@@ -28,7 +28,7 @@ export function SlideContextProvider({
   )
 }
 
-export function useSlideContext() {
+function useSlideContext() {
   return useContext(SlideContext)
 }
 
