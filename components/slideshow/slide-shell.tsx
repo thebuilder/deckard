@@ -1,4 +1,5 @@
 import Link from "next/link"
+import type { ReactNode } from "react"
 import {
   PresenterKeyboardShortcut,
   PresenterPopoutButton,
@@ -14,6 +15,7 @@ import {
 } from "@/components/slideshow/slide-stepper"
 import { StaticMediaBoundary } from "@/components/slideshow/static-media-boundary"
 import { SlideshowThemeToggle } from "@/components/slideshow/theme-toggle"
+import type { SlideSummary } from "@/lib/deck/types"
 import { cn } from "@/lib/utils"
 import type {
   SlideBackgroundMode,
@@ -24,9 +26,7 @@ import type {
 
 interface SlideShellProps {
   background?: SlideBackgroundMode
-  children: React.ReactNode
-  current: number
-  currentId: string
+  children: ReactNode
   deckTitle: string
   deckTitleHref?: string
   footerMode?: SlideFooterMode
@@ -34,143 +34,168 @@ interface SlideShellProps {
   headerMode?: SlideHeaderMode
   initialStep?: number
   layout?: SlideLayoutMode
-  nextHref?: string
-  nextSlide?: {
-    id: string
-    title: string
-  }
+  next?: SlideSummary
   notes?: string
-  prefetchHrefs?: string[]
+  prefetch?: SlideSummary[]
   presenterEnabled?: boolean
-  previousHref?: string
+  previous?: SlideSummary
   readOnly?: boolean
-  slideOptions: Array<{
-    index: number
-    title: string
-    id: string
-    href: string
-  }>
-  slideTitle?: string
-  stepCount?: number
-  total: number
+  slide: SlideSummary
+  slides: SlideSummary[]
+}
+
+interface ChromeState {
+  isFullscreen: boolean
+  showFooter: boolean
+  showHeader: boolean
+}
+
+function resolveChrome({
+  footerMode,
+  headerMode,
+  layout,
+}: {
+  footerMode: SlideFooterMode
+  headerMode: SlideHeaderMode
+  layout: SlideLayoutMode
+}): ChromeState {
+  const isFullscreen = layout === "fullscreen"
+
+  return {
+    isFullscreen,
+    showFooter: footerMode !== "hidden",
+    showHeader:
+      headerMode === "visible" || (headerMode === "auto" && !isFullscreen),
+  }
+}
+
+function mainClassName({ isFullscreen, showFooter, showHeader }: ChromeState) {
+  if (isFullscreen) {
+    return cn(
+      "box-border h-svh items-stretch p-0",
+      showHeader && "pt-20 sm:pt-24",
+      showFooter && "pb-16 sm:pb-20"
+    )
+  }
+
+  return cn(
+    "mx-auto min-h-svh max-w-6xl items-start px-4 sm:px-6",
+    showHeader ? "pt-28 sm:pt-32" : "pt-8 sm:pt-10",
+    showFooter ? "pb-24 sm:pb-28" : "pb-4 sm:pb-6"
+  )
+}
+
+function SlideShellHeader({
+  currentNumber,
+  deckTitle,
+  deckTitleHref,
+  slides,
+}: {
+  currentNumber: number
+  deckTitle: string
+  deckTitleHref: string
+  slides: SlideSummary[]
+}) {
+  return (
+    <header className="fixed inset-x-0 top-0 z-40 border-transparent border-b bg-background/50 backdrop-blur-sm">
+      <div className="flex items-center justify-between gap-4 px-4 py-4 sm:px-6">
+        <Link
+          className="font-semibold text-sm tracking-tight"
+          href={deckTitleHref}
+        >
+          {deckTitle}
+        </Link>
+        <div className="flex items-center gap-2">
+          <SlideCommandCenter
+            currentNumber={currentNumber}
+            deckTitle={deckTitle}
+            slides={slides}
+          />
+          <PresenterPopoutButton />
+          <SlideshowThemeToggle />
+        </div>
+      </div>
+    </header>
+  )
 }
 
 export function SlideShell({
+  background = "default",
   children,
-  current,
-  total,
-  stepCount = 0,
-  previousHref,
-  nextHref,
-  prefetchHrefs = [],
   deckTitle,
   deckTitleHref = "/",
-  slideTitle,
-  headerMode = "auto",
   footerMode = "visible",
-  layout = "default",
-  background = "default",
-  slideOptions,
-  notes,
-  currentId,
-  nextSlide,
-  readOnly = false,
-  initialStep = 0,
-  presenterEnabled = true,
   freezeMedia = false,
+  headerMode = "auto",
+  initialStep = 0,
+  layout = "default",
+  next,
+  notes,
+  prefetch,
+  presenterEnabled = true,
+  previous,
+  readOnly = false,
+  slide,
+  slides,
 }: SlideShellProps) {
-  const isFullscreen = layout === "fullscreen"
-  const showHeader =
-    headerMode === "visible" || (headerMode === "auto" && !isFullscreen)
-  const showFooter = footerMode !== "hidden"
+  const chrome = resolveChrome({ footerMode, headerMode, layout })
+  const isPresenterLive = presenterEnabled && !readOnly
 
   return (
     <SlideStepper
       initialStep={initialStep}
-      nextHref={nextHref}
-      previousHref={previousHref}
+      nextHref={next?.href}
+      previousHref={previous?.href}
       readOnly={readOnly}
-      stepCount={stepCount}
+      stepCount={slide.stepCount}
     >
-      <SlideContextProvider isPresenterPreview={readOnly} title={slideTitle}>
+      <SlideContextProvider isPresenterPreview={readOnly} title={slide.title}>
         <div className="relative min-h-svh overflow-hidden bg-background text-foreground">
           <PresenterSync
-            current={current}
-            currentId={currentId}
-            currentTitle={
-              slideOptions[current - 1]?.title ?? slideTitle ?? deckTitle
-            }
-            enabled={presenterEnabled && !readOnly}
-            nextSlide={nextSlide}
+            enabled={isPresenterLive}
+            next={next}
             notes={notes}
-            slides={slideOptions.map((slide) => ({
-              href: slide.href,
-              title: slide.title,
-            }))}
-            stepCount={stepCount}
-            total={total}
+            slide={slide}
+            slides={slides}
           />
-          <PresenterKeyboardShortcut enabled={presenterEnabled && !readOnly} />
+          <PresenterKeyboardShortcut enabled={isPresenterLive} />
           <SlideBackground variant={background} />
 
-          {showHeader ? (
-            <header className="fixed inset-x-0 top-0 z-40 border-transparent border-b bg-background/50 backdrop-blur-sm">
-              <div className="flex items-center justify-between gap-4 px-4 py-4 sm:px-6">
-                <Link
-                  className="font-semibold text-sm tracking-tight"
-                  href={deckTitleHref}
-                >
-                  {deckTitle}
-                </Link>
-                <div className="flex items-center gap-2">
-                  <SlideCommandCenter
-                    current={current}
-                    slideOptions={slideOptions}
-                    title={deckTitle}
-                  />
-                  <PresenterPopoutButton />
-                  <SlideshowThemeToggle />
-                </div>
-              </div>
-            </header>
+          {chrome.showHeader ? (
+            <SlideShellHeader
+              currentNumber={slide.number}
+              deckTitle={deckTitle}
+              deckTitleHref={deckTitleHref}
+              slides={slides}
+            />
           ) : null}
 
           <main
-            className={cn(
-              "relative z-10 flex w-full",
-              isFullscreen
-                ? "box-border h-svh items-stretch p-0"
-                : "mx-auto min-h-svh max-w-6xl items-start px-4 sm:px-6",
-              isFullscreen && showHeader && "pt-20 sm:pt-24",
-              isFullscreen && showFooter && "pb-16 sm:pb-20",
-              !isFullscreen &&
-                (showHeader ? "pt-28 sm:pt-32" : "pt-8 sm:pt-10"),
-              !isFullscreen && (showFooter ? "pb-24 sm:pb-28" : "pb-4 sm:pb-6")
-            )}
+            className={cn("relative z-10 flex w-full", mainClassName(chrome))}
           >
             <SlideStepAdvanceArea
-              className={cn("w-full", isFullscreen && "h-full")}
+              className={cn("w-full", chrome.isFullscreen && "h-full")}
             >
               <StaticMediaBoundary
-                activePath={`/slides/${currentId}`}
-                className={cn(isFullscreen && "h-full")}
+                activePath={slide.href}
+                className={cn(chrome.isFullscreen && "h-full")}
                 enabled={freezeMedia}
               >
-                <div className={cn("w-full", isFullscreen && "h-full")}>
+                <div className={cn("w-full", chrome.isFullscreen && "h-full")}>
                   {children}
                 </div>
               </StaticMediaBoundary>
             </SlideStepAdvanceArea>
           </main>
 
-          {showFooter ? (
+          {chrome.showFooter ? (
             <SlideNavigation
-              current={current}
               mode={footerMode === "counter" ? "counter" : "visible"}
-              nextHref={nextHref}
-              prefetchHrefs={prefetchHrefs}
-              previousHref={previousHref}
-              total={total}
+              next={next}
+              prefetch={prefetch}
+              previous={previous}
+              slide={slide}
+              total={slides.length}
             />
           ) : null}
         </div>

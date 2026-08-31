@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 import { SlideShell } from "@/components/slideshow/slide-shell"
 import { deck } from "@/deck/deck"
 import { getSlideById } from "@/lib/deck/resolve-slides"
+import { toSlideSummaries, toSlideSummary } from "@/lib/deck/slide-summary"
 
 interface SlidePageProps {
   params: Promise<{
@@ -74,15 +75,9 @@ export default async function SlidePage({
   const previousSlide = deck.slides[slide.index - 1]
   const nextSlide = deck.slides[slide.index + 1]
   const nextNextSlide = deck.slides[slide.index + 2]
-  const slideOptions = deck.slides.map((item) => ({
-    href: item.href,
-    id: item.id,
-    index: item.number,
-    title: item.title,
-  }))
-  const prefetchHrefs = [previousSlide, nextSlide, nextNextSlide]
+  const prefetch = [previousSlide, nextSlide, nextNextSlide]
     .filter((item) => item !== undefined)
-    .map((item) => item.href)
+    .map(toSlideSummary)
   const maxStepIndex = Math.max(slide.stepCount - 1, 0)
   const previewStepClamped = Math.min(previewStep, maxStepIndex)
   const isChromeHidden = isPdfExport || isPresenterPreview
@@ -90,8 +85,6 @@ export default async function SlidePage({
   return (
     <SlideShell
       background={slide.background}
-      current={slide.number}
-      currentId={slide.id}
       deckTitle={deck.header.brand}
       deckTitleHref={deck.header.href}
       footerMode={isChromeHidden ? "hidden" : slide.footer}
@@ -99,24 +92,14 @@ export default async function SlidePage({
       headerMode={isChromeHidden ? "hidden" : slide.header}
       initialStep={previewStepClamped}
       layout={slide.layout}
-      nextHref={nextSlide?.href}
-      nextSlide={
-        nextSlide
-          ? {
-              id: nextSlide.id,
-              title: nextSlide.title,
-            }
-          : undefined
-      }
+      next={nextSlide ? toSlideSummary(nextSlide) : undefined}
       notes={slide.notes}
-      prefetchHrefs={prefetchHrefs}
+      prefetch={prefetch}
       presenterEnabled={!isPresenterPreview}
-      previousHref={previousSlide?.href}
+      previous={previousSlide ? toSlideSummary(previousSlide) : undefined}
       readOnly={isPresenterPreview}
-      slideOptions={slideOptions}
-      slideTitle={slide.title}
-      stepCount={slide.stepCount}
-      total={deck.slides.length}
+      slide={toSlideSummary(slide)}
+      slides={toSlideSummaries(deck.slides)}
     >
       {slide.body}
     </SlideShell>

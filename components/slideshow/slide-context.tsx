@@ -4,7 +4,7 @@ import { createContext, type ReactNode, useContext } from "react"
 
 interface SlideContextValue {
   isPresenterPreview: boolean
-  title?: ReactNode
+  title?: string
 }
 
 type SlideContextProviderProps = SlideContextValue & {

@@ -15,18 +15,12 @@ import {
   CommandList,
   CommandShortcut,
 } from "@/components/ui/command"
-
-interface SlideOption {
-  href: string
-  id: string
-  index: number
-  title: string
-}
+import type { SlideSummary } from "@/lib/deck/types"
 
 interface SlideCommandCenterProps {
-  current: number
-  slideOptions: SlideOption[]
-  title: string
+  currentNumber: number
+  deckTitle: string
+  slides: SlideSummary[]
 }
 
 function SlideCommandOption({
@@ -34,7 +28,7 @@ function SlideCommandOption({
   isCurrent,
   onSelect,
 }: {
-  slide: SlideOption
+  slide: SlideSummary
   isCurrent: boolean
   onSelect: (href: string) => void
 }) {
@@ -45,10 +39,10 @@ function SlideCommandOption({
   return (
     <CommandItem
       onSelect={handleSelect}
-      value={`${slide.index} ${slide.title} ${slide.id}`}
+      value={`${slide.number} ${slide.title} ${slide.id}`}
     >
       <span className="inline-flex min-w-10 text-muted-foreground tabular-nums">
-        {String(slide.index).padStart(2, "0")}
+        {String(slide.number).padStart(2, "0")}
       </span>
       <span className="truncate">{slide.title}</span>
       <span className="hidden truncate text-muted-foreground text-xs md:inline">
@@ -60,9 +54,9 @@ function SlideCommandOption({
 }
 
 export function SlideCommandCenter({
-  current,
-  title,
-  slideOptions,
+  currentNumber,
+  deckTitle,
+  slides,
 }: SlideCommandCenterProps) {
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
@@ -119,16 +113,16 @@ export function SlideCommandCenter({
         description="Jump to any slide by number or title."
         onOpenChange={setIsOpen}
         open={isOpen}
-        title={title}
+        title={deckTitle}
       >
         <Command>
           <CommandInput placeholder="Go to slide by number, title, or id..." />
           <CommandList>
             <CommandEmpty>No slides found.</CommandEmpty>
             <CommandGroup heading="Slides">
-              {slideOptions.map((slide) => (
+              {slides.map((slide) => (
                 <SlideCommandOption
-                  isCurrent={slide.index === current}
+                  isCurrent={slide.number === currentNumber}
                   key={slide.href}
                   onSelect={goToSlide}
                   slide={slide}

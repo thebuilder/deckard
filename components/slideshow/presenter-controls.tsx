@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef } from "react"
 
 import { useSlideStepper } from "@/components/slideshow/slide-stepper"
 import { Button } from "@/components/ui/button"
+import type { SlideSummary } from "@/lib/deck/types"
 import {
   PRESENTER_CHANNEL_NAME,
   type PresenterChannelMessage,
@@ -12,49 +13,35 @@ import {
 } from "@/types/presenter"
 
 interface PresenterSyncProps {
-  current: number
-  currentId: string
-  currentTitle: string
   enabled?: boolean
-  nextSlide?: {
-    id: string
-    title: string
-  }
+  next?: SlideSummary
   notes?: string
-  slides: Array<{
-    title: string
-    href: string
-  }>
-  stepCount: number
-  total: number
+  slide: SlideSummary
+  slides: SlideSummary[]
 }
 
 function resolvePreview({
-  currentId,
-  currentTitle,
+  slide,
   currentStep,
-  stepCount,
-  nextSlide,
+  next,
 }: {
-  currentId: string
-  currentTitle: string
+  slide: SlideSummary
   currentStep: number
-  stepCount: number
-  nextSlide?: { id: string; title: string }
+  next?: SlideSummary
 }): PresenterSlideState["preview"] {
-  if (stepCount > 0 && currentStep < stepCount - 1) {
+  if (slide.stepCount > 0 && currentStep < slide.stepCount - 1) {
     return {
-      id: currentId,
+      id: slide.id,
       step: currentStep + 1,
-      title: currentTitle,
+      title: slide.title,
     }
   }
 
-  if (nextSlide) {
+  if (next) {
     return {
-      id: nextSlide.id,
+      id: next.id,
       step: 0,
-      title: nextSlide.title,
+      title: next.title,
     }
   }
 
@@ -62,37 +49,21 @@ function resolvePreview({
 }
 
 function buildPresenterState({
-  current,
-  total,
+  slide,
   slides,
-  currentId,
-  currentTitle,
-  stepCount,
   currentStep,
   notes,
-  nextSlide,
+  next,
 }: PresenterSyncProps & {
   currentStep: number
 }): PresenterSlideState {
-  const preview = resolvePreview({
-    currentId,
-    currentStep,
-    currentTitle,
-    nextSlide,
-    stepCount,
-  })
-
   return {
-    current,
     currentStep,
-    id: currentId,
     notes,
-    preview,
+    preview: resolvePreview({ currentStep, next, slide }),
     sentAt: Date.now(),
+    slide,
     slides,
-    stepCount,
-    title: currentTitle,
-    total,
   }
 }
 

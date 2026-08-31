@@ -34,19 +34,16 @@ function getFlowWindow(state: PresenterSlideState | null) {
     return []
   }
 
-  const currentIndex = state.current - 1
+  const currentIndex = state.slide.number - 1
   const start = Math.max(0, currentIndex - 2)
   const end = Math.min(state.slides.length - 1, currentIndex + 5)
 
-  return state.slides.slice(start, end + 1).map((slide, offset) => {
-    const index = start + offset
-    return {
-      href: slide.href,
-      index,
-      isCurrent: index === currentIndex,
-      title: slide.title,
-    }
-  })
+  return state.slides.slice(start, end + 1).map((slide) => ({
+    href: slide.href,
+    isCurrent: slide.number === state.slide.number,
+    number: slide.number,
+    title: slide.title,
+  }))
 }
 
 type FlowItem = ReturnType<typeof getFlowWindow>[number]
@@ -73,7 +70,7 @@ function FlowButton({
       type="button"
     >
       <span className="min-w-7 font-medium text-xs tabular-nums">
-        {item.index + 1}
+        {item.number}
       </span>
       <span className="truncate text-sm">{item.title}</span>
     </button>
@@ -269,7 +266,7 @@ export function PresenterConsole() {
 
   const elapsed = startedAt ? formatElapsed(Date.now() - startedAt) : "00:00:00"
   const currentSlideUrl = state
-    ? `/slides/${state.id}?presenterPreview=1&step=${state.currentStep}`
+    ? `/slides/${state.slide.id}?presenterPreview=1&step=${state.currentStep}`
     : null
   const nextStepPreviewUrl = state?.preview
     ? `/slides/${state.preview.id}?presenterPreview=1&step=${state.preview.step}`
@@ -277,7 +274,7 @@ export function PresenterConsole() {
   const notesLineHeight = Number((notesFontSize * 1.45).toFixed(2))
   const flowItems = getFlowWindow(state)
   const canNavigatePrevious = Boolean(
-    state && (state.current > 1 || state.currentStep > 0)
+    state && (state.slide.number > 1 || state.currentStep > 0)
   )
   const canNavigateNext = Boolean(state?.preview)
 
@@ -364,11 +361,7 @@ export function PresenterConsole() {
           <div className="mt-2 space-y-1">
             {flowItems.length ? (
               flowItems.map((item) => (
-                <FlowButton
-                  item={item}
-                  key={`${item.index}-${item.title}`}
-                  onSelect={goToSlide}
-                />
+                <FlowButton item={item} key={item.href} onSelect={goToSlide} />
               ))
             ) : (
               <p className="text-muted-foreground text-sm">
@@ -414,18 +407,19 @@ export function PresenterConsole() {
               Current Slide
             </p>
             <h2 className="mt-1 font-semibold text-lg tracking-tight">
-              {state?.title ?? "Waiting for slideshow"}
+              {state?.slide.title ?? "Waiting for slideshow"}
             </h2>
           </div>
           <div className="flex flex-wrap items-center gap-2 text-muted-foreground text-xs">
             <span className="rounded-full border border-border/70 bg-card/60 px-3 py-1 font-medium">
               {state
-                ? `Slide ${state.current} of ${state.total}`
+                ? `Slide ${state.slide.number} of ${state.slides.length}`
                 : "Open a slide tab and start presenting"}
             </span>
             {state ? (
               <span className="rounded-full border border-border/70 bg-card/60 px-3 py-1 font-medium">
-                Step {state.currentStep + 1} of {Math.max(state.stepCount, 1)}
+                Step {state.currentStep + 1} of{" "}
+                {Math.max(state.slide.stepCount, 1)}
               </span>
             ) : null}
           </div>

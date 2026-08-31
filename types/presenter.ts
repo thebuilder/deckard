@@ -1,3 +1,5 @@
+import type { SlideSummary } from "@/lib/deck/types"
+
 export const PRESENTER_CHANNEL_NAME = "slideshow-presenter-sync"
 
 export interface PresenterPreviewState {
@@ -6,22 +8,13 @@ export interface PresenterPreviewState {
   title: string
 }
 
-export interface PresenterSlideListItem {
-  href: string
-  title: string
-}
-
 export interface PresenterSlideState {
-  current: number
   currentStep: number
-  id: string
   notes?: string
   preview: PresenterPreviewState | null
   sentAt: number
-  slides: PresenterSlideListItem[]
-  stepCount: number
-  title: string
-  total: number
+  slide: SlideSummary
+  slides: SlideSummary[]
 }
 
 export type PresenterChannelMessage =
