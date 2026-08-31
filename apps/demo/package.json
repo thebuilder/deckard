@@ -1,0 +1,37 @@
+{
+  "name": "demo",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "next build",
+    "deck:check-overflow": "deck-check-overflow",
+    "deck:contact-sheet": "deck-contact-sheet",
+    "deck:screenshots": "deck-screenshots",
+    "deck:validate": "deck-validate",
+    "dev": "next dev --turbopack --port 3002",
+    "export:pdf": "deck-export-pdf",
+    "start": "next start --port 3002",
+    "test": "vitest run --passWithNoTests",
+    "test:unit": "vitest run --passWithNoTests",
+    "typecheck": "next typegen && tsc --noEmit"
+  },
+  "dependencies": {
+    "@deckard/core": "workspace:*",
+    "next": "16.3.3",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "server-only": "^0.0.1"
+  },
+  "devDependencies": {
+    "@deckard/deck-scripts": "workspace:*",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^26.4.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.5",
+    "postcss": "^8.5.26",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.11"
+  }
+}
