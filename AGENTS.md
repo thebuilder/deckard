@@ -10,6 +10,9 @@ pnpm workspace driven by Turborepo.
   alongside the app.
 - `apps/playground` is the reference deck and the app the visual checks run
   against.
+- `apps/demo` is a 19-slide talk shaped like a consumer project, and the proof
+  that the framework works outside the playground. `docs/MIGRATION-NOTES.md`
+  records what that migration surfaced.
 - `apps/docs` is the documentation site.
 - `registry` holds theme sources the playground does not use. `registry.json` at
   the root publishes them and the blocks through shadcn.
@@ -37,6 +40,8 @@ All of these run from the root.
 | `pnpm deck:screenshots`    | one PNG per slide at canvas size, `--light` for light mode   |
 | `pnpm deck:contact-sheet`  | every screenshot in one grid image for review                |
 | `pnpm export:pdf`          | one PDF page per slide at canvas size                        |
+| `pnpm demo`                | the demo talk on :3002                                       |
+| `pnpm demo:validate`       | the deck scripts against `apps/demo`, plus `demo:check-overflow`, `demo:screenshots`, `demo:contact-sheet`, `demo:export:pdf` |
 | `pnpm registry:build`      | compiles `registry.json` into `apps/docs/public/r`           |
 | `pnpm smoke:package`       | packs `@deckard/core` and builds a scratch app against it    |
 | `pnpm smoke:registry`      | installs the registry into a scratch app and builds it       |

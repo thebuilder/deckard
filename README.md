@@ -47,7 +47,8 @@ pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) for the playground deck.
-`pnpm --filter docs dev` serves the documentation site on port 3001.
+`pnpm demo` serves the demo talk on port 3002, and `pnpm --filter docs dev`
+serves the documentation site on port 3001.
 
 ## The monorepo
 
@@ -57,6 +58,7 @@ This is a pnpm workspace run by Turborepo.
 | --- | --- |
 | `packages/core` | `@deckard/core`, the deck contract and the slideshow runtime |
 | `apps/playground` | the reference deck, and the app the visual checks run against |
+| `apps/demo` | a 19-slide conference talk, shaped like a consumer project |
 | `apps/docs` | the documentation site |
 | `registry` | theme sources the playground does not use, published through the registry |
 | `tools/deck-scripts` | `@deckard/deck-scripts`, the deck tooling every app runs |
@@ -69,13 +71,16 @@ Every script runs from the root:
 pnpm dev            # playground on :3000, core rebuilding on save
 pnpm build          # every app
 pnpm typecheck
-pnpm test           # 85 tests across core and playground
+pnpm test           # 96 tests across core, the deck scripts, and both decks
 pnpm lint
 pnpm analyze
 pnpm deck:validate       # deck, theme, and registry integrity
 pnpm deck:check-overflow # fail on slides the canvas clips
 pnpm deck:screenshots    # one PNG per slide at canvas size
 pnpm deck:contact-sheet  # every screenshot in one grid image
+pnpm demo           # the demo talk on :3002
+pnpm demo:validate  # the same checks against apps/demo, plus demo:check-overflow,
+                    # demo:screenshots, demo:contact-sheet, demo:export:pdf
 pnpm registry:build # write the shadcn registry to apps/docs/public/r
 pnpm smoke:package  # pack @deckard/core and build a scratch app against it
 pnpm smoke:registry # install the registry into a scratch app and build it
@@ -83,7 +88,8 @@ pnpm smoke:registry # install the registry into a scratch app and build it
 
 `AGENTS.md` is the short version of the rules for a coding agent, and
 `.claude/skills/slide-authoring/SKILL.md` is the slide-authoring skill it loads
-when it writes or edits slides.
+when it writes or edits slides. `docs/MIGRATION-NOTES.md` records what building
+`apps/demo` on this API proved, including the parts that pushed back.
 
 ### @deckard/core
 
@@ -144,6 +150,17 @@ export default Page
 | `createPresenterPage(deck)` | `app/presenter/page.tsx`, returns `Page` and `metadata` |
 | `createDeckSitemap(deck, { siteUrl })` | `app/sitemap.ts`, defaults to `NEXT_PUBLIC_SITE_URL` |
 | `createFirstSlideRedirect(deck)` | `app/page.tsx`, redirects to the first slide |
+
+### Inside the demo
+
+`apps/demo` is the proof that a deck built on Deckard is a plain Next.js app. It
+consumes `@deckard/core` through the workspace, installs its blocks and its theme
+as files it owns, and runs the same deck scripts as the playground through
+`@deckard/deck-scripts`. It carries a 19-slide talk with a manual opening and
+close, nine discovered slide modules, an async Server Component that reads the
+workspace at build time, a nested client widget, step reveals, a fullscreen media
+slide, and a code walkthrough. Read `docs/MIGRATION-NOTES.md` for what building
+it cost.
 
 ### Inside the playground
 
