@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation"
 import { type ReactNode, useEffect, useRef } from "react"
+import { useIsPresenterPreview } from "./slide-context"
 
 interface StaticMediaBoundaryProps {
   activePath?: string
@@ -35,6 +36,9 @@ export function StaticMediaBoundary({
 }: StaticMediaBoundaryProps) {
   const rootRef = useRef<HTMLDivElement | null>(null)
   const pathname = usePathname()
+  // A presenter preview is a still of the deck, and it only knows it is one after hydration.
+  const isPresenterPreview = useIsPresenterPreview()
+  const isFrozen = enabled || isPresenterPreview
 
   useEffect(() => {
     const root = rootRef.current
@@ -49,7 +53,7 @@ export function StaticMediaBoundary({
       return
     }
 
-    if (!enabled) {
+    if (!isFrozen) {
       return
     }
 
@@ -65,7 +69,7 @@ export function StaticMediaBoundary({
     })
 
     return () => observer.disconnect()
-  }, [activePath, enabled, pathname])
+  }, [activePath, isFrozen, pathname])
 
   useEffect(() => {
     function handleVisibilityChange() {

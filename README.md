@@ -457,6 +457,12 @@ Presenter previews render slide routes with `?presenterPreview=1`, and slides
 can detect that mode with `useIsPresenterPreview()` from
 `@deckard/core/components`.
 
+The slide route never reads the query itself. `?presenterPreview=1` and `?step=`
+are read on the client, inside a Suspense boundary that holds nothing but the
+reader, so every slide prerenders as static HTML and only the preview wiring
+(chrome visibility, the read-only stepper, presenter sync, frozen media) settles
+after hydration.
+
 Use that hook in custom client components to skip autoplay, audio, canvas, or
 other expensive interactive rendering inside the presenter preview iframe.
 

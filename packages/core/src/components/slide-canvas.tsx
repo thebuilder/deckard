@@ -32,8 +32,8 @@ export function SlideCanvas({
   const canvasStyle = {
     "--canvas-height": `${canvas.height}px`,
     "--canvas-width": `${canvas.width}px`,
-    "--slide-chrome-bottom": `${chromeInset.bottom}px`,
-    "--slide-chrome-top": `${chromeInset.top}px`,
+    "--slide-chrome-bottom": `calc(${chromeInset.bottom}px * var(--slide-chrome-scale, 1))`,
+    "--slide-chrome-top": `calc(${chromeInset.top}px * var(--slide-chrome-scale, 1))`,
     height: canvas.height,
     width: canvas.width,
   } as CSSProperties
