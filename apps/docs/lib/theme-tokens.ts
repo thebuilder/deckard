@@ -14,27 +14,36 @@ export const swatchTokens = [
 ] as const
 
 export type SwatchToken = (typeof swatchTokens)[number]
-export type Swatches = Record<SwatchToken, string>
+export type Swatches = Partial<Record<SwatchToken, string>>
 
 function readToken(css: string, token: SwatchToken) {
-  const matches = [
+  return [
     ...css.matchAll(new RegExp(`^\\s*--${token}:\\s*([^;]+);`, "gm")),
-  ]
+  ].map((match) => match[1].trim())
+}
 
-  if (matches.length === 0) {
-    throw new Error(`theme stylesheet defines no --${token}`)
+// A swatch is documentation, not the docs build. A stylesheet that moved or a
+// token it never defines leaves that square blank instead of failing the build.
+function readThemeCss(source: string) {
+  try {
+    return fs.readFileSync(path.join(repoRoot, source), "utf8")
+  } catch {
+    return ""
   }
-
-  return matches.map((match) => match[1].trim())
 }
 
 export function readThemeSwatches(source: string) {
-  const css = fs.readFileSync(path.join(repoRoot, source), "utf8")
-  const light = {} as Swatches
-  const dark = {} as Swatches
+  const css = readThemeCss(source)
+  const light: Swatches = {}
+  const dark: Swatches = {}
 
   for (const token of swatchTokens) {
     const values = readToken(css, token)
+
+    if (values.length === 0) {
+      continue
+    }
+
     light[token] = values[0]
     dark[token] = values.at(-1) ?? values[0]
   }

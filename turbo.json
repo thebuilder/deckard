@@ -1,7 +1,12 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "stream",
-  "globalDependencies": ["biome.json", ".fallowrc.json"],
+  "globalDependencies": [
+    "biome.json",
+    ".fallowrc.json",
+    "apps/playground/deck/theme/theme.css",
+    "registry/themes/**"
+  ],
   "globalEnv": [
     "NEXT_PUBLIC_PDF_EXPORT",
     "NEXT_PUBLIC_PDF_THEME",

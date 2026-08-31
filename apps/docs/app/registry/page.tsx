@@ -78,16 +78,18 @@ function SwatchRow({ label, swatches }: { label: string; swatches: Swatches }) {
         className="flex gap-1 rounded border border-black/10 p-1"
         style={{ backgroundColor: swatches.background }}
       >
-        {swatchTokens.map((token) => (
-          <span
-            aria-label={`${label} ${token}`}
-            className="size-7 rounded-sm"
-            key={token}
-            role="img"
-            style={{ backgroundColor: swatches[token] }}
-            title={`--${token}: ${swatches[token]}`}
-          />
-        ))}
+        {swatchTokens
+          .filter((token) => swatches[token])
+          .map((token) => (
+            <span
+              aria-label={`${label} ${token}`}
+              className="size-7 rounded-sm"
+              key={token}
+              role="img"
+              style={{ backgroundColor: swatches[token] }}
+              title={`--${token}: ${swatches[token]}`}
+            />
+          ))}
       </div>
     </div>
   )
