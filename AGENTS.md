@@ -14,6 +14,7 @@ The reusable parts (`lib/deck`, `components/slideshow`) are headed for `@deckard
 
 - Slide definitions live in `deck/slides.tsx`, and the exported array always
   defines deck order. `resolveSlides` never sorts.
+- File-per-slide modules live in `deck/slides/*.slide.tsx` and join the array through `slideFromModule`.
 - Deck config lives in `deck/deck.ts` and is wrapped in `defineDeck`.
 - Slide model, id resolution, and validation live in `lib/deck/*`. A slide id
   is its `slug` or its 1-based position, and lookups match it exactly, so a
@@ -29,7 +30,7 @@ The reusable parts (`lib/deck`, `components/slideshow`) are headed for `@deckard
 
 ## Authoring rules
 
-- Keep `deck/slides.tsx` definitions-only. Do not define component implementations there.
+- Keep `deck/slides.tsx` close to definitions-only. A slide-local async Server Component that loads data is fine, the visuals still come from blocks.
 - Prefer composing slides from `app/slides/blocks/*` primitives.
 - Prefer explicit variant components over mode flags/booleans (composition pattern):
   - good: `ContentSlideCard` + `OpenContentSlide`
@@ -39,6 +40,16 @@ The reusable parts (`lib/deck`, `components/slideshow`) are headed for `@deckard
 - Use reusable media primitives (for example `ImageShowcaseSlide`) for media-first slides and keep assets in `public/images`.
 - Prefer static image imports (`ImageProps["src"]`) over raw strings when possible, so blur placeholders are available.
 - Reuse `deck` values for branding/title instead of hardcoding strings.
+
+## Slide modules and Server Components
+
+- Slide entry modules are Server Components. Never put `"use client"` at the top of `deck/slides.tsx` or a `deck/slides/*.slide.tsx` file. `deck/slides.test.ts` fails on it.
+- Put interactivity one level down, in a nested client component beside the slide (for example `deck/slides/interactive-demo-widget.tsx`), and render it from the slide body.
+- Fetch data inside the slide component with `await`. The route renders the slide after the data resolves.
+- Metadata stays synchronously readable. Export `meta` and `notes` as plain values so the deck can list, order, and title a slide without rendering it.
+- A slide module exports `default` (the component), `meta`, and `notes`. `slideFromModule` turns it into a `SlideDefinition`.
+- Anything crossing into a client component has to be serializable. Pass a `SlideSummary` built from a `ResolvedSlide`, and let the rendered body cross only as `children`.
+- A slide that throws renders the inline card from `SlideErrorBoundary`. Navigation keeps working, so check the console for the real stack.
 
 ## UX expectations
 
