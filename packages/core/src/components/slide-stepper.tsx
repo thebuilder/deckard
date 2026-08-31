@@ -81,13 +81,8 @@ export function SlideStepper({
   const [currentStep, setCurrentStep] = useState(clampedInitialStep)
 
   useEffect(() => {
-    if (readOnly) {
-      setCurrentStep(clampedInitialStep)
-      return
-    }
-
-    setCurrentStep(0)
-  }, [clampedInitialStep, readOnly])
+    setCurrentStep(clampedInitialStep)
+  }, [clampedInitialStep])
 
   const maxStepIndex = Math.max(stepCount - 1, 0)
   const canAdvance = !readOnly && stepCount > 0 && currentStep < maxStepIndex
