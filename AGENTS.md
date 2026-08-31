@@ -49,7 +49,7 @@ The reusable parts (`lib/deck`, `components/slideshow`) are headed for `@deckard
 - Metadata stays synchronously readable. Export `meta` and `notes` as plain values so the deck can list, order, and title a slide without rendering it.
 - A slide module exports `default` (the component), `meta`, and `notes`. `slideFromModule` turns it into a `SlideDefinition`.
 - Anything crossing into a client component has to be serializable. Pass a `SlideSummary` built from a `ResolvedSlide`, and let the rendered body cross only as `children`.
-- A slide that throws renders the inline card from `SlideErrorBoundary`. Navigation keeps working, so check the console for the real stack.
+- A slide that throws renders the inline card from `SlideErrorBoundary` and navigation keeps working. That covers `next dev` and anything a nested client component throws after hydration. In a production build, a Server Component that throws is fatal to the route and Next serves its own error page instead.
 
 ## UX expectations
 
