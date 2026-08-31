@@ -14,9 +14,52 @@ import exampleBackgroundImage from "@/assets/example-background.png"
 import templateCapabilitiesImage from "@/assets/template-capabilities.svg"
 import { CodeBlock } from "@/components/slideshow/code-block"
 import { SlideStep } from "@/components/slideshow/slide-stepper"
+// biome-ignore lint/performance/noNamespaceImport: slideFromModule takes the whole slide module, which is what a dynamic import hands back
+import * as interactiveDemoSlide from "@/deck/slides/interactive-demo.slide"
 import "server-only"
 
+import { slideFromModule } from "@/lib/deck/slide-from-module"
 import type { SlideDefinition } from "@/lib/deck/types"
+
+const vitalsDelayMs = 40
+
+async function loadDeckVitals() {
+  await new Promise((resolve) => {
+    setTimeout(resolve, vitalsDelayMs)
+  })
+
+  return [
+    {
+      description:
+        "The route waited for this data before it sent any HTML, so the audience never watches a slide fill itself in.",
+      title: `Awaited ${vitalsDelayMs}ms`,
+    },
+    {
+      description:
+        "The query, its credentials, and its result stay on the server. The browser gets markup.",
+      title: "Nothing shipped to the client",
+    },
+    {
+      description:
+        "An async body is still one entry in this array, with the same metadata, notes, and navigation.",
+      title: "Same slide contract",
+    },
+  ]
+}
+
+async function DeckVitalsSlide() {
+  const vitals = await loadDeckVitals()
+
+  return (
+    <ContentSlideCard
+      description="This body is an async Server Component. It awaits its data, then returns the slide."
+      eyebrow="Server components"
+      title="Slides can fetch their own data"
+    >
+      <FeatureGrid items={vitals} />
+    </ContentSlideCard>
+  )
+}
 
 export const slides: SlideDefinition[] = [
   {
@@ -275,6 +318,17 @@ Close by reinforcing that this pattern is what makes Deckard scalable for future
       </ContentSlideCard>
     ),
   },
+  {
+    slug: "server-data",
+    title: "Server Data",
+    notes:
+      "Say plainly that the slide awaited its own data before rendering. Then point at the 40ms number, it came back from that call.",
+    body: <DeckVitalsSlide />,
+  },
+  slideFromModule(
+    interactiveDemoSlide,
+    "deck/slides/interactive-demo.slide.tsx"
+  ),
   {
     title: "Use It",
     body: (
