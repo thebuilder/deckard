@@ -26,7 +26,7 @@ function pathsOf(entries: GlobEntry[], sort?: SlideSort) {
   )
 }
 
-describe("discoverSlides", () => {
+describe("discoverSlides sorting", () => {
   it("sorts numeric filename prefixes naturally", () => {
     const paths = pathsOf([
       ["./slides/10-outro.slide.tsx"],
@@ -104,7 +104,9 @@ describe("discoverSlides", () => {
 
     expect(paths).toEqual(["slides/2-b.slide.tsx", "slides/1-a.slide.tsx"])
   })
+})
 
+describe("discoverSlides definitions", () => {
   it("captures the normalized glob key as the source path", () => {
     const resolved = resolveSlides(
       discoverSlides(globOf([["./slides/pricing.slide.tsx"]]))
@@ -141,7 +143,9 @@ describe("discoverSlides", () => {
       "Closing",
     ])
   })
+})
 
+describe("discoverSlides validation", () => {
   it("names the file when a module has no default export", () => {
     expect(() =>
       discoverSlides({ "./slides/broken.slide.tsx": { meta: { title: "x" } } })
