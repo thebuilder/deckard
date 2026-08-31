@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "next build",
+    "deck:contact-sheet": "node scripts/contact-sheet.ts",
+    "deck:screenshots": "node scripts/screenshots.ts",
     "deck:validate": "node scripts/validate-deck.ts",
     "dev": "next dev --turbopack",
     "export:pdf": "node scripts/export-pdf.ts",
