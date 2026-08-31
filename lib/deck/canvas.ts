@@ -1,6 +1,6 @@
 import type { DeckCanvasConfig } from "@/lib/deck/types"
 
-export const defaultDeckCanvas: DeckCanvasConfig = {
+const defaultDeckCanvas: DeckCanvasConfig = {
   fit: "contain",
   height: 1080,
   margin: 24,

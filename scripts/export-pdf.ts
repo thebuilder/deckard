@@ -110,6 +110,10 @@ interface CanvasGeometry {
   width: number
 }
 
+function isPositive(value: number): boolean {
+  return Number.isFinite(value) && value > 0
+}
+
 // Page size comes from the deck canvas the route renders, so export and presentation can never drift apart.
 async function readCanvasGeometry(page: Page): Promise<CanvasGeometry> {
   const geometry = await page.evaluate(() => {
@@ -118,24 +122,15 @@ async function readCanvasGeometry(page: Page): Promise<CanvasGeometry> {
       "[data-slide-viewport]"
     )
 
-    if (!(canvas && viewport)) {
-      return null
-    }
-
     return {
-      height: Number(canvas.dataset.canvasHeight),
-      margin: Number(viewport.dataset.canvasMargin),
-      width: Number(canvas.dataset.canvasWidth),
+      height: Number(canvas?.dataset.canvasHeight),
+      margin: Number(viewport?.dataset.canvasMargin),
+      width: Number(canvas?.dataset.canvasWidth),
     }
   })
 
   const isUsable =
-    geometry &&
-    Number.isFinite(geometry.width) &&
-    Number.isFinite(geometry.height) &&
-    Number.isFinite(geometry.margin) &&
-    geometry.width > 0 &&
-    geometry.height > 0
+    [geometry.width, geometry.height].every(isPositive) && geometry.margin >= 0
 
   if (!isUsable) {
     throw new Error(
