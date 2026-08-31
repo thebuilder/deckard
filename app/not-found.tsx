@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { Eyebrow } from "@/app/slides/blocks/typography"
 import { SlideShell } from "@/components/slideshow/slide-shell"
 import { deck } from "@/deck/deck"
 import { toSlideSummaries } from "@/lib/deck/slide-summary"
@@ -25,20 +26,18 @@ export default function SlidesNotFoundPage() {
       slides={toSlideSummaries(deck.slides)}
     >
       <section className="flex h-full items-center py-12">
-        <div className="space-y-6">
-          <p className="font-semibold text-primary text-sm uppercase tracking-[0.3em]">
-            Page not found
-          </p>
-          <h1 className="max-w-4xl text-pretty font-semibold text-6xl tracking-tight">
+        <div className="space-y-[var(--slide-content-gap)]">
+          <Eyebrow>Page not found</Eyebrow>
+          <h1 className="max-w-4xl text-pretty font-semibold text-[length:var(--slide-heading-size)] tracking-tight">
             We couldn&apos;t find that slide.
           </h1>
-          <p className="max-w-2xl text-lg text-muted-foreground leading-7">
+          <p className="max-w-2xl text-[length:var(--slide-lead-size)] text-muted-foreground leading-[1.6]">
             The link may be old, or the URL may be incorrect. Start from the
             first slide and navigate from there.
           </p>
           <div>
             <Link
-              className="inline-flex rounded-md border border-border/70 bg-card px-4 py-2 font-medium text-sm hover:bg-muted"
+              className="inline-flex rounded-[var(--slide-radius)] border border-[var(--slide-surface-border)] bg-[var(--slide-surface)] px-4 py-2 font-medium text-[length:var(--slide-support-size)] hover:bg-muted"
               href="/"
             >
               Go to first slide
