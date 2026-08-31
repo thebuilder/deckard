@@ -1,15 +1,15 @@
 {
   "name": "slideshow-base",
   "version": "0.0.1",
-  "type": "module",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "next dev --turbopack",
     "build": "next build",
-    "start": "next start",
+    "dev": "next dev --turbopack",
     "export:pdf": "node scripts/export-pdf.ts",
-    "lint": "biome check . --fix --error-on-warnings",
-    "format": "prettier --write \"**/*.{ts,tsx}\"",
+    "lint": "ultracite fix --error-on-warnings",
+    "lint:check": "ultracite check",
+    "start": "next start",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -37,7 +37,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.12",
+    "@biomejs/biome": "^2.5.9",
     "@tailwindcss/postcss": "^4.2.1",
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
@@ -45,9 +45,8 @@
     "pdf-lib": "^1.17.1",
     "playwright": "^1.55.1",
     "postcss": "^8",
-    "prettier": "^3.8.1",
-    "prettier-plugin-tailwindcss": "^0.7.2",
     "tailwindcss": "^4.2.1",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "ultracite": "7.10.7"
   }
 }
