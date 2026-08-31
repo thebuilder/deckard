@@ -4,6 +4,7 @@ import { SlideShell } from "@/components/slideshow/slide-shell"
 import { deck } from "@/deck/deck"
 import { getSlideById } from "@/lib/deck/resolve-slides"
 import { toSlideSummaries, toSlideSummary } from "@/lib/deck/slide-summary"
+import { toDeckPresentation } from "@/lib/deck/theme"
 
 interface SlidePageProps {
   params: Promise<{
@@ -85,9 +86,7 @@ export default async function SlidePage({
   return (
     <SlideShell
       background={slide.background}
-      canvas={deck.canvas}
-      deckTitle={deck.header.brand}
-      deckTitleHref={deck.header.href}
+      deck={toDeckPresentation(deck)}
       footerMode={isChromeHidden ? "hidden" : slide.footer}
       freezeMedia={isPresenterPreview}
       headerMode={isChromeHidden ? "hidden" : slide.header}

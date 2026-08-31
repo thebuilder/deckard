@@ -17,28 +17,28 @@ function useHasHydrated(): boolean {
   )
 }
 
-function getToggleLabel(hasHydrated: boolean, isDark: boolean) {
+function getColorModeLabel(hasHydrated: boolean, isDark: boolean) {
   if (!hasHydrated) {
-    return "Toggle theme"
+    return "Toggle color mode"
   }
 
   return isDark ? "Switch to light mode" : "Switch to dark mode"
 }
 
-export function SlideshowThemeToggle() {
+export function SlideshowColorModeToggle() {
   const { resolvedTheme, setTheme } = useTheme()
   const hasHydrated = useHasHydrated()
   const isDark = resolvedTheme === "dark"
 
-  const toggleTheme = useCallback(() => {
+  const toggleColorMode = useCallback(() => {
     setTheme(isDark ? "light" : "dark")
   }, [isDark, setTheme])
 
   return (
     <Button
-      aria-label={getToggleLabel(hasHydrated, isDark)}
+      aria-label={getColorModeLabel(hasHydrated, isDark)}
       className="border-border/70 bg-background/80 backdrop-blur-sm"
-      onClick={toggleTheme}
+      onClick={toggleColorMode}
       size="icon-sm"
       type="button"
       variant="outline"

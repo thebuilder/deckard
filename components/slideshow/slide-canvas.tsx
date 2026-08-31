@@ -2,7 +2,8 @@ import type { CSSProperties, ReactNode } from "react"
 
 import { SlideBackground } from "@/components/slideshow/slide-background"
 import { SlideOverflowGuard } from "@/components/slideshow/slide-overflow-guard"
-import type { DeckCanvasConfig } from "@/lib/deck/types"
+import { forcedColorMode } from "@/lib/deck/theme"
+import type { DeckCanvasConfig, SlideTheme } from "@/lib/deck/types"
 import { cn } from "@/lib/utils"
 import type { SlideBackgroundMode } from "@/types/slides"
 
@@ -14,6 +15,7 @@ interface SlideCanvasProps {
   footer?: ReactNode
   frameClassName?: string
   header?: ReactNode
+  theme: SlideTheme
 }
 
 const noChromeInset = { bottom: 0, top: 0 }
@@ -26,6 +28,7 @@ export function SlideCanvas({
   footer,
   frameClassName,
   header,
+  theme,
 }: SlideCanvasProps) {
   const canvasStyle = {
     "--canvas-height": `${canvas.height}px`,
@@ -38,10 +41,16 @@ export function SlideCanvas({
 
   return (
     <div
-      className="relative overflow-hidden bg-background text-foreground"
+      className={cn(
+        "relative overflow-hidden bg-background text-foreground",
+        theme.className
+      )}
       data-canvas-height={canvas.height}
       data-canvas-width={canvas.width}
+      data-slide-background={background}
       data-slide-canvas=""
+      data-slide-color-mode={forcedColorMode(theme)}
+      data-slide-theme={theme.id}
       style={canvasStyle}
     >
       <SlideBackground variant={background} />

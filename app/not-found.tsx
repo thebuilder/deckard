@@ -2,6 +2,7 @@ import Link from "next/link"
 import { SlideShell } from "@/components/slideshow/slide-shell"
 import { deck } from "@/deck/deck"
 import { toSlideSummaries } from "@/lib/deck/slide-summary"
+import { toDeckPresentation } from "@/lib/deck/theme"
 import type { SlideSummary } from "@/lib/deck/types"
 
 const notFoundSlide: SlideSummary = {
@@ -15,9 +16,7 @@ const notFoundSlide: SlideSummary = {
 export default function SlidesNotFoundPage() {
   return (
     <SlideShell
-      canvas={deck.canvas}
-      deckTitle={deck.header.brand}
-      deckTitleHref={deck.header.href}
+      deck={toDeckPresentation(deck)}
       footerMode="hidden"
       headerMode={deck.header.mode}
       layout="default"

@@ -1,21 +1,28 @@
 "use client"
 
 import { ThemeProvider as NextThemesProvider, useTheme } from "next-themes"
-import { type ComponentProps, useEffect } from "react"
+import { type ReactNode, useEffect } from "react"
 
-function ThemeProvider({
+import type { SlideTheme } from "@/lib/deck/types"
+
+// Light/dark only. The deck theme is static config and never switches at runtime.
+function ColorModeProvider({
   children,
-  ...props
-}: ComponentProps<typeof NextThemesProvider>) {
+  theme,
+}: {
+  children: ReactNode
+  theme: SlideTheme
+}) {
+  const switchable = theme.colorModes.length > 1
+
   return (
     <NextThemesProvider
       attribute="class"
-      defaultTheme="system"
+      defaultTheme={theme.defaultColorMode}
       disableTransitionOnChange
-      enableSystem
-      {...props}
+      enableSystem={switchable}
     >
-      <ThemeHotkey />
+      {switchable ? <ColorModeHotkey /> : null}
       {children}
     </NextThemesProvider>
   )
@@ -34,7 +41,7 @@ function isTypingTarget(target: EventTarget | null) {
   )
 }
 
-function ThemeHotkey() {
+function ColorModeHotkey() {
   const { resolvedTheme, setTheme } = useTheme()
 
   useEffect(() => {
@@ -68,4 +75,4 @@ function ThemeHotkey() {
   return null
 }
 
-export { ThemeProvider }
+export { ColorModeProvider }
