@@ -295,25 +295,46 @@ Close by reinforcing that this pattern is what makes Deckard scalable for future
         description="Author slide metadata in one place and pull visuals from reusable components."
       >
         <CodeBlock
-          code={`{
-  slug: "image",
-  title: "Image-first slide",
-  body: (
-    <ImageShowcaseSlide
-      image={{ src: myImage, alt: "Capability map", placeholder: "blur" }}
-    />
-  ),
-  // Fullscreen video with autoplay:
-  // body: (
-  //   <FullscreenMediaSlide
-  //     media={{ kind: "video", src: "/videos/demo.mp4", autoplay: true }}
-  //   />
-  // ),
-  layout: "fullscreen",
-  background: "none",
-  header: "hidden"
-}`}
+          code={`export const slides: SlideDefinition[] = [
+  {
+    slug: "image",
+    title: "Image-first slide",
+    body: (
+      <ImageShowcaseSlide
+        image={{ src: myImage, alt: "Capability map", placeholder: "blur" }}
+      />
+    ),
+    // Fullscreen video with autoplay:
+    // body: (
+    //   <FullscreenMediaSlide
+    //     media={{ kind: "video", src: "/videos/demo.mp4", autoplay: true }}
+    //   />
+    // ),
+    layout: "fullscreen",
+    background: "none",
+    header: "hidden"
+  },
+  {
+    title: "Stepped content",
+    stepCount: 3,
+    notes: "Pause on each step and ask for questions.",
+    body: (
+      <ContentSlideCard eyebrow="Rollout" title="Three phases">
+        <SlideStep step={0}>Pilot team</SlideStep>
+        <SlideStep step={1}>Second wave</SlideStep>
+        <SlideStep step={2}>Everyone else</SlideStep>
+      </ContentSlideCard>
+    )
+  },
+  {
+    slug: "numbers",
+    title: "Numbers",
+    body: <QuarterlyNumbersSlide />
+  },
+  slideFromModule(pricingSlide, "deck/slides/pricing.slide.tsx")
+]`}
           language="typescript"
+          maxHeight={360}
         />
       </ContentSlideCard>
     ),
