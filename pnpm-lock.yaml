@@ -100,6 +100,9 @@ importers:
         specifier: ^1.4.0
         version: 1.4.0
     devDependencies:
+      '@deckard/deck-scripts':
+        specifier: workspace:*
+        version: link:../../tools/deck-scripts
       '@tailwindcss/postcss':
         specifier: ^4.3.3
         version: 4.3.3
@@ -112,12 +115,6 @@ importers:
       '@types/react-dom':
         specifier: ^19.2.5
         version: 19.2.5(@types/react@19.2.18)
-      pdf-lib:
-        specifier: ^1.17.1
-        version: 1.17.1
-      playwright:
-        specifier: ^1.62.1
-        version: 1.62.1
       postcss:
         specifier: ^8.5.26
         version: 8.5.26
@@ -127,9 +124,6 @@ importers:
       typescript:
         specifier: ^7.0.2
         version: 7.0.2
-      vite:
-        specifier: ^8.2.2
-        version: 8.2.2(@types/node@26.4.0)(jiti@2.7.0)(yaml@2.9.0)
       vitest:
         specifier: ^4.1.11
         version: 4.1.11(@opentelemetry/api@1.9.0)(@types/node@26.4.0)(@vitest/browser-playwright@4.1.11)(msw@2.13.2(@types/node@26.4.0)(typescript@7.0.2))(vite@8.2.2(@types/node@26.4.0)(jiti@2.7.0)(yaml@2.9.0))
@@ -188,6 +182,31 @@ importers:
       react-dom:
         specifier: ^19.2.8
         version: 19.2.8(react@19.2.8)
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
+      vitest:
+        specifier: ^4.1.11
+        version: 4.1.11(@opentelemetry/api@1.9.0)(@types/node@26.4.0)(@vitest/browser-playwright@4.1.11)(msw@2.13.2(@types/node@26.4.0)(typescript@7.0.2))(vite@8.2.2(@types/node@26.4.0)(jiti@2.7.0)(yaml@2.9.0))
+
+  tools/deck-scripts:
+    dependencies:
+      '@deckard/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      pdf-lib:
+        specifier: ^1.17.1
+        version: 1.17.1
+      playwright:
+        specifier: ^1.62.1
+        version: 1.62.1
+      vite:
+        specifier: ^8.2.2
+        version: 8.2.2(@types/node@26.4.0)(jiti@2.7.0)(yaml@2.9.0)
+    devDependencies:
+      '@types/node':
+        specifier: ^26.4.0
+        version: 26.4.0
       typescript:
         specifier: ^7.0.2
         version: 7.0.2

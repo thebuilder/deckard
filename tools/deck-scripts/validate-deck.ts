@@ -3,7 +3,7 @@ import fs from "node:fs"
 import path from "node:path"
 import process from "node:process"
 
-import { fail, write } from "./lib/cli.ts"
+import { fail, readStringFlag, write } from "./lib/cli.ts"
 import {
   checkRegistry,
   checkSlides,
@@ -12,14 +12,27 @@ import {
   type Section,
 } from "./lib/deck-checks.ts"
 import { loadDeck } from "./lib/deck-module.ts"
-import { projectRoot, workspaceRoot } from "./lib/paths.ts"
+import { projectRoot } from "./lib/paths.ts"
 
 const themeCssPath = path.join(projectRoot, "deck", "theme", "theme.css")
-const registryPath = path.join(workspaceRoot, "registry.json")
 
-function readWorkspaceFile(relativePath: string) {
+// A deck validates its own slides and theme. Only the repository that publishes
+// a shadcn registry passes --registry, and its paths are relative to that file.
+const registryFlag = readStringFlag(process.argv, "registry")
+const registryPath = registryFlag
+  ? path.resolve(projectRoot, registryFlag)
+  : null
+
+function readRegistryFile(relativePath: string) {
+  if (!registryPath) {
+    return null
+  }
+
   try {
-    return fs.readFileSync(path.join(workspaceRoot, relativePath), "utf8")
+    return fs.readFileSync(
+      path.join(path.dirname(registryPath), relativePath),
+      "utf8"
+    )
   } catch {
     return null
   }
@@ -36,6 +49,10 @@ function hasSlideModule(sourcePath: string) {
 }
 
 function readRegistryItems(): RegistryItem[] {
+  if (!registryPath) {
+    return []
+  }
+
   const registry = JSON.parse(fs.readFileSync(registryPath, "utf8")) as {
     items?: RegistryItem[]
   }
@@ -84,7 +101,9 @@ function printSections(sections: Section[]) {
 async function validate() {
   const sections = [
     ...(await deckSections()),
-    checkRegistry(readRegistryItems(), readWorkspaceFile),
+    ...(registryPath
+      ? [checkRegistry(readRegistryItems(), readRegistryFile)]
+      : []),
   ]
 
   printSections(sections)

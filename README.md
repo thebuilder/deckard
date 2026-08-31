@@ -59,6 +59,7 @@ This is a pnpm workspace run by Turborepo.
 | `apps/playground` | the reference deck, and the app the visual checks run against |
 | `apps/docs` | the documentation site |
 | `registry` | theme sources the playground does not use, published through the registry |
+| `tools/deck-scripts` | `@deckard/deck-scripts`, the deck tooling every app runs |
 | `tools/package-smoke` | proves the package installs into a plain Next.js app |
 | `tools/registry-smoke` | proves the registry installs into a plain Next.js app |
 
@@ -512,10 +513,17 @@ color. `apps/playground/deck/theme/THEME.md` lists the tokens and what they cont
 
 ## Checking a deck
 
-Four scripts in `apps/playground/scripts` cover the checks a deck needs. They
-share one harness: `scripts/lib/preview.ts` builds the app, starts `next start`
-on a spare port, and opens a page sized so the canvas renders at scale 1. The
-PDF export runs on the same harness.
+Four scripts in `tools/deck-scripts` cover the checks a deck needs. They share
+one harness: `lib/preview.ts` builds the app, starts `next start` on a spare
+port, and opens a page sized so the canvas renders at scale 1. The PDF export
+runs on the same harness.
+
+The package installs into an app as `@deckard/deck-scripts` and exposes each
+script as a bin, so a deck's `package.json` reads `"deck:validate":
+"deck-validate"`. The harness takes the invoking package's directory as the
+deck, which is what makes one copy serve every app in this repo. Pass
+`--registry=<path>` to `deck-validate` to also check a shadcn `registry.json`;
+without it the run covers the deck and its theme only.
 
 ```bash
 pnpm deck:validate

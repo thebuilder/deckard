@@ -13,6 +13,10 @@ pnpm workspace driven by Turborepo.
 - `apps/docs` is the documentation site.
 - `registry` holds theme sources the playground does not use. `registry.json` at
   the root publishes them and the blocks through shadcn.
+- `tools/deck-scripts` is `@deckard/deck-scripts`, the deck tooling every app
+  runs. It exposes `deck-validate`, `deck-check-overflow`, `deck-screenshots`,
+  `deck-contact-sheet`, and `deck-export-pdf` as bins, and treats the invoking
+  package's directory as the deck.
 - `tools/package-smoke` packs the package and builds a scratch app against it.
 - `tools/registry-smoke` installs the registry into a scratch app and builds it.
 
@@ -81,8 +85,8 @@ layout leaks into the app someone generates from the framework.
 - Color mode: `packages/core/src/components/color-mode-provider.tsx`. It is
   light and dark only. The deck theme is static config and never switches at
   runtime.
-- Deck tooling: `apps/playground/scripts/`, with the shared build, server, and
-  canvas harness in `scripts/lib/preview.ts`.
+- Deck tooling: `tools/deck-scripts/`, with the shared build, server, and canvas
+  harness in `lib/preview.ts`.
 
 ## The package boundary
 
