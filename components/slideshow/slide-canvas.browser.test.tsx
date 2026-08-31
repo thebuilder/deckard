@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest"
 
 import { SlideCanvas } from "@/components/slideshow/slide-canvas"
 import { resolveCanvas } from "@/lib/deck/canvas"
+import { resolveTheme } from "@/lib/deck/theme"
 import type { SlideColorMode } from "@/lib/deck/types"
 
 import "@/deck/theme/theme.css"
@@ -19,7 +20,12 @@ let root: Root
 function renderChromeCanvas(chromeInset?: { bottom: number; top: number }) {
   act(() => {
     root.render(
-      <SlideCanvas background="none" canvas={canvas} chromeInset={chromeInset}>
+      <SlideCanvas
+        background="none"
+        canvas={canvas}
+        chromeInset={chromeInset}
+        theme={resolveTheme()}
+      >
         <section
           data-testid="media"
           style={{
