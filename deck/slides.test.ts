@@ -12,7 +12,8 @@ function slideModulePaths() {
     return []
   }
 
-  return readdirSync(moduleDirectory)
+  return readdirSync(moduleDirectory, { recursive: true })
+    .map(String)
     .filter((entry) => entry.endsWith(".slide.tsx"))
     .map((entry) => path.join(moduleDirectory, entry))
 }

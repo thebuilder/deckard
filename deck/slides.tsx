@@ -14,12 +14,16 @@ import exampleBackgroundImage from "@/assets/example-background.png"
 import templateCapabilitiesImage from "@/assets/template-capabilities.svg"
 import { CodeBlock } from "@/components/slideshow/code-block"
 import { SlideStep } from "@/components/slideshow/slide-stepper"
-// biome-ignore lint/performance/noNamespaceImport: slideFromModule takes the whole slide module, which is what a dynamic import hands back
-import * as interactiveDemoSlide from "@/deck/slides/interactive-demo.slide"
 import "server-only"
 
-import { slideFromModule } from "@/lib/deck/slide-from-module"
+import { discoverSlides } from "@/lib/deck/discovery"
 import type { SlideDefinition } from "@/lib/deck/types"
+
+// Eager: every module is in the bundle either way. The glob only saves the imports.
+const discoveredSlides = discoverSlides(
+  import.meta.glob("./slides/**/*.slide.tsx", { eager: true }),
+  { sort: "order" }
+)
 
 const vitalsDelayMs = 40
 
@@ -330,7 +334,7 @@ Close by reinforcing that this pattern is what makes Deckard scalable for future
     title: "Numbers",
     body: <QuarterlyNumbersSlide />
   },
-  slideFromModule(pricingSlide, "deck/slides/pricing.slide.tsx")
+  ...discoveredSlides
 ]`}
           language="typescript"
           maxHeight={360}
@@ -345,10 +349,7 @@ Close by reinforcing that this pattern is what makes Deckard scalable for future
       "Say plainly that the slide awaited its own data before rendering. Then point at the 40ms number, it came back from that call.",
     body: <DeckVitalsSlide />,
   },
-  slideFromModule(
-    interactiveDemoSlide,
-    "deck/slides/interactive-demo.slide.tsx"
-  ),
+  ...discoveredSlides,
   {
     title: "Use It",
     body: (
