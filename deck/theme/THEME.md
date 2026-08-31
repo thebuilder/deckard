@@ -18,9 +18,15 @@ Content sits on raised surfaces: a near-opaque card, a hairline border, and a
 soft shadow. In light mode the shadow does most of the work, since a white card
 on a white sheet has nothing else to separate it.
 
-The accent is indigo in both modes, at the lightness each mode can carry. It
-appears on eyebrows, the primary button, focus rings, and the background washes.
-One accent, used in few places, is the whole palette.
+The accent is teal in both modes, at the lightness each mode can carry: a deep
+teal on paper, a bright cyan-teal on the dark sheet. It appears on eyebrows, the
+primary button, focus rings, and the background washes. One accent, used in few
+places, is the whole palette.
+
+The washes carry a supporting blue alongside it. `--slide-wash` and
+`--slide-glow` sit on the accent hue, while `--slide-veil` and
+`--slide-spotlight` fall back toward blue so the layers separate without
+introducing a second color.
 
 ## Typography
 
