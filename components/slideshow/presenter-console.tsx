@@ -3,7 +3,9 @@
 import { ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { SlideErrorBoundary } from "@/components/slideshow/slide-error-boundary"
+import { SlideViewport } from "@/components/slideshow/slide-viewport"
 import { Button } from "@/components/ui/button"
+import type { DeckCanvasConfig } from "@/lib/deck/types"
 import {
   PRESENTER_CHANNEL_NAME,
   type PresenterChannelMessage,
@@ -79,17 +81,20 @@ function FlowButton({
   )
 }
 
-const previewCanvasWidth = 1920
-const previewCanvasHeight = 1080
-const previewAspectRatio = previewCanvasWidth / previewCanvasHeight
+// The preview iframe renders a slide route at canvas size, so the deck canvas is the only place these numbers come from.
+function toPreviewCanvas(canvas: DeckCanvasConfig): DeckCanvasConfig {
+  return { ...canvas, margin: 0 }
+}
 
 function PreviewLayer({
+  canvas,
   layer,
   src,
   isActive,
   title,
   onLoad,
 }: {
+  canvas: DeckCanvasConfig
   layer: 0 | 1
   src: string
   isActive: boolean
@@ -109,8 +114,8 @@ function PreviewLayer({
       onLoad={handleLoad}
       src={src}
       style={{
-        height: previewCanvasHeight,
-        width: previewCanvasWidth,
+        height: canvas.height,
+        width: canvas.width,
       }}
       title={title}
     />
@@ -118,10 +123,12 @@ function PreviewLayer({
 }
 
 function PreviewFrame({
+  canvas,
   previewUrl,
   emptyLabel = "End of deck",
   titlePrefix = "Preview",
 }: {
+  canvas: DeckCanvasConfig
   previewUrl: string | null
   emptyLabel?: string
   titlePrefix?: string
@@ -183,47 +190,41 @@ function PreviewFrame({
   }
 
   return (
-    <div
-      className="absolute inset-0 overflow-hidden bg-card/40"
-      style={{ containerType: "size" }}
-    >
-      <div
-        className="absolute top-1/2 left-1/2"
-        style={{
-          height: previewCanvasHeight,
-          transform:
-            "translate(-50%, -50%) scale(min(calc(100cqw / 1920px), calc(100cqh / 1080px)))",
-          transformOrigin: "center center",
-          width: previewCanvasWidth,
-        }}
-      >
-        {([0, 1] as const).map((layer) => {
-          const src = layerUrls[layer]
+    <SlideViewport canvas={toPreviewCanvas(canvas)}>
+      {([0, 1] as const).map((layer) => {
+        const src = layerUrls[layer]
 
-          if (!src) {
-            return null
-          }
+        if (!src) {
+          return null
+        }
 
-          return (
-            <PreviewLayer
-              isActive={activeLayer === layer}
-              key={`${layer}-${src}`}
-              layer={layer}
-              onLoad={handleLoad}
-              src={src}
-              title={`${titlePrefix} ${layer + 1}`}
-            />
-          )
-        })}
-      </div>
-    </div>
+        return (
+          <PreviewLayer
+            canvas={canvas}
+            isActive={activeLayer === layer}
+            key={`${layer}-${src}`}
+            layer={layer}
+            onLoad={handleLoad}
+            src={src}
+            title={`${titlePrefix} ${layer + 1}`}
+          />
+        )
+      })}
+    </SlideViewport>
   )
 }
 
-function CurrentSlidePreview({ state }: { state: PresenterSlideState | null }) {
+function CurrentSlidePreview({
+  canvas,
+  state,
+}: {
+  canvas: DeckCanvasConfig
+  state: PresenterSlideState | null
+}) {
   return (
     <SlideErrorBoundary slideId={state?.slide.id ?? "current"}>
       <PreviewFrame
+        canvas={canvas}
         emptyLabel="Waiting for current slide preview"
         previewUrl={
           state
@@ -237,13 +238,16 @@ function CurrentSlidePreview({ state }: { state: PresenterSlideState | null }) {
 }
 
 function NextStepPreview({
+  canvas,
   preview,
 }: {
+  canvas: DeckCanvasConfig
   preview: PresenterPreviewState | null | undefined
 }) {
   return (
     <SlideErrorBoundary slideId={preview?.id ?? "next"}>
       <PreviewFrame
+        canvas={canvas}
         previewUrl={
           preview
             ? `/slides/${preview.id}?presenterPreview=1&step=${preview.step}`
@@ -255,7 +259,8 @@ function NextStepPreview({
   )
 }
 
-export function PresenterConsole() {
+export function PresenterConsole({ canvas }: { canvas: DeckCanvasConfig }) {
+  const previewAspectRatio = canvas.width / canvas.height
   const [state, setState] = useState<PresenterSlideState | null>(null)
   const [connected, setConnected] = useState(false)
   const [clock, setClock] = useState(() => new Date())
@@ -378,7 +383,7 @@ export function PresenterConsole() {
             className="relative mt-3 w-full overflow-hidden rounded-xl border border-border/70 bg-card/40"
             style={{ aspectRatio: previewAspectRatio }}
           >
-            <NextStepPreview preview={state?.preview} />
+            <NextStepPreview canvas={canvas} preview={state?.preview} />
           </div>
         </div>
 
@@ -457,7 +462,7 @@ export function PresenterConsole() {
           className="relative w-full overflow-hidden rounded-2xl border border-border/70 bg-card/40"
           style={{ aspectRatio: previewAspectRatio }}
         >
-          <CurrentSlidePreview state={state} />
+          <CurrentSlidePreview canvas={canvas} state={state} />
         </div>
 
         <div className="mt-5 flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-border/80 bg-card/80">

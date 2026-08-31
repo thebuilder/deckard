@@ -16,9 +16,20 @@ function fitTransform(canvas: DeckCanvasConfig) {
   return `translate(-50%, -50%) scale(min(${widthScale}, ${heightScale}))`
 }
 
+// Geometry stays in inline styles: the fit has to hold wherever this renders, with or without the deck stylesheet.
+const viewportStyle: CSSProperties = {
+  containerType: "size",
+  inset: 0,
+  overflow: "hidden",
+  position: "absolute",
+}
+
 export function SlideViewport({ canvas, children }: SlideViewportProps) {
   const stageStyle: CSSProperties = {
     height: canvas.height,
+    left: "50%",
+    position: "absolute",
+    top: "50%",
     transform: fitTransform(canvas),
     transformOrigin: "center center",
     width: canvas.width,
@@ -26,14 +37,11 @@ export function SlideViewport({ canvas, children }: SlideViewportProps) {
 
   return (
     <div
-      className="absolute inset-0 overflow-hidden"
       data-canvas-margin={canvas.margin}
       data-slide-viewport=""
-      style={{ containerType: "size" }}
+      style={viewportStyle}
     >
-      <div className="absolute top-1/2 left-1/2" style={stageStyle}>
-        {children}
-      </div>
+      <div style={stageStyle}>{children}</div>
     </div>
   )
 }
