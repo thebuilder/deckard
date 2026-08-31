@@ -260,10 +260,10 @@ export const slides: SlideDefinition[] = [
         }}
       >
         <Eyebrow>Fullscreen mode</Eyebrow>
-        <h1 className="mt-3 text-balance font-semibold text-4xl text-white tracking-tight sm:text-5xl lg:text-6xl">
+        <h1 className="mt-3 text-balance font-semibold text-6xl text-white tracking-tight">
           Image and video can take over the full canvas
         </h1>
-        <p className="mt-3 max-w-3xl text-base text-white/85 leading-7 sm:text-lg">
+        <p className="mt-3 max-w-3xl text-lg text-white/85 leading-7">
           Use fullscreen media for transitions, product trailers, launch
           moments, or immersive visual slides.
         </p>

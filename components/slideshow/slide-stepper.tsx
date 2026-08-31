@@ -9,7 +9,6 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from "react"
 import { cn } from "@/lib/utils"
@@ -226,42 +225,19 @@ export function SlideStep({
 }) {
   const context = useSlideStepper()
   const isVisible = context ? step <= context.currentStep : true
-  const stepRef = useRef<HTMLDivElement | null>(null)
-
-  useEffect(() => {
-    if (!(context && isVisible) || context.currentStep !== step) {
-      return
-    }
-
-    const frame = window.requestAnimationFrame(() => {
-      stepRef.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest",
-      })
-    })
-
-    return () => window.cancelAnimationFrame(frame)
-  }, [context, isVisible, step])
 
   if (mountOnReveal && !isVisible) {
-    return (
-      <div
-        aria-hidden
-        className={cn("scroll-mt-32 scroll-mb-28 sm:scroll-mb-32", className)}
-        ref={stepRef}
-      />
-    )
+    return <div aria-hidden className={className} />
   }
 
   return (
     <div
       aria-hidden={!isVisible}
       className={cn(
-        "scroll-mt-32 scroll-mb-28 transition-opacity duration-300 ease-out sm:scroll-mb-32",
+        "transition-opacity duration-300 ease-out",
         !isVisible && "pointer-events-none opacity-0",
         className
       )}
-      ref={stepRef}
     >
       {children}
     </div>

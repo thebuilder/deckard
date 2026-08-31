@@ -15,11 +15,11 @@ export function SlideHeading({
 }) {
   return (
     <div className="space-y-3">
-      <h1 className="max-w-5xl text-balance font-semibold text-3xl tracking-tight sm:text-4xl lg:text-[3.5rem] lg:leading-[1.02]">
+      <h1 className="max-w-5xl text-balance font-semibold text-[3.5rem] leading-[1.02] tracking-tight">
         {title}
       </h1>
       {description ? (
-        <p className="max-w-3xl text-base text-muted-foreground leading-7 sm:text-lg">
+        <p className="max-w-3xl text-lg text-muted-foreground leading-7">
           {description}
         </p>
       ) : null}

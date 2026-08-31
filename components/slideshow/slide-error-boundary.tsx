@@ -28,7 +28,7 @@ function SlideErrorCard({
   slideId: string
 }) {
   return (
-    <div className="flex w-full items-center justify-center py-8 sm:py-12">
+    <div className="flex h-full w-full items-center justify-center py-12">
       <div
         className="w-full max-w-3xl space-y-4 rounded-[calc(var(--radius)*2)] border border-destructive/40 bg-destructive/5 p-6 shadow-sm backdrop-blur-sm"
         role="alert"
@@ -36,7 +36,7 @@ function SlideErrorCard({
         <p className="font-semibold text-destructive text-sm uppercase tracking-[0.3em]">
           Slide error
         </p>
-        <h2 className="text-balance font-semibold text-2xl tracking-tight sm:text-3xl">
+        <h2 className="text-balance font-semibold text-3xl tracking-tight">
           Slide {slideId} threw while rendering
         </h2>
         <p className="text-muted-foreground text-sm leading-7">

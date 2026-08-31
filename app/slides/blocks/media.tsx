@@ -123,7 +123,7 @@ export function FullscreenMediaSlide({
   const containerClassName =
     variant === "background"
       ? "relative h-full min-h-[16rem] w-full overflow-hidden"
-      : "relative min-h-[calc(100svh-9rem)] overflow-hidden rounded-3xl border border-border/70 bg-card/60"
+      : "relative h-full overflow-hidden rounded-3xl border border-border/70 bg-card/60"
   const overlayClassName = overlayClassNames[overlay]
 
   return (
@@ -160,7 +160,7 @@ export function FullscreenMediaSlide({
 
       {children ? (
         <div
-          className={`pointer-events-none absolute inset-x-0 bottom-0 z-10 p-6 sm:p-8 ${overlayClassName}`}
+          className={`pointer-events-none absolute inset-x-0 bottom-0 z-10 p-8 ${overlayClassName}`}
         >
           <div className="pointer-events-auto">{children}</div>
         </div>
@@ -192,7 +192,7 @@ export function ImageShowcaseSlide({
     placeholder === "blur" && !resolvedBlurDataURL ? undefined : placeholder
 
   return (
-    <section className="grid min-h-[calc(100svh-10rem)] gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+    <section className="grid h-full grid-cols-[1.2fr_0.8fr] gap-6">
       <div className="relative min-h-[20rem] overflow-hidden rounded-3xl border border-border/70 bg-card/60">
         <Image
           alt={alt ?? ""}

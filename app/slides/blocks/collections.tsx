@@ -3,16 +3,16 @@ export function BulletList({ items }: { items: React.ReactNode[] }) {
     <div>
       {items.map((item, index) => (
         <div
-          className="grid gap-4 border-border/70 border-b py-5 last:border-b-0 sm:grid-cols-[4.5rem_minmax(0,1fr)] sm:gap-6 sm:py-6"
+          className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-6 border-border/70 border-b py-6 last:border-b-0"
           // biome-ignore lint/suspicious/noArrayIndexKey: authored bullet nodes have no stable identity and the list never reorders
           key={index}
         >
-          <div className="flex items-center gap-3 sm:block">
+          <div className="block">
             <span className="font-semibold text-[0.72rem] text-muted-foreground uppercase tracking-[0.3em]">
               {String(index + 1).padStart(2, "0")}
             </span>
           </div>
-          <p className="max-w-4xl text-[1.35rem] text-foreground leading-[1.55] sm:text-[1.6rem] sm:leading-[1.45]">
+          <p className="max-w-4xl text-[1.6rem] text-foreground leading-[1.45]">
             {item}
           </p>
         </div>
@@ -27,7 +27,7 @@ export function FeatureGrid({
   items: Array<{ title: string; description: string }>
 }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-3 gap-4">
       {items.map((item) => (
         <div
           className="rounded-2xl border border-border/70 bg-card/70 p-5"
