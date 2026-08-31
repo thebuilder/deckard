@@ -4,12 +4,19 @@ Deckard is a React presentation framework for fixed-canvas slides with reusable
 blocks, presenter tooling, and shadcn-native themes. It runs on Next.js and is a
 pnpm workspace driven by Turborepo.
 
+This file describes work inside this repository, where the decks are
+`apps/playground` and `apps/demo`. Someone building a real presentation does not
+clone this repo: they own a Next.js app with `@deckard/core` as a dependency and
+their theme and blocks installed from the registry. The same authoring rules
+apply there, against their own `deck/` directory.
+
 - `packages/core` is `@deckard/core`, the deck contract and the slideshow
   runtime. It compiles to `dist/` with `tsc`, and apps consume the build. Turbo
   builds it before an app builds, and `pnpm dev` runs its `tsc --watch`
   alongside the app.
-- `apps/playground` is the reference deck and the app the visual checks run
-  against.
+- `apps/playground` is the reference deck and the app every visual check runs
+  against. It exercises every feature on purpose, so it is a test surface, not a
+  template and not anyone's presentation.
 - `apps/demo` is a 19-slide talk shaped like a consumer project, and the proof
   that the framework works outside the playground. `docs/MIGRATION-NOTES.md`
   records what that migration surfaced.

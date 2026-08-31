@@ -13,6 +13,11 @@ that array. Everything else is metadata.
 in whichever deck the change belongs to, and read that deck's
 `deck/theme/THEME.md`, not the other one's.
 
+Those two decks are this repository's decks. A presentation someone builds on
+Deckard is their own Next.js app with the same `deck/` layout, and every rule
+below applies there unchanged. Paths in this skill are written for this repo, so
+drop the `apps/<name>/` prefix when the deck is a standalone app.
+
 Read `apps/playground/deck/theme/THEME.md` before you touch a color or a size.
 
 ## Start from a block
