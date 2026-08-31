@@ -6,6 +6,7 @@
   "scripts": {
     "analyze": "fallow",
     "build": "turbo run build",
+    "deck:validate": "pnpm --filter playground deck:validate",
     "dev": "turbo run dev --filter=playground...",
     "export:pdf": "pnpm --filter playground export:pdf",
     "lint": "ultracite fix --error-on-warnings",
