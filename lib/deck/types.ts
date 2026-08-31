@@ -19,7 +19,7 @@ export interface SlideMeta {
   title?: string
 }
 
-export interface SlideDefinition extends SlideMeta {
+export type SlideDefinition = Omit<SlideMeta, "order"> & {
   body: ReactNode
   sourcePath?: string
 }

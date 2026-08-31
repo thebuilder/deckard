@@ -12,9 +12,12 @@ The reusable parts (`lib/deck`, `components/slideshow`) are headed for `@deckard
 
 ## Core architecture
 
-- Slide definitions live in `deck/slides.tsx`.
+- Slide definitions live in `deck/slides.tsx`, and the exported array always
+  defines deck order. `resolveSlides` never sorts.
 - Deck config lives in `deck/deck.ts` and is wrapped in `defineDeck`.
-- Slide model, id resolution, and validation live in `lib/deck/*`.
+- Slide model, id resolution, and validation live in `lib/deck/*`. A slide id
+  is its `slug` or its 1-based position, and lookups match it exactly, so a
+  slugged slide has no numeric URL. Numeric slugs are rejected.
 - Slide chrome mode types live in `types/slides.ts`.
 - Deck-authoring blocks live in `app/slides/blocks/*` and are split by concern:
   - `templates.tsx` for slide layout templates

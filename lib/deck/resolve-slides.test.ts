@@ -43,16 +43,16 @@ describe("resolveSlides ids", () => {
     expect(resolved[0].id).toBe("1")
   })
 
-  it("orders slides by an explicit order before numbering", () => {
+  it("keeps the authored array order", () => {
     const resolved = resolveSlides([
       slide({ title: "third" }),
-      slide({ order: -1, title: "first" }),
+      slide({ title: "first" }),
       slide({ title: "fourth" }),
     ])
 
     expect(resolved.map((item) => item.title)).toEqual([
-      "first",
       "third",
+      "first",
       "fourth",
     ])
     expect(resolved.map((item) => item.id)).toEqual(["1", "2", "3"])
@@ -90,16 +90,22 @@ describe("resolveSlides validation", () => {
     ).toThrow('both use the slug "intro"')
   })
 
-  it("rejects a slug that collides with a generated numeric id", () => {
+  it("rejects a fully numeric slug", () => {
     expect(() => resolveSlides([slide(), slide({ slug: "1" })])).toThrow(
-      "already the generated id of slide 1"
+      'numeric slug "1"'
+    )
+    expect(() => resolveSlides([slide({ slug: "2" }), slide()])).toThrow(
+      'numeric slug "2"'
+    )
+    expect(() => resolveSlides([slide({ slug: "007" })])).toThrow(
+      'numeric slug "007"'
     )
   })
 
-  it("rejects a generated numeric id claimed by an earlier slug", () => {
-    expect(() => resolveSlides([slide({ slug: "2" }), slide()])).toThrow(
-      "already claimed by the slug on slide 1"
-    )
+  it("allows a slug that only starts with digits", () => {
+    const resolved = resolveSlides([slide({ slug: "2024-recap" })])
+
+    expect(resolved[0].id).toBe("2024-recap")
   })
 
   it("rejects an empty slug", () => {
@@ -117,12 +123,6 @@ describe("resolveSlides validation", () => {
       "not safe in a URL"
     )
   })
-
-  it("allows a numeric slug that matches the slide's own number", () => {
-    const resolved = resolveSlides([slide(), slide({ slug: "2" })])
-
-    expect(resolved.map((item) => item.id)).toEqual(["1", "2"])
-  })
 })
 
 describe("getSlideById", () => {
@@ -136,8 +136,8 @@ describe("getSlideById", () => {
     expect(getSlideById(resolved, "pricing")?.number).toBe(2)
   })
 
-  it("finds a slugged slide by its number", () => {
-    expect(getSlideById(resolved, "2")?.slug).toBe("pricing")
+  it("does not find a slugged slide by its number", () => {
+    expect(getSlideById(resolved, "2")).toBeUndefined()
   })
 
   it("returns undefined for an unknown id", () => {

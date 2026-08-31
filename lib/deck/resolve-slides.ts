@@ -14,11 +14,6 @@ const fallbackDefaults: SlideDefaults = {
   layout: "default",
 }
 
-interface IdOwner {
-  isExplicit: boolean
-  number: number
-}
-
 function assertValidSlug(slug: string, number: number) {
   if (slug.trim().length === 0) {
     throw new Error(
@@ -31,38 +26,24 @@ function assertValidSlug(slug: string, number: number) {
       `Slide ${number} has the slug "${slug}", which is not safe in a URL path. Use lowercase letters, digits, and hyphens.`
     )
   }
+
+  if (numericPattern.test(slug)) {
+    throw new Error(
+      `Slide ${number} has the numeric slug "${slug}". A numeric slug adds nothing over /slides/${number} and breaks when slides move, so use letters or drop the slug.`
+    )
+  }
 }
 
-function assertUnclaimedId(id: string, owner: IdOwner, claimed: IdOwner) {
-  if (claimed.isExplicit && owner.isExplicit) {
+function claimSlug(slug: string, number: number, claimed: Map<string, number>) {
+  const owner = claimed.get(slug)
+
+  if (owner !== undefined) {
     throw new Error(
-      `Slides ${claimed.number} and ${owner.number} both use the slug "${id}". Slide ids must be unique.`
+      `Slides ${owner} and ${number} both use the slug "${slug}". Slide ids must be unique.`
     )
   }
 
-  if (owner.isExplicit) {
-    throw new Error(
-      `Slide ${owner.number} uses the slug "${id}", which is already the generated id of slide ${claimed.number}.`
-    )
-  }
-
-  throw new Error(
-    `Slide ${owner.number} is served at /slides/${id}, which is already claimed by the slug on slide ${claimed.number}.`
-  )
-}
-
-function sortByOrder(slides: SlideDefinition[]) {
-  return slides
-    .map((slide, index) => ({ index, slide }))
-    .sort((left, right) => {
-      const leftKey = left.slide.order ?? left.index
-      const rightKey = right.slide.order ?? right.index
-
-      return leftKey === rightKey
-        ? left.index - right.index
-        : leftKey - rightKey
-    })
-    .map((entry) => entry.slide)
+  claimed.set(slug, number)
 }
 
 export function resolveSlides(
@@ -70,24 +51,17 @@ export function resolveSlides(
   defaults: Partial<SlideDefaults> = {}
 ): ResolvedSlide[] {
   const resolvedDefaults = { ...fallbackDefaults, ...defaults }
-  const claimedIds = new Map<string, IdOwner>()
+  const claimedSlugs = new Map<string, number>()
 
-  return sortByOrder(slides).map((slide, index) => {
+  return slides.map((slide, index) => {
     const number = index + 1
 
     if (slide.slug !== undefined) {
       assertValidSlug(slide.slug, number)
+      claimSlug(slide.slug, number, claimedSlugs)
     }
 
     const id = slide.slug ?? String(number)
-    const owner: IdOwner = { isExplicit: slide.slug !== undefined, number }
-    const claimed = claimedIds.get(id)
-
-    if (claimed) {
-      assertUnclaimedId(id, owner, claimed)
-    }
-
-    claimedIds.set(id, owner)
 
     return {
       background: slide.background ?? resolvedDefaults.background,
@@ -109,11 +83,5 @@ export function resolveSlides(
 }
 
 export function getSlideById(slides: ResolvedSlide[], id: string) {
-  const bySlug = slides.find((slide) => slide.id === id)
-
-  if (bySlug || !numericPattern.test(id)) {
-    return bySlug
-  }
-
-  return slides.find((slide) => slide.number === Number(id))
+  return slides.find((slide) => slide.id === id)
 }

@@ -60,11 +60,15 @@ Open [http://localhost:3000](http://localhost:3000).
 `SlideDefinition` supports:
 
 - Required: `body`
-- Optional identity: `slug`, `title`, `order`
+- Optional identity: `slug`, `title`
 - Optional flow: `stepCount`, `notes`
 - Optional chrome/layout: `header`, `footer`, `layout`, `background`
 
 ### Slide ids
+
+The exported `slides` array in `deck/slides.tsx` always defines deck order.
+`resolveSlides` never reorders it, so moving a slide in the array is the only
+way to move it in the deck.
 
 Every slide gets an id, and the id is the URL. A slide without a `slug` is
 served at its 1-based position, so the fourth slide is `/slides/4`. Give a
@@ -72,12 +76,14 @@ slide a `slug` when you want a link that survives reordering, and it is served
 at `/slides/<slug>` instead. Slugs accept lowercase letters, digits, and
 hyphens.
 
+Ids are matched exactly. A slugged slide is served only at its slug, never
+at its position, so there is one URL per slide.
+
 Titles never become slugs. A slide with no `title` falls back to `Slide 4` in
 the header, command center, and presenter flow.
 
 The deck fails to build on a duplicate slug, an empty slug, a slug with
-characters that are unsafe in a URL path, or a numeric slug that collides with
-another slide's position.
+characters that are unsafe in a URL path, or a slug made only of digits.
 
 Slide primitives can read the current slide `title` from context, so layout
 blocks only need an explicit `title` prop when you want to override the slide
