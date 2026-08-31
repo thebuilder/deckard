@@ -1,6 +1,7 @@
 "use client"
 
 import type {
+  CSSProperties,
   KeyboardEvent,
   ReactNode,
   SyntheticEvent,
@@ -20,6 +21,16 @@ const scrollKeys = new Set([
   "PageDown",
   "PageUp",
 ])
+
+// Scroll behavior is the contract, so it lives in inline styles rather than in utility classes a caller could drop.
+function scrollStyle(maxHeight: number | undefined): CSSProperties {
+  return {
+    maxHeight,
+    minHeight: 0,
+    overflowY: "auto",
+    overscrollBehavior: "contain",
+  }
+}
 
 interface SlideScrollAreaProps {
   children: ReactNode
@@ -52,16 +63,13 @@ export function SlideScrollArea({
     // biome-ignore lint/a11y/noNoninteractiveElementInteractions: the handlers keep scroll input out of the deck stepper, they do not add an interaction
     <section
       aria-label={label}
-      className={cn(
-        "min-h-0 overflow-y-auto overscroll-contain focus-visible:outline-none",
-        className
-      )}
+      className={cn("focus-visible:outline-none", className)}
       data-slide-scroll-area=""
       data-step-ignore-click="true"
       onKeyDown={handleKeyDown}
       onTouchMove={stopEvent}
       onWheel={stopEvent}
-      style={maxHeight ? { maxHeight } : undefined}
+      style={scrollStyle(maxHeight)}
       // biome-ignore lint/a11y/noNoninteractiveTabindex: a region that only scrolls still has to be reachable by keyboard
       tabIndex={0}
     >
