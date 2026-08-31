@@ -1,10 +1,14 @@
 # AGENTS Guidelines
 
-This repository is a reusable Next.js slideshow template.
+This repository is Deckard, a React presentation framework for building
+polished, fixed-canvas slides with reusable components, custom React content,
+presenter tooling, and shadcn-native themes. It ships as a Next.js app.
 
 ## Goal
 
 Keep the project optimized for fast authoring of new slide decks with consistent navigation, styling, and configurable slide chrome.
+
+The reusable parts (`lib/deck`, `components/slideshow`) are headed for `@deckard` packages, so keep deck-specific content out of them.
 
 ## Core architecture
 

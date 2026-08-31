@@ -21,12 +21,12 @@ import type { SlideDefinition } from "@/lib/deck/types"
 export const slides: SlideDefinition[] = [
   {
     slug: "intro",
-    title: "Slideshow Base",
+    title: "Deckard",
     notes:
       "Welcome the audience, set context in one sentence, and preview what they will get from this walkthrough.",
     body: (
       <HeroSlide
-        eyebrow="Reusable Next.js template"
+        eyebrow="React presentation framework"
         title="Build polished slides fast"
         description="Keyboard controls, step reveals, command center, themed UI, and flexible layout options out of the box."
       />
@@ -37,8 +37,8 @@ export const slides: SlideDefinition[] = [
     body: (
       <ContentSlideCard
         eyebrow="Capabilities"
-        title="A production-ready slideshow baseline"
-        description="The template focuses on practical presentation features you can reuse in demos, talks, and product walkthroughs."
+        title="A production-ready presentation baseline"
+        description="Deckard focuses on practical presentation features you can reuse in demos, talks, and product walkthroughs."
       >
         <FeatureGrid
           items={[
@@ -183,7 +183,7 @@ export const slides: SlideDefinition[] = [
       <ImageShowcaseSlide
         image={{
           src: templateCapabilitiesImage,
-          alt: "Capability map for the slideshow template",
+          alt: "Capability map for Deckard",
           fit: "contain",
           caption: "Use this for diagrams, mockups, or campaign visuals.",
           credit: "Generated template asset",
@@ -244,7 +244,7 @@ Mention the practical editing flow:
 
 Pause briefly on the code snippet and explicitly point to the commented fullscreen media example.
 
-Close by reinforcing that this pattern is what makes the template scalable for future decks with different visual styles but identical navigation and presenter tooling.`,
+Close by reinforcing that this pattern is what makes Deckard scalable for future decks with different visual styles but identical navigation and presenter tooling.`,
     body: (
       <ContentSlideCard
         eyebrow="Authoring"
@@ -280,7 +280,7 @@ Close by reinforcing that this pattern is what makes the template scalable for f
     body: (
       <HeroSlide
         eyebrow="Ready"
-        title="Start from this template"
+        title="Start from Deckard"
         description="Replace the demo slides, keep the structure, and ship presentation-grade decks faster."
       />
     ),

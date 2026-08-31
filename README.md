@@ -1,6 +1,12 @@
-# Slideshow Base (Next.js)
+# Deckard
 
-Reusable slideshow template built with Next.js, React, Tailwind, and shadcn/ui.
+Beautiful React presentations with shadcn-native theming.
+
+Deckard is a React presentation framework for building polished, fixed-canvas
+slides with reusable components, custom React content, presenter tooling, and
+shadcn-native themes. It runs on Next.js and Tailwind, and every slide is a
+React component, so a chart, a live demo, or a form is as easy to put on a
+slide as a bullet list.
 
 ## Screenshots
 
@@ -12,7 +18,7 @@ Reusable slideshow template built with Next.js, React, Tailwind, and shadcn/ui.
 
 ![Presenter view](assets/presenter-view.png)
 
-## What this template includes
+## What you get
 
 - Route-per-slide presentation flow (`/slides/[id]`)
 - Keyboard navigation (`Arrow`, `PageUp/PageDown`, `Space`)
@@ -29,6 +35,7 @@ Reusable slideshow template built with Next.js, React, Tailwind, and shadcn/ui.
 - Slide-level layout/background/header controls
 - Typed image slide support
 - PDF export pipeline for static handout rendering
+- shadcn/ui components and tokens, so slides inherit your app theme
 
 ## Quick start
 
@@ -72,7 +79,7 @@ The deck fails to build on a duplicate slug, an empty slug, a slug with
 characters that are unsafe in a URL path, or a numeric slug that collides with
 another slide's position.
 
-Slide primitives can read the current slide `title` from context, so template
+Slide primitives can read the current slide `title` from context, so layout
 blocks only need an explicit `title` prop when you want to override the slide
 title text inside the layout.
 
@@ -208,13 +215,13 @@ This runs a production build in `NEXT_PUBLIC_PDF_EXPORT=1` mode and writes:
 - `out/slides.pdf`
 
 Slide routes are discovered from `app/sitemap.ts` (`/sitemap.xml`) so export
-stays aligned with your actual published slideshow paths.
+stays aligned with your published slide paths.
 
 Export mode behavior:
 
 - fixed viewport (default `1920x1080`)
 - animations/transitions disabled
-- slideshow header/footer hidden
+- deck header/footer hidden
 
 Optional env vars:
 
@@ -228,3 +235,10 @@ Skip build (reuse existing `.next` build):
 ```bash
 pnpm export:pdf -- --skip-build
 ```
+
+## Packages
+
+Deckard is one app today. The reusable parts, the deck contract in `lib/deck`
+and the chrome in `components/slideshow`, are being pulled out into `@deckard`
+packages, so keep new code inside those directories free of deck-specific
+content.
