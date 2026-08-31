@@ -32,7 +32,8 @@ slide as a bullet list.
 - Presenter next-step preview (aware of reveal steps)
 - Presenter flow window (previous 2 + current + next 5 slide titles)
 - Presenter notes font-size controls
-- Light/dark theme toggle
+- Deck theme with canvas-scoped tokens, light and dark
+- Light/dark color mode toggle
 - Slide-level layout/background/header controls
 - Typed image slide support
 - PDF export pipeline for static handout rendering
@@ -51,13 +52,14 @@ Open [http://localhost:3000](http://localhost:3000).
 
 - `deck/slides.tsx`: slide definitions
 - `deck/slides/*.slide.tsx`: file-per-slide modules wired in with `slideFromModule`
-- `deck/deck.ts`: deck config (title, description, canvas, header and footer defaults) wrapped in `defineDeck`
+- `deck/deck.ts`: deck config (title, description, canvas, theme, header and footer defaults) wrapped in `defineDeck`
+- `deck/theme/`: the deck theme (`theme.css`, the `SlideTheme` export, and `THEME.md`)
 - `lib/deck/*`: slide model, id resolution, and validation
 - `app/slides/blocks/*`: deck-authoring building blocks (layout, typography, collections, media)
 - `components/slideshow/slide-shell.tsx`: slideshow chrome (header, navigation, frame)
 - `components/slideshow/slide-viewport.tsx`: fits the canvas to the browser viewport
 - `components/slideshow/slide-canvas.tsx`: the fixed coordinate space slides are authored in
-- `components/slideshow/slide-background.tsx`: shared background variants
+- `components/slideshow/slide-background.tsx`: the background hook the theme paints
 
 ## The canvas
 
@@ -112,7 +114,7 @@ scrolling never steps the deck:
 
 `CodeBlock` takes an optional `maxHeight` and uses it for long samples.
 
-Utility controls (command center, presenter popout, theme toggle) live outside
+Utility controls (command center, presenter popout, color mode toggle) live outside
 the canvas so they keep their own size and hit targets at any scale.
 
 ## Slide model
@@ -305,7 +307,33 @@ preview.
 - `"grid"`
 - `"none"`
 
-Add custom variants in `components/slideshow/slide-background.tsx`.
+`SlideBackground` renders one empty element carrying `data-slide-background`.
+What each variant paints lives in the deck theme, so change the look in
+`deck/theme/theme.css` and read `deck/theme/THEME.md` first.
+
+## Theme
+
+`deck/theme/` owns every audience-facing color, size, and background in the
+deck. The stylesheet is scoped to the theme class, which `SlideCanvas` puts on
+the canvas element, so the utility bar, command center, and presenter console
+keep the app tokens and stay readable whatever the deck looks like.
+
+```ts
+export const theme = {
+  className: "deckard-theme",
+  colorModes: ["light", "dark"],
+  defaultColorMode: "system",
+  id: "deckard",
+} satisfies SlideTheme
+```
+
+`defineDeck` validates the theme. `defaultColorMode: "system"` needs both color
+modes. A theme that lists one mode pins the canvas to it and hides the
+light/dark toggle. There is no runtime switching between named themes.
+
+Inside the canvas, style with semantic tokens (`bg-card`, `text-muted-foreground`)
+or slide tokens (`--slide-title-size`, `--slide-surface`). Never a hardcoded
+color. `deck/theme/THEME.md` lists the tokens and what they control.
 
 ## PDF export
 
