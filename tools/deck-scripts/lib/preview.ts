@@ -180,8 +180,11 @@ function startNextServer(port: number, env: Record<string, string>) {
     },
   }
 
-  process.on("SIGINT", () => {
+  // Once: a second Ctrl+C has nothing left to do, and the parent has to leave
+  // with the child rather than swallow the signal and outlive the server.
+  process.once("SIGINT", () => {
     child.kill("SIGTERM")
+    setTimeout(() => process.exit(130), 500)
   })
 
   return server
