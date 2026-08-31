@@ -5,7 +5,6 @@ export const deck = defineDeck({
   canvas: {
     fit: "contain",
     height: 1080,
-    margin: 24,
     mode: "fixed",
     width: 1920,
   },

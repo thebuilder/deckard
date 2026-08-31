@@ -7,21 +7,21 @@ const heightError = /height/
 const marginError = /margin/
 
 describe("resolveCanvas", () => {
-  it("defaults to a 1920x1080 contained canvas", () => {
+  it("defaults to a 1920x1080 contained canvas with no margin", () => {
     expect(resolveCanvas()).toEqual({
       fit: "contain",
       height: 1080,
-      margin: 24,
+      margin: 0,
       mode: "fixed",
       width: 1920,
     })
   })
 
   it("keeps the defaults a deck does not override", () => {
-    expect(resolveCanvas({ margin: 0, width: 1280 })).toEqual({
+    expect(resolveCanvas({ margin: 24, width: 1280 })).toEqual({
       fit: "contain",
       height: 1080,
-      margin: 0,
+      margin: 24,
       mode: "fixed",
       width: 1280,
     })

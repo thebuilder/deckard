@@ -7,11 +7,19 @@ interface SlideViewportProps {
   children: ReactNode
 }
 
+// A margin of zero has to stay a plain division, so an exact 16:9 window puts the canvas edges on the window edges.
+function fitScale(axis: "w" | "h", side: number, gutter: number) {
+  const available =
+    gutter === 0 ? `100cq${axis}` : `(100cq${axis} - ${gutter}px)`
+
+  return `calc(${available} / ${side}px)`
+}
+
 // Container query units keep the fit correct on the first paint, so the canvas never lands at the wrong scale before hydration.
 function fitTransform(canvas: DeckCanvasConfig) {
   const gutter = canvas.margin * 2
-  const widthScale = `calc((100cqw - ${gutter}px) / ${canvas.width}px)`
-  const heightScale = `calc((100cqh - ${gutter}px) / ${canvas.height}px)`
+  const widthScale = fitScale("w", canvas.width, gutter)
+  const heightScale = fitScale("h", canvas.height, gutter)
 
   return `translate(-50%, -50%) scale(min(${widthScale}, ${heightScale}))`
 }

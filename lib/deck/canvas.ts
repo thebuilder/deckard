@@ -3,7 +3,7 @@ import type { DeckCanvasConfig } from "@/lib/deck/types"
 const defaultDeckCanvas: DeckCanvasConfig = {
   fit: "contain",
   height: 1080,
-  margin: 24,
+  margin: 0,
   mode: "fixed",
   width: 1920,
 }

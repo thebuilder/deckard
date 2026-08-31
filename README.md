@@ -75,11 +75,16 @@ canvas: {
   width: 1920,
   height: 1080,
   fit: "contain",
-  margin: 24,
+  margin: 0,
 }
 ```
 
 `margin` is the gap in browser pixels between the canvas and the window edge.
+It defaults to `0`, so a window with the canvas aspect ratio shows the canvas
+edge to edge. Set it if a deck wants the canvas to float inside the window.
+Content spacing is a slide concern: the default frame keeps slide bodies off
+the canvas edges, and `layout: "fullscreen"` hands the whole canvas to the
+slide so media can bleed to every edge.
 
 Two rules follow from the fixed canvas:
 
