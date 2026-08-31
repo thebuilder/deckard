@@ -16,6 +16,7 @@ const links = [
   { href: "/", label: "Overview" },
   { href: "/getting-started", label: "Getting started" },
   { href: "/authoring", label: "Authoring rules" },
+  { href: "/registry", label: "Registry" },
 ]
 
 export default function RootLayout({ children }: { children: ReactNode }) {
