@@ -3,7 +3,7 @@
 @import "shadcn/tailwind.css";
 @import "@deckard/core/styles.css";
 
-@source "../../../packages/core/src";
+@source "../node_modules/@deckard/core/src";
 
 @custom-variant dark (&:is(.dark *));
 
