@@ -13,10 +13,19 @@ It is a pnpm workspace driven by Turborepo:
 - `apps/playground` is the reference deck and the app the visual checks run
   against.
 - `apps/docs` is the documentation site.
+- `registry` holds theme sources the playground does not use. `registry.json` at
+  the root publishes them and the blocks through shadcn.
 - `tools/package-smoke` packs the package and builds a scratch app against it.
+- `tools/registry-smoke` installs the registry into a scratch app and builds it.
 
 Every script runs from the root: `pnpm dev` (playground on :3000), `pnpm build`,
-`pnpm typecheck`, `pnpm test`, `pnpm lint`, `pnpm analyze`, `pnpm smoke:package`.
+`pnpm typecheck`, `pnpm test`, `pnpm lint`, `pnpm analyze`, `pnpm smoke:package`,
+`pnpm registry:build`, `pnpm smoke:registry`.
+
+A registry item that ships a file has to keep pointing at the file the repo
+actually renders. Move `apps/playground/app/slides/blocks/*` or
+`apps/playground/deck/theme/*` and `registry.json` breaks silently, because
+`shadcn build` reads those paths.
 
 ## Goal
 
