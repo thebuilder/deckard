@@ -51,7 +51,7 @@ Open [http://localhost:3000](http://localhost:3000).
 ## Project structure
 
 - `deck/slides.tsx`: slide definitions
-- `deck/slides/*.slide.tsx`: file-per-slide modules wired in with `slideFromModule`
+- `deck/slides/*.slide.tsx`: file-per-slide modules, discovered by one glob or wired in with `slideFromModule`
 - `deck/deck.ts`: deck config (title, description, canvas, theme, header and footer defaults) wrapped in `defineDeck`
 - `deck/theme/`: the deck theme (`theme.css`, the `SlideTheme` export, and `THEME.md`)
 - `lib/deck/*`: slide model, id resolution, and validation
@@ -276,6 +276,9 @@ export default async function PricingSlide() {
 slideFromModule(pricingSlide, "deck/slides/pricing.slide.tsx")
 ```
 
+`discoverSlides` does that import for you. See
+[Discovering slide modules](#discovering-slide-modules).
+
 Props that cross into a client component have to be serializable. The chrome
 passes `SlideSummary` values (`id`, `number`, `title`, `href`, `stepCount`)
 built from the resolved deck, and the rendered slide body crosses only as
@@ -285,6 +288,69 @@ A slide that throws under `next dev` renders an inline error card with the
 slide id and the message, and navigation keeps working. In a production build a
 Server Component that throws is fatal to the route, so Next serves its own
 error page.
+
+## Discovering slide modules
+
+`deck/slides.tsx` is a plain array and stays one. Discovery only saves you the
+imports:
+
+```tsx
+const discoveredSlides = discoverSlides(
+  import.meta.glob("./slides/**/*.slide.tsx", { eager: true }),
+  { sort: "order" }
+)
+
+export const slides: SlideDefinition[] = [
+  { slug: "intro", title: "Deckard", body: <HeroSlide /> },
+  ...discoveredSlides,
+  { title: "Use It", body: <HeroSlide /> },
+]
+```
+
+The spread decides where the group lands. Slides before and after it are manual
+entries, the discovered ones fill the gap in their sorted order, and moving the
+spread moves the whole group.
+
+### Inline or extracted
+
+The glob is eager, so every matched module is in the bundle either way.
+Extraction buys editing room, never loading speed.
+
+Keep a slide in the array while it is metadata and one block. Give it a file
+once it loads its own data, brings a client widget along, or carries notes
+longer than the slide body. A deck that never adds a file loses nothing.
+
+### Sorting
+
+`discoverSlides` takes `sort`:
+
+- `"path"` (default) compares the normalized glob keys segment by segment, with
+  numbers compared as numbers. `2-intro.slide.tsx` sorts before
+  `10-outro.slide.tsx`, and `10-context/20-b.slide.tsx` sorts after
+  `10-context/10-a.slide.tsx` and before `20-solution/10-a.slide.tsx`.
+- `"order"` reads `meta.order` first and falls back to path order for ties and
+  for modules that set no order. Number the slides you care about and let the
+  filenames handle the rest.
+- A comparator function receives `{ path, meta }` for both slides and is used as
+  given.
+
+Sorting never reads the enumeration order of the glob object.
+
+`meta.order` sorts inside the discovered group and nowhere else. `discoverSlides`
+consumes it and leaves it off the definition it returns, so a module cannot push
+itself past a manual slide or out of the spread. Explicit array placement wins.
+
+### Two limits
+
+A discovered module has to be a synchronous module. If it or anything it imports
+uses top-level await or WebAssembly, the eager glob hands back a promise instead
+of the exports, and discovery throws with the file path. `CodeBlock` is the case
+in this repo, because shiki loads a WebAssembly regex engine. A slide that shows
+highlighted code belongs in the array, wired with `slideFromModule`.
+
+Adding or deleting a matched file while `next dev` runs updates route handlers
+but leaves page routes serving stale modules. Restart the dev server after
+adding a slide file.
 
 ## Presenter preview context
 
