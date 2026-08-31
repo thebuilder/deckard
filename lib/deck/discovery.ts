@@ -26,7 +26,17 @@ function normalizePath(key: string) {
 }
 
 function toSlideModule(value: unknown, path: string): SlideModule {
-  const candidate = value as Partial<SlideModule> | null
+  const candidate = value as
+    | (Partial<SlideModule> & PromiseLike<unknown>)
+    | null
+
+  // An async module (top-level await, or a WebAssembly dependency such as a
+  // syntax highlighter) comes back as a promise even from an eager glob.
+  if (typeof candidate?.then === "function") {
+    throw new Error(
+      `Discovered slide "${path}" is an async module, so the glob handed back a promise instead of its exports. Import it in the deck array with slideFromModule, or drop the dependency that uses top-level await.`
+    )
+  }
 
   if (typeof candidate?.default !== "function") {
     throw new Error(

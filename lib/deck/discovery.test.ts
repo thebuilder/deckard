@@ -8,6 +8,7 @@ type GlobEntry = [string, SlideMeta?]
 
 const brokenPathPattern = /slides\/broken\.slide\.tsx/
 const missingDefaultPattern = /no default export/
+const asyncModulePattern = /async module/
 
 function slideModule(meta?: SlideMeta): SlideModule {
   return { default: () => null, meta }
@@ -145,6 +146,14 @@ describe("discoverSlides", () => {
     expect(() =>
       discoverSlides({ "./slides/broken.slide.tsx": { meta: { title: "x" } } })
     ).toThrow(brokenPathPattern)
+  })
+
+  it("rejects a module that arrives as a promise", () => {
+    expect(() =>
+      discoverSlides({
+        "./slides/highlighted.slide.tsx": Promise.resolve(slideModule()),
+      })
+    ).toThrow(asyncModulePattern)
   })
 
   it("rejects a glob entry that is not a module", () => {
