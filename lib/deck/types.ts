@@ -74,6 +74,16 @@ export interface DeckCanvasConfig {
   width: number
 }
 
+export type SlideColorMode = "light" | "dark"
+
+// Static deck styling. The class scopes the theme stylesheet to the canvas, so it never reaches the runtime UI.
+export interface SlideTheme {
+  className: string
+  colorModes: SlideColorMode[]
+  defaultColorMode: SlideColorMode | "system"
+  id: string
+}
+
 export interface DeckHeaderConfig {
   brand: string
   href: string
@@ -90,6 +100,7 @@ export interface DeckConfig {
   footer: DeckFooterConfig
   header: DeckHeaderConfig
   slides: SlideDefinition[]
+  theme?: SlideTheme
   title: string
 }
 
@@ -99,5 +110,14 @@ export interface Deck {
   footer: DeckFooterConfig
   header: DeckHeaderConfig
   slides: ResolvedSlide[]
+  theme: SlideTheme
   title: string
+}
+
+// Everything the shell needs from the deck. Crosses into client components, so it stays serializable.
+export interface DeckPresentation {
+  canvas: DeckCanvasConfig
+  theme: SlideTheme
+  title: string
+  titleHref: string
 }
