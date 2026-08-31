@@ -22,7 +22,21 @@
   },
   "overrides": [
     {
-      "includes": ["deck/slides.tsx"],
+      "includes": [
+        "packages/core/src/index.ts",
+        "packages/core/src/components/index.ts",
+        "packages/core/src/ui/index.ts"
+      ],
+      "linter": {
+        "rules": {
+          "performance": {
+            "noBarrelFile": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["apps/playground/deck/slides.tsx"],
       "assist": {
         "actions": {
           "source": {

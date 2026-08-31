@@ -1,0 +1,66 @@
+/*
+ * Presentation token contract. A deck theme redefines these on the canvas and wins,
+ * because it ships unlayered CSS and everything here sits in the base layer.
+ * A deck without a theme still renders: neutral sizes, app surfaces, no decoration.
+ */
+@layer base {
+  :root {
+    --slide-font-heading: var(--font-sans);
+    --slide-font-body: var(--font-sans);
+    --slide-font-mono: var(--font-mono);
+
+    --slide-padding-inline: 1.5rem;
+    --slide-padding-block: 2rem;
+    --slide-content-gap: 1.5rem;
+
+    --slide-title-size: 4rem;
+    --slide-heading-size: 3rem;
+    --slide-subheading-size: 1.75rem;
+    --slide-lead-size: 1.25rem;
+    --slide-body-size: 1.5rem;
+    --slide-support-size: 0.875rem;
+    --slide-label-size: 0.875rem;
+    --slide-label-tracking: 0.25em;
+
+    --slide-radius: 0.75rem;
+    --slide-radius-lg: 1.25rem;
+    --slide-surface: var(--card);
+    --slide-surface-muted: var(--muted);
+    --slide-surface-border: var(--border);
+    --slide-surface-shadow: none;
+
+    --slide-media-foreground: oklch(1 0 0);
+    --slide-media-foreground-muted: oklch(1 0 0 / 85%);
+    --slide-media-overlay-subtle: linear-gradient(
+      to top,
+      oklch(0 0 0 / 35%),
+      oklch(0 0 0 / 10%),
+      transparent
+    );
+    --slide-media-overlay-medium: linear-gradient(
+      to top,
+      oklch(0 0 0 / 55%),
+      oklch(0 0 0 / 20%),
+      transparent
+    );
+    --slide-media-overlay-strong: linear-gradient(
+      to top,
+      oklch(0 0 0 / 75%),
+      oklch(0 0 0 / 35%),
+      transparent
+    );
+
+    --slide-wash: transparent;
+    --slide-veil: transparent;
+    --slide-glow: transparent;
+    --slide-grid-color: transparent;
+    --slide-grid-size: 44px;
+    --slide-spotlight: transparent;
+  }
+}
+
+/* CodeBlock renders shiki markup, which paints its own background. */
+.shiki,
+.shiki span {
+  background-color: transparent !important;
+}
