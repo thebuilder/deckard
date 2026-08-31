@@ -10,6 +10,7 @@
     "./components": "./src/components/index.ts",
     "./code-block": "./src/components/code-block.tsx",
     "./discovery": "./src/deck/discovery.ts",
+    "./next": "./src/next/routes.tsx",
     "./slide-from-module": "./src/deck/slide-from-module.tsx",
     "./ui": "./src/ui/index.ts",
     "./utils": "./src/lib/utils.ts",

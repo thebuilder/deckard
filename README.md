@@ -88,6 +88,7 @@ Both are below, in
 | `@deckard/core/components` | `SlideShell`, `SlideViewport`, `SlideCanvas`, `SlideStep`, `SlideScrollArea`, `PresenterConsole`, `ColorModeProvider`, the slide context hooks |
 | `@deckard/core/code-block` | `CodeBlock`, kept off the components barrel because shiki loads WebAssembly |
 | `@deckard/core/discovery` | `discoverSlides` |
+| `@deckard/core/next` | `createSlideRoute`, `createPresenterPage`, `createDeckSitemap`, `createFirstSlideRedirect` |
 | `@deckard/core/slide-from-module` | `slideFromModule` |
 | `@deckard/core/ui` | the shadcn primitives the runtime renders |
 | `@deckard/core/utils` | `cn` |
@@ -118,6 +119,27 @@ const nextConfig = {
 
 Without the `@source` line Tailwind never scans the package and the chrome
 renders unstyled.
+
+The routes come from `@deckard/core/next`, so an app owns its deck and nothing
+else:
+
+```tsx
+// app/slides/[id]/page.tsx
+import { createSlideRoute } from "@deckard/core/next"
+import { deck } from "@/deck/deck"
+
+const { Page, generateMetadata, generateStaticParams } = createSlideRoute(deck)
+
+export { generateMetadata, generateStaticParams }
+export default Page
+```
+
+| Adapter | Route |
+| --- | --- |
+| `createSlideRoute(deck)` | `app/slides/[id]/page.tsx`, returns `Page`, `generateMetadata`, `generateStaticParams` |
+| `createPresenterPage(deck)` | `app/presenter/page.tsx`, returns `Page` and `metadata` |
+| `createDeckSitemap(deck, { siteUrl })` | `app/sitemap.ts`, defaults to `NEXT_PUBLIC_SITE_URL` |
+| `createFirstSlideRedirect(deck)` | `app/page.tsx`, redirects to the first slide |
 
 ### Inside the playground
 

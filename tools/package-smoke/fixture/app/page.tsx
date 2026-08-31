@@ -1,7 +1,5 @@
-import { redirect } from "next/navigation"
+import { createFirstSlideRedirect } from "@deckard/core/next"
 
 import { deck } from "../deck/deck"
 
-export default function Page() {
-  redirect(deck.slides[0].href)
-}
+export default createFirstSlideRedirect(deck)
