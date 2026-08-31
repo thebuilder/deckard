@@ -20,7 +20,7 @@ const themes = [
     modes: "Light and dark",
     name: "theme-deckard",
     summary:
-      "The default. Off-white paper in light mode, a blue-black sheet in dark, one indigo accent on eyebrows, buttons, and focus rings. Cards are near-opaque with a hairline border, a soft shadow, and 1rem corners. Backgrounds are a top wash, a 44px grid, or a wide spotlight, each with a blurred corner glow.",
+      "The default. Off-white paper in light mode, a blue-black sheet in dark, one teal accent on eyebrows, buttons, and focus rings. Cards are near-opaque with a hairline border, a soft shadow, and 1rem corners. Backgrounds are a top wash, a 44px grid, or a wide spotlight, each with a blurred corner glow.",
     swatches: readThemeSwatches("apps/playground/deck/theme/theme.css"),
     title: "Deckard",
     when: "You want a deck that reads as a modern product presentation and you do not want to design a theme.",
