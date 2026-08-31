@@ -9,9 +9,13 @@
     "packages/core/src/lib/utils.ts",
     "packages/core/src/ui/**",
     "apps/playground/components/ui/**",
-    "apps/playground/app/slides/blocks/**"
+    "apps/playground/app/slides/blocks/**",
+    "registry/themes/**"
   ],
-  "ignorePatterns": ["tools/package-smoke/fixture/**"],
+  "ignorePatterns": [
+    "tools/package-smoke/fixture/**",
+    "tools/registry-smoke/fixture/**"
+  ],
   "ignoreExports": [
     {
       "file": "apps/playground/deck/slides/**/*.slide.tsx",

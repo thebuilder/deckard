@@ -20,6 +20,9 @@ node_modules/
 **/.next/
 **/out/
 
+# built shadcn registry
+apps/docs/public/r/
+
 # production
 /build
 
