@@ -65,8 +65,9 @@
   }
 }
 
-/* CodeBlock renders shiki markup, which paints its own background. */
-.shiki,
-.shiki span {
+/* CodeBlock renders shiki markup, which paints its own background. Scoped to the
+ * canvas so a deck never restyles code the surrounding app renders. */
+[data-slide-canvas] .shiki,
+[data-slide-canvas] .shiki span {
   background-color: transparent !important;
 }
