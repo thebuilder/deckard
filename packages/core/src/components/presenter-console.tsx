@@ -477,7 +477,7 @@ export function PresenterConsole({ canvas }: { canvas: DeckCanvasConfig }) {
             type="button"
             variant="outline"
           >
-            <ChevronLeft className="size-4" />
+            <ChevronLeft className="size-4" data-icon="inline-start" />
             Previous
           </Button>
           <Button
@@ -487,7 +487,7 @@ export function PresenterConsole({ canvas }: { canvas: DeckCanvasConfig }) {
             type="button"
           >
             Next
-            <ChevronRight className="size-4" />
+            <ChevronRight className="size-4" data-icon="inline-end" />
           </Button>
         </div>
 
