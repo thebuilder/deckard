@@ -116,7 +116,7 @@
       "name": "preset-deckard",
       "type": "registry:item",
       "title": "Deckard preset",
-      "description": "Everything a new deck needs in one add: the Deckard theme and all four block families. Use this once, right after installing @deckard/core, then write slides. It also adds the two stylesheet lines a consumer cannot guess, the @import of the @deckard/core token contract and the @source line that makes Tailwind scan the package for classes. The one thing it cannot do for you is edit next.config, which needs transpilePackages because @deckard/core ships TypeScript source. Read the docs field for that step.",
+      "description": "Everything a new deck needs in one add: the Deckard theme and all four block families. Use this once, right after installing @deckard/core, then write slides. It also adds the one stylesheet line a consumer cannot guess, the @import of @deckard/core/styles.css, which carries the slide token contract and registers the package's own Tailwind source so the runtime classes survive tree shaking. Nothing else has to be wired: @deckard/core ships compiled, so next.config stays empty.",
       "categories": ["deck", "preset"],
       "dependencies": ["@deckard/core"],
       "registryDependencies": [
@@ -127,10 +127,9 @@
         "@deckard/block-media"
       ],
       "css": {
-        "@import \"@deckard/core/styles.css\"": {},
-        "@source \"../node_modules/@deckard/core/src\"": {}
+        "@import \"@deckard/core/styles.css\"": {}
       },
-      "docs": "One manual step is left. @deckard/core ships TypeScript source rather than compiled output, so your Next.js app has to transpile it. Add `transpilePackages: [\"@deckard/core\"]` to next.config.mjs. If the @source line above does not match where pnpm put the package, point it at the directory that holds @deckard/core/src; Tailwind needs to scan it or the slide classes get tree-shaken out of the stylesheet. Then create deck/deck.ts, pass the installed theme to defineDeck, and render the deck from app/slides/[id]/page.tsx."
+      "docs": "The theme lands in deck/theme/ and the blocks in app/slides/blocks/, and the stylesheet import above is the whole build wiring. @deckard/core ships compiled output and its stylesheet registers its own Tailwind source, so there is no transpilePackages entry and no @source line for you to add. What is left is deck code: create deck/deck.ts, pass the installed theme to defineDeck, then render the deck from app/slides/[id]/page.tsx with createSlideRoute from @deckard/core/next."
     }
   ]
 }
