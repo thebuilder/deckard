@@ -20,6 +20,8 @@
       "dependsOn": ["^typecheck"]
     },
     "test": {},
+    "test:unit": {},
+    "test:browser": {},
     "//#lint": {
       "cache": false
     },

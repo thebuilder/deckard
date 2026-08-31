@@ -9,6 +9,7 @@
     "export:pdf": "node scripts/export-pdf.ts",
     "start": "next start",
     "test": "vitest run --passWithNoTests",
+    "test:unit": "vitest run --passWithNoTests",
     "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {

@@ -12,8 +12,8 @@
     "lint:check": "ultracite check",
     "smoke:package": "node tools/package-smoke/run.ts",
     "test": "turbo run test",
-    "test:browser": "pnpm --filter @deckard/core test:browser",
-    "test:unit": "pnpm --filter @deckard/core test:unit",
+    "test:browser": "turbo run test:browser",
+    "test:unit": "turbo run test:unit",
     "typecheck": "turbo run typecheck"
   },
   "devDependencies": {
