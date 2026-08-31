@@ -305,8 +305,9 @@ scrolling never steps the deck:
 
 `CodeBlock` takes an optional `maxHeight` and uses it for long samples.
 
-Utility controls (command center, presenter popout, color mode toggle) live outside
-the canvas so they keep their own size and hit targets at any scale.
+Deck chrome (footer navigation and counter, command center, presenter popout,
+color mode toggle) lives outside the canvas so it keeps its own size and hit
+targets at any scale, down to a phone.
 
 ## Slide model
 

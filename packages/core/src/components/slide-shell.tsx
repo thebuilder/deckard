@@ -218,20 +218,6 @@ export function SlideShell({
           background={background}
           canvas={deck.canvas}
           chromeInset={chromeInset(chrome)}
-          footer={
-            chrome.showFooter ? (
-              <div className={chromeHiddenClass}>
-                <SlideNavigation
-                  mode={footerMode === "counter" ? "counter" : "visible"}
-                  next={next}
-                  prefetch={prefetch}
-                  previous={previous}
-                  slide={slide}
-                  total={slides.length}
-                />
-              </div>
-            ) : null
-          }
           frameClassName={frameClassName(chrome)}
           header={
             chrome.showHeader ? (
@@ -258,6 +244,19 @@ export function SlideShell({
           </SlideStepAdvanceArea>
         </SlideCanvas>
       </SlideViewport>
+
+      {chrome.showFooter ? (
+        <div className={chromeHiddenClass}>
+          <SlideNavigation
+            mode={footerMode === "counter" ? "counter" : "visible"}
+            next={next}
+            prefetch={prefetch}
+            previous={previous}
+            slide={slide}
+            total={slides.length}
+          />
+        </div>
+      ) : null}
     </SlideShellRuntime>
   )
 }
