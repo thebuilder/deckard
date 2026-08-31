@@ -21,6 +21,7 @@ slide as a bullet list.
 ## What you get
 
 - Route-per-slide presentation flow (`/slides/[id]`)
+- Fixed 1920x1080 slide canvas that scales to any screen
 - Keyboard navigation (`Arrow`, `PageUp/PageDown`, `Space`)
 - Step reveals with `stepCount` + `SlideStep`
 - Click-to-advance reveal area for stepped slides
@@ -50,11 +51,59 @@ Open [http://localhost:3000](http://localhost:3000).
 
 - `deck/slides.tsx`: slide definitions
 - `deck/slides/*.slide.tsx`: file-per-slide modules wired in with `slideFromModule`
-- `deck/deck.ts`: deck config (title, description, header and footer defaults) wrapped in `defineDeck`
+- `deck/deck.ts`: deck config (title, description, canvas, header and footer defaults) wrapped in `defineDeck`
 - `lib/deck/*`: slide model, id resolution, and validation
 - `app/slides/blocks/*`: deck-authoring building blocks (layout, typography, collections, media)
 - `components/slideshow/slide-shell.tsx`: slideshow chrome (header, navigation, frame)
+- `components/slideshow/slide-viewport.tsx`: fits the canvas to the browser viewport
+- `components/slideshow/slide-canvas.tsx`: the fixed coordinate space slides are authored in
 - `components/slideshow/slide-background.tsx`: shared background variants
+
+## The canvas
+
+Every slide is authored in one fixed coordinate space, 1920x1080 by default.
+`SlideViewport` scales that canvas to fit the browser window and centers it,
+`SlideCanvas` holds the header, footer, background, and slide body inside it.
+A slide looks the same on a laptop, a projector, a phone, and in the PDF: only
+the scale changes.
+
+Configure it in `deck/deck.ts`:
+
+```ts
+canvas: {
+  mode: "fixed",
+  width: 1920,
+  height: 1080,
+  fit: "contain",
+  margin: 24,
+}
+```
+
+`margin` is the gap in browser pixels between the canvas and the window edge.
+
+Two rules follow from the fixed canvas:
+
+- Size slide content against the canvas, with `h-full` and percentages. Browser
+  viewport units (`svh`, `vw`) and responsive breakpoints (`sm:`, `lg:`) inside
+  the canvas would react to the window instead of the slide, so the canvas is
+  the wrong size for them.
+- The canvas clips what does not fit. In development an overflowing slide gets
+  a console warning and an amber outline. Trim the content, or put the part
+  that has to scroll in a `SlideScrollArea`.
+
+`SlideScrollArea` keeps wheel, touch, and key scrolling inside itself so
+scrolling never steps the deck:
+
+```tsx
+<SlideScrollArea label="Full config" maxHeight={360}>
+  <ConfigTable />
+</SlideScrollArea>
+```
+
+`CodeBlock` takes an optional `maxHeight` and uses it for long samples.
+
+Utility controls (command center, presenter popout, theme toggle) live outside
+the canvas so they keep their own size and hit targets at any scale.
 
 ## Slide model
 
@@ -272,14 +321,15 @@ stays aligned with your published slide paths.
 
 Export mode behavior:
 
-- fixed viewport (default `1920x1080`)
+- one page per slide at the deck canvas size, captured from the canvas element
 - animations/transitions disabled
 - deck header/footer hidden
 
+Page size comes from the `canvas` config in `deck/deck.ts`, so the export
+cannot drift from what the audience sees.
+
 Optional env vars:
 
-- `PDF_EXPORT_WIDTH` (default `1920`)
-- `PDF_EXPORT_HEIGHT` (default `1080`)
 - `PDF_EXPORT_PORT` (default `3410`)
 - `PDF_EXPORT_OUTPUT` (default `out/slides.pdf`)
 
