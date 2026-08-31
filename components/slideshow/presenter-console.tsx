@@ -2,6 +2,7 @@
 
 import { ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react"
 import { useCallback, useEffect, useRef, useState } from "react"
+import { SlideErrorBoundary } from "@/components/slideshow/slide-error-boundary"
 import { Button } from "@/components/ui/button"
 import {
   PRESENTER_CHANNEL_NAME,
@@ -347,10 +348,15 @@ export function PresenterConsole() {
             className="relative mt-3 w-full overflow-hidden rounded-xl border border-border/70 bg-card/40"
             style={{ aspectRatio: previewAspectRatio }}
           >
-            <PreviewFrame
-              previewUrl={nextStepPreviewUrl}
-              titlePrefix="Next step preview"
-            />
+            <SlideErrorBoundary
+              key={state?.preview?.id ?? "preview-empty"}
+              slideId={state?.preview?.id ?? "preview"}
+            >
+              <PreviewFrame
+                previewUrl={nextStepPreviewUrl}
+                titlePrefix="Next step preview"
+              />
+            </SlideErrorBoundary>
           </div>
         </div>
 
@@ -429,11 +435,16 @@ export function PresenterConsole() {
           className="relative w-full overflow-hidden rounded-2xl border border-border/70 bg-card/40"
           style={{ aspectRatio: previewAspectRatio }}
         >
-          <PreviewFrame
-            emptyLabel="Waiting for current slide preview"
-            previewUrl={currentSlideUrl}
-            titlePrefix="Current slide preview"
-          />
+          <SlideErrorBoundary
+            key={state?.slide.id ?? "current-empty"}
+            slideId={state?.slide.id ?? "current"}
+          >
+            <PreviewFrame
+              emptyLabel="Waiting for current slide preview"
+              previewUrl={currentSlideUrl}
+              titlePrefix="Current slide preview"
+            />
+          </SlideErrorBoundary>
         </div>
 
         <div className="mt-5 flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-border/80 bg-card/80">

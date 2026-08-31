@@ -8,6 +8,7 @@ import {
 import { SlideBackground } from "@/components/slideshow/slide-background"
 import { SlideCommandCenter } from "@/components/slideshow/slide-command-center"
 import { SlideContextProvider } from "@/components/slideshow/slide-context"
+import { SlideErrorBoundary } from "@/components/slideshow/slide-error-boundary"
 import { SlideNavigation } from "@/components/slideshow/slide-navigation"
 import {
   SlideStepAdvanceArea,
@@ -182,7 +183,9 @@ export function SlideShell({
                 enabled={freezeMedia}
               >
                 <div className={cn("w-full", chrome.isFullscreen && "h-full")}>
-                  {children}
+                  <SlideErrorBoundary key={slide.id} slideId={slide.id}>
+                    {children}
+                  </SlideErrorBoundary>
                 </div>
               </StaticMediaBoundary>
             </SlideStepAdvanceArea>
