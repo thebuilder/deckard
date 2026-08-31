@@ -11,6 +11,7 @@
     "apps/playground/components/ui/**",
     "apps/playground/app/slides/blocks/**"
   ],
+  "ignorePatterns": ["tools/package-smoke/fixture/**"],
   "ignoreExports": [
     {
       "file": "apps/playground/deck/slides/**/*.slide.tsx",
