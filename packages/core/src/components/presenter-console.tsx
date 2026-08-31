@@ -5,8 +5,10 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import type { DeckCanvasConfig } from "../deck/types"
 import {
   PRESENTER_CHANNEL_NAME,
+  PRESENTER_PREVIEW_STEP_MESSAGE,
   type PresenterChannelMessage,
   type PresenterPreviewState,
+  type PresenterPreviewStepMessage,
   type PresenterSlideState,
 } from "../types/presenter"
 import { Button } from "../ui/button"
@@ -93,6 +95,7 @@ function PreviewLayer({
   isActive,
   title,
   onLoad,
+  onMount,
 }: {
   canvas: DeckCanvasConfig
   layer: 0 | 1
@@ -100,10 +103,18 @@ function PreviewLayer({
   isActive: boolean
   title: string
   onLoad: (layer: 0 | 1) => void
+  onMount: (layer: 0 | 1, frame: HTMLIFrameElement | null) => void
 }) {
   const handleLoad = useCallback(() => {
     onLoad(layer)
   }, [layer, onLoad])
+
+  const handleMount = useCallback(
+    (frame: HTMLIFrameElement | null) => {
+      onMount(layer, frame)
+    },
+    [layer, onMount]
+  )
 
   return (
     // biome-ignore lint/a11y/noNoninteractiveElementInteractions: onLoad is a resource lifecycle event, not a user interaction
@@ -112,6 +123,7 @@ function PreviewLayer({
         isActive ? "opacity-100" : "pointer-events-none opacity-0"
       }`}
       onLoad={handleLoad}
+      ref={handleMount}
       src={src}
       style={{
         height: canvas.height,
@@ -122,68 +134,122 @@ function PreviewLayer({
   )
 }
 
+function previewSrc(id: string, step: number) {
+  return `/slides/${id}?presenterPreview=1&step=${step}`
+}
+
+// The slide document is loaded once per slide and stepped from here. Putting the
+// step in the src instead would refetch two whole slides on every step press.
 function PreviewFrame({
   canvas,
-  previewUrl,
+  previewId,
+  step,
   emptyLabel = "End of deck",
   titlePrefix = "Preview",
 }: {
   canvas: DeckCanvasConfig
-  previewUrl: string | null
+  previewId: string | null
+  step: number
   emptyLabel?: string
   titlePrefix?: string
 }) {
   const [activeLayer, setActiveLayer] = useState<0 | 1>(0)
-  const [layerUrls, setLayerUrls] = useState<[string | null, string | null]>([
-    previewUrl,
+  const [layerIds, setLayerIds] = useState<[string | null, string | null]>([
+    previewId,
+    null,
+  ])
+  const [layerSrcs, setLayerSrcs] = useState<[string | null, string | null]>([
+    previewId ? previewSrc(previewId, step) : null,
     null,
   ])
   // The iframe key is layer plus src, so a layer that already holds the wanted
   // document never fires onLoad again. Reveal it from here instead.
-  const loadedUrlsRef = useRef<[string | null, string | null]>([null, null])
+  const loadedIdsRef = useRef<[string | null, string | null]>([null, null])
+  const framesRef = useRef<
+    [HTMLIFrameElement | null, HTMLIFrameElement | null]
+  >([null, null])
+  const stepRef = useRef(step)
+
+  stepRef.current = step
+
+  const handleMount = useCallback(
+    (layer: 0 | 1, frame: HTMLIFrameElement | null) => {
+      framesRef.current[layer] = frame
+    },
+    []
+  )
 
   useEffect(() => {
-    if (!previewUrl) {
-      loadedUrlsRef.current = [null, null]
-      setLayerUrls((previous) =>
+    if (!previewId) {
+      loadedIdsRef.current = [null, null]
+      setLayerIds((previous) =>
+        previous[0] === null && previous[1] === null ? previous : [null, null]
+      )
+      setLayerSrcs((previous) =>
         previous[0] === null && previous[1] === null ? previous : [null, null]
       )
       return
     }
 
-    if (layerUrls[activeLayer] === previewUrl) {
+    if (layerIds[activeLayer] === previewId) {
       return
     }
 
     const hiddenLayer = activeLayer === 0 ? 1 : 0
 
-    if (layerUrls[hiddenLayer] === previewUrl) {
-      if (loadedUrlsRef.current[hiddenLayer] === previewUrl) {
+    if (layerIds[hiddenLayer] === previewId) {
+      if (loadedIdsRef.current[hiddenLayer] === previewId) {
         setActiveLayer(hiddenLayer)
       }
 
       return
     }
 
-    const nextUrls: [string | null, string | null] = [...layerUrls]
-    nextUrls[hiddenLayer] = previewUrl
-    setLayerUrls(nextUrls)
-  }, [activeLayer, layerUrls, previewUrl])
+    const nextIds: [string | null, string | null] = [...layerIds]
+    const nextSrcs: [string | null, string | null] = [...layerSrcs]
+    nextIds[hiddenLayer] = previewId
+    nextSrcs[hiddenLayer] = previewSrc(previewId, stepRef.current)
+    setLayerIds(nextIds)
+    setLayerSrcs(nextSrcs)
+  }, [activeLayer, layerIds, layerSrcs, previewId])
+
+  useEffect(() => {
+    if (!previewId) {
+      return
+    }
+
+    for (const layer of [0, 1] as const) {
+      if (
+        layerIds[layer] !== previewId ||
+        loadedIdsRef.current[layer] !== previewId
+      ) {
+        continue
+      }
+
+      framesRef.current[layer]?.contentWindow?.postMessage(
+        {
+          step,
+          type: PRESENTER_PREVIEW_STEP_MESSAGE,
+        } satisfies PresenterPreviewStepMessage,
+        window.location.origin
+      )
+    }
+  }, [layerIds, previewId, step])
 
   const handleLoad = useCallback(
     (layer: 0 | 1) => {
-      loadedUrlsRef.current[layer] = layerUrls[layer]
+      loadedIdsRef.current[layer] = layerIds[layer]
 
-      if (layerUrls[layer] !== previewUrl || !previewUrl) {
+      if (layerIds[layer] !== previewId || !previewId) {
         return
       }
 
       setActiveLayer(layer)
     },
-    [layerUrls, previewUrl]
+    [layerIds, previewId]
   )
 
-  if (!previewUrl) {
+  if (!previewId) {
     return (
       <div className="grid h-full place-items-center text-muted-foreground text-sm">
         {emptyLabel}
@@ -194,7 +260,7 @@ function PreviewFrame({
   return (
     <SlideViewport canvas={toPreviewCanvas(canvas)}>
       {([0, 1] as const).map((layer) => {
-        const src = layerUrls[layer]
+        const src = layerSrcs[layer]
 
         if (!src) {
           return null
@@ -207,6 +273,7 @@ function PreviewFrame({
             key={`${layer}-${src}`}
             layer={layer}
             onLoad={handleLoad}
+            onMount={handleMount}
             src={src}
             title={`${titlePrefix} ${layer + 1}`}
           />
@@ -228,11 +295,8 @@ function CurrentSlidePreview({
       <PreviewFrame
         canvas={canvas}
         emptyLabel="Waiting for current slide preview"
-        previewUrl={
-          state
-            ? `/slides/${state.slide.id}?presenterPreview=1&step=${state.currentStep}`
-            : null
-        }
+        previewId={state?.slide.id ?? null}
+        step={state?.currentStep ?? 0}
         titlePrefix="Current slide preview"
       />
     </SlideErrorBoundary>
@@ -250,11 +314,8 @@ function NextStepPreview({
     <SlideErrorBoundary slideId={preview?.id ?? "next"}>
       <PreviewFrame
         canvas={canvas}
-        previewUrl={
-          preview
-            ? `/slides/${preview.id}?presenterPreview=1&step=${preview.step}`
-            : null
-        }
+        previewId={preview?.id ?? null}
+        step={preview?.step ?? 0}
         titlePrefix="Next step preview"
       />
     </SlideErrorBoundary>
