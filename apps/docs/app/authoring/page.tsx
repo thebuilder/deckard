@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 
 export const metadata: Metadata = {
   title: "Authoring rules",
@@ -12,6 +13,11 @@ export default function AuthoringPage() {
         These are the rules the framework enforces, plus the ones that keep a
         deck maintainable. The first group has tests and build errors behind it.
         The rest is convention.
+      </p>
+      <p>
+        They apply to every deck: the one in your own app, and the two in the
+        Deckard repository. <code>deck/slides.tsx</code> below means your
+        app&apos;s deck directory, not a shared file somewhere in the framework.
       </p>
 
       <h2 className="pt-4 text-2xl">The canvas is one fixed size</h2>
@@ -96,8 +102,10 @@ export default function AuthoringPage() {
         slide moved into its own file, a theme token, a registry path. Content
         edits get <code>pnpm deck:check-overflow</code>. Before you call a deck
         done, look at a fresh <code>pnpm deck:contact-sheet</code>, because a
-        whole deck in one grid catches what reading the diff does not. Getting
-        started describes what each one measures.
+        whole deck in one grid catches what reading the diff does not.{" "}
+        <Link href="/getting-started">Getting started</Link> describes what each
+        one measures, and notes that the scripts are workspace-only until{" "}
+        <code>@deckard/deck-scripts</code> publishes.
       </p>
 
       <h2 className="pt-4 text-2xl">Two things that will confuse you</h2>

@@ -98,22 +98,31 @@ export default function RegistryPage() {
     <>
       <h1 className="text-3xl">Registry</h1>
       <p>
-        The themes and blocks in this repository install through{" "}
-        <code>shadcn add</code>. Everything lands as source files in your app.
-        There is no runtime and nothing to import from a package, so once a
-        theme is in <code>deck/theme/</code> it is yours to edit and the
+        The deck theme and the slide blocks are not part of{" "}
+        <code>@deckard/core</code>. They install into your presentation app
+        through <code>shadcn add</code> and land as source files you own. There
+        is no runtime behind them and nothing to import from a package, so once
+        a theme is in <code>deck/theme/</code> it is yours to edit and the
         registry never touches it again.
       </p>
-
-      <h2 className="pt-4 text-2xl">Point at the registry</h2>
       <p>
-        The registry is built from <code>registry.json</code> at the repository
-        root and served as static JSON from this docs site at{" "}
-        <code>/r/&#123;name&#125;.json</code>. Build it with{" "}
-        <code>pnpm registry:build</code>, then run the docs site with{" "}
-        <code>pnpm --filter docs dev</code> to serve it on port 3001.
+        That is the arrangement working, not a gap. A block sized for one
+        theme&apos;s font often needs retuning at another: the demo deck widened{" "}
+        <code>HeroSlide</code> from <code>max-w-[14ch]</code> to{" "}
+        <code>20ch</code> because a serif headline broke into four ragged lines.
+        Editing the file is the supported fix.
       </p>
-      <p>Add it to the consuming app&apos;s components.json:</p>
+
+      <h2 className="pt-4 text-2xl">Point your app at the registry</h2>
+      <p>
+        The registry is built from <code>registry.json</code> in the Deckard
+        repository and served as static JSON at{" "}
+        <code>/r/&#123;name&#125;.json</code> by this docs site. There is no
+        public host for it yet, so serve it from a local checkout: run{" "}
+        <code>pnpm registry:build</code> there, then{" "}
+        <code>pnpm --filter docs dev</code> to put it on port 3001.
+      </p>
+      <p>Then add the namespace to your app&apos;s components.json:</p>
       <pre className="overflow-x-auto rounded bg-black/5 p-4 text-sm">
         <code>{registryConfig}</code>
       </pre>
@@ -135,7 +144,8 @@ export default function RegistryPage() {
         <code>@import</code> of <code>@deckard/core/styles.css</code>. That
         sheet carries the slide token contract and registers the package&apos;s
         own Tailwind source, so the runtime classes survive tree shaking without
-        a <code>@source</code> line in your app.
+        a <code>@source</code> line in your app. Start here in a new app and
+        swap the theme later if you want a different look.
       </p>
       <p>
         That import is the whole build wiring. <code>@deckard/core</code> ships
@@ -181,8 +191,8 @@ export default function RegistryPage() {
 
       <h2 className="pt-4 text-2xl">Blocks</h2>
       <p>
-        Blocks install to <code>app/slides/blocks/</code> and depend on{" "}
-        <code>@deckard/core</code>. They style themselves entirely from the
+        Blocks install to <code>app/slides/blocks/</code> in your app and import
+        from <code>@deckard/core</code>. They style themselves entirely from the
         slide tokens, so swapping the theme restyles them with no edits. None of
         them pull in a shadcn primitive.
       </p>
