@@ -2,6 +2,7 @@ import type { ResolvedSlide, SlideSummary } from "./types"
 
 export function toSlideSummary(slide: ResolvedSlide): SlideSummary {
   return {
+    authoredTitle: slide.authoredTitle,
     href: slide.href,
     id: slide.id,
     number: slide.number,

@@ -51,7 +51,10 @@ export function SlideShellRuntime({
       readOnly={isReadOnly}
       stepCount={slide.stepCount}
     >
-      <SlideContextProvider isPresenterPreview={isPreview} title={slide.title}>
+      <SlideContextProvider
+        isPresenterPreview={isPreview}
+        title={slide.authoredTitle}
+      >
         <div
           className="group/shell relative h-svh w-full overflow-hidden bg-background text-foreground"
           data-slide-chrome={isPreview ? "hidden" : undefined}

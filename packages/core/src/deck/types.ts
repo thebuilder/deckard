@@ -40,6 +40,10 @@ export interface SlideDefaults {
 }
 
 export interface ResolvedSlide {
+  // Set only when the author gave the slide a title. `title` carries the
+  // generated fallback, which names a slide in chrome but must never render as
+  // the slide's own heading.
+  authoredTitle?: string
   background: SlideBackgroundMode
   body: ReactNode
   footer: SlideFooterMode
@@ -58,6 +62,7 @@ export interface ResolvedSlide {
 
 // Crosses the server/client boundary and BroadcastChannel, so every field has to stay serializable.
 export interface SlideSummary {
+  authoredTitle?: string
   href: string
   id: string
   number: number

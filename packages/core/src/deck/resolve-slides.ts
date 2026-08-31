@@ -60,6 +60,7 @@ export function resolveSlides(
     const id = slide.slug ?? String(number)
 
     return {
+      authoredTitle: slide.title,
       background: slide.background ?? resolvedDefaults.background,
       body: slide.body,
       footer: slide.footer ?? resolvedDefaults.footer,
