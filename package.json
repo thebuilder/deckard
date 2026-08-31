@@ -6,6 +6,7 @@
   "scripts": {
     "analyze": "fallow",
     "build": "turbo run build",
+    "deck:check-overflow": "pnpm --filter playground deck:check-overflow",
     "deck:contact-sheet": "pnpm --filter playground deck:contact-sheet",
     "deck:screenshots": "pnpm --filter playground deck:screenshots",
     "deck:validate": "pnpm --filter playground deck:validate",

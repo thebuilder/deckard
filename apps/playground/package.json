@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "next build",
+    "deck:check-overflow": "node scripts/check-overflow.ts",
     "deck:contact-sheet": "node scripts/contact-sheet.ts",
     "deck:screenshots": "node scripts/screenshots.ts",
     "deck:validate": "node scripts/validate-deck.ts",
