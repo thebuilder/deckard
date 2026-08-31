@@ -92,16 +92,12 @@ export default function AuthoringPage() {
 
       <h2 className="pt-4 text-2xl">Check the change</h2>
       <p>
-        Run <code>pnpm deck:validate</code> after anything structural: a new
-        slug, a slide moved into its own file, a theme edit, a registry path. It
-        loads the real deck, so a duplicate slug or a class the stylesheet never
-        selects comes back as one line instead of a stack trace at build time.
-      </p>
-      <p>
-        Run <code>pnpm deck:check-overflow</code> after changing slide content,
-        and look at a fresh <code>pnpm deck:contact-sheet</code> before calling
-        a deck done. A whole deck in one grid catches what reading the diff does
-        not.
+        Structural edits get <code>pnpm deck:validate</code>: a new slug, a
+        slide moved into its own file, a theme token, a registry path. Content
+        edits get <code>pnpm deck:check-overflow</code>. Before you call a deck
+        done, look at a fresh <code>pnpm deck:contact-sheet</code>, because a
+        whole deck in one grid catches what reading the diff does not. Getting
+        started describes what each one measures.
       </p>
 
       <h2 className="pt-4 text-2xl">Two things that will confuse you</h2>
