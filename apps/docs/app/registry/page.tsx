@@ -131,17 +131,18 @@ export default function RegistryPage() {
       <h2 className="pt-4 text-2xl">preset-deckard</h2>
       <p>
         One add for a new deck: the Deckard theme and all four block families.
-        It also writes the two stylesheet lines you cannot guess, the{" "}
-        <code>@import</code> of the <code>@deckard/core</code> token contract
-        and the Tailwind <code>@source</code> line that makes the package&apos;s
-        classes survive tree shaking.
+        It also writes the one stylesheet line you cannot guess, the{" "}
+        <code>@import</code> of <code>@deckard/core/styles.css</code>. That
+        sheet carries the slide token contract and registers the package&apos;s
+        own Tailwind source, so the runtime classes survive tree shaking without
+        a <code>@source</code> line in your app.
       </p>
       <p>
-        It cannot edit <code>next.config.mjs</code>, and that file needs{" "}
-        <code>transpilePackages: [&quot;@deckard/core&quot;]</code> because the
-        package ships TypeScript source. The CLI prints this reminder after the
-        install. See <Link href="/getting-started">Getting started</Link> for
-        the rest of the setup.
+        That import is the whole build wiring. <code>@deckard/core</code> ships
+        compiled, so <code>next.config.mjs</code> stays empty and nothing has to
+        be transpiled. What is left is deck code. See{" "}
+        <Link href="/getting-started">Getting started</Link> for the rest of the
+        setup.
       </p>
 
       <h2 className="pt-4 text-2xl">Themes</h2>

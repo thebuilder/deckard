@@ -568,9 +568,9 @@ There are seven items. `theme-deckard` and `theme-broadsheet` each install
 three files to `deck/theme/`, so adding one replaces the other.
 `block-typography`, `block-slide-layouts`, `block-collections`, and
 `block-media` install to `app/slides/blocks/`. `preset-deckard` pulls in the
-default theme and every block, and writes the `@import` and `@source` lines
-into the app stylesheet. It cannot write `transpilePackages`, so the CLI prints
-that step instead.
+default theme and every block, and writes the one line the app stylesheet
+needs, `@import "@deckard/core/styles.css"`. That sheet registers the package's
+own Tailwind source, so there is nothing left to wire in `next.config.mjs`.
 
 Theme sources live in two places. The deckard theme is published straight out
 of `apps/playground/deck/theme`, where the reference deck uses it, so the
@@ -580,6 +580,7 @@ lives in `registry/themes/broadsheet`.
 `pnpm smoke:registry` proves the whole path. It builds the registry, serves it
 on a spare port, packs `@deckard/core`, and installs both into a scratch app
 outside the workspace. It checks the files land where the items claim, that the
-preset wrote both stylesheet lines, and that an edit to the installed
-`theme.css` reaches the built stylesheet. Then it swaps in `theme-broadsheet`
-and typechecks again. It takes about a minute.
+preset wrote the stylesheet import and nothing else, that the app builds with
+an empty `next.config.mjs`, and that both an edit to the installed `theme.css`
+and the runtime's own utility classes reach the built stylesheet. Then it swaps
+in `theme-broadsheet` and typechecks again. It takes about a minute.
