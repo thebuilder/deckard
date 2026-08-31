@@ -12,6 +12,7 @@ export interface ImageShowcaseConfig {
   priority?: boolean
   sizes?: string
   src: ImageProps["src"]
+  unoptimized?: boolean
 }
 
 interface FullscreenImageMedia {
@@ -23,6 +24,7 @@ interface FullscreenImageMedia {
   priority?: boolean
   sizes?: string
   src: ImageProps["src"]
+  unoptimized?: boolean
 }
 
 interface FullscreenVideoMedia {
@@ -139,6 +141,7 @@ export function FullscreenMediaSlide({
           priority={media.priority}
           sizes={media.sizes}
           src={media.src}
+          unoptimized={media.unoptimized}
         />
       ) : (
         <SlideMediaVideo
@@ -185,6 +188,7 @@ export function ImageShowcaseSlide({
     priority,
     caption,
     credit,
+    unoptimized,
   } = image
   const resolvedBlurDataURL = blurDataURL ?? resolveSourceBlurDataURL(src)
   const resolvedPlaceholder =
@@ -202,6 +206,7 @@ export function ImageShowcaseSlide({
           priority={priority}
           sizes={sizes}
           src={src}
+          unoptimized={unoptimized}
         />
       </div>
 

@@ -6,6 +6,7 @@ import type { SlideDefinition } from "@deckard/core"
 import { CodeBlock } from "@deckard/core/code-block"
 import { SlideStep } from "@deckard/core/components"
 import { discoverSlides } from "@deckard/core/discovery"
+import type { ReactNode } from "react"
 import { BulletList, FeatureGrid } from "@/app/slides/blocks/collections"
 import { FullscreenMediaSlide } from "@/app/slides/blocks/media"
 import { type Stat, StatGrid } from "@/app/slides/blocks/stats"
@@ -139,7 +140,7 @@ export const slides: SlideDefinition[] = [
     background: "none",
     body: (
       <FullscreenMediaSlide
-        media={{ kind: "image", src: "/canvas-field.svg", sizes: "100vw" }}
+        media={{ kind: "image", src: "/canvas-field.svg", unoptimized: true }}
         overlay="strong"
       />
     )
@@ -152,13 +153,7 @@ export const slides: SlideDefinition[] = [
   }
 ]`
 
-function FrictionPhase({
-  body,
-  label,
-}: {
-  body: React.ReactNode
-  label: string
-}) {
+function FrictionPhase({ body, label }: { body: ReactNode; label: string }) {
   return (
     <div className="grid grid-cols-[13rem_minmax(0,1fr)] items-baseline gap-6 border-[var(--slide-surface-border)] border-t pt-4">
       <p className="font-semibold text-[length:var(--slide-label-size)] text-primary uppercase tracking-[var(--slide-label-tracking)]">
@@ -313,6 +308,7 @@ If someone asks about a database, the answer is the same shape. Await it, return
           priority: true,
           sizes: "100vw",
           src: "/canvas-field.svg",
+          unoptimized: true,
         }}
         overlay="strong"
         variant="background"
