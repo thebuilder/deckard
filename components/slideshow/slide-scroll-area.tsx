@@ -10,8 +10,6 @@ import type {
 } from "react"
 import { useCallback } from "react"
 
-import { cn } from "@/lib/utils"
-
 const scrollKeys = new Set([
   " ",
   "ArrowDown",
@@ -63,7 +61,7 @@ export function SlideScrollArea({
     // biome-ignore lint/a11y/noNoninteractiveElementInteractions: the handlers keep scroll input out of the deck stepper, they do not add an interaction
     <section
       aria-label={label}
-      className={cn("focus-visible:outline-none", className)}
+      className={className}
       data-slide-scroll-area=""
       data-step-ignore-click="true"
       onKeyDown={handleKeyDown}
