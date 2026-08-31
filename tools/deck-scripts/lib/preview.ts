@@ -64,10 +64,13 @@ const buildInputs = [
   path.join(projectRoot, "components"),
   path.join(projectRoot, "deck"),
   path.join(projectRoot, "hooks"),
+  path.join(projectRoot, "lib"),
   path.join(projectRoot, "public"),
+  path.join(projectRoot, "components.json"),
   path.join(projectRoot, "next.config.mjs"),
   path.join(projectRoot, "package.json"),
   path.join(projectRoot, "postcss.config.mjs"),
+  path.join(projectRoot, "tsconfig.json"),
   path.join(corePackageRoot, "src"),
   path.join(corePackageRoot, "package.json"),
 ]
