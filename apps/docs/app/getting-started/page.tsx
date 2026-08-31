@@ -19,6 +19,21 @@ export const deck = defineDeck({
   title: "Deckard",
 })`
 
+const deckChecks = `pnpm deck:validate
+pnpm deck:check-overflow
+pnpm deck:screenshots
+pnpm deck:contact-sheet`
+
+const componentsAliases = `{
+  "aliases": {
+    "components": "@/components",
+    "hooks": "@/hooks",
+    "lib": "@/lib",
+    "ui": "@/components/ui",
+    "utils": "@/lib/utils"
+  }
+}`
+
 const slideArray = `import type { SlideDefinition } from "@deckard/core"
 
 export const slides: SlideDefinition[] = [
@@ -90,6 +105,16 @@ export default function GettingStartedPage() {
         <code>--slide-*</code> variables every block and every theme reads. A
         deck without a theme renders with those defaults.
       </p>
+      <p>
+        In a standalone app, point the <code>utils</code> alias in{" "}
+        <code>components.json</code> at <code>@/lib/utils</code>. shadcn
+        resolves that alias against your tsconfig paths, so a package subpath
+        such as <code>@deckard/core/utils</code> only works inside this
+        workspace and makes <code>shadcn add</code> fail everywhere else.
+      </p>
+      <pre>
+        <code>{componentsAliases}</code>
+      </pre>
 
       <h2 className="pt-4 text-2xl">Describe the deck</h2>
       <p>
@@ -162,6 +187,31 @@ export default function GettingStartedPage() {
         body renders into. Reach for it directly when a deck needs a route the
         adapters do not cover.
       </p>
+
+      <h2 className="pt-4 text-2xl">Check the deck</h2>
+      <p>
+        <code>pnpm deck:validate</code> loads the real deck in about a second
+        and reports three things: whether it resolves at all, whether the theme
+        class and its color blocks match the stylesheet, and whether every
+        registry file path still exists. It exits nonzero with the offending
+        slug, token, or path. Run it after a structural change.
+      </p>
+      <p>
+        <code>pnpm deck:check-overflow</code> builds the deck, serves it, and
+        measures each slide against the canvas with the same arithmetic the
+        development overflow guard uses. It exits nonzero listing the slides
+        whose content is clipped, so it works as a CI gate.
+      </p>
+      <p>
+        <code>pnpm deck:screenshots</code> writes one PNG per slide at canvas
+        size into <code>out/screenshots</code>, dark by default and light with{" "}
+        <code>--light</code>. <code>pnpm deck:contact-sheet</code> composes them
+        into a single grid at <code>out/contact-sheet.png</code>, which is the
+        fastest way to look at a whole deck at once.
+      </p>
+      <pre>
+        <code>{deckChecks}</code>
+      </pre>
 
       <h2 className="pt-4 text-2xl">Export a PDF</h2>
       <p>
