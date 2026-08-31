@@ -21,6 +21,11 @@ const blockFiles = [
   "media.tsx",
 ]
 
+// Classes only the @deckard/core runtime writes. Tailwind reaches them through
+// the @source the package stylesheet registers against its own compiled output,
+// so finding them proves the single @import is the whole contract.
+const runtimeUtilities = ["min-h-16", "backdrop-blur-xl", "data-slide-chrome"]
+
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) {
     throw new Error(message)
@@ -143,26 +148,17 @@ function assertStylesheetWiring(appDirectory: string) {
     "the preset did not add the @deckard/core stylesheet import"
   )
   assert(
-    css.includes("@source") && css.includes("@deckard/core/src"),
-    "the preset did not add the Tailwind @source line"
+    !css.includes("@source"),
+    "the preset wrote a consumer @source, which the package now registers itself"
   )
 }
 
-function applyTranspilePackages(appDirectory: string) {
-  const file = path.join(appDirectory, "next.config.mjs")
-  const config = fs.readFileSync(file, "utf8")
+function assertPlainNextConfig(appDirectory: string) {
+  const config = readFile(appDirectory, "next.config.mjs")
 
   assert(
     !config.includes("transpilePackages"),
-    "the fixture already transpiled the package, so this step proves nothing"
-  )
-
-  fs.writeFileSync(
-    file,
-    config.replace(
-      "const nextConfig = {}",
-      'const nextConfig = {\n  transpilePackages: ["@deckard/core"],\n}'
-    )
+    "the consumer app needs no transpilePackages, because @deckard/core ships compiled"
   )
 }
 
@@ -178,18 +174,23 @@ function findStylesheets(directory: string): string[] {
   })
 }
 
-function assertThemeReachedTheBuild(appDirectory: string) {
+function assertBuiltStylesheet(appDirectory: string) {
   const bundles = findStylesheets(path.join(appDirectory, ".next"))
 
   assert(bundles.length > 0, "next build emitted no stylesheet")
 
-  const found = bundles.some((file) =>
-    fs.readFileSync(file, "utf8").includes(ownershipToken)
-  )
+  const css = bundles.map((file) => fs.readFileSync(file, "utf8")).join("\n")
 
   assert(
-    found,
+    css.includes(ownershipToken),
     "the edit to deck/theme/theme.css never reached the built stylesheet"
+  )
+
+  const missing = runtimeUtilities.filter((utility) => !css.includes(utility))
+
+  assert(
+    missing.length === 0,
+    `the built stylesheet is missing @deckard/core runtime utilities: ${missing.join(", ")}`
   )
 }
 
@@ -214,6 +215,7 @@ const server = await serveRegistry(registryDirectory)
 
 try {
   await run("shadcn", ["build", "--output", registryDirectory], repoRoot)
+  await run("pnpm", ["--filter", "@deckard/core", "run", "build"], repoRoot)
   await packCore(scratch)
   fs.cpSync(fixtureSource, smokeApp, { recursive: true })
   pointAtRegistry(smokeApp, server.port)
@@ -231,11 +233,11 @@ try {
 
   assertConsumerOwned(smokeApp)
   assertStylesheetWiring(smokeApp)
-  applyTranspilePackages(smokeApp)
+  assertPlainNextConfig(smokeApp)
 
   await run("pnpm", ["run", "typecheck"], smokeApp)
   await run("pnpm", ["run", "build"], smokeApp)
-  assertThemeReachedTheBuild(smokeApp)
+  assertBuiltStylesheet(smokeApp)
 
   await run(
     "pnpm",

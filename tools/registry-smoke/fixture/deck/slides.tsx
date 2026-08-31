@@ -45,7 +45,7 @@ export const slides: SlideDefinition[] = [
           items={[
             "The theme landed in deck/theme and this app owns those files.",
             "The blocks landed in app/slides/blocks and import @deckard/core.",
-            "Tailwind scans the package because the preset added the source line.",
+            "The only build wiring is the stylesheet import the preset wrote.",
           ]}
         />
       </ContentSlideCard>
