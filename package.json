@@ -11,6 +11,9 @@
     "lint": "ultracite fix --error-on-warnings",
     "lint:check": "ultracite check",
     "start": "next start",
+    "test": "vitest run --passWithNoTests",
+    "test:browser": "vitest run --project browser --passWithNoTests",
+    "test:unit": "vitest run --project node",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -35,12 +38,15 @@
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@vitest/browser": "^4.1.11",
+    "@vitest/browser-playwright": "^4.1.11",
     "fallow": "^3.21.0",
     "pdf-lib": "^1.17.1",
     "playwright": "^1.55.1",
     "postcss": "^8",
     "tailwindcss": "^4.2.1",
     "typescript": "^5.9.3",
-    "ultracite": "7.10.7"
+    "ultracite": "7.10.7",
+    "vitest": "^4.1.11"
   }
 }
