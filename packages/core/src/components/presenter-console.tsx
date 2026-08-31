@@ -138,40 +138,42 @@ function PreviewFrame({
     previewUrl,
     null,
   ])
+  // The iframe key is layer plus src, so a layer that already holds the wanted
+  // document never fires onLoad again. Reveal it from here instead.
+  const loadedUrlsRef = useRef<[string | null, string | null]>([null, null])
 
   useEffect(() => {
     if (!previewUrl) {
-      setLayerUrls((previous) => {
-        if (previous[0] === null && previous[1] === null) {
-          return previous
-        }
-
-        return [null, null]
-      })
+      loadedUrlsRef.current = [null, null]
+      setLayerUrls((previous) =>
+        previous[0] === null && previous[1] === null ? previous : [null, null]
+      )
       return
     }
 
-    setLayerUrls((previous) => {
-      const currentActiveUrl = previous[activeLayer]
+    if (layerUrls[activeLayer] === previewUrl) {
+      return
+    }
 
-      if (currentActiveUrl === previewUrl) {
-        return previous
+    const hiddenLayer = activeLayer === 0 ? 1 : 0
+
+    if (layerUrls[hiddenLayer] === previewUrl) {
+      if (loadedUrlsRef.current[hiddenLayer] === previewUrl) {
+        setActiveLayer(hiddenLayer)
       }
 
-      const hiddenLayer = activeLayer === 0 ? 1 : 0
+      return
+    }
 
-      if (previous[hiddenLayer] === previewUrl) {
-        return previous
-      }
-
-      const nextUrls: [string | null, string | null] = [...previous]
-      nextUrls[hiddenLayer] = previewUrl
-      return nextUrls
-    })
-  }, [activeLayer, previewUrl])
+    const nextUrls: [string | null, string | null] = [...layerUrls]
+    nextUrls[hiddenLayer] = previewUrl
+    setLayerUrls(nextUrls)
+  }, [activeLayer, layerUrls, previewUrl])
 
   const handleLoad = useCallback(
     (layer: 0 | 1) => {
+      loadedUrlsRef.current[layer] = layerUrls[layer]
+
       if (layerUrls[layer] !== previewUrl || !previewUrl) {
         return
       }
