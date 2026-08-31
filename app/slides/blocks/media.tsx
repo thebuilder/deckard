@@ -105,7 +105,7 @@ const overlayClassNames: Record<FullscreenMediaOverlay, string> = {
 
 export function FullscreenMediaSlide({
   media,
-  variant = "framed",
+  variant = "background",
   overlay = "medium",
   children,
 }: {
@@ -122,8 +122,8 @@ export function FullscreenMediaSlide({
 
   const containerClassName =
     variant === "background"
-      ? "relative h-full min-h-[16rem] w-full overflow-hidden"
-      : "relative h-full overflow-hidden rounded-3xl border border-border/70 bg-card/60"
+      ? "relative h-full w-full overflow-hidden"
+      : "relative h-full w-full overflow-hidden rounded-3xl border border-border/70 bg-card/60"
   const overlayClassName = overlayClassNames[overlay]
 
   return (
@@ -160,7 +160,7 @@ export function FullscreenMediaSlide({
 
       {children ? (
         <div
-          className={`pointer-events-none absolute inset-x-0 bottom-0 z-10 p-8 ${overlayClassName}`}
+          className={`pointer-events-none absolute inset-x-0 bottom-0 z-10 px-12 pt-12 pb-[calc(3rem+var(--slide-chrome-bottom,0px))] ${overlayClassName}`}
         >
           <div className="pointer-events-auto">{children}</div>
         </div>
@@ -192,8 +192,8 @@ export function ImageShowcaseSlide({
     placeholder === "blur" && !resolvedBlurDataURL ? undefined : placeholder
 
   return (
-    <section className="grid h-full grid-cols-[1.2fr_0.8fr] gap-6">
-      <div className="relative min-h-[20rem] overflow-hidden rounded-3xl border border-border/70 bg-card/60">
+    <section className="grid h-full grid-cols-[1.2fr_0.8fr] gap-6 px-6 pt-[calc(1.5rem+var(--slide-chrome-top,0px))] pb-[calc(1.5rem+var(--slide-chrome-bottom,0px))]">
+      <div className="relative overflow-hidden rounded-3xl border border-border/70 bg-card/60">
         <Image
           alt={alt ?? ""}
           blurDataURL={resolvedBlurDataURL}

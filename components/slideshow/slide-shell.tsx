@@ -81,10 +81,12 @@ const canvasFrames = {
   },
   fullscreen: {
     base: "p-0",
-    footer: { off: "", on: "pb-20" },
-    header: { off: "", on: "pt-24" },
+    footer: { off: "", on: "" },
+    header: { off: "", on: "" },
   },
 }
+
+const fullscreenChromeInsets = { bottom: 80, top: 96 }
 
 function frameClassName({ isFullscreen, showFooter, showHeader }: ChromeState) {
   const frame = canvasFrames[isFullscreen ? "fullscreen" : "default"]
@@ -94,6 +96,18 @@ function frameClassName({ isFullscreen, showFooter, showHeader }: ChromeState) {
     frame.header[showHeader ? "on" : "off"],
     frame.footer[showFooter ? "on" : "off"]
   )
+}
+
+// The fullscreen frame reserves nothing, so slide content that has to clear the chrome reads these instead.
+function chromeInset({ isFullscreen, showFooter, showHeader }: ChromeState) {
+  if (!isFullscreen) {
+    return { bottom: 0, top: 0 }
+  }
+
+  return {
+    bottom: showFooter ? fullscreenChromeInsets.bottom : 0,
+    top: showHeader ? fullscreenChromeInsets.top : 0,
+  }
 }
 
 function SlideCanvasHeader({
@@ -188,6 +202,7 @@ export function SlideShell({
             <SlideCanvas
               background={background}
               canvas={canvas}
+              chromeInset={chromeInset(chrome)}
               footer={
                 chrome.showFooter ? (
                   <SlideNavigation

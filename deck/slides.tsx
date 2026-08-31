@@ -227,7 +227,6 @@ export const slides: SlideDefinition[] = [
         image={{
           src: templateCapabilitiesImage,
           alt: "Capability map for Deckard",
-          fit: "contain",
           caption: "Use this for diagrams, mockups, or campaign visuals.",
           credit: "Generated template asset",
         }}
