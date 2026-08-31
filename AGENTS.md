@@ -49,3 +49,4 @@ The reusable parts (`lib/deck`, `components/slideshow`) are headed for `@deckard
 - Favor small, composable components over large monolithic slide bodies.
 - Update README when introducing new slide model fields or behavior.
 - Run `pnpm typecheck && pnpm lint && pnpm test` after structural changes.
+- Read the Next.js docs for the pinned version in `node_modules/next/dist/docs/` before writing App Router code. The APIs move fast, and `next dev` is configured not to inject its own agent-rules block into this file (`agentRules: false` in `next.config.mjs`).
