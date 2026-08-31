@@ -31,6 +31,15 @@ function describe(overflow: Overflow) {
   return `Slide content runs ${parts.join(" and ")} the canvas and is clipped.`
 }
 
+function isSameOverflow(left: Overflow | null, right: Overflow | null) {
+  if (!(left && right)) {
+    return left === right
+  }
+
+  return left.x === right.x && left.y === right.y
+}
+
+// Development-only feedback: the canvas clips silently, so authors get told the moment a slide asks for more room than it has.
 export function SlideOverflowGuard() {
   const anchorRef = useRef<HTMLDivElement>(null)
   const [overflow, setOverflow] = useState<Overflow | null>(null)
@@ -45,15 +54,36 @@ export function SlideOverflowGuard() {
       return
     }
 
-    const observer = new ResizeObserver(() => setOverflow(measure(frame)))
+    let frameRequest = 0
 
-    observer.observe(frame)
+    const check = () => {
+      cancelAnimationFrame(frameRequest)
+      frameRequest = requestAnimationFrame(() => {
+        const next = measure(frame)
 
-    for (const child of frame.children) {
-      observer.observe(child)
+        setOverflow((current) =>
+          isSameOverflow(current, next) ? current : next
+        )
+      })
     }
 
-    return () => observer.disconnect()
+    const resizeObserver = new ResizeObserver(check)
+    const mutationObserver = new MutationObserver(check)
+
+    resizeObserver.observe(frame)
+    mutationObserver.observe(frame, {
+      attributes: true,
+      characterData: true,
+      childList: true,
+      subtree: true,
+    })
+    check()
+
+    return () => {
+      cancelAnimationFrame(frameRequest)
+      resizeObserver.disconnect()
+      mutationObserver.disconnect()
+    }
   }, [])
 
   useEffect(() => {
@@ -65,7 +95,10 @@ export function SlideOverflowGuard() {
   return (
     <div aria-hidden className="contents" ref={anchorRef}>
       {overflow ? (
-        <div className="pointer-events-none absolute inset-0 z-50 ring-2 ring-amber-500/60 ring-inset">
+        <div
+          className="pointer-events-none absolute inset-0 z-50 ring-2 ring-amber-500/60 ring-inset"
+          data-slide-overflow=""
+        >
           <p className="absolute right-3 bottom-3 rounded-full bg-amber-500/90 px-3 py-1 font-medium text-[11px] text-amber-950">
             {describe(overflow)}
           </p>
