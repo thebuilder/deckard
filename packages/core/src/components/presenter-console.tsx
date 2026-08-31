@@ -415,13 +415,15 @@ export function PresenterConsole({ canvas }: { canvas: DeckCanvasConfig }) {
   }, [])
 
   return (
-    <div className="grid h-svh grid-cols-1 overflow-hidden bg-background text-foreground lg:grid-cols-[22rem_1fr]">
-      <aside className="flex min-h-0 flex-col overflow-hidden border-border/70 border-b p-6 lg:border-r lg:border-b-0">
-        <p className="text-muted-foreground text-xs uppercase tracking-[0.22em]">
+    // Two panes side by side on a wide screen. Narrower than that they become
+    // one column the page scrolls, because a phone cannot hold two panes.
+    <div className="flex min-h-svh flex-col bg-background text-foreground lg:grid lg:h-svh lg:grid-cols-[22rem_1fr] lg:overflow-hidden">
+      <aside className="order-2 flex flex-col border-border/70 border-t p-6 lg:order-none lg:min-h-0 lg:overflow-hidden lg:border-t-0 lg:border-r">
+        <p className="order-1 text-muted-foreground text-xs uppercase tracking-[0.22em] lg:order-none">
           Presenter View
         </p>
 
-        <div className="mt-5 grid grid-cols-2 gap-3">
+        <div className="order-4 mt-5 grid grid-cols-2 gap-3 lg:order-none">
           <div className="rounded-xl border border-border/70 bg-card/60 p-3">
             <p className="font-semibold text-[0.65rem] text-muted-foreground uppercase tracking-[0.18em]">
               Timer
@@ -438,7 +440,7 @@ export function PresenterConsole({ canvas }: { canvas: DeckCanvasConfig }) {
           </div>
         </div>
 
-        <div className="mt-5 rounded-xl border border-border/70 bg-card/60 p-4">
+        <div className="order-3 mt-5 rounded-xl border border-border/70 bg-card/60 p-4 lg:order-none">
           <p className="font-semibold text-[0.65rem] text-muted-foreground uppercase tracking-[0.18em]">
             Next Step Preview
           </p>
@@ -450,7 +452,7 @@ export function PresenterConsole({ canvas }: { canvas: DeckCanvasConfig }) {
           </div>
         </div>
 
-        <div className="mt-4 rounded-xl border border-border/70 bg-card/60 p-3">
+        <div className="order-5 mt-4 rounded-xl border border-border/70 bg-card/60 p-3 lg:order-none">
           <p className="font-semibold text-[0.65rem] text-muted-foreground uppercase tracking-[0.18em]">
             Flow
           </p>
@@ -467,7 +469,7 @@ export function PresenterConsole({ canvas }: { canvas: DeckCanvasConfig }) {
           </div>
         </div>
 
-        <div className="mt-4 flex items-center justify-between gap-3">
+        <div className="order-2 mt-4 flex items-center justify-between gap-3 lg:order-none">
           <Button
             className="gap-2"
             disabled={!canNavigatePrevious}
@@ -489,14 +491,14 @@ export function PresenterConsole({ canvas }: { canvas: DeckCanvasConfig }) {
           </Button>
         </div>
 
-        <p className="mt-auto pt-4 text-muted-foreground text-xs">
+        <p className="order-6 pt-4 text-muted-foreground text-xs lg:order-none lg:mt-auto">
           {connected
             ? "Connected via BroadcastChannel."
             : "Waiting for connection from the slideshow tab."}
         </p>
       </aside>
 
-      <section className="flex min-h-0 flex-col overflow-hidden p-5 sm:p-6">
+      <section className="order-1 flex flex-col p-5 sm:p-6 lg:order-none lg:min-h-0 lg:overflow-hidden">
         <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
           <div>
             <p className="font-semibold text-[0.65rem] text-muted-foreground uppercase tracking-[0.18em]">
@@ -528,8 +530,8 @@ export function PresenterConsole({ canvas }: { canvas: DeckCanvasConfig }) {
           <CurrentSlidePreview canvas={canvas} state={state} />
         </div>
 
-        <div className="mt-5 flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-border/80 bg-card/80">
-          <div className="min-h-0 flex-1 overflow-y-auto p-6">
+        <div className="mt-5 flex flex-col rounded-2xl border border-border/80 bg-card/80 lg:min-h-0 lg:flex-1 lg:overflow-hidden">
+          <div className="p-6 lg:min-h-0 lg:flex-1 lg:overflow-y-auto">
             <p
               className="whitespace-pre-wrap text-foreground"
               style={{
