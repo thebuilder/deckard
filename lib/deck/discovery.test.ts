@@ -122,7 +122,7 @@ describe("discoverSlides definitions", () => {
     )
 
     expect(definition.title).toBe("Pricing")
-    expect(definition.order).toBeUndefined()
+    expect(Object.hasOwn(definition, "order")).toBe(false)
   })
 
   it("keeps discovered slides where the array spreads them", () => {

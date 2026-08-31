@@ -5,9 +5,10 @@ export function slideFromModule(
   sourcePath?: string
 ): SlideDefinition {
   const Slide = slideModule.default
+  const { order: _order, ...meta } = slideModule.meta ?? {}
 
   return {
-    ...slideModule.meta,
+    ...meta,
     body: <Slide />,
     notes: slideModule.notes ?? slideModule.meta?.notes,
     sourcePath,

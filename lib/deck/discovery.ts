@@ -81,12 +81,10 @@ function comparatorFor(sort: SlideSort): SlideComparator {
   return sort === "order" ? byOrder : sort
 }
 
-// meta.order sorts the discovered group and stops there. Carrying it onto the
-// definition would let a module reorder the deck array it was spread into.
+// meta.order sorts the discovered group and stops there. slideFromModule drops
+// it, so a module can never reorder the deck array it was spread into.
 function toDefinition(slide: DiscoveredSlide): SlideDefinition {
-  const { order, ...definition } = slideFromModule(slide.module, slide.path)
-
-  return definition
+  return slideFromModule(slide.module, slide.path)
 }
 
 export function discoverSlides(
