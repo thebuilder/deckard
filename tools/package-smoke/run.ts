@@ -11,6 +11,10 @@ const repoRoot = path.resolve(toolDirectory, "../..")
 const fixtureSource = path.join(toolDirectory, "fixture")
 const keepScratch = process.argv.includes("--keep")
 
+// Classes only the runtime writes. Tailwind can only reach them through the
+// @source the package stylesheet registers against its own compiled output.
+const runtimeUtilities = ["min-h-16", "backdrop-blur-xl", "data-slide-chrome"]
+
 function run(command: string, args: string[], cwd: string) {
   const result = spawnSync(command, args, {
     cwd,
@@ -20,6 +24,46 @@ function run(command: string, args: string[], cwd: string) {
 
   if (result.status !== 0) {
     throw new Error(`${command} ${args.join(" ")} failed in ${cwd}`)
+  }
+}
+
+// The fixture is the app a consumer writes, so anything the package should be
+// doing for them cannot appear in it.
+function assertPlainConsumer() {
+  const config = fs.readFileSync(
+    path.join(fixtureSource, "next.config.mjs"),
+    "utf8"
+  )
+
+  if (config.includes("transpilePackages")) {
+    throw new Error("The fixture must build without transpilePackages")
+  }
+
+  const css = fs.readFileSync(
+    path.join(fixtureSource, "app/globals.css"),
+    "utf8"
+  )
+
+  if (css.includes("@source")) {
+    throw new Error("The fixture must build without a consumer-level @source")
+  }
+}
+
+function assertRuntimeStyles(directory: string) {
+  const staticDirectory = path.join(directory, ".next/static")
+  const css = fs
+    .readdirSync(staticDirectory, { recursive: true })
+    .map((entry) => path.join(staticDirectory, String(entry)))
+    .filter((entry) => entry.endsWith(".css"))
+    .map((entry) => fs.readFileSync(entry, "utf8"))
+    .join("\n")
+
+  const missing = runtimeUtilities.filter((utility) => !css.includes(utility))
+
+  if (missing.length > 0) {
+    throw new Error(
+      `The built CSS is missing runtime utilities: ${missing.join(", ")}`
+    )
   }
 }
 
@@ -60,6 +104,8 @@ const scratch = fs.mkdtempSync(path.join(os.tmpdir(), "deckard-smoke-"))
 const appDirectory = path.join(scratch, "app")
 
 try {
+  assertPlainConsumer()
+  run("pnpm", ["--filter", "@deckard/core", "run", "build"], repoRoot)
   packCore(scratch)
   fs.cpSync(fixtureSource, appDirectory, { recursive: true })
 
@@ -70,8 +116,11 @@ try {
   )
   run("pnpm", ["run", "typecheck"], appDirectory)
   run("pnpm", ["run", "build"], appDirectory)
+  assertRuntimeStyles(appDirectory)
 
-  process.stdout.write("\n@deckard/core builds in a standalone Next.js app\n")
+  process.stdout.write(
+    "\n@deckard/core builds and styles a standalone Next.js app\n"
+  )
 } finally {
   if (keepScratch) {
     process.stdout.write(`scratch kept at ${scratch}\n`)

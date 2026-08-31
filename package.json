@@ -6,7 +6,7 @@
   "scripts": {
     "analyze": "fallow",
     "build": "turbo run build",
-    "dev": "turbo run dev --filter=playground",
+    "dev": "turbo run dev --filter=playground...",
     "export:pdf": "pnpm --filter playground export:pdf",
     "lint": "ultracite fix --error-on-warnings",
     "lint:check": "ultracite check",

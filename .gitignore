@@ -38,6 +38,7 @@ pnpm-debug.log*
 .env*.local
 
 # typescript
+packages/*/dist
 *.tsbuildinfo
 next-env.d.ts
 posters

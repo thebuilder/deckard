@@ -1,6 +1,4 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  transpilePackages: ["@deckard/core"],
-}
+const nextConfig = {}
 
 export default nextConfig

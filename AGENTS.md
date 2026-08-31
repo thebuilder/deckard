@@ -7,8 +7,9 @@ presenter tooling, and shadcn-native themes. It runs on Next.js.
 It is a pnpm workspace driven by Turborepo:
 
 - `packages/core` is `@deckard/core`, the deck contract and the slideshow
-  runtime. It ships TypeScript source, no build step, consumed through Next
-  `transpilePackages`.
+  runtime. It compiles to `dist/` with `tsc`, and apps consume the build. Turbo
+  builds it before an app builds, and `pnpm dev` runs its `tsc --watch`
+  alongside the app.
 - `apps/playground` is the reference deck and the app the visual checks run
   against.
 - `apps/docs` is the documentation site.
@@ -25,8 +26,8 @@ Keep deck-specific content out of `packages/core`. Colors, sizes, backgrounds,
 and copy belong to the deck that owns them.
 
 A presentation built on Deckard is a plain Next.js app: `app/`, `components/`,
-`deck/`, `public/`, `package.json`, plus `transpilePackages: ["@deckard/core"]`
-and a Tailwind `@source` pointed at the package. Nothing about the workspace
+`deck/`, `public/`, `package.json`, plus one `@import "@deckard/core/styles.css"`.
+No `transpilePackages`, no Tailwind `@source`. Nothing about the workspace
 layout leaks into the app someone generates from the framework.
 
 ## Core architecture
@@ -91,7 +92,9 @@ layout leaks into the app someone generates from the framework.
 
 - Apps import the runtime through the package exports only: `@deckard/core`, `/components`, `/code-block`, `/discovery`, `/next`, `/slide-from-module`, `/ui`, `/utils`, `/styles.css`. Never a deep path into `packages/core/src`.
 - New runtime code goes in `packages/core` and gets an export. New deck content goes in `apps/playground`. If a component names the deck, a color, or a slide, it is deck content.
-- A new export means adding it to the matching index file. `packages/core/src/index.ts`, `src/components/index.ts`, and `src/ui/index.ts` are the only barrels, and biome allows barrels only there.
+- A new export means adding it to the matching index file, and a new subpath means adding it to the `exports` map in `packages/core/package.json`, where every entry points at `dist`. `packages/core/src/index.ts`, `src/components/index.ts`, and `src/ui/index.ts` are the only barrels, and biome allows barrels only there.
+- Route files belong to `@deckard/core/next`. An app's `app/slides/[id]/page.tsx`, `app/presenter/page.tsx`, `app/sitemap.ts`, and `app/page.tsx` are re-exports of `createSlideRoute`, `createPresenterPage`, `createDeckSitemap`, and `createFirstSlideRedirect`.
+- The slide route is static. Nothing in it may read the request: `presenterPreview` and `step` are read on the client, so the whole deck prerenders.
 - Nothing heavy or async belongs in the components barrel. `CodeBlock` sits behind its own entry point because shiki loads WebAssembly, and a discovered slide module that reaches it through the barrel would throw.
 - Adding a dependency to the runtime means adding it to `packages/core/package.json`, not the app's. `pnpm smoke:package` catches the ones that only work because the workspace hoisted them.
 

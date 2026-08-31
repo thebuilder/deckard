@@ -1,4 +1,10 @@
 /*
+ * Registered here rather than in the app: the path is relative to this file, so
+ * it resolves inside the package wherever the package manager put it.
+ */
+@source "./dist/**/*.js";
+
+/*
  * Presentation token contract. A deck theme redefines these on the canvas and wins,
  * because it ships unlayered CSS and everything here sits in the base layer.
  * A deck without a theme still renders: neutral sizes, app surfaces, no decoration.

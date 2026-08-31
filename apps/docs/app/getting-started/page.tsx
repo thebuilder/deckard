@@ -36,6 +36,16 @@ export default async function PricingSlide() {
   return <PricingTable plans={await loadPlans()} />
 }`
 
+const slideRoute = `// app/slides/[id]/page.tsx
+import { createSlideRoute } from "@deckard/core/next"
+
+import { deck } from "@/deck/deck"
+
+const { Page, generateMetadata, generateStaticParams } = createSlideRoute(deck)
+
+export { generateMetadata, generateStaticParams }
+export default Page`
+
 const discovery = `import { discoverSlides } from "@deckard/core/discovery"
 
 const discoveredSlides = discoverSlides(
@@ -64,22 +74,15 @@ export default function GettingStartedPage() {
 
       <h2 className="pt-4 text-2xl">Add Deckard to a Next.js app</h2>
       <p>
-        <code>@deckard/core</code> ships as TypeScript source with no build
-        step, so Next has to compile it. Add it to{" "}
-        <code>transpilePackages</code> in <code>next.config.mjs</code>, and
-        point a Tailwind <code>@source</code> at the package so its utility
-        classes survive the scan.
+        <code>@deckard/core</code> ships compiled, so Next consumes it like any
+        other package: no <code>transpilePackages</code> entry, no Tailwind{" "}
+        <code>@source</code>. One import in the app stylesheet is the whole
+        wiring, because the package stylesheet registers the package&apos;s own
+        output as a Tailwind source.
       </p>
       <pre>
         <code>
-          {'const nextConfig = {\n  transpilePackages: ["@deckard/core"],\n}'}
-        </code>
-      </pre>
-      <pre>
-        <code>
-          {
-            '@import "tailwindcss";\n@import "@deckard/core/styles.css";\n\n@source "../node_modules/@deckard/core/src";'
-          }
+          {'@import "tailwindcss";\n@import "@deckard/core/styles.css";'}
         </code>
       </pre>
       <p>
@@ -140,11 +143,24 @@ export default function GettingStartedPage() {
 
       <h2 className="pt-4 text-2xl">Render the routes</h2>
       <p>
-        <code>SlideShell</code> from <code>@deckard/core/components</code> is
-        the chrome: header, footer, navigation, command center, error boundary,
-        and the canvas the slide body renders into. Hand it the deck
-        presentation from <code>toDeckPresentation</code>, the slide summaries
-        from <code>toSlideSummaries</code>, and the slide body as children.
+        <code>@deckard/core/next</code> ships the routes, so an app owns its
+        deck and nothing else. <code>createSlideRoute</code> returns the slide
+        page with its metadata and static params,{" "}
+        <code>createPresenterPage</code> the presenter console,{" "}
+        <code>createDeckSitemap</code> the sitemap the PDF export reads, and{" "}
+        <code>createFirstSlideRedirect</code> the root redirect. Every slide
+        prerenders: the route reads no request, and the presenter preview flags
+        are read from the URL on the client.
+      </p>
+      <pre>
+        <code>{slideRoute}</code>
+      </pre>
+      <p>
+        Under it, <code>SlideShell</code> from{" "}
+        <code>@deckard/core/components</code> is the chrome: header, footer,
+        navigation, command center, error boundary, and the canvas the slide
+        body renders into. Reach for it directly when a deck needs a route the
+        adapters do not cover.
       </p>
 
       <h2 className="pt-4 text-2xl">Export a PDF</h2>

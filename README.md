@@ -63,7 +63,7 @@ This is a pnpm workspace run by Turborepo.
 Every script runs from the root:
 
 ```bash
-pnpm dev            # playground on :3000
+pnpm dev            # playground on :3000, core rebuilding on save
 pnpm build          # every app
 pnpm typecheck
 pnpm test           # 73 tests across core and playground
@@ -74,13 +74,12 @@ pnpm smoke:package  # pack @deckard/core and build a scratch app against it
 
 ### @deckard/core
 
-The package ships TypeScript source with no build step. Apps compile it
-through `transpilePackages`, so an edit in the runtime shows up in the next
-render instead of after a rebuild. Nothing is generated, nothing goes stale,
-and a stack trace points at the real file. The cost is that a consumer has to
-list the package in `transpilePackages` and point a Tailwind `@source` at it.
-Both are below, in
-[Adding Deckard to your own app](#adding-deckard-to-your-own-app).
+The package compiles to `dist/` with `tsc`: ESM, `.d.ts`, and the `use client`
+directives preserved. No bundler, so a stack trace still points at a file that
+matches the source. An app installs it and imports it like any other package,
+with no `transpilePackages` entry and no Tailwind `@source` of its own.
+`pnpm dev` runs `tsc --watch` beside the app, so an edit in the runtime lands
+in the next render.
 
 | Entry point | Contents |
 | --- | --- |
@@ -100,25 +99,17 @@ the deck theme of the app that owns them.
 ### Adding Deckard to your own app
 
 A presentation built on Deckard is a plain Next.js app: `app/`, `components/`,
-`deck/`, `public/`, `package.json`. Two lines connect it to the package.
-
-```js
-// next.config.mjs
-const nextConfig = {
-  transpilePackages: ["@deckard/core"],
-}
-```
+`deck/`, `public/`, `package.json`. One line connects it to the package.
 
 ```css
 /* app/globals.css */
 @import "tailwindcss";
 @import "@deckard/core/styles.css";
-
-@source "../node_modules/@deckard/core/src";
 ```
 
-Without the `@source` line Tailwind never scans the package and the chrome
-renders unstyled.
+That stylesheet registers the package's own compiled output as a Tailwind
+source, so the chrome gets its utilities without the app naming a path inside
+`node_modules`.
 
 The routes come from `@deckard/core/next`, so an app owns its deck and nothing
 else:

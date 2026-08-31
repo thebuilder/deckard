@@ -1,26 +1,67 @@
 {
   "name": "@deckard/core",
   "version": "0.0.1",
+  "description": "The deck contract and the slideshow runtime behind Deckard, a React presentation framework for Next.js.",
+  "keywords": [
+    "deck",
+    "next",
+    "presentation",
+    "react",
+    "slides"
+  ],
+  "homepage": "https://github.com/thebuilder/next-slideshow-template#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thebuilder/next-slideshow-template.git"
+  },
+  "license": "MIT",
   "sideEffects": [
     "*.css"
   ],
   "type": "module",
   "exports": {
-    ".": "./src/index.ts",
-    "./components": "./src/components/index.ts",
-    "./code-block": "./src/components/code-block.tsx",
-    "./discovery": "./src/deck/discovery.ts",
-    "./next": "./src/next/routes.tsx",
-    "./slide-from-module": "./src/deck/slide-from-module.tsx",
-    "./ui": "./src/ui/index.ts",
-    "./utils": "./src/lib/utils.ts",
-    "./styles.css": "./src/styles.css",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./components": {
+      "types": "./dist/components/index.d.ts",
+      "default": "./dist/components/index.js"
+    },
+    "./code-block": {
+      "types": "./dist/components/code-block.d.ts",
+      "default": "./dist/components/code-block.js"
+    },
+    "./discovery": {
+      "types": "./dist/deck/discovery.d.ts",
+      "default": "./dist/deck/discovery.js"
+    },
+    "./next": {
+      "types": "./dist/next/routes.d.ts",
+      "default": "./dist/next/routes.js"
+    },
+    "./slide-from-module": {
+      "types": "./dist/deck/slide-from-module.d.ts",
+      "default": "./dist/deck/slide-from-module.js"
+    },
+    "./ui": {
+      "types": "./dist/ui/index.d.ts",
+      "default": "./dist/ui/index.js"
+    },
+    "./utils": {
+      "types": "./dist/lib/utils.d.ts",
+      "default": "./dist/lib/utils.js"
+    },
+    "./styles.css": "./styles.css",
     "./package.json": "./package.json"
   },
   "files": [
-    "src"
+    "dist",
+    "styles.css"
   ],
   "scripts": {
+    "build": "tsc --project tsconfig.build.json",
+    "dev": "tsc --project tsconfig.build.json --watch --preserveWatchOutput",
     "test": "vitest run --passWithNoTests",
     "test:browser": "vitest run --project browser --passWithNoTests",
     "test:unit": "vitest run --project node",
@@ -53,5 +94,8 @@
     "next": ">=16",
     "react": ">=19",
     "react-dom": ">=19"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
