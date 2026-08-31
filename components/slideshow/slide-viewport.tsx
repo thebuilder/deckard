@@ -1,4 +1,7 @@
+"use client"
+
 import type { CSSProperties, ReactNode } from "react"
+import { useLayoutEffect, useState } from "react"
 
 import type { DeckCanvasConfig } from "@/lib/deck/types"
 
@@ -7,21 +10,26 @@ interface SlideViewportProps {
   children: ReactNode
 }
 
-// A margin of zero has to stay a plain division, so an exact 16:9 window puts the canvas edges on the window edges.
-function fitScale(axis: "w" | "h", side: number, gutter: number) {
-  const available =
-    gutter === 0 ? `100cq${axis}` : `(100cq${axis} - ${gutter}px)`
+// A stage that collapses to zero would take the slide with it, so the fit never goes below this.
+const minimumScale = 0.0001
 
-  return `calc(${available} / ${side}px)`
-}
+// Firefox has no typed CSS arithmetic before 155, so a length over a length can only be divided here.
+function fitScale(
+  canvas: Pick<DeckCanvasConfig, "height" | "margin" | "width">,
+  width: number,
+  height: number
+) {
+  const gutter = canvas.margin > 0 ? canvas.margin * 2 : 0
+  const scale = Math.min(
+    (width - gutter) / canvas.width,
+    (height - gutter) / canvas.height
+  )
 
-// Container query units keep the fit correct on the first paint, so the canvas never lands at the wrong scale before hydration.
-function fitTransform(canvas: DeckCanvasConfig) {
-  const gutter = canvas.margin * 2
-  const widthScale = fitScale("w", canvas.width, gutter)
-  const heightScale = fitScale("h", canvas.height, gutter)
+  if (!Number.isFinite(scale) || scale < minimumScale) {
+    return minimumScale
+  }
 
-  return `translate(-50%, -50%) scale(min(${widthScale}, ${heightScale}))`
+  return scale
 }
 
 // Geometry stays in inline styles: the fit has to hold wherever this renders, with or without the deck stylesheet.
@@ -33,13 +41,47 @@ const viewportStyle: CSSProperties = {
 }
 
 export function SlideViewport({ canvas, children }: SlideViewportProps) {
+  const [viewport, setViewport] = useState<HTMLDivElement | null>(null)
+  const [scale, setScale] = useState<number | null>(null)
+  const { height, margin, width } = canvas
+
+  useLayoutEffect(() => {
+    if (viewport === null) {
+      return
+    }
+
+    const measure = () => {
+      setScale(
+        fitScale(
+          { height, margin, width },
+          viewport.clientWidth,
+          viewport.clientHeight
+        )
+      )
+    }
+
+    measure()
+
+    const observer = new ResizeObserver(measure)
+    observer.observe(viewport)
+
+    return () => observer.disconnect()
+  }, [height, margin, viewport, width])
+
+  const wrapperStyle = {
+    ...viewportStyle,
+    "--deckard-scale": scale ?? 1,
+  } as CSSProperties
+
   const stageStyle: CSSProperties = {
     height: canvas.height,
     left: "50%",
     position: "absolute",
     top: "50%",
-    transform: fitTransform(canvas),
+    transform: "translate(-50%, -50%) scale(var(--deckard-scale))",
     transformOrigin: "center center",
+    // The measured scale only lands after hydration, so the stage stays out of sight rather than flashing unscaled.
+    visibility: scale === null ? "hidden" : undefined,
     width: canvas.width,
   }
 
@@ -47,7 +89,8 @@ export function SlideViewport({ canvas, children }: SlideViewportProps) {
     <div
       data-canvas-margin={canvas.margin}
       data-slide-viewport=""
-      style={viewportStyle}
+      ref={setViewport}
+      style={wrapperStyle}
     >
       <div style={stageStyle}>{children}</div>
     </div>

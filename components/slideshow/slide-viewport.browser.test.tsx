@@ -1,40 +1,42 @@
 import { act } from "react"
 import { createRoot, type Root } from "react-dom/client"
-import { afterEach, beforeEach, describe, expect, it } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { page } from "vitest/browser"
 
 import { SlideViewport } from "@/components/slideshow/slide-viewport"
 import { resolveCanvas } from "@/lib/deck/canvas"
 import type { DeckCanvasConfig } from "@/lib/deck/types"
 
-Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true })
+// The resize observer updates state outside any act() scope, so the flag is only raised around renders.
+function actNow(work: () => void) {
+  Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true })
+
+  try {
+    act(work)
+  } finally {
+    Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: false })
+  }
+}
 
 const canvas = resolveCanvas()
 
 let container: HTMLDivElement
 let root: Root
 
-function nextFrame() {
-  return new Promise((resolve) => requestAnimationFrame(resolve))
-}
-
-async function renderViewport(
+function expectedScale(
   width: number,
   height: number,
   config: DeckCanvasConfig = canvas
 ) {
-  await page.viewport(width, height)
+  const gutter = config.margin > 0 ? config.margin * 2 : 0
 
-  act(() => {
-    root.render(
-      <SlideViewport canvas={config}>
-        <div data-testid="slide" style={{ height: "100%", width: "100%" }} />
-      </SlideViewport>
-    )
-  })
+  return Math.min(
+    (width - gutter) / config.width,
+    (height - gutter) / config.height
+  )
+}
 
-  await nextFrame()
-
+function stageElement() {
   const stage = container.querySelector<HTMLElement>(
     "[data-slide-viewport] > div"
   )
@@ -43,18 +45,44 @@ async function renderViewport(
     throw new Error("SlideViewport did not render a stage")
   }
 
+  return stage
+}
+
+function mountViewport(config: DeckCanvasConfig = canvas) {
+  actNow(() => {
+    root.render(
+      <SlideViewport canvas={config}>
+        <div data-testid="slide" style={{ height: "100%", width: "100%" }} />
+      </SlideViewport>
+    )
+  })
+}
+
+// The scale is measured, so every assertion has to wait for the resize observer to report the new box.
+async function settledRect(
+  boxWidth: number,
+  boxHeight: number,
+  config: DeckCanvasConfig = canvas
+) {
+  const stage = stageElement()
+  const fitted = config.width * expectedScale(boxWidth, boxHeight, config)
+
+  await vi.waitUntil(
+    () => Math.abs(stage.getBoundingClientRect().width - fitted) < 0.5
+  )
+
   return stage.getBoundingClientRect()
 }
 
-function expectedScale(
+async function renderViewport(
   width: number,
   height: number,
   config: DeckCanvasConfig = canvas
 ) {
-  return Math.min(
-    (width - config.margin * 2) / config.width,
-    (height - config.margin * 2) / config.height
-  )
+  await page.viewport(width, height)
+  mountViewport(config)
+
+  return await settledRect(width, height, config)
 }
 
 beforeEach(() => {
@@ -66,7 +94,7 @@ beforeEach(() => {
 })
 
 afterEach(() => {
-  act(() => root.unmount())
+  actNow(() => root.unmount())
   container.remove()
 })
 
@@ -129,5 +157,33 @@ describe("SlideViewport", () => {
     )
     expect(rect.left + rect.width / 2).toBeCloseTo(960, 0)
     expect(rect.top).toBeCloseTo(24, 0)
+  })
+})
+
+describe("SlideViewport resizing", () => {
+  it("refits the canvas when its own container resizes", async () => {
+    await page.viewport(1280, 720)
+    mountViewport()
+
+    container.style.height = "450px"
+    container.style.width = "800px"
+
+    const fitted = await settledRect(800, 450)
+
+    expect(fitted.width).toBeCloseTo(800, 0)
+    expect(fitted.height).toBeCloseTo(450, 0)
+    expect(fitted.left + fitted.width / 2).toBeCloseTo(400, 0)
+    expect(fitted.top + fitted.height / 2).toBeCloseTo(225, 0)
+
+    container.style.height = "400px"
+    container.style.width = "1200px"
+
+    const reflowed = await settledRect(1200, 400)
+    const scale = expectedScale(1200, 400)
+
+    expect(reflowed.width).toBeCloseTo(canvas.width * scale, 0)
+    expect(reflowed.height).toBeCloseTo(canvas.height * scale, 0)
+    expect(reflowed.left + reflowed.width / 2).toBeCloseTo(600, 0)
+    expect(reflowed.top + reflowed.height / 2).toBeCloseTo(200, 0)
   })
 })

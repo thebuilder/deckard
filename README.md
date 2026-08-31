@@ -67,6 +67,11 @@ Every slide is authored in one fixed coordinate space, 1920x1080 by default.
 A slide looks the same on a laptop, a projector, a phone, and in the PDF: only
 the scale changes.
 
+The fit is measured in the browser and published as `--deckard-scale`, because
+CSS cannot divide a length by a length in every engine Deckard targets. Slide
+content stays server rendered, and the canvas stays hidden until the first
+measurement lands so it never flashes at the wrong size.
+
 Configure it in `deck/deck.ts`:
 
 ```ts
