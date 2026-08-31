@@ -269,10 +269,10 @@ export function PresenterConsole() {
 
   const elapsed = startedAt ? formatElapsed(Date.now() - startedAt) : "00:00:00"
   const currentSlideUrl = state
-    ? `/slides/${state.slug}?presenterPreview=1&step=${state.currentStep}`
+    ? `/slides/${state.id}?presenterPreview=1&step=${state.currentStep}`
     : null
   const nextStepPreviewUrl = state?.preview
-    ? `/slides/${state.preview.slug}?presenterPreview=1&step=${state.preview.step}`
+    ? `/slides/${state.preview.id}?presenterPreview=1&step=${state.preview.step}`
     : null
   const notesLineHeight = Number((notesFontSize * 1.45).toFixed(2))
   const flowItems = getFlowWindow(state)

@@ -26,7 +26,7 @@ interface SlideShellProps {
   background?: SlideBackgroundMode
   children: React.ReactNode
   current: number
-  currentSlug: string
+  currentId: string
   deckTitle: string
   deckTitleHref?: string
   footerMode?: SlideFooterMode
@@ -36,7 +36,7 @@ interface SlideShellProps {
   layout?: SlideLayoutMode
   nextHref?: string
   nextSlide?: {
-    slug: string
+    id: string
     title: string
   }
   notes?: string
@@ -47,7 +47,7 @@ interface SlideShellProps {
   slideOptions: Array<{
     index: number
     title: string
-    slug: string
+    id: string
     href: string
   }>
   slideTitle?: string
@@ -72,7 +72,7 @@ export function SlideShell({
   background = "default",
   slideOptions,
   notes,
-  currentSlug,
+  currentId,
   nextSlide,
   readOnly = false,
   initialStep = 0,
@@ -96,7 +96,7 @@ export function SlideShell({
         <div className="relative min-h-svh overflow-hidden bg-background text-foreground">
           <PresenterSync
             current={current}
-            currentSlug={currentSlug}
+            currentId={currentId}
             currentTitle={
               slideOptions[current - 1]?.title ?? slideTitle ?? deckTitle
             }
@@ -152,7 +152,7 @@ export function SlideShell({
               className={cn("w-full", isFullscreen && "h-full")}
             >
               <StaticMediaBoundary
-                activePath={`/slides/${currentSlug}`}
+                activePath={`/slides/${currentId}`}
                 className={cn(isFullscreen && "h-full")}
                 enabled={freezeMedia}
               >

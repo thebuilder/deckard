@@ -1,12 +1,12 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
-import { slideshowConfig } from "@/app/slideshow-config"
 import { SlideShell } from "@/components/slideshow/slide-shell"
-import { getAllSlideSlugs, getSlideBySlug, slides } from "../../slides"
+import { deck } from "@/deck/deck"
+import { getSlideById } from "@/lib/deck/resolve-slides"
 
 interface SlidePageProps {
   params: Promise<{
-    slug: string
+    id: string
   }>
   searchParams: Promise<{
     presenterPreview?: string
@@ -15,20 +15,20 @@ interface SlidePageProps {
 }
 
 export function generateStaticParams() {
-  return getAllSlideSlugs().map((slug) => ({ slug }))
+  return deck.slides.map((slide) => ({ id: slide.id }))
 }
 
 export async function generateMetadata({
   params,
 }: SlidePageProps): Promise<Metadata> {
-  const { slug } = await params
-  const slide = getSlideBySlug(slug)
+  const { id } = await params
+  const slide = getSlideById(deck.slides, id)
 
   if (!slide) {
     return {}
   }
 
-  if (slide.title === slideshowConfig.title) {
+  if (slide.title === deck.title) {
     return {
       title: {
         absolute: slide.title,
@@ -60,9 +60,9 @@ export default async function SlidePage({
   searchParams,
 }: SlidePageProps) {
   const isPdfExport = process.env.NEXT_PUBLIC_PDF_EXPORT === "1"
-  const { slug } = await params
+  const { id } = await params
   const resolvedSearchParams = await searchParams
-  const slide = getSlideBySlug(slug)
+  const slide = getSlideById(deck.slides, id)
 
   if (!slide) {
     notFound()
@@ -71,49 +71,39 @@ export default async function SlidePage({
   const isPresenterPreview = resolvedSearchParams.presenterPreview === "1"
   const previewStep = parseStep(resolvedSearchParams.step)
 
-  const index = slides.findIndex((item) => item.slug === slide.slug)
-  const previousSlide = slides[index - 1]
-  const nextSlide = slides[index + 1]
-  const nextNextSlide = slides[index + 2]
-  const slideOptions = slides.map((item, itemIndex) => ({
-    href: `/slides/${item.slug}`,
-    index: itemIndex + 1,
-    slug: item.slug,
+  const previousSlide = deck.slides[slide.index - 1]
+  const nextSlide = deck.slides[slide.index + 1]
+  const nextNextSlide = deck.slides[slide.index + 2]
+  const slideOptions = deck.slides.map((item) => ({
+    href: item.href,
+    id: item.id,
+    index: item.number,
     title: item.title,
   }))
-  const prefetchHrefs = [
-    previousSlide ? `/slides/${previousSlide.slug}` : undefined,
-    nextSlide ? `/slides/${nextSlide.slug}` : undefined,
-    nextNextSlide ? `/slides/${nextNextSlide.slug}` : undefined,
-  ].filter((href): href is string => Boolean(href))
-  const maxStepIndex = Math.max((slide.stepCount ?? 0) - 1, 0)
+  const prefetchHrefs = [previousSlide, nextSlide, nextNextSlide]
+    .filter((item) => item !== undefined)
+    .map((item) => item.href)
+  const maxStepIndex = Math.max(slide.stepCount - 1, 0)
   const previewStepClamped = Math.min(previewStep, maxStepIndex)
+  const isChromeHidden = isPdfExport || isPresenterPreview
 
   return (
     <SlideShell
       background={slide.background}
-      current={index + 1}
-      currentSlug={slide.slug}
-      deckTitle={slideshowConfig.header.brand}
-      deckTitleHref={slideshowConfig.header.href}
-      footerMode={
-        isPdfExport || isPresenterPreview
-          ? "hidden"
-          : (slide.footer ?? slideshowConfig.footer.mode)
-      }
+      current={slide.number}
+      currentId={slide.id}
+      deckTitle={deck.header.brand}
+      deckTitleHref={deck.header.href}
+      footerMode={isChromeHidden ? "hidden" : slide.footer}
       freezeMedia={isPresenterPreview}
-      headerMode={
-        isPdfExport || isPresenterPreview
-          ? "hidden"
-          : (slide.header ?? slideshowConfig.header.mode)
-      }
+      headerMode={isChromeHidden ? "hidden" : slide.header}
       initialStep={previewStepClamped}
       layout={slide.layout}
-      nextHref={nextSlide ? `/slides/${nextSlide.slug}` : undefined}
+      nextHref={nextSlide?.href}
       nextSlide={
         nextSlide
           ? {
-              slug: nextSlide.slug,
+              id: nextSlide.id,
               title: nextSlide.title,
             }
           : undefined
@@ -121,12 +111,12 @@ export default async function SlidePage({
       notes={slide.notes}
       prefetchHrefs={prefetchHrefs}
       presenterEnabled={!isPresenterPreview}
-      previousHref={previousSlide ? `/slides/${previousSlide.slug}` : undefined}
+      previousHref={previousSlide?.href}
       readOnly={isPresenterPreview}
       slideOptions={slideOptions}
       slideTitle={slide.title}
       stepCount={slide.stepCount}
-      total={slides.length}
+      total={deck.slides.length}
     >
       {slide.body}
     </SlideShell>

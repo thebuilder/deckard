@@ -14,7 +14,9 @@ import exampleBackgroundImage from "@/assets/example-background.png"
 import templateCapabilitiesImage from "@/assets/template-capabilities.svg"
 import { CodeBlock } from "@/components/slideshow/code-block"
 import { SlideStep } from "@/components/slideshow/slide-stepper"
-import type { SlideDefinition } from "@/types/slides"
+import "server-only"
+
+import type { SlideDefinition } from "@/lib/deck/types"
 
 export const slides: SlideDefinition[] = [
   {
@@ -31,7 +33,6 @@ export const slides: SlideDefinition[] = [
     ),
   },
   {
-    slug: "capabilities",
     title: "Capabilities",
     body: (
       <ContentSlideCard
@@ -77,7 +78,6 @@ export const slides: SlideDefinition[] = [
     ),
   },
   {
-    slug: "navigation",
     title: "Navigation",
     body: (
       <OpenContentSlide
@@ -108,7 +108,6 @@ export const slides: SlideDefinition[] = [
     ),
   },
   {
-    slug: "step-reveals",
     title: "Step Reveals",
     notes:
       "Pause between each reveal and ask a short alignment question before advancing to the next step.",
@@ -168,7 +167,6 @@ export const slides: SlideDefinition[] = [
     stepCount: 4,
   },
   {
-    slug: "layout-and-background",
     title: "Layout and Background",
     body: (
       <BreakerSlide
@@ -180,7 +178,6 @@ export const slides: SlideDefinition[] = [
     background: "spotlight",
   },
   {
-    slug: "image-slide",
     title: "Image Slide",
     body: (
       <ImageShowcaseSlide
@@ -206,7 +203,6 @@ export const slides: SlideDefinition[] = [
     background: "grid",
   },
   {
-    slug: "fullscreen",
     title: "Fullscreen",
     body: (
       <FullscreenMediaSlide
@@ -280,7 +276,6 @@ Close by reinforcing that this pattern is what makes the template scalable for f
     ),
   },
   {
-    slug: "outro",
     title: "Use It",
     body: (
       <HeroSlide
@@ -291,11 +286,3 @@ Close by reinforcing that this pattern is what makes the template scalable for f
     ),
   },
 ]
-
-export function getAllSlideSlugs() {
-  return slides.map((slide) => slide.slug)
-}
-
-export function getSlideBySlug(slug: string) {
-  return slides.find((slide) => slide.slug === slug)
-}

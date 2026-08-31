@@ -1,7 +1,7 @@
 export const PRESENTER_CHANNEL_NAME = "slideshow-presenter-sync"
 
 export interface PresenterPreviewState {
-  slug: string
+  id: string
   step: number
   title: string
 }
@@ -14,11 +14,11 @@ export interface PresenterSlideListItem {
 export interface PresenterSlideState {
   current: number
   currentStep: number
+  id: string
   notes?: string
   preview: PresenterPreviewState | null
   sentAt: number
   slides: PresenterSlideListItem[]
-  slug: string
   stepCount: number
   title: string
   total: number

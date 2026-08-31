@@ -18,8 +18,8 @@ import {
 
 interface SlideOption {
   href: string
+  id: string
   index: number
-  slug: string
   title: string
 }
 
@@ -45,14 +45,14 @@ function SlideCommandOption({
   return (
     <CommandItem
       onSelect={handleSelect}
-      value={`${slide.index} ${slide.title} ${slide.slug}`}
+      value={`${slide.index} ${slide.title} ${slide.id}`}
     >
       <span className="inline-flex min-w-10 text-muted-foreground tabular-nums">
         {String(slide.index).padStart(2, "0")}
       </span>
       <span className="truncate">{slide.title}</span>
       <span className="hidden truncate text-muted-foreground text-xs md:inline">
-        {slide.slug}
+        {slide.id}
       </span>
       {isCurrent ? <CommandShortcut>Current</CommandShortcut> : null}
     </CommandItem>
@@ -122,7 +122,7 @@ export function SlideCommandCenter({
         title={title}
       >
         <Command>
-          <CommandInput placeholder="Go to slide by number, title, or slug..." />
+          <CommandInput placeholder="Go to slide by number, title, or id..." />
           <CommandList>
             <CommandEmpty>No slides found.</CommandEmpty>
             <CommandGroup heading="Slides">

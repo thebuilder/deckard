@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation"
 
-import { slides } from "./slides"
+import { deck } from "@/deck/deck"
 
 export default function Page() {
-  redirect(`/slides/${slides[0].slug}`)
+  redirect(deck.slides[0].href)
 }

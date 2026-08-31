@@ -1,8 +1,8 @@
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
-import { slideshowConfig } from "@/app/slideshow-config"
 import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { deck } from "@/deck/deck"
 import { cn } from "@/lib/utils"
 
 import "./globals.css"
@@ -18,10 +18,10 @@ const fontMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  description: slideshowConfig.description,
+  description: deck.description,
   title: {
-    default: slideshowConfig.title,
-    template: `%s · ${slideshowConfig.title}`,
+    default: deck.title,
+    template: `%s · ${deck.title}`,
   },
 }
 

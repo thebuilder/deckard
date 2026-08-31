@@ -1,17 +1,16 @@
 import Link from "next/link"
-
-import { slideshowConfig } from "@/app/slideshow-config"
 import { SlideShell } from "@/components/slideshow/slide-shell"
+import { deck } from "@/deck/deck"
 
 export default function SlidesNotFoundPage() {
   return (
     <SlideShell
       current={1}
-      currentSlug="not-found"
-      deckTitle={slideshowConfig.header.brand}
-      deckTitleHref={slideshowConfig.header.href}
+      currentId="not-found"
+      deckTitle={deck.header.brand}
+      deckTitleHref={deck.header.href}
       footerMode="hidden"
-      headerMode={slideshowConfig.header.mode}
+      headerMode={deck.header.mode}
       layout="default"
       slideOptions={[]}
       slideTitle="Page not found"

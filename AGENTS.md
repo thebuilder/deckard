@@ -8,9 +8,10 @@ Keep the project optimized for fast authoring of new slide decks with consistent
 
 ## Core architecture
 
-- Slide definitions live in `app/slides.tsx`.
-- Shared slideshow config lives in `app/slideshow-config.ts`.
-- Slide model/types live in `types/slides.ts`.
+- Slide definitions live in `deck/slides.tsx`.
+- Deck config lives in `deck/deck.ts` and is wrapped in `defineDeck`.
+- Slide model, id resolution, and validation live in `lib/deck/*`.
+- Slide chrome mode types live in `types/slides.ts`.
 - Deck-authoring blocks live in `app/slides/blocks/*` and are split by concern:
   - `templates.tsx` for slide layout templates
   - `typography.tsx` for heading/eyebrow primitives
@@ -21,7 +22,7 @@ Keep the project optimized for fast authoring of new slide decks with consistent
 
 ## Authoring rules
 
-- Keep `app/slides.tsx` definitions-only. Do not define component implementations there.
+- Keep `deck/slides.tsx` definitions-only. Do not define component implementations there.
 - Prefer composing slides from `app/slides/blocks/*` primitives.
 - Prefer explicit variant components over mode flags/booleans (composition pattern):
   - good: `ContentSlideCard` + `OpenContentSlide`
@@ -30,7 +31,7 @@ Keep the project optimized for fast authoring of new slide decks with consistent
 - Use slide-level metadata (`layout`, `header`, `footer`, `background`, `stepCount`) instead of route-specific hacks.
 - Use reusable media primitives (for example `ImageShowcaseSlide`) for media-first slides and keep assets in `public/images`.
 - Prefer static image imports (`ImageProps["src"]`) over raw strings when possible, so blur placeholders are available.
-- Reuse `slideshowConfig` values for branding/title instead of hardcoding strings.
+- Reuse `deck` values for branding/title instead of hardcoding strings.
 
 ## UX expectations
 
@@ -43,4 +44,4 @@ Keep the project optimized for fast authoring of new slide decks with consistent
 
 - Favor small, composable components over large monolithic slide bodies.
 - Update README when introducing new slide model fields or behavior.
-- Run `pnpm typecheck && pnpm lint` after structural changes.
+- Run `pnpm typecheck && pnpm lint && pnpm test` after structural changes.

@@ -22,7 +22,7 @@
   },
   "overrides": [
     {
-      "includes": ["app/slides.tsx"],
+      "includes": ["deck/slides.tsx"],
       "assist": {
         "actions": {
           "source": {

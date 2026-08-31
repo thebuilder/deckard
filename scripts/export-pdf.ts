@@ -69,7 +69,7 @@ async function waitForServer(baseUrl: string): Promise<void> {
   throw new Error(`Timed out waiting for server at ${baseUrl}`)
 }
 
-async function readSlideSlugsFromSitemap(baseUrl: string): Promise<string[]> {
+async function readSlideIdsFromSitemap(baseUrl: string): Promise<string[]> {
   const sitemapUrl = `${baseUrl}/sitemap.xml`
   const response = await fetch(sitemapUrl)
 
@@ -80,7 +80,7 @@ async function readSlideSlugsFromSitemap(baseUrl: string): Promise<string[]> {
   const xml = await response.text()
   const locMatches = [...xml.matchAll(/<loc>(.*?)<\/loc>/g)]
 
-  const slugs = locMatches
+  const ids = locMatches
     .map((match) => match[1]?.trim() ?? "")
     .map((loc) => {
       try {
@@ -91,15 +91,15 @@ async function readSlideSlugsFromSitemap(baseUrl: string): Promise<string[]> {
     })
     .filter((pathname) => pathname.startsWith("/slides/"))
     .map((pathname) => decodeURIComponent(pathname.replace("/slides/", "")))
-    .filter((slug) => slug.length > 0)
+    .filter((id) => id.length > 0)
 
-  if (slugs.length === 0) {
+  if (ids.length === 0) {
     throw new Error(
       "No slide routes found in sitemap. Ensure app/sitemap.ts includes /slides/* entries."
     )
   }
 
-  return [...new Set(slugs)]
+  return [...new Set(ids)]
 }
 
 function pxToPt(px: number): number {
@@ -107,10 +107,10 @@ function pxToPt(px: number): number {
 }
 
 async function exportPdf({
-  slugs,
+  ids,
   baseUrl,
 }: {
-  slugs: string[]
+  ids: string[]
   baseUrl: string
 }): Promise<void> {
   let browser: Browser
@@ -132,8 +132,8 @@ async function exportPdf({
     const page = await context.newPage()
     const pdf = await PDFDocument.create()
 
-    for (const slug of slugs) {
-      const url = `${baseUrl}/slides/${slug}`
+    for (const id of ids) {
+      const url = `${baseUrl}/slides/${id}`
       // biome-ignore lint/performance/noAwaitInLoops: slides are captured one at a time on a single page
       await page.goto(url, { waitUntil: "networkidle" })
       await page.waitForTimeout(80)
@@ -155,7 +155,7 @@ async function exportPdf({
         y: 0,
       })
 
-      process.stdout.write(`Exported slide: ${slug}\n`)
+      process.stdout.write(`Exported slide: ${id}\n`)
     }
 
     const pdfBytes = await pdf.save()
@@ -195,8 +195,8 @@ async function main(): Promise<void> {
 
   try {
     await waitForServer(baseUrl)
-    const slugs = await readSlideSlugsFromSitemap(baseUrl)
-    await exportPdf({ baseUrl, slugs })
+    const ids = await readSlideIdsFromSitemap(baseUrl)
+    await exportPdf({ baseUrl, ids })
   } finally {
     shutdown()
   }

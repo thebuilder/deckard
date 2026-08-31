@@ -14,13 +14,13 @@ Reusable slideshow template built with Next.js, React, Tailwind, and shadcn/ui.
 
 ## What this template includes
 
-- Route-per-slide presentation flow (`/slides/[slug]`)
+- Route-per-slide presentation flow (`/slides/[id]`)
 - Keyboard navigation (`Arrow`, `PageUp/PageDown`, `Space`)
 - Step reveals with `stepCount` + `SlideStep`
 - Click-to-advance reveal area for stepped slides
 - Command center (`Cmd/Ctrl + K`) for quick jump
 - Presenter popout window with `BroadcastChannel` sync
-- Presenter notes per slide via `notes` in `app/slides.tsx`
+- Presenter notes per slide via `notes` in `deck/slides.tsx`
 - Presenter timer + 24h current-time clock
 - Presenter next-step preview (aware of reveal steps)
 - Presenter flow window (previous 2 + current + next 5 slide titles)
@@ -41,9 +41,9 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Project structure
 
-- `app/slides.tsx`: slide definitions only
-- `types/slides.ts`: slide model/types
-- `app/slideshow-config.ts`: global slideshow config (title, description, header defaults)
+- `deck/slides.tsx`: slide definitions only
+- `deck/deck.ts`: deck config (title, description, header and footer defaults) wrapped in `defineDeck`
+- `lib/deck/*`: slide model, id resolution, and validation
 - `app/slides/blocks/*`: deck-authoring building blocks (layout, typography, collections, media)
 - `components/slideshow/slide-shell.tsx`: slideshow chrome (header, navigation, frame)
 - `components/slideshow/slide-background.tsx`: shared background variants
@@ -52,9 +52,25 @@ Open [http://localhost:3000](http://localhost:3000).
 
 `SlideDefinition` supports:
 
-- Core: `slug`, `title`, `body`
+- Required: `body`
+- Optional identity: `slug`, `title`, `order`
 - Optional flow: `stepCount`, `notes`
 - Optional chrome/layout: `header`, `footer`, `layout`, `background`
+
+### Slide ids
+
+Every slide gets an id, and the id is the URL. A slide without a `slug` is
+served at its 1-based position, so the fourth slide is `/slides/4`. Give a
+slide a `slug` when you want a link that survives reordering, and it is served
+at `/slides/<slug>` instead. Slugs accept lowercase letters, digits, and
+hyphens.
+
+Titles never become slugs. A slide with no `title` falls back to `Slide 4` in
+the header, command center, and presenter flow.
+
+The deck fails to build on a duplicate slug, an empty slug, a slug with
+characters that are unsafe in a URL path, or a numeric slug that collides with
+another slide's position.
 
 Slide primitives can read the current slide `title` from context, so template
 blocks only need an explicit `title` prop when you want to override the slide
@@ -68,7 +84,7 @@ title text inside the layout.
 - `"hidden"`: never render header
 - `"auto"`: render in default layout, hide in fullscreen layout
 
-Global default is configured in `app/slideshow-config.ts`.
+Global default is configured in `deck/deck.ts`.
 
 ### Footer behavior
 
@@ -80,16 +96,25 @@ Global default is configured in `app/slideshow-config.ts`.
 
 ## Adding slides
 
-Add entries to `app/slides.tsx`.
+Add entries to `deck/slides.tsx`.
 
 Example content slide:
 
 ```tsx
 {
-  slug: "my-slide",
   title: "My Slide",
   body: <MySlideComponent />,
   background: "spotlight",
+}
+```
+
+Example slide with a stable route:
+
+```tsx
+{
+  slug: "pricing",
+  title: "Pricing",
+  body: <MySlideComponent />,
 }
 ```
 
@@ -97,7 +122,6 @@ Presenter notes example:
 
 ```tsx
 {
-  slug: "my-slide",
   title: "My Slide",
   notes: "Speaker-only context and reminders shown in /presenter.",
   body: <MySlideComponent />,
@@ -108,7 +132,6 @@ Example image slide:
 
 ```tsx
 {
-  slug: "diagram",
   title: "Architecture Diagram",
   body: (
     <ImageShowcaseSlide
@@ -124,7 +147,6 @@ Example fullscreen video slide with autoplay:
 
 ```tsx
 {
-  slug: "launch-video",
   title: "Launch Video",
   body: (
     <FullscreenMediaSlide

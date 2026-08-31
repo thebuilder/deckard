@@ -13,11 +13,11 @@ import {
 
 interface PresenterSyncProps {
   current: number
-  currentSlug: string
+  currentId: string
   currentTitle: string
   enabled?: boolean
   nextSlide?: {
-    slug: string
+    id: string
     title: string
   }
   notes?: string
@@ -30,21 +30,21 @@ interface PresenterSyncProps {
 }
 
 function resolvePreview({
-  currentSlug,
+  currentId,
   currentTitle,
   currentStep,
   stepCount,
   nextSlide,
 }: {
-  currentSlug: string
+  currentId: string
   currentTitle: string
   currentStep: number
   stepCount: number
-  nextSlide?: { slug: string; title: string }
+  nextSlide?: { id: string; title: string }
 }): PresenterSlideState["preview"] {
   if (stepCount > 0 && currentStep < stepCount - 1) {
     return {
-      slug: currentSlug,
+      id: currentId,
       step: currentStep + 1,
       title: currentTitle,
     }
@@ -52,7 +52,7 @@ function resolvePreview({
 
   if (nextSlide) {
     return {
-      slug: nextSlide.slug,
+      id: nextSlide.id,
       step: 0,
       title: nextSlide.title,
     }
@@ -65,7 +65,7 @@ function buildPresenterState({
   current,
   total,
   slides,
-  currentSlug,
+  currentId,
   currentTitle,
   stepCount,
   currentStep,
@@ -75,7 +75,7 @@ function buildPresenterState({
   currentStep: number
 }): PresenterSlideState {
   const preview = resolvePreview({
-    currentSlug,
+    currentId,
     currentStep,
     currentTitle,
     nextSlide,
@@ -85,11 +85,11 @@ function buildPresenterState({
   return {
     current,
     currentStep,
+    id: currentId,
     notes,
     preview,
     sentAt: Date.now(),
     slides,
-    slug: currentSlug,
     stepCount,
     title: currentTitle,
     total,
