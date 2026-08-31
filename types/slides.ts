@@ -7,28 +7,28 @@ export type SlideLayoutMode = "default" | "fullscreen"
 
 export type SlideBackgroundMode = "default" | "none" | "spotlight" | "grid"
 
-type BaseSlideDefinition = {
-  slug: string
-  title: string
-  notes?: string
-  stepCount?: number
-  header?: SlideHeaderMode
-  footer?: SlideFooterMode
-  layout?: SlideLayoutMode
+interface BaseSlideDefinition {
   background?: SlideBackgroundMode
   body: ReactNode
+  footer?: SlideFooterMode
+  header?: SlideHeaderMode
+  layout?: SlideLayoutMode
+  notes?: string
+  slug: string
+  stepCount?: number
+  title: string
 }
 export type SlideDefinition = BaseSlideDefinition
 
-export type SlideshowConfig = {
-  title: string
+export interface SlideshowConfig {
   description: string
+  footer: {
+    mode: SlideFooterMode
+  }
   header: {
     mode: SlideHeaderMode
     brand: string
     href: string
   }
-  footer: {
-    mode: SlideFooterMode
-  }
+  title: string
 }

@@ -22,9 +22,9 @@ export function SlideMediaVideo({
     <video
       {...props}
       autoPlay={shouldAutoplay}
-      muted={shouldAutoplay ? (muted ?? true) : muted}
-      loop={shouldAutoplay ? (loop ?? true) : loop}
       controls={controls ?? !shouldAutoplay}
+      loop={shouldAutoplay ? (loop ?? true) : loop}
+      muted={shouldAutoplay ? (muted ?? true) : muted}
     />
   )
 }

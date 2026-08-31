@@ -1,11 +1,10 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
-
-import { SlideShell } from "@/components/slideshow/slide-shell"
 import { slideshowConfig } from "@/app/slideshow-config"
+import { SlideShell } from "@/components/slideshow/slide-shell"
 import { getAllSlideSlugs, getSlideBySlug, slides } from "../../slides"
 
-type SlidePageProps = {
+interface SlidePageProps {
   params: Promise<{
     slug: string
   }>
@@ -56,7 +55,10 @@ function parseStep(value: string | undefined) {
   return parsed
 }
 
-export default async function SlidePage({ params, searchParams }: SlidePageProps) {
+export default async function SlidePage({
+  params,
+  searchParams,
+}: SlidePageProps) {
   const isPdfExport = process.env.NEXT_PUBLIC_PDF_EXPORT === "1"
   const { slug } = await params
   const resolvedSearchParams = await searchParams
@@ -74,10 +76,10 @@ export default async function SlidePage({ params, searchParams }: SlidePageProps
   const nextSlide = slides[index + 1]
   const nextNextSlide = slides[index + 2]
   const slideOptions = slides.map((item, itemIndex) => ({
-    index: itemIndex + 1,
-    title: item.title,
-    slug: item.slug,
     href: `/slides/${item.slug}`,
+    index: itemIndex + 1,
+    slug: item.slug,
+    title: item.title,
   }))
   const prefetchHrefs = [
     previousSlide ? `/slides/${previousSlide.slug}` : undefined,
@@ -89,30 +91,25 @@ export default async function SlidePage({ params, searchParams }: SlidePageProps
 
   return (
     <SlideShell
+      background={slide.background}
       current={index + 1}
-      total={slides.length}
-      stepCount={slide.stepCount}
-      previousHref={previousSlide ? `/slides/${previousSlide.slug}` : undefined}
-      nextHref={nextSlide ? `/slides/${nextSlide.slug}` : undefined}
-      prefetchHrefs={prefetchHrefs}
-      slideOptions={slideOptions}
+      currentSlug={slide.slug}
       deckTitle={slideshowConfig.header.brand}
       deckTitleHref={slideshowConfig.header.href}
-      slideTitle={slide.title}
-      headerMode={
-        isPdfExport || isPresenterPreview
-          ? "hidden"
-          : (slide.header ?? slideshowConfig.header.mode)
-      }
       footerMode={
         isPdfExport || isPresenterPreview
           ? "hidden"
           : (slide.footer ?? slideshowConfig.footer.mode)
       }
+      freezeMedia={isPresenterPreview}
+      headerMode={
+        isPdfExport || isPresenterPreview
+          ? "hidden"
+          : (slide.header ?? slideshowConfig.header.mode)
+      }
+      initialStep={previewStepClamped}
       layout={slide.layout}
-      background={slide.background}
-      notes={slide.notes}
-      currentSlug={slide.slug}
+      nextHref={nextSlide ? `/slides/${nextSlide.slug}` : undefined}
       nextSlide={
         nextSlide
           ? {
@@ -121,10 +118,15 @@ export default async function SlidePage({ params, searchParams }: SlidePageProps
             }
           : undefined
       }
-      readOnly={isPresenterPreview}
-      initialStep={previewStepClamped}
+      notes={slide.notes}
+      prefetchHrefs={prefetchHrefs}
       presenterEnabled={!isPresenterPreview}
-      freezeMedia={isPresenterPreview}
+      previousHref={previousSlide ? `/slides/${previousSlide.slug}` : undefined}
+      readOnly={isPresenterPreview}
+      slideOptions={slideOptions}
+      slideTitle={slide.title}
+      stepCount={slide.stepCount}
+      total={slides.length}
     >
       {slide.body}
     </SlideShell>

@@ -21,7 +21,7 @@ export function SlideBackground({
   if (variant === "spotlight") {
     return (
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-1/2 top-0 h-[78svh] w-[92svw] -translate-x-1/2 bg-[radial-gradient(circle_at_top,rgba(15,23,42,0.24),transparent_66%)] dark:bg-[radial-gradient(circle_at_top,rgba(125,211,252,0.14),transparent_66%)]" />
+        <div className="absolute top-0 left-1/2 h-[78svh] w-[92svw] -translate-x-1/2 bg-[radial-gradient(circle_at_top,rgba(15,23,42,0.24),transparent_66%)] dark:bg-[radial-gradient(circle_at_top,rgba(125,211,252,0.14),transparent_66%)]" />
         <div className="absolute right-0 bottom-0 h-[24rem] w-[24rem] rounded-full bg-primary/10 blur-3xl" />
       </div>
     )

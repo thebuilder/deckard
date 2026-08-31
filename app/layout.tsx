@@ -1,9 +1,8 @@
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
-
+import { slideshowConfig } from "@/app/slideshow-config"
 import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
-import { slideshowConfig } from "@/app/slideshow-config"
 import { cn } from "@/lib/utils"
 
 import "./globals.css"
@@ -19,11 +18,11 @@ const fontMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
+  description: slideshowConfig.description,
   title: {
     default: slideshowConfig.title,
     template: `%s · ${slideshowConfig.title}`,
   },
-  description: slideshowConfig.description,
 }
 
 export default function RootLayout({
@@ -36,16 +35,16 @@ export default function RootLayout({
 
   return (
     <html
-      lang="en"
-      suppressHydrationWarning
-      data-pdf-export={isPdfExport ? "true" : undefined}
       className={cn(
         "antialiased",
         fontMono.variable,
         "font-sans",
         geist.variable,
-        isPdfExport && isPdfDarkTheme && "dark",
+        isPdfExport && isPdfDarkTheme && "dark"
       )}
+      data-pdf-export={isPdfExport ? "true" : undefined}
+      lang="en"
+      suppressHydrationWarning
     >
       <body>
         <ThemeProvider>

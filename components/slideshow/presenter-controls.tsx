@@ -1,7 +1,7 @@
 "use client"
 
-import * as React from "react"
 import { MonitorUp } from "lucide-react"
+import { useEffect, useMemo, useRef } from "react"
 
 import { useSlideStepper } from "@/components/slideshow/slide-stepper"
 import { Button } from "@/components/ui/button"
@@ -11,22 +11,54 @@ import {
   type PresenterSlideState,
 } from "@/types/presenter"
 
-type PresenterSyncProps = {
-  enabled?: boolean
+interface PresenterSyncProps {
   current: number
-  total: number
-  slides: Array<{
-    title: string
-    href: string
-  }>
   currentSlug: string
   currentTitle: string
-  stepCount: number
-  notes?: string
+  enabled?: boolean
   nextSlide?: {
     slug: string
     title: string
   }
+  notes?: string
+  slides: Array<{
+    title: string
+    href: string
+  }>
+  stepCount: number
+  total: number
+}
+
+function resolvePreview({
+  currentSlug,
+  currentTitle,
+  currentStep,
+  stepCount,
+  nextSlide,
+}: {
+  currentSlug: string
+  currentTitle: string
+  currentStep: number
+  stepCount: number
+  nextSlide?: { slug: string; title: string }
+}): PresenterSlideState["preview"] {
+  if (stepCount > 0 && currentStep < stepCount - 1) {
+    return {
+      slug: currentSlug,
+      step: currentStep + 1,
+      title: currentTitle,
+    }
+  }
+
+  if (nextSlide) {
+    return {
+      slug: nextSlide.slug,
+      step: 0,
+      title: nextSlide.title,
+    }
+  }
+
+  return null
 }
 
 function buildPresenterState({
@@ -42,59 +74,55 @@ function buildPresenterState({
 }: PresenterSyncProps & {
   currentStep: number
 }): PresenterSlideState {
-  const preview =
-    stepCount > 0 && currentStep < stepCount - 1
-      ? {
-          slug: currentSlug,
-          title: currentTitle,
-          step: currentStep + 1,
-        }
-      : nextSlide
-        ? {
-            slug: nextSlide.slug,
-            title: nextSlide.title,
-            step: 0,
-          }
-        : null
+  const preview = resolvePreview({
+    currentSlug,
+    currentStep,
+    currentTitle,
+    nextSlide,
+    stepCount,
+  })
 
   return {
-    slug: currentSlug,
-    title: currentTitle,
     current,
-    total,
-    slides,
-    stepCount,
     currentStep,
     notes,
     preview,
     sentAt: Date.now(),
+    slides,
+    slug: currentSlug,
+    stepCount,
+    title: currentTitle,
+    total,
   }
 }
 
 export function PresenterSync(props: PresenterSyncProps) {
   const stepper = useSlideStepper()
-  const channelRef = React.useRef<BroadcastChannel | null>(null)
+  const channelRef = useRef<BroadcastChannel | null>(null)
   const currentStep = stepper?.currentStep ?? 0
-  const state = React.useMemo(
+  const state = useMemo(
     () =>
       buildPresenterState({
         ...props,
         currentStep,
       }),
-    [currentStep, props],
+    [currentStep, props]
   )
-  const stateRef = React.useRef(state)
+  const stateRef = useRef(state)
 
-  React.useEffect(() => {
+  useEffect(() => {
     stateRef.current = state
   }, [state])
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!props.enabled) {
       return
     }
 
-    if (typeof window === "undefined" || typeof BroadcastChannel === "undefined") {
+    if (
+      typeof window === "undefined" ||
+      typeof BroadcastChannel === "undefined"
+    ) {
       return
     }
 
@@ -107,8 +135,8 @@ export function PresenterSync(props: PresenterSyncProps) {
       }
 
       channel.postMessage({
-        type: "slide-state",
         payload: stateRef.current,
+        type: "slide-state",
       } satisfies PresenterChannelMessage)
     }
 
@@ -121,14 +149,14 @@ export function PresenterSync(props: PresenterSyncProps) {
     }
   }, [props.enabled])
 
-  React.useEffect(() => {
-    if (!props.enabled || !channelRef.current) {
+  useEffect(() => {
+    if (!(props.enabled && channelRef.current)) {
       return
     }
 
     channelRef.current.postMessage({
-      type: "slide-state",
       payload: state,
+      type: "slide-state",
     } satisfies PresenterChannelMessage)
   }, [props.enabled, state])
 
@@ -139,7 +167,7 @@ function openPresenterWindow() {
   const presenterWindow = window.open(
     "/presenter",
     "slideshow-presenter",
-    "popup=yes,width=1420,height=920,left=80,top=60",
+    "popup=yes,width=1420,height=920,left=80,top=60"
   )
 
   presenterWindow?.focus()
@@ -163,7 +191,7 @@ export function PresenterKeyboardShortcut({
 }: {
   enabled?: boolean
 }) {
-  React.useEffect(() => {
+  useEffect(() => {
     if (!enabled) {
       return
     }
@@ -193,19 +221,15 @@ export function PresenterKeyboardShortcut({
 }
 
 export function PresenterPopoutButton() {
-  function handleOpen() {
-    openPresenterWindow()
-  }
-
   return (
     <Button
+      aria-label="Open presenter view"
+      className="border-border/70 bg-background/80 text-muted-foreground backdrop-blur-sm hover:bg-accent/70 hover:text-foreground"
+      onClick={openPresenterWindow}
+      size="icon-sm"
+      title="Open presenter view"
       type="button"
       variant="outline"
-      size="icon-sm"
-      onClick={handleOpen}
-      className="border-border/70 bg-background/80 text-muted-foreground backdrop-blur-sm hover:bg-accent/70 hover:text-foreground"
-      title="Open presenter view"
-      aria-label="Open presenter view"
     >
       <MonitorUp />
     </Button>
