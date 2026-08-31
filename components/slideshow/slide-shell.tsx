@@ -70,19 +70,26 @@ function resolveChrome({
   }
 }
 
+const mainFrames = {
+  default: {
+    base: "mx-auto min-h-svh max-w-6xl items-start px-4 sm:px-6",
+    footer: { off: "pb-4 sm:pb-6", on: "pb-24 sm:pb-28" },
+    header: { off: "pt-8 sm:pt-10", on: "pt-28 sm:pt-32" },
+  },
+  fullscreen: {
+    base: "box-border h-svh items-stretch p-0",
+    footer: { off: "", on: "pb-16 sm:pb-20" },
+    header: { off: "", on: "pt-20 sm:pt-24" },
+  },
+}
+
 function mainClassName({ isFullscreen, showFooter, showHeader }: ChromeState) {
-  if (isFullscreen) {
-    return cn(
-      "box-border h-svh items-stretch p-0",
-      showHeader && "pt-20 sm:pt-24",
-      showFooter && "pb-16 sm:pb-20"
-    )
-  }
+  const frame = mainFrames[isFullscreen ? "fullscreen" : "default"]
 
   return cn(
-    "mx-auto min-h-svh max-w-6xl items-start px-4 sm:px-6",
-    showHeader ? "pt-28 sm:pt-32" : "pt-8 sm:pt-10",
-    showFooter ? "pb-24 sm:pb-28" : "pb-4 sm:pb-6"
+    frame.base,
+    frame.header[showHeader ? "on" : "off"],
+    frame.footer[showFooter ? "on" : "off"]
   )
 }
 
@@ -183,7 +190,7 @@ export function SlideShell({
                 enabled={freezeMedia}
               >
                 <div className={cn("w-full", chrome.isFullscreen && "h-full")}>
-                  <SlideErrorBoundary key={slide.id} slideId={slide.id}>
+                  <SlideErrorBoundary slideId={slide.id}>
                     {children}
                   </SlideErrorBoundary>
                 </div>

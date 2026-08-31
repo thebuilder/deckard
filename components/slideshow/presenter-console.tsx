@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import {
   PRESENTER_CHANNEL_NAME,
   type PresenterChannelMessage,
+  type PresenterPreviewState,
   type PresenterSlideState,
 } from "@/types/presenter"
 
@@ -219,6 +220,41 @@ function PreviewFrame({
   )
 }
 
+function CurrentSlidePreview({ state }: { state: PresenterSlideState | null }) {
+  return (
+    <SlideErrorBoundary slideId={state?.slide.id ?? "current"}>
+      <PreviewFrame
+        emptyLabel="Waiting for current slide preview"
+        previewUrl={
+          state
+            ? `/slides/${state.slide.id}?presenterPreview=1&step=${state.currentStep}`
+            : null
+        }
+        titlePrefix="Current slide preview"
+      />
+    </SlideErrorBoundary>
+  )
+}
+
+function NextStepPreview({
+  preview,
+}: {
+  preview: PresenterPreviewState | null | undefined
+}) {
+  return (
+    <SlideErrorBoundary slideId={preview?.id ?? "next"}>
+      <PreviewFrame
+        previewUrl={
+          preview
+            ? `/slides/${preview.id}?presenterPreview=1&step=${preview.step}`
+            : null
+        }
+        titlePrefix="Next step preview"
+      />
+    </SlideErrorBoundary>
+  )
+}
+
 export function PresenterConsole() {
   const [state, setState] = useState<PresenterSlideState | null>(null)
   const [connected, setConnected] = useState(false)
@@ -266,12 +302,6 @@ export function PresenterConsole() {
   }, [])
 
   const elapsed = startedAt ? formatElapsed(Date.now() - startedAt) : "00:00:00"
-  const currentSlideUrl = state
-    ? `/slides/${state.slide.id}?presenterPreview=1&step=${state.currentStep}`
-    : null
-  const nextStepPreviewUrl = state?.preview
-    ? `/slides/${state.preview.id}?presenterPreview=1&step=${state.preview.step}`
-    : null
   const notesLineHeight = Number((notesFontSize * 1.45).toFixed(2))
   const flowItems = getFlowWindow(state)
   const canNavigatePrevious = Boolean(
@@ -348,15 +378,7 @@ export function PresenterConsole() {
             className="relative mt-3 w-full overflow-hidden rounded-xl border border-border/70 bg-card/40"
             style={{ aspectRatio: previewAspectRatio }}
           >
-            <SlideErrorBoundary
-              key={state?.preview?.id ?? "preview-empty"}
-              slideId={state?.preview?.id ?? "preview"}
-            >
-              <PreviewFrame
-                previewUrl={nextStepPreviewUrl}
-                titlePrefix="Next step preview"
-              />
-            </SlideErrorBoundary>
+            <NextStepPreview preview={state?.preview} />
           </div>
         </div>
 
@@ -435,16 +457,7 @@ export function PresenterConsole() {
           className="relative w-full overflow-hidden rounded-2xl border border-border/70 bg-card/40"
           style={{ aspectRatio: previewAspectRatio }}
         >
-          <SlideErrorBoundary
-            key={state?.slide.id ?? "current-empty"}
-            slideId={state?.slide.id ?? "current"}
-          >
-            <PreviewFrame
-              emptyLabel="Waiting for current slide preview"
-              previewUrl={currentSlideUrl}
-              titlePrefix="Current slide preview"
-            />
-          </SlideErrorBoundary>
+          <CurrentSlidePreview state={state} />
         </div>
 
         <div className="mt-5 flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-border/80 bg-card/80">

@@ -9,6 +9,7 @@ interface SlideErrorBoundaryProps {
 
 interface SlideErrorBoundaryState {
   message: string | null
+  slideId: string
 }
 
 function toMessage(error: unknown) {
@@ -54,10 +55,24 @@ export class SlideErrorBoundary extends Component<
   SlideErrorBoundaryProps,
   SlideErrorBoundaryState
 > {
-  state: SlideErrorBoundaryState = { message: null }
+  state: SlideErrorBoundaryState = {
+    message: null,
+    slideId: this.props.slideId,
+  }
 
-  static getDerivedStateFromError(error: unknown): SlideErrorBoundaryState {
+  static getDerivedStateFromError(error: unknown) {
     return { message: toMessage(error) }
+  }
+
+  static getDerivedStateFromProps(
+    props: SlideErrorBoundaryProps,
+    state: SlideErrorBoundaryState
+  ) {
+    if (props.slideId === state.slideId) {
+      return null
+    }
+
+    return { message: null, slideId: props.slideId }
   }
 
   componentDidCatch(error: unknown) {
