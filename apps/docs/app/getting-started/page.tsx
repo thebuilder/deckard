@@ -251,8 +251,8 @@ export default function GettingStartedPage() {
         <code>defineDeck</code> takes the config and returns a resolved deck:
         slide ids, hrefs, numbering, and a validated theme. It throws on a
         duplicate slug, an empty slug, a slug with characters that are unsafe in
-        a URL path, and a numeric slug that collides with another slide
-        position.
+        a URL path, and a slug made only of digits. Ids are matched exactly, so
+        a slugged slide has no numeric URL.
       </p>
       <pre>
         <code>{deckConfig}</code>
@@ -261,9 +261,9 @@ export default function GettingStartedPage() {
       <h2 className="pt-4 text-2xl">Write slides</h2>
       <p>
         A slide is an object with a <code>body</code>. Everything else is
-        optional: <code>slug</code>, <code>title</code>, <code>order</code>,{" "}
-        <code>stepCount</code>, <code>notes</code>, <code>header</code>,{" "}
-        <code>footer</code>, <code>layout</code>, <code>background</code>.
+        optional: <code>slug</code>, <code>title</code>, <code>stepCount</code>,{" "}
+        <code>notes</code>, <code>header</code>, <code>footer</code>,{" "}
+        <code>layout</code>, <code>background</code>.
       </p>
       <pre>
         <code>{slideArray}</code>
