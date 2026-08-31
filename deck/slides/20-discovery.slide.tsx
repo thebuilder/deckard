@@ -25,7 +25,7 @@ export default function DiscoverySlide() {
         items={[
           {
             description:
-              'discoverSlides(import.meta.glob("./slides/**/*.slide.tsx", { eager: true })) turns every matching module into a slide definition.',
+              "One eager glob over deck/slides hands every .slide.tsx module to discoverSlides, which sorts them and returns slide definitions.",
             title: "One glob, eager",
           },
           {
