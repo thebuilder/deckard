@@ -104,6 +104,26 @@ export default function AuthoringPage() {
         instead of route-specific special cases.
       </p>
 
+      <h2 className="pt-4 text-2xl">One surface per slide</h2>
+      <p>
+        A slide is either a framed panel with flat content inside it, or an open
+        frame holding content that brings its own surface. Never a bordered
+        panel full of bordered cards. <code>FeatureGrid</code> cards, a{" "}
+        <code>CodeBlock</code>, <code>BulletList</code> rules, and{" "}
+        <code>StatGrid</code> rules are all surfaces, so those bodies compose
+        through <code>OpenContentSlide</code> or <code>FocusSlide</code>, and{" "}
+        <code>ContentSlideCard</code> is for body copy with no surface of its
+        own.
+      </p>
+      <p>
+        The rule is also mechanical. Anything with its own surface carries{" "}
+        <code>data-slide-surface</code>, and a panel carrying{" "}
+        <code>data-slide-panel</code> that turns out to hold one drops its
+        border, background, shadow, and padding. Composing the wrong way stops
+        looking wrong, but write it the right way anyway: the attribute is a
+        safety net, not the design.
+      </p>
+
       <h2 className="pt-4 text-2xl">Check the change</h2>
       <p>
         Structural edits get <code>pnpm deck:validate</code>: a new slug, a

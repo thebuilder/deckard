@@ -93,17 +93,18 @@ const blocks = [
     when: "You are writing your own slide layouts and want the deck heading rhythm without copying class strings.",
   },
   {
-    exports: "HeroSlide, BreakerSlide, ContentSlideCard, OpenContentSlide",
+    exports:
+      "HeroSlide, BreakerSlide, ContentSlideCard, OpenContentSlide, FocusSlide",
     name: "block-slide-layouts",
     summary:
-      "Four whole-slide frames. A centered opener, a left-aligned section divider at the same type size, an intro above a bordered surface panel, and the same intro with no panel. All four fall back to useSlideTitle() when you do not pass a title, so a slide names itself once.",
-    when: "Almost every slide. Start here and drop to OpenContentSlide when the body brings its own frame.",
+      "Five whole-slide frames. A centered opener at half again the title size, a left-aligned section divider at the plain one, an intro above a bordered surface panel, the same intro with no panel, and a focus layout where one block fills the frame with no heading around it. All five fall back to useSlideTitle() when you do not pass a title, so a slide names itself once.",
+    when: "Almost every slide. Card for body copy that has no surface of its own, open when the body brings its own frame, focus when the body is the whole slide.",
   },
   {
     exports: "BulletList, FeatureGrid",
     name: "block-collections",
     summary:
-      "A numbered list that rules each row off with a border, and a three-across card grid on --slide-surface-muted. Both take plain arrays, so a server component can await the data and pass it straight in.",
+      "A numbered list that rules each row off with a border, and a three-across card grid on --slide-surface-muted. Both take plain arrays, so a server component can await the data and pass it straight in. Both carry data-slide-surface, so a card layout wrapped around them drops its own panel instead of framing a frame.",
     when: "BulletList for four to six sequential points, FeatureGrid for three parallel ones. Neither scrolls, so cut copy rather than adding a seventh item.",
   },
   {
