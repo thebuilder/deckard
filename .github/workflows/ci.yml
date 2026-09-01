@@ -86,7 +86,7 @@ jobs:
           node-version: 24
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @deckard/core exec playwright install --with-deps chromium
-      - run: pnpm --filter @deckard/core build
+      - run: pnpm cli:build
       - run: pnpm validate
       - run: pnpm check-overflow
 
@@ -102,3 +102,17 @@ jobs:
           node-version: 24
       - run: pnpm install --frozen-lockfile
       - run: pnpm smoke
+
+  cli-smoke:
+    name: CLI smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          cache: pnpm
+          node-version: 24
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm smoke:cli
