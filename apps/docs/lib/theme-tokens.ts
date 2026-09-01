@@ -1,8 +1,8 @@
 import fs from "node:fs"
 import path from "node:path"
-import process from "node:process"
+import { fileURLToPath } from "node:url"
 
-const repoRoot = path.resolve(process.cwd(), "../..")
+const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..")
 
 export const swatchTokens = [
   "background",
@@ -24,16 +24,21 @@ function readToken(css: string, token: SwatchToken) {
 
 // A swatch is documentation, not the docs build. A stylesheet that moved or a
 // token it never defines leaves that square blank instead of failing the build.
-function readThemeCss(source: string) {
+function readThemeCss(theme: string) {
   try {
-    return fs.readFileSync(path.join(repoRoot, source), "utf8")
+    return fs.readFileSync(
+      path.join(repoRoot, "packages/themes/src", theme, "theme.css"),
+      "utf8"
+    )
   } catch {
     return ""
   }
 }
 
-export function readThemeSwatches(source: string) {
-  const css = readThemeCss(source)
+// Each theme.css declares its light values first and its dark values in the
+// block below, so the first match is light and the last is dark.
+export function readThemeSwatches(theme: string) {
+  const css = readThemeCss(theme)
   const light: Swatches = {}
   const dark: Swatches = {}
 
