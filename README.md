@@ -801,10 +801,11 @@ control.
 
 A slide carries one surface. A framed panel holds flat content, an open frame
 holds content that brings its own border or background, and the two never nest.
-Blocks with a surface of their own carry `data-slide-surface`, the panel in
-`ContentSlideCard` carries `data-slide-panel`, and the stylesheet drops the
-panel's frame when it holds a surface. Compose through `OpenContentSlide` or
-`FocusSlide` anyway.
+Blocks with a surface of their own carry `data-slide-surface` and the panel in
+`ContentSlideCard` carries `data-slide-panel`, but nothing rewrites the slide:
+the panel always paints its card, so a framed block inside it frames a frame.
+The panel says so in development, naming `OpenContentSlide` and `FocusSlide`.
+Compose through one of those.
 
 ## Checking a deck
 

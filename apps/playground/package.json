@@ -14,7 +14,8 @@
     "export:pdf": "deckard export pdf",
     "start": "next start",
     "test": "vitest run --passWithNoTests",
-    "test:unit": "vitest run --passWithNoTests",
+    "test:browser": "vitest run --project blocks --passWithNoTests",
+    "test:unit": "vitest run --project playground --passWithNoTests",
     "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
@@ -37,6 +38,9 @@
     "@types/node": "^26.4.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
+    "@vitest/browser": "^4.1.11",
+    "@vitest/browser-playwright": "^4.1.11",
+    "playwright": "^1.62.1",
     "postcss": "^8.5.26",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",

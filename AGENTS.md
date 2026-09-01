@@ -143,11 +143,13 @@ is what generates it, so a change to that shape belongs in
 - Favor small, composable components over large slide bodies.
 - One surface per slide. A slide is a framed panel with flat content inside it,
   or an open frame holding content that carries its own surface, never a
-  bordered panel full of bordered cards. A block that paints a border or a
-  background carries `data-slide-surface`, `ContentSlideCard`'s panel carries
-  `data-slide-panel`, and a panel holding a surface drops its own frame. Compose
-  through `OpenContentSlide` or `FocusSlide` anyway: the attribute keeps a
-  mistake from looking bad, it does not make the composition right.
+  bordered panel full of bordered cards. It is a convention, not CSS: the panel
+  in `ContentSlideCard` always paints its card, so a framed block inside it
+  frames a frame and looks like it. A block that paints a border or a background
+  carries `data-slide-surface`, the panel carries `data-slide-panel`, and the
+  panel warns in development when it finds one inside itself, naming
+  `OpenContentSlide` and `FocusSlide`. The markers are how the mistake gets
+  named, not how it gets fixed.
 - Update the README when you add a slide model field or change its behavior.
 - Run `pnpm typecheck && pnpm lint && pnpm test` after structural changes, plus
   `pnpm deck:validate`, and `pnpm smoke:package` after touching the package

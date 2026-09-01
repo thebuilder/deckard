@@ -104,7 +104,7 @@ const blocks = [
     exports: "BulletList, FeatureGrid",
     name: "block-collections",
     summary:
-      "A numbered list that rules each row off with a border, and a three-across card grid on --slide-surface-muted. Both take plain arrays, so a server component can await the data and pass it straight in. Both carry data-slide-surface, so a card layout wrapped around them drops its own panel instead of framing a frame.",
+      "A numbered list that rules each row off with a border, and a three-across card grid on --slide-surface-muted. Both take plain arrays, so a server component can await the data and pass it straight in. Both carry data-slide-surface, which is what makes a ContentSlideCard around them warn rather than quietly frame a frame; compose them through OpenContentSlide or FocusSlide instead.",
     when: "BulletList for four to six sequential points, FeatureGrid for three parallel ones. Neither scrolls, so cut copy rather than adding a seventh item.",
   },
   {
