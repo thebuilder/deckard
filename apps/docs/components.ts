@@ -1,5 +1,7 @@
 import { defineComponents } from "blume"
+import DeckPreview from "./components/DeckPreview.astro"
 import Logo from "./components/Logo.astro"
+import ThemeGallery from "./components/ThemeGallery.astro"
 import ThemePalette from "./components/ThemePalette.astro"
 
 export default defineComponents({
@@ -7,6 +9,8 @@ export default defineComponents({
     Logo,
   },
   mdx: {
+    DeckPreview,
+    ThemeGallery,
     ThemePalette,
   },
 })
