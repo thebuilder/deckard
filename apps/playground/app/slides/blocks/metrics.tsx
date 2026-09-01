@@ -10,7 +10,7 @@ export type StatGridItems = readonly [Stat, Stat, Stat]
 
 export function StatGrid({ items }: { items: StatGridItems }) {
   return (
-    <dl className="grid grid-cols-3 gap-10">
+    <dl className="grid grid-cols-3 gap-10" data-slide-surface="">
       {items.map((item, index) => (
         <div
           className="flex flex-col-reverse border-[var(--slide-surface-border)] border-t-2 pt-7"
