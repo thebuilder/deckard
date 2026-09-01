@@ -66,10 +66,10 @@ export function SlideNavigation({
   }, [prefetch, router])
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-border/70 border-t bg-background/75 backdrop-blur-xl">
+    <div className="absolute inset-x-0 bottom-0 z-40 border-border/70 border-t bg-background/75 backdrop-blur-xl">
       <div
         className={cn(
-          "px-4 py-3 sm:px-6",
+          "px-6 py-3",
           isCounterOnly
             ? "flex items-center justify-center"
             : "flex items-center justify-between gap-3"

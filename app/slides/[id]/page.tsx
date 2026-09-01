@@ -85,6 +85,7 @@ export default async function SlidePage({
   return (
     <SlideShell
       background={slide.background}
+      canvas={deck.canvas}
       deckTitle={deck.header.brand}
       deckTitleHref={deck.header.href}
       footerMode={isChromeHidden ? "hidden" : slide.footer}

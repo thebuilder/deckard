@@ -15,6 +15,7 @@ const notFoundSlide: SlideSummary = {
 export default function SlidesNotFoundPage() {
   return (
     <SlideShell
+      canvas={deck.canvas}
       deckTitle={deck.header.brand}
       deckTitleHref={deck.header.href}
       footerMode="hidden"
@@ -24,15 +25,15 @@ export default function SlidesNotFoundPage() {
       slide={notFoundSlide}
       slides={toSlideSummaries(deck.slides)}
     >
-      <section className="flex min-h-[calc(100svh-16rem)] items-center py-8 sm:py-12">
+      <section className="flex h-full items-center py-12">
         <div className="space-y-6">
           <p className="font-semibold text-primary text-sm uppercase tracking-[0.3em]">
             Page not found
           </p>
-          <h1 className="max-w-4xl text-pretty font-semibold text-4xl tracking-tight sm:text-5xl lg:text-6xl">
+          <h1 className="max-w-4xl text-pretty font-semibold text-6xl tracking-tight">
             We couldn&apos;t find that slide.
           </h1>
-          <p className="max-w-2xl text-base text-muted-foreground leading-7 sm:text-lg">
+          <p className="max-w-2xl text-lg text-muted-foreground leading-7">
             The link may be old, or the URL may be incorrect. Start from the
             first slide and navigate from there.
           </p>

@@ -28,7 +28,7 @@ export function ContentSlideCard({
         <SlideHeading description={description} title={resolvedTitle} />
       </div>
 
-      <div className="grid gap-4 rounded-[calc(var(--radius)*2)] border border-border/70 bg-card/80 p-4 shadow-sm backdrop-blur-sm sm:p-5">
+      <div className="grid gap-4 rounded-[calc(var(--radius)*2)] border border-border/70 bg-card/80 p-5 shadow-sm backdrop-blur-sm">
         {children}
       </div>
     </div>
@@ -71,14 +71,14 @@ export function HeroSlide({
   const resolvedTitle = useResolvedSlideTitle(title)
 
   return (
-    <div className="flex min-h-[calc(100svh-16rem)] items-center justify-center py-8 text-center sm:py-12">
+    <div className="flex h-full items-center justify-center py-12 text-center">
       <div className="space-y-8">
         <Eyebrow>{eyebrow}</Eyebrow>
-        <h1 className="mx-auto max-w-[14ch] text-balance font-semibold text-5xl leading-[1.06] tracking-tight sm:text-6xl sm:leading-[1.04] lg:text-7xl lg:leading-[1.02]">
+        <h1 className="mx-auto max-w-[14ch] text-balance font-semibold text-7xl leading-[1.02] tracking-tight">
           {resolvedTitle}
         </h1>
         {description ? (
-          <p className="mx-auto max-w-4xl text-lg text-muted-foreground leading-8 sm:text-xl">
+          <p className="mx-auto max-w-4xl text-muted-foreground text-xl leading-8">
             {description}
           </p>
         ) : null}
@@ -99,13 +99,13 @@ export function BreakerSlide({
   const resolvedTitle = useResolvedSlideTitle(title)
 
   return (
-    <section className="flex min-h-[calc(100svh-16rem)] items-center py-8 sm:py-12">
+    <section className="flex h-full items-center py-12">
       <div className="max-w-4xl space-y-6">
         <Eyebrow>{eyebrow}</Eyebrow>
-        <h1 className="max-w-4xl text-pretty font-semibold text-4xl tracking-tight sm:text-5xl lg:text-7xl lg:leading-[0.98]">
+        <h1 className="max-w-4xl text-pretty font-semibold text-7xl leading-[0.98] tracking-tight">
           {resolvedTitle}
         </h1>
-        <p className="max-w-3xl text-lg text-muted-foreground leading-8 sm:text-xl">
+        <p className="max-w-3xl text-muted-foreground text-xl leading-8">
           {description}
         </p>
       </div>

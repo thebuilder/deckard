@@ -26,6 +26,7 @@ The reusable parts (`lib/deck`, `components/slideshow`) are headed for `@deckard
   - `collections.tsx` for list/grid content blocks
   - `media.tsx` for image/media composition blocks
 - Shell/chrome behavior lives in `components/slideshow/slide-shell.tsx`.
+- The fixed canvas lives in `components/slideshow/slide-viewport.tsx` (fit and centering) and `components/slideshow/slide-canvas.tsx` (the 1920x1080 coordinate space). Canvas size comes from `deck/deck.ts` through `lib/deck/canvas.ts`.
 - Background variants are centralized in `components/slideshow/slide-background.tsx`.
 
 ## Authoring rules
@@ -37,6 +38,8 @@ The reusable parts (`lib/deck`, `components/slideshow`) are headed for `@deckard
   - good: `FullscreenMediaSlide` with `media.kind: "image" | "video"`
   - avoid: single component with `variant`/`animate*` branching props
 - Use slide-level metadata (`layout`, `header`, `footer`, `background`, `stepCount`) instead of route-specific hacks.
+- Size slide content against the canvas (`h-full`, percentages, fixed values). No browser viewport units (`svh`, `svw`, `vh`, `vw`) and no responsive breakpoints (`sm:`, `lg:`) inside the canvas: the canvas is one fixed size and the browser window is not.
+- Content that has to scroll goes in `SlideScrollArea` so scrolling does not step the deck. Everything else has to fit, the canvas clips it and warns in development.
 - Use reusable media primitives (for example `ImageShowcaseSlide`) for media-first slides and keep assets in `public/images`.
 - Prefer static image imports (`ImageProps["src"]`) over raw strings when possible, so blur placeholders are available.
 - Reuse `deck` values for branding/title instead of hardcoding strings.

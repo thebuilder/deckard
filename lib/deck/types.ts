@@ -65,6 +65,15 @@ export interface SlideSummary {
   title: string
 }
 
+// The logical coordinate space every slide is authored in. Crosses to client components, so it stays serializable.
+export interface DeckCanvasConfig {
+  fit: "contain"
+  height: number
+  margin: number
+  mode: "fixed"
+  width: number
+}
+
 export interface DeckHeaderConfig {
   brand: string
   href: string
@@ -76,6 +85,7 @@ export interface DeckFooterConfig {
 }
 
 export interface DeckConfig {
+  canvas?: Partial<DeckCanvasConfig>
   description: string
   footer: DeckFooterConfig
   header: DeckHeaderConfig
@@ -84,6 +94,7 @@ export interface DeckConfig {
 }
 
 export interface Deck {
+  canvas: DeckCanvasConfig
   description: string
   footer: DeckFooterConfig
   header: DeckHeaderConfig

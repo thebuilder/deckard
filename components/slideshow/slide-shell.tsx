@@ -5,7 +5,7 @@ import {
   PresenterPopoutButton,
   PresenterSync,
 } from "@/components/slideshow/presenter-controls"
-import { SlideBackground } from "@/components/slideshow/slide-background"
+import { SlideCanvas } from "@/components/slideshow/slide-canvas"
 import { SlideCommandCenter } from "@/components/slideshow/slide-command-center"
 import { SlideContextProvider } from "@/components/slideshow/slide-context"
 import { SlideErrorBoundary } from "@/components/slideshow/slide-error-boundary"
@@ -14,9 +14,10 @@ import {
   SlideStepAdvanceArea,
   SlideStepper,
 } from "@/components/slideshow/slide-stepper"
+import { SlideViewport } from "@/components/slideshow/slide-viewport"
 import { StaticMediaBoundary } from "@/components/slideshow/static-media-boundary"
 import { SlideshowThemeToggle } from "@/components/slideshow/theme-toggle"
-import type { SlideSummary } from "@/lib/deck/types"
+import type { DeckCanvasConfig, SlideSummary } from "@/lib/deck/types"
 import { cn } from "@/lib/utils"
 import type {
   SlideBackgroundMode,
@@ -27,6 +28,7 @@ import type {
 
 interface SlideShellProps {
   background?: SlideBackgroundMode
+  canvas: DeckCanvasConfig
   children: ReactNode
   deckTitle: string
   deckTitleHref?: string
@@ -70,21 +72,24 @@ function resolveChrome({
   }
 }
 
-const mainFrames = {
+// Canvas coordinates, not browser viewport coordinates. Every value below is a slice of the 1080px-tall canvas.
+const canvasFrames = {
   default: {
-    base: "mx-auto min-h-svh max-w-6xl items-start px-4 sm:px-6",
-    footer: { off: "pb-4 sm:pb-6", on: "pb-24 sm:pb-28" },
-    header: { off: "pt-8 sm:pt-10", on: "pt-28 sm:pt-32" },
+    base: "mx-auto max-w-6xl px-6",
+    footer: { off: "pb-6", on: "pb-28" },
+    header: { off: "pt-10", on: "pt-32" },
   },
   fullscreen: {
-    base: "box-border h-svh items-stretch p-0",
-    footer: { off: "", on: "pb-16 sm:pb-20" },
-    header: { off: "", on: "pt-20 sm:pt-24" },
+    base: "p-0",
+    footer: { off: "", on: "" },
+    header: { off: "", on: "" },
   },
 }
 
-function mainClassName({ isFullscreen, showFooter, showHeader }: ChromeState) {
-  const frame = mainFrames[isFullscreen ? "fullscreen" : "default"]
+const fullscreenChromeInsets = { bottom: 80, top: 96 }
+
+function frameClassName({ isFullscreen, showFooter, showHeader }: ChromeState) {
+  const frame = canvasFrames[isFullscreen ? "fullscreen" : "default"]
 
   return cn(
     frame.base,
@@ -93,42 +98,67 @@ function mainClassName({ isFullscreen, showFooter, showHeader }: ChromeState) {
   )
 }
 
-function SlideShellHeader({
-  currentNumber,
+// The fullscreen frame reserves nothing, so slide content that has to clear the chrome reads these instead.
+function chromeInset({ isFullscreen, showFooter, showHeader }: ChromeState) {
+  if (!isFullscreen) {
+    return { bottom: 0, top: 0 }
+  }
+
+  return {
+    bottom: showFooter ? fullscreenChromeInsets.bottom : 0,
+    top: showHeader ? fullscreenChromeInsets.top : 0,
+  }
+}
+
+function SlideCanvasHeader({
   deckTitle,
   deckTitleHref,
-  slides,
 }: {
-  currentNumber: number
   deckTitle: string
   deckTitleHref: string
-  slides: SlideSummary[]
 }) {
   return (
-    <header className="fixed inset-x-0 top-0 z-40 border-transparent border-b bg-background/50 backdrop-blur-sm">
-      <div className="flex items-center justify-between gap-4 px-4 py-4 sm:px-6">
+    <header className="absolute inset-x-0 top-0 z-40 border-transparent border-b bg-background/50 backdrop-blur-sm">
+      <div className="flex min-h-16 items-center px-6 py-4">
         <Link
           className="font-semibold text-sm tracking-tight"
           href={deckTitleHref}
         >
           {deckTitle}
         </Link>
-        <div className="flex items-center gap-2">
-          <SlideCommandCenter
-            currentNumber={currentNumber}
-            deckTitle={deckTitle}
-            slides={slides}
-          />
-          <PresenterPopoutButton />
-          <SlideshowThemeToggle />
-        </div>
       </div>
     </header>
   )
 }
 
+// Presenter tooling, not slide content, so it sits outside the scaled canvas and keeps its own hit targets.
+function SlideUtilityBar({
+  currentNumber,
+  deckTitle,
+  slides,
+}: {
+  currentNumber: number
+  deckTitle: string
+  slides: SlideSummary[]
+}) {
+  return (
+    <div className="pointer-events-none absolute inset-x-0 top-0 z-50 flex justify-end px-4 py-4 sm:px-6">
+      <div className="pointer-events-auto flex items-center gap-2">
+        <SlideCommandCenter
+          currentNumber={currentNumber}
+          deckTitle={deckTitle}
+          slides={slides}
+        />
+        <PresenterPopoutButton />
+        <SlideshowThemeToggle />
+      </div>
+    </div>
+  )
+}
+
 export function SlideShell({
   background = "default",
+  canvas,
   children,
   deckTitle,
   deckTitleHref = "/",
@@ -158,7 +188,7 @@ export function SlideShell({
       stepCount={slide.stepCount}
     >
       <SlideContextProvider isPresenterPreview={readOnly} title={slide.title}>
-        <div className="relative min-h-svh overflow-hidden bg-background text-foreground">
+        <div className="relative h-svh w-full overflow-hidden bg-background text-foreground">
           <PresenterSync
             enabled={isPresenterLive}
             next={next}
@@ -167,45 +197,55 @@ export function SlideShell({
             slides={slides}
           />
           <PresenterKeyboardShortcut enabled={isPresenterLive} />
-          <SlideBackground variant={background} />
+
+          <SlideViewport canvas={canvas}>
+            <SlideCanvas
+              background={background}
+              canvas={canvas}
+              chromeInset={chromeInset(chrome)}
+              footer={
+                chrome.showFooter ? (
+                  <SlideNavigation
+                    mode={footerMode === "counter" ? "counter" : "visible"}
+                    next={next}
+                    prefetch={prefetch}
+                    previous={previous}
+                    slide={slide}
+                    total={slides.length}
+                  />
+                ) : null
+              }
+              frameClassName={frameClassName(chrome)}
+              header={
+                chrome.showHeader ? (
+                  <SlideCanvasHeader
+                    deckTitle={deckTitle}
+                    deckTitleHref={deckTitleHref}
+                  />
+                ) : null
+              }
+            >
+              <SlideStepAdvanceArea className="h-full w-full">
+                <StaticMediaBoundary
+                  activePath={slide.href}
+                  className="h-full w-full"
+                  enabled={freezeMedia}
+                >
+                  <div className="h-full w-full">
+                    <SlideErrorBoundary slideId={slide.id}>
+                      {children}
+                    </SlideErrorBoundary>
+                  </div>
+                </StaticMediaBoundary>
+              </SlideStepAdvanceArea>
+            </SlideCanvas>
+          </SlideViewport>
 
           {chrome.showHeader ? (
-            <SlideShellHeader
+            <SlideUtilityBar
               currentNumber={slide.number}
               deckTitle={deckTitle}
-              deckTitleHref={deckTitleHref}
               slides={slides}
-            />
-          ) : null}
-
-          <main
-            className={cn("relative z-10 flex w-full", mainClassName(chrome))}
-          >
-            <SlideStepAdvanceArea
-              className={cn("w-full", chrome.isFullscreen && "h-full")}
-            >
-              <StaticMediaBoundary
-                activePath={slide.href}
-                className={cn(chrome.isFullscreen && "h-full")}
-                enabled={freezeMedia}
-              >
-                <div className={cn("w-full", chrome.isFullscreen && "h-full")}>
-                  <SlideErrorBoundary slideId={slide.id}>
-                    {children}
-                  </SlideErrorBoundary>
-                </div>
-              </StaticMediaBoundary>
-            </SlideStepAdvanceArea>
-          </main>
-
-          {chrome.showFooter ? (
-            <SlideNavigation
-              mode={footerMode === "counter" ? "counter" : "visible"}
-              next={next}
-              prefetch={prefetch}
-              previous={previous}
-              slide={slide}
-              total={slides.length}
             />
           ) : null}
         </div>
