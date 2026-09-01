@@ -48,7 +48,8 @@ measure back.
 | `--slide-subheading-size` | an `h2` inside a slide body              |
 | `--slide-lead-size`       | the sentence under a headline            |
 | `--slide-body-size`       | bullet copy, the main text of a slide    |
-| `--slide-support-size`    | captions, grid copy, code, metadata rows |
+| `--slide-code-size`       | the type inside a `CodeBlock`            |
+| `--slide-support-size`    | captions, grid copy, metadata rows       |
 | `--slide-label-size`      | eyebrows and other uppercase labels      |
 
 The scale is the tightest of the four themes in this registry, and every size is

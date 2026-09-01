@@ -55,7 +55,8 @@ set in it will not survive a room.
 | `--slide-subheading-size` | an `h2` inside a slide body              |
 | `--slide-lead-size`       | the sentence under a headline            |
 | `--slide-body-size`       | bullet copy, the main text of a slide    |
-| `--slide-support-size`    | captions, grid copy, code, metadata rows |
+| `--slide-code-size`       | the type inside a `CodeBlock`            |
+| `--slide-support-size`    | captions, grid copy, metadata rows       |
 | `--slide-label-size`      | eyebrows and other uppercase labels      |
 
 Uppercase headings eat about 15% more width than the same words in mixed case.
