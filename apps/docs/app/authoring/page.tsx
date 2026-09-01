@@ -24,9 +24,11 @@ export default function AuthoringPage() {
       </p>
       <p>
         What does not fit gets clipped. In development an overflowing slide logs
-        a warning and draws an amber outline. Trim it, or put the part that has
-        to scroll in <code>SlideScrollArea</code>, which keeps wheel, touch, and
-        key scrolling inside itself so scrolling never steps the deck.
+        a warning and draws an amber outline, and{" "}
+        <code>pnpm deck:check-overflow</code> fails on it with the slide id and
+        how far over it runs. Trim it, or put the part that has to scroll in{" "}
+        <code>SlideScrollArea</code>, which keeps wheel, touch, and key
+        scrolling inside itself so scrolling never steps the deck.
       </p>
 
       <h2 className="pt-4 text-2xl">Slide modules stay on the server</h2>
@@ -86,6 +88,16 @@ export default function AuthoringPage() {
         Use slide metadata (<code>layout</code>, <code>header</code>,{" "}
         <code>footer</code>, <code>background</code>, <code>stepCount</code>)
         instead of route-specific special cases.
+      </p>
+
+      <h2 className="pt-4 text-2xl">Check the change</h2>
+      <p>
+        Structural edits get <code>pnpm deck:validate</code>: a new slug, a
+        slide moved into its own file, a theme token, a registry path. Content
+        edits get <code>pnpm deck:check-overflow</code>. Before you call a deck
+        done, look at a fresh <code>pnpm deck:contact-sheet</code>, because a
+        whole deck in one grid catches what reading the diff does not. Getting
+        started describes what each one measures.
       </p>
 
       <h2 className="pt-4 text-2xl">Two things that will confuse you</h2>

@@ -86,13 +86,14 @@ Every token in `theme.css` is meant to be edited. Change the accent by moving
 deck by moving `--background`, `--card`, and the four background variant colors.
 Retune the type scale by editing the size tokens alone.
 
-Two rules bound the edits. Keep both color blocks in sync, so every token defined
-for light is also defined for dark. And keep contrast: body copy against
+Two rules bound the edits. The dark block only overrides, so every token it
+defines has to exist in the light block above it; a token that appears only in
+dark leaves light mode without it. And keep contrast: body copy against
 `--background` and against `--slide-surface` both have to clear 4.5:1.
 
 If you change the class name, change it in `index.ts` too. The class in the
-`SlideTheme` and the selector in the stylesheet are the same string, and nothing
-checks that for you.
+`SlideTheme` and the selector in the stylesheet are the same string.
+`pnpm deck:validate` fails when they drift apart, and when a token is dark-only.
 
 ## Media overlays
 
@@ -116,7 +117,8 @@ starts at `.deckard-theme`.
 
 Adding a color mode to `colorModes` without writing its block. `defineDeck`
 checks that the list is coherent, not that the CSS exists. A theme that claims
-`light` and only styles dark renders as unthemed light.
+`light` and only styles dark renders as unthemed light. `pnpm deck:validate`
+compares the list against the blocks this file actually carries.
 
 Assuming `.dark` on `<html>` is the only switch. A single-mode theme pins the
 canvas through `data-slide-color-mode`, and the dark block matches both. Copy

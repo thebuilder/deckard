@@ -68,13 +68,21 @@ Every script runs from the root:
 pnpm dev            # playground on :3000, core rebuilding on save
 pnpm build          # every app
 pnpm typecheck
-pnpm test           # 73 tests across core and playground
+pnpm test           # 85 tests across core and playground
 pnpm lint
 pnpm analyze
+pnpm deck:validate       # deck, theme, and registry integrity
+pnpm deck:check-overflow # fail on slides the canvas clips
+pnpm deck:screenshots    # one PNG per slide at canvas size
+pnpm deck:contact-sheet  # every screenshot in one grid image
 pnpm registry:build # write the shadcn registry to apps/docs/public/r
 pnpm smoke:package  # pack @deckard/core and build a scratch app against it
 pnpm smoke:registry # install the registry into a scratch app and build it
 ```
+
+`AGENTS.md` is the short version of the rules for a coding agent, and
+`.claude/skills/slide-authoring/SKILL.md` is the slide-authoring skill it loads
+when it writes or edits slides.
 
 ### @deckard/core
 
@@ -192,8 +200,9 @@ Two rules follow from the fixed canvas:
   the canvas would react to the window instead of the slide, so the canvas is
   the wrong size for them.
 - The canvas clips what does not fit. In development an overflowing slide gets
-  a console warning and an amber outline. Trim the content, or put the part
-  that has to scroll in a `SlideScrollArea`.
+  a console warning and an amber outline, and `pnpm deck:check-overflow` fails
+  on it. Trim the content, or put the part that has to scroll in a
+  `SlideScrollArea`.
 
 `SlideScrollArea` keeps wheel, touch, and key scrolling inside itself so
 scrolling never steps the deck:
@@ -501,6 +510,55 @@ Inside the canvas, style with semantic tokens (`bg-card`, `text-muted-foreground
 or slide tokens (`--slide-title-size`, `--slide-surface`). Never a hardcoded
 color. `apps/playground/deck/theme/THEME.md` lists the tokens and what they control.
 
+## Checking a deck
+
+Four scripts in `apps/playground/scripts` cover the checks a deck needs. They
+share one harness: `scripts/lib/preview.ts` builds the app, starts `next start`
+on a spare port, and opens a page sized so the canvas renders at scale 1. The
+PDF export runs on the same harness.
+
+```bash
+pnpm deck:validate
+```
+
+Loads the real deck through a throwaway Vite server, in about a second, and
+reports:
+
+- the deck resolves, every slide has a body, and every `sourcePath` a discovered
+  module reports is a file on disk. A duplicate slug, an unsafe slug, or a
+  module without a default export comes back as one line naming the slide or the
+  file, not a stack trace at build time
+- the theme class in `deck/theme/index.ts` is a selector in `deck/theme/theme.css`,
+  the dark block defines nothing the light block does not, and `colorModes`
+  matches the blocks the stylesheet actually carries
+- every `files[].path` in the root `registry.json` exists, and every registry
+  theme's class is a selector in the stylesheet it ships
+
+It exits nonzero on any of those and prints slide counts otherwise.
+
+```bash
+pnpm deck:check-overflow
+```
+
+Measures each slide's frame against the canvas with the same arithmetic as the
+development-only `SlideOverflowGuard`, and exits nonzero listing every slide the
+canvas clips and by how much. Add `--light` to check light mode instead of dark.
+
+```bash
+pnpm deck:screenshots
+pnpm deck:contact-sheet
+```
+
+`deck:screenshots` writes one PNG per slide at canvas size to
+`apps/playground/out/screenshots/<id>.png`, plus a manifest. `deck:contact-sheet`
+composes them into `apps/playground/out/contact-sheet.png`, a labelled grid of
+the whole deck. Both take `--light`; the contact sheet takes `--columns=N`.
+
+A build is reused when it is newer than everything in `app/`, `deck/`,
+`components/`, `assets/`, `public/`, and `packages/core/src`. Pass
+`--skip-build` to reuse whatever is in `.next`, or `--port=N` to move off the
+default port.
+
 ## PDF export
 
 Use Playwright + PDF-lib export:
@@ -534,7 +592,7 @@ cannot drift from what the audience sees.
 
 Optional env vars:
 
-- `PDF_EXPORT_PORT` (default `3410`)
+- `PDF_EXPORT_PORT` (default `3410`, or pass `--port=N`)
 - `PDF_EXPORT_OUTPUT` (default `out/slides.pdf`, relative to the app)
 
 Skip build (reuse existing `.next` build):

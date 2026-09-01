@@ -5,6 +5,10 @@
   "type": "module",
   "scripts": {
     "build": "next build",
+    "deck:check-overflow": "node scripts/check-overflow.ts",
+    "deck:contact-sheet": "node scripts/contact-sheet.ts",
+    "deck:screenshots": "node scripts/screenshots.ts",
+    "deck:validate": "node scripts/validate-deck.ts",
     "dev": "next dev --turbopack",
     "export:pdf": "node scripts/export-pdf.ts",
     "start": "next start",
@@ -35,6 +39,7 @@
     "postcss": "^8.5.26",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
+    "vite": "^8.2.2",
     "vitest": "^4.1.11"
   }
 }
