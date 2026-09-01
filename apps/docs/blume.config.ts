@@ -20,7 +20,11 @@ export default defineConfig({
   search: {
     popular: [
       { href: "/quickstart", icon: "rocket", label: "Quickstart" },
-      { href: "/guides/writing-slides", icon: "file-text", label: "Writing slides" },
+      {
+        href: "/guides/writing-slides",
+        icon: "file-text",
+        label: "Writing slides",
+      },
       { href: "/guides/the-canvas", icon: "frame", label: "The canvas" },
       { href: "/reference/cli", icon: "terminal", label: "CLI reference" },
       { href: "/themes", icon: "palette", label: "Theme gallery" },
