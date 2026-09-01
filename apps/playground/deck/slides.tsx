@@ -12,7 +12,7 @@ import {
   OpenContentSlide,
 } from "@/app/slides/blocks/templates"
 import { Eyebrow } from "@/app/slides/blocks/typography"
-import exampleBackgroundImage from "@/assets/example-background.png"
+import incomingSignalImage from "@/assets/incoming-signal.webp"
 import templateCapabilitiesImage from "@/assets/template-capabilities.svg"
 import "server-only"
 
@@ -275,8 +275,8 @@ export const slides: SlideDefinition[] = [
         overlay="strong"
         media={{
           kind: "image",
-          src: exampleBackgroundImage,
-          alt: "Example scenic background",
+          src: incomingSignalImage,
+          alt: "Wireframe monolith rising over a glowing signal grid",
           placeholder: "blur",
           priority: true,
         }}
