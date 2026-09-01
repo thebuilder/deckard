@@ -114,5 +114,5 @@ jobs:
           cache: pnpm
           node-version: 24
       - run: pnpm install --frozen-lockfile
-      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm --filter @deckard/core exec playwright install --with-deps chromium
       - run: pnpm smoke:cli
