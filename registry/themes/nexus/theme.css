@@ -62,9 +62,7 @@
   color-scheme: light;
 }
 
-.nexus-theme:where(.dark, .dark *):where(
-  :not([data-slide-color-mode="light"])
-),
+.nexus-theme:where(.dark, .dark *):where(:not([data-slide-color-mode="light"])),
 .nexus-theme:where([data-slide-color-mode="dark"]) {
   --background: oklch(0.155 0.022 258);
   --foreground: oklch(0.96 0.008 258);
@@ -120,8 +118,8 @@
 
 .nexus-theme :is(code, kbd, pre, samp) {
   font-family: var(--slide-font-mono);
-  letter-spacing: 0;
   text-transform: none;
+  letter-spacing: 0;
 }
 
 /* Background variants. The runtime only renders the hook element and the variant name. */
