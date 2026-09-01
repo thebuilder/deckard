@@ -1,0 +1,97 @@
+---
+title: Introduction
+description: Deckard is a React presentation framework for Next.js. Slides are components, the canvas is a fixed 1920x1080, and the look is a theme you can eject.
+sidebar:
+  label: Introduction
+  order: 0
+---
+
+Deckard builds presentations out of React components. A slide is a `body` and some metadata, the deck is an array of those, and everything the audience sees is painted inside one fixed 1920x1080 canvas that scales to whatever screen it lands on.
+
+That last part is the trade. You give up responsive layout inside a slide and you get back certainty: the deck looks the same on your laptop, the venue projector, a phone, and in the exported PDF. Only the scale changes.
+
+## Who it is for
+
+People who already write React and would rather not leave it to make slides. If a slide needs a live chart, a running demo, a table pulled from an API, or a code sample with real syntax highlighting, it is a component like any other component, and it awaits its own data before it renders.
+
+If your deck is bullet points and a photo, Deckard will do that too, but so will Keynote, and Keynote will not ask you to run `pnpm install`.
+
+## What a deck looks like
+
+```tsx deck/slides.tsx
+import type { SlideDefinition } from "@deckard/core"
+
+export const slides: SlideDefinition[] = [
+  {
+    slug: "intro",
+    title: "Deckard",
+    body: <HeroSlide eyebrow="A talk" />,
+  },
+  {
+    title: "The numbers",
+    notes: "Pause here. The middle figure is the one they will ask about.",
+    body: (
+      <FocusSlide>
+        <StatGrid items={quarterly} />
+      </FocusSlide>
+    ),
+  },
+]
+```
+
+```ts deck/deck.ts
+import { defineDeck } from "@deckard/core"
+import { phosphor } from "@deckard/themes"
+import { slides } from "@/deck/slides"
+
+export const deck = defineDeck({
+  description: "What we shipped and what it cost.",
+  footer: { mode: "visible" },
+  header: { brand: "Acme", href: "/", meta: "March 2026", mode: "auto" },
+  slides,
+  theme: phosphor,
+  title: "Q1 review",
+})
+```
+
+The array is the deck order. `defineDeck` resolves it: every slide gets an id, a number, a URL, and its chrome defaults filled in. Nothing reorders your array, so moving a slide in it is the only way to move it in the deck.
+
+## Three packages
+
+<CardGroup cols={3}>
+  <Card title="@deckard/core" icon="box">
+    The deck contract and the runtime: `defineDeck`, the canvas, the slide
+    shell, presenter mode, and the Next.js route adapters.
+  </Card>
+  <Card title="@deckard/themes" icon="palette">
+    Six presets. A deck imports one and hands it to `defineDeck`, and can eject
+    it into its own files later.
+  </Card>
+  <Card title="@deckard/cli" icon="terminal">
+    The `deckard` binary: scaffold a deck, check that it fits, screenshot it,
+    export it to PDF.
+  </Card>
+</CardGroup>
+
+Slide blocks are the fourth piece and deliberately not a package. They install into your app as source through a shadcn registry, and you edit them from then on.
+
+:::warning
+None of the three packages are published to npm yet. The [Quickstart](/quickstart) has the tarball path that works today.
+:::
+
+## Where to go next
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" href="/quickstart" icon="rocket">
+    Scaffold a deck, run it, change a slide.
+  </Card>
+  <Card title="Writing slides" href="/guides/writing-slides" icon="file-text">
+    Blocks, inline slides, file-per-slide modules, discovery.
+  </Card>
+  <Card title="The canvas" href="/guides/the-canvas" icon="frame">
+    Why 1920x1080 is fixed and what that means for your CSS.
+  </Card>
+  <Card title="Theme gallery" href="/themes" icon="swatch-book">
+    The six built-in palettes, read out of their stylesheets.
+  </Card>
+</CardGroup>

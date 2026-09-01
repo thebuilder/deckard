@@ -1,0 +1,133 @@
+---
+title: Token contract
+description: Every --slide-* custom property declared in @deckard/core/styles.css, its neutral default, and what reads it.
+sidebar:
+  label: Tokens
+  icon: swatch-book
+---
+
+`@deckard/core/styles.css` declares every `--slide-*` token with a neutral default, inside `@layer base`. A theme redefines them on the canvas and wins, because it ships unlayered CSS and everything in the contract sits in the base layer.
+
+That is the whole arrangement. The runtime depends on these names and never on a preset, so a deck with no theme still renders: neutral sizes, app surfaces, no decoration.
+
+```css app/globals.css
+@import "tailwindcss";
+@import "@deckard/core/styles.css";
+```
+
+## Type
+
+| Token | Default | Reads it |
+| --- | --- | --- |
+| `--slide-font-heading` | `var(--font-sans)` | Headings, and `StatGrid` figures |
+| `--slide-font-body` | `var(--font-sans)` | Body copy and the chrome |
+| `--slide-font-mono` | `var(--font-mono)` | Code |
+| `--slide-title-size` | `4rem` | Hero and breaker headlines, `StatGrid` figures |
+| `--slide-heading-size` | `3rem` | The `h1` on a content slide |
+| `--slide-subheading-size` | `1.75rem` | An `h2` inside a body, `StatGrid` units |
+| `--slide-lead-size` | `1.25rem` | The sentence under a headline |
+| `--slide-body-size` | `1.5rem` | Bullet copy, the main text of a slide |
+| `--slide-code-size` | `1.125rem` | Type inside a `CodeBlock` |
+| `--slide-support-size` | `0.875rem` | Captions, grid copy, metadata rows |
+| `--slide-label-size` | `0.875rem` | Eyebrows and other uppercase labels |
+| `--slide-label-tracking` | `0.25em` | Letter spacing on those labels |
+
+Line height rides along as a unitless multiplier in the blocks, so changing a size token keeps its leading proportional. Never pair a size token with a fixed `leading-7`.
+
+## Spacing
+
+| Token | Default | |
+| --- | --- | --- |
+| `--slide-padding-inline` | `1.5rem` | The gutter on both sides of the frame, and inside the canvas header |
+| `--slide-padding-block` | `2rem` | Top and bottom padding when the slide has no header or footer |
+| `--slide-content-gap` | `1.5rem` | The rhythm between blocks inside a slide |
+
+## Surfaces
+
+| Token | Default | |
+| --- | --- | --- |
+| `--slide-radius` | `0.75rem` | Cards, code blocks, small panels |
+| `--slide-radius-lg` | `1.25rem` | The `ContentSlideCard` panel |
+| `--slide-surface` | `var(--card)` | The raised surface a panel paints |
+| `--slide-surface-muted` | `var(--muted)` | `FeatureGrid` cards, secondary panels |
+| `--slide-surface-border` | `var(--border)` | Panel borders, the `StatGrid` rule |
+| `--slide-surface-shadow` | `none` | Depth under a panel, where the theme wants it |
+
+## Backgrounds
+
+`SlideBackground` renders one empty element carrying `data-slide-background`, and the theme paints each variant with these:
+
+| Token | Default | |
+| --- | --- | --- |
+| `--slide-wash` | `transparent` | The broad tint over the sheet |
+| `--slide-veil` | `transparent` | A second layer that separates from the wash |
+| `--slide-glow` | `transparent` | A concentrated highlight |
+| `--slide-grid-color` | `transparent` | The rule color for the `grid` variant |
+| `--slide-grid-size` | `44px` | The grid pitch |
+| `--slide-spotlight` | `transparent` | The `spotlight` variant's focus |
+
+## Media
+
+| Token | Default | |
+| --- | --- | --- |
+| `--slide-media-foreground` | `oklch(1 0 0)` | Text over photography |
+| `--slide-media-foreground-muted` | `oklch(1 0 0 / 85%)` | Secondary text over photography |
+| `--slide-media-overlay-subtle` | a bottom-up black gradient at 35% | `overlay="subtle"` |
+| `--slide-media-overlay-medium` | the same at 55% | `overlay="medium"` |
+| `--slide-media-overlay-strong` | the same at 75% | `overlay="strong"` |
+
+## Chrome
+
+The eight tokens every built-in theme overrides, plus the two that decide how much canvas the chrome gets:
+
+| Token | Default | |
+| --- | --- | --- |
+| `--slide-chrome-foreground` | `var(--muted-foreground)` | Header and footer text |
+| `--slide-chrome-emphasis` | `var(--foreground)` | The brand |
+| `--slide-chrome-border` | `var(--border)` | The rules above the footer and below the header |
+| `--slide-chrome-size` | `var(--slide-support-size)` | Chrome type size |
+| `--slide-chrome-tracking` | `0.08em` | Letter spacing on the counter |
+| `--slide-chrome-gap` | `1rem` | Column gap inside header and footer |
+| `--slide-progress-track` | `transparent` | The progress element's own background |
+| `--slide-progress-fill` | `var(--slide-chrome-border)` | The filled portion |
+| `--slide-header-space` | `8rem` | Canvas padding reserved for the header |
+| `--slide-footer-space` | `6rem` | Canvas padding reserved for the footer |
+
+A theme that redesigns the chrome to a different height sets the last two and the slide content moves with it.
+
+## Published by the runtime
+
+These are set in the DOM rather than declared in the contract, and a theme or a block reads them:
+
+| Variable | Set on | |
+| --- | --- | --- |
+| `--slide-progress` | `[data-slide-progress]` | Position in the deck as a fraction from 0 to 1 |
+| `--slide-chrome-top` | the canvas | `--slide-header-space` republished as an inset for a bleeding layout |
+| `--slide-chrome-bottom` | the canvas | The same for the footer |
+| `--deckard-scale` | the viewport | The measured fit, applied as a `scale()` transform |
+
+A fullscreen block pads against the chrome insets so the deck header and slide counter never sit on top of a caption:
+
+```tsx
+className="pb-[calc(3rem+var(--slide-chrome-bottom,0px))]"
+```
+
+## Structural attributes
+
+The runtime renders these and the theme styles them. They are as much a part of the contract as the tokens.
+
+| Attribute | On |
+| --- | --- |
+| `data-slide-canvas` | The canvas element, which also carries the theme class |
+| `data-slide-viewport` | The element that scales the canvas |
+| `data-slide-frame` | The slide frame the overflow check measures |
+| `data-slide-background` | The background element, valued with the variant name |
+| `data-slide-header`, `data-slide-footer` | The chrome |
+| `data-slide-header-brand`, `-title`, `-meta` | The three header parts |
+| `data-slide-counter`, `-current`, `-separator`, `-total` | The counter |
+| `data-slide-progress` | The progress element, absent entirely when `footer.progress` is `false` |
+| `data-slide-surface` | A block that paints its own border or background |
+| `data-slide-panel` | The `ContentSlideCard` panel |
+| `data-stat-value` | A `StatGrid` figure, which is not a heading element but wants heading treatment |
+
+Code blocks are scoped too: `[data-slide-canvas] .shiki` has its shiki-painted background forced transparent, so a deck never restyles code the surrounding app renders.
