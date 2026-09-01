@@ -1,0 +1,567 @@
+/*
+ * The landing page. PageLayout gives the document shell, the header, and the
+ * fonts, and nothing else, so every rule the page needs is here.
+ *
+ * The theme switcher and the deck stepper are radio groups read with :checked.
+ * They work with JavaScript off, and a radio group is already the right thing
+ * for the keyboard: arrow keys move between the options.
+ */
+
+.landing {
+  --landing-measure: 72rem;
+
+  padding-block-end: 6rem;
+  font-family: var(--blume-font-body);
+  color: var(--blume-foreground);
+}
+
+.landing a {
+  color: inherit;
+}
+
+/* Hero */
+
+.hero {
+  display: grid;
+  gap: 3rem;
+  align-items: center;
+  max-width: var(--landing-measure);
+  padding-block: 4rem 5rem;
+  padding-inline: 1.5rem;
+  margin-inline: auto;
+}
+
+@media (min-width: 64rem) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    gap: 4rem;
+    max-width: 78rem;
+    padding-block: 6rem 7rem;
+  }
+}
+
+.hero-eyebrow {
+  font-family: var(--blume-font-mono);
+  font-size: 0.75rem;
+  color: var(--blume-muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+.hero-title {
+  margin-block-start: 1.25rem;
+  font-family: var(--blume-font-display);
+  font-size: clamp(2rem, 3.6vw, 2.875rem);
+  font-weight: 500;
+  line-height: 1.04;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.hero-lead {
+  max-width: 34rem;
+  margin-block-start: 1.5rem;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--blume-muted-foreground);
+  text-wrap: pretty;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-block-start: 2rem;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.6875rem 1.125rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1;
+  text-decoration: none;
+  border: 1px solid transparent;
+  border-radius: var(--blume-radius);
+  transition:
+    background-color 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease;
+}
+
+.button-primary {
+  color: var(--blume-accent-foreground);
+  background-color: var(--blume-accent);
+}
+
+.button-primary:hover {
+  background-color: color-mix(
+    in oklch,
+    var(--blume-accent) 88%,
+    var(--blume-foreground)
+  );
+}
+
+.button-quiet {
+  color: var(--blume-foreground);
+  border-color: var(--blume-border);
+}
+
+.button-quiet:hover {
+  background-color: var(--blume-muted);
+}
+
+.hero-install {
+  display: flex;
+  gap: 0.625rem;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  padding: 0.75rem 1rem;
+  margin-block-start: 2rem;
+  overflow-x: auto;
+  background-color: var(--blume-code-background);
+  border: 1px solid var(--blume-border);
+  border-radius: var(--blume-radius);
+}
+
+.hero-install code {
+  font-family: var(--blume-font-mono);
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.hero-install-prompt {
+  font-family: var(--blume-font-mono);
+  font-size: 0.875rem;
+  color: var(--blume-muted-foreground);
+  user-select: none;
+}
+
+.hero-note {
+  margin-block-start: 0.875rem;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--blume-muted-foreground);
+}
+
+.hero-note a {
+  color: var(--blume-accent);
+  text-decoration-line: underline;
+  text-underline-offset: 3px;
+}
+
+.switch-input,
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+.hero-frames {
+  display: grid;
+}
+
+.hero-frame {
+  display: none;
+  grid-area: 1 / 1;
+}
+
+.hero-frame .deck-preview {
+  box-shadow: 0 24px 60px -32px rgb(0 0 0 / 55%);
+}
+
+.hero-themes,
+.demo-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
+.hero-themes {
+  margin-block-start: 1rem;
+}
+
+.hero-themes label,
+.demo-steps label {
+  font-family: var(--blume-font-mono);
+  font-size: 0.75rem;
+  line-height: 1;
+  color: var(--blume-muted-foreground);
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  transition:
+    background-color 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease;
+}
+
+.hero-themes label {
+  padding: 0.4375rem 0.75rem;
+}
+
+.hero-themes label:hover,
+.demo-steps label:hover {
+  color: var(--blume-foreground);
+}
+
+.hero-themes label:has(:checked),
+.demo-steps label:has(:checked) {
+  color: var(--blume-foreground);
+  background-color: var(--blume-muted);
+  border-color: var(--blume-border);
+}
+
+.hero-themes label:has(:focus-visible),
+.demo-steps label:has(:focus-visible) {
+  outline: 2px solid var(--blume-accent);
+  outline-offset: 2px;
+}
+
+.hero-caption {
+  margin-block-start: 0.75rem;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--blume-muted-foreground);
+  text-wrap: pretty;
+}
+
+.landing :not(pre, .hero-install) > code {
+  padding: 0.1em 0.35em;
+  font-family: var(--blume-font-mono);
+  font-size: 0.875em;
+  background-color: var(--blume-muted);
+  border: 1px solid var(--blume-border);
+  border-radius: 0.35rem;
+}
+
+/* Sections */
+
+.section {
+  max-width: var(--landing-measure);
+  padding-block: 4.5rem;
+  padding-inline: 1.5rem;
+  margin-inline: auto;
+  border-block-start: 1px solid var(--blume-border);
+}
+
+.section-head {
+  max-width: 46rem;
+  margin-block-end: 2.5rem;
+}
+
+.section-head h2,
+.closing h2 {
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.section-head p {
+  margin-block-start: 1rem;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--blume-muted-foreground);
+  text-wrap: pretty;
+}
+
+.section-footnote {
+  max-width: 46rem;
+  margin-block-start: 1.75rem;
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: var(--blume-muted-foreground);
+  text-wrap: pretty;
+}
+
+.split {
+  display: grid;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (min-width: 64rem) {
+  .split {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: 3rem;
+  }
+}
+
+.notes h3 {
+  margin-block-start: 1.75rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.notes h3:first-child {
+  margin-block-start: 0;
+}
+
+.notes p {
+  margin-block-start: 0.5rem;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--blume-muted-foreground);
+  text-wrap: pretty;
+}
+
+.facts {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.facts li {
+  position: relative;
+  padding-inline-start: 1.375rem;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--blume-muted-foreground);
+  text-wrap: pretty;
+}
+
+.facts li::before {
+  position: absolute;
+  inset-block-start: 0.7em;
+  inset-inline-start: 0;
+  width: 0.5rem;
+  height: 1px;
+  content: "";
+  background-color: var(--blume-accent);
+}
+
+/* Code panels */
+
+.code-figure,
+.demo-code {
+  margin: 0;
+  overflow: hidden;
+  background-color: var(--blume-code-background);
+  border: 1px solid var(--blume-border);
+  border-radius: calc(var(--blume-radius) + 0.25rem);
+}
+
+.code-figure figcaption,
+.demo-code figcaption {
+  padding: 0.625rem 1rem;
+  font-family: var(--blume-font-mono);
+  font-size: 0.6875rem;
+  color: var(--blume-muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  background-color: var(--blume-muted);
+  border-block-end: 1px solid var(--blume-border);
+}
+
+.landing pre.astro-code {
+  padding: 1rem 1.25rem;
+  margin: 0;
+  overflow-x: auto;
+  font-family: var(--blume-font-mono);
+  font-size: 0.78125rem;
+  line-height: 1.7;
+  background-color: transparent;
+}
+
+@media (max-width: 47.99rem) {
+  .landing pre.astro-code {
+    padding: 0.875rem 1rem;
+    font-size: 0.6875rem;
+  }
+}
+
+.landing pre.astro-code,
+.landing pre.astro-code span {
+  color: var(--shiki-light);
+}
+
+:root[data-theme="dark"] .landing pre.astro-code,
+:root[data-theme="dark"] .landing pre.astro-code span {
+  color: var(--shiki-dark);
+}
+
+/* The stepped demo */
+
+.demo {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.demo-steps label {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.5rem 0.875rem;
+  border-color: transparent;
+}
+
+.demo-step-number {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.55;
+}
+
+.demo-panels {
+  display: grid;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (min-width: 64rem) {
+  .demo-panels {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: 2rem;
+  }
+
+  /* The array is taller than a screen, so the slide it is describing follows
+   * the reader down it. 5rem clears the sticky site header. */
+  .demo-stage {
+    position: sticky;
+    inset-block-start: 5rem;
+  }
+}
+
+.demo-slide {
+  display: none;
+}
+
+.demo-caption {
+  display: none;
+  margin-block-start: 1rem;
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: var(--blume-muted-foreground);
+  text-wrap: pretty;
+}
+
+.demo-code .line {
+  display: inline-block;
+  width: 100%;
+  animation-duration: 340ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-fill-mode: both;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .demo-code .line {
+    transition: opacity 220ms ease;
+  }
+}
+
+/* Transform only. An animation that also carried the opacity would leave the
+ * active lines dim whenever the browser throttles it, which is the opposite of
+ * what the step is saying. The dimming is a plain declaration and a transition. */
+@keyframes demo-line-in {
+  from {
+    transform: translateX(-0.4rem);
+  }
+
+  to {
+    transform: none;
+  }
+}
+
+/* The canvas demonstration */
+
+.canvas-demo {
+  display: grid;
+  gap: 2rem;
+  align-items: end;
+  justify-items: center;
+}
+
+@media (min-width: 48rem) {
+  .canvas-demo {
+    grid-template-columns: minmax(0, 1fr) 10.5rem;
+    gap: 3rem;
+    max-width: 58rem;
+  }
+}
+
+.canvas-demo figure {
+  width: 100%;
+  margin: 0;
+}
+
+.canvas-demo-narrow {
+  max-width: 10.5rem;
+}
+
+.canvas-demo figcaption {
+  margin-block-start: 0.75rem;
+  font-family: var(--blume-font-mono);
+  font-size: 0.6875rem;
+  color: var(--blume-muted-foreground);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+/* Closing */
+
+.closing {
+  max-width: var(--landing-measure);
+  padding-block: 5rem;
+  padding-inline: 1.5rem;
+  margin-inline: auto;
+  text-align: center;
+  border-block-start: 1px solid var(--blume-border);
+}
+
+.closing p {
+  max-width: 38rem;
+  margin-block-start: 1rem;
+  margin-inline: auto;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--blume-muted-foreground);
+  text-wrap: pretty;
+}
+
+.closing .hero-actions {
+  justify-content: center;
+}
+
+/* Footer */
+
+.landing-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 2rem;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 72rem;
+  padding-block: 2rem 3rem;
+  padding-inline: 1.5rem;
+  margin-inline: auto;
+  font-size: 0.8125rem;
+  color: var(--blume-muted-foreground);
+  border-block-start: 1px solid var(--blume-border);
+}
+
+.landing-footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+.landing-footer a {
+  color: var(--blume-muted-foreground);
+  text-decoration: none;
+}
+
+.landing-footer a:hover {
+  color: var(--blume-foreground);
+}
