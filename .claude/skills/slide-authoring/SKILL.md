@@ -9,6 +9,15 @@ A slide is an object with a `body` in `apps/playground/deck/slides.tsx`, or a
 module in `apps/playground/deck/slides/*.slide.tsx` that discovery spreads into
 that array. Everything else is metadata.
 
+`apps/demo` has the same shape, and its blocks and theme are its own copies. Work
+in whichever deck the change belongs to, and read that deck's
+`deck/theme/THEME.md`, not the other one's.
+
+Those two decks are this repository's decks. A presentation someone builds on
+Deckard is their own Next.js app with the same `deck/` layout, and every rule
+below applies there unchanged. Paths in this skill are written for this repo, so
+drop the `apps/<name>/` prefix when the deck is a standalone app.
+
 Read `apps/playground/deck/theme/THEME.md` before you touch a color or a size.
 
 ## Start from a block
@@ -122,6 +131,10 @@ pnpm deck:check-overflow  # every slide fits the canvas, nonzero exit on clippin
 pnpm deck:screenshots     # out/screenshots/<id>.png, dark by default, --light for light
 pnpm deck:contact-sheet   # out/contact-sheet.png, every slide in one grid
 ```
+
+Every one of those has a `demo:` twin (`pnpm demo:validate`,
+`pnpm demo:check-overflow`, `pnpm demo:screenshots`, `pnpm demo:contact-sheet`)
+that runs the same script against `apps/demo`.
 
 Run `pnpm deck:validate` after any structural change: a new slug, a moved file, a
 theme edit, a registry path. It loads the real deck in about a second.

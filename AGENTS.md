@@ -4,15 +4,29 @@ Deckard is a React presentation framework for fixed-canvas slides with reusable
 blocks, presenter tooling, and shadcn-native themes. It runs on Next.js and is a
 pnpm workspace driven by Turborepo.
 
+This file describes work inside this repository, where the decks are
+`apps/playground` and `apps/demo`. Someone building a real presentation does not
+clone this repo: they own a Next.js app with `@deckard/core` as a dependency and
+their theme and blocks installed from the registry. The same authoring rules
+apply there, against their own `deck/` directory.
+
 - `packages/core` is `@deckard/core`, the deck contract and the slideshow
   runtime. It compiles to `dist/` with `tsc`, and apps consume the build. Turbo
   builds it before an app builds, and `pnpm dev` runs its `tsc --watch`
   alongside the app.
-- `apps/playground` is the reference deck and the app the visual checks run
-  against.
+- `apps/playground` is the reference deck and the app every visual check runs
+  against. It exercises every feature on purpose, so it is a test surface, not a
+  template and not anyone's presentation.
+- `apps/demo` is a 19-slide talk shaped like a consumer project, and the proof
+  that the framework works outside the playground. `docs/MIGRATION-NOTES.md`
+  records what that migration surfaced.
 - `apps/docs` is the documentation site.
 - `registry` holds theme sources the playground does not use. `registry.json` at
   the root publishes them and the blocks through shadcn.
+- `tools/deck-scripts` is `@deckard/deck-scripts`, the deck tooling every app
+  runs. It exposes `deck-validate`, `deck-check-overflow`, `deck-screenshots`,
+  `deck-contact-sheet`, and `deck-export-pdf` as bins, and treats the invoking
+  package's directory as the deck.
 - `tools/package-smoke` packs the package and builds a scratch app against it.
 - `tools/registry-smoke` installs the registry into a scratch app and builds it.
 
@@ -33,6 +47,8 @@ All of these run from the root.
 | `pnpm deck:screenshots`    | one PNG per slide at canvas size, `--light` for light mode   |
 | `pnpm deck:contact-sheet`  | every screenshot in one grid image for review                |
 | `pnpm export:pdf`          | one PDF page per slide at canvas size                        |
+| `pnpm demo`                | the demo talk on :3002                                       |
+| `pnpm demo:validate`       | the deck scripts against `apps/demo`, plus `demo:check-overflow`, `demo:screenshots`, `demo:contact-sheet`, `demo:export:pdf` |
 | `pnpm registry:build`      | compiles `registry.json` into `apps/docs/public/r`           |
 | `pnpm smoke:package`       | packs `@deckard/core` and builds a scratch app against it    |
 | `pnpm smoke:registry`      | installs the registry into a scratch app and builds it       |
@@ -81,8 +97,8 @@ layout leaks into the app someone generates from the framework.
 - Color mode: `packages/core/src/components/color-mode-provider.tsx`. It is
   light and dark only. The deck theme is static config and never switches at
   runtime.
-- Deck tooling: `apps/playground/scripts/`, with the shared build, server, and
-  canvas harness in `scripts/lib/preview.ts`.
+- Deck tooling: `tools/deck-scripts/`, with the shared build, server, and canvas
+  harness in `lib/preview.ts`.
 
 ## The package boundary
 

@@ -63,9 +63,11 @@ export function HeroSlide({ eyebrow, title, description }: SlideIntroProps) {
     <div className="flex h-full items-center justify-center py-12 text-center">
       <div className="space-y-8">
         <Eyebrow>{eyebrow}</Eyebrow>
-        <h1 className="mx-auto max-w-[14ch] text-balance font-semibold text-[length:var(--slide-title-size)] leading-[1.02] tracking-tight">
-          {resolvedTitle}
-        </h1>
+        {resolvedTitle ? (
+          <h1 className="mx-auto max-w-[14ch] text-balance font-semibold text-[length:var(--slide-title-size)] leading-[1.02] tracking-tight">
+            {resolvedTitle}
+          </h1>
+        ) : null}
         {description ? (
           <p className="mx-auto max-w-4xl text-[length:var(--slide-lead-size)] text-muted-foreground leading-[1.6]">
             {description}
@@ -87,9 +89,11 @@ export function BreakerSlide({
     <section className="flex h-full items-center py-12">
       <div className="max-w-4xl space-y-[var(--slide-content-gap)]">
         <Eyebrow>{eyebrow}</Eyebrow>
-        <h1 className="max-w-4xl text-pretty font-semibold text-[length:var(--slide-title-size)] leading-[0.98] tracking-tight">
-          {resolvedTitle}
-        </h1>
+        {resolvedTitle ? (
+          <h1 className="max-w-4xl text-pretty font-semibold text-[length:var(--slide-title-size)] leading-[0.98] tracking-tight">
+            {resolvedTitle}
+          </h1>
+        ) : null}
         <p className="max-w-3xl text-[length:var(--slide-lead-size)] text-muted-foreground leading-[1.6]">
           {description}
         </p>

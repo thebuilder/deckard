@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080" role="img" aria-label="A single 16 by 9 rectangle standing on a receding grid">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0b1417" />
+      <stop offset="55%" stop-color="#122024" />
+      <stop offset="100%" stop-color="#08100f" />
+    </linearGradient>
+    <radialGradient id="horizon" cx="50%" cy="57.2%" r="52%">
+      <stop offset="0%" stop-color="#38c0c8" stop-opacity="0.40" />
+      <stop offset="45%" stop-color="#1d6f78" stop-opacity="0.15" />
+      <stop offset="100%" stop-color="#0b1417" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="pane" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#eaf6f6" stop-opacity="0.11" />
+      <stop offset="100%" stop-color="#eaf6f6" stop-opacity="0.02" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#sky)" />
+  <rect width="1920" height="1080" fill="url(#horizon)" />
+
+  <g>
+    <line x1="960" y1="618.0" x2="-1980" y2="1080" stroke="#7fd4d8" stroke-opacity="0.10" stroke-width="1.2" />
+    <line x1="960" y1="618.0" x2="-1770" y2="1080" stroke="#7fd4d8" stroke-opacity="0.10" stroke-width="1.2" />
+    <line x1="960" y1="618.0" x2="-1560" y2="1080" stroke="#7fd4d8" stroke-opacity="0.10" stroke-width="1.2" />
+    <line x1="960" y1="618.0" x2="-1350" y2="1080" stroke="#7fd4d8" stroke-opacity="0.10" stroke-width="1.2" />
+    <line x1="960" y1="618.0" x2="-1140" y2="1080" stroke="#7fd4d8" stroke-opacity="0.10" stroke-width="1.2" />
+    <line x1="960" y1="618.0" x2="-930" y2="1080" stroke="#7fd4d8" stroke-opacity="0.10" stroke-width="1.2" />
+    <line x1="960" y1="618.0" x2="-720" y2="1080" stroke="#7fd4d8" stroke-opacity="0.10" stroke-width="1.2" />
+    <line x1="960" y1="618.0" x2="-510" y2="1080" stroke="#7fd4d8" stroke-opacity="0.10" stroke-width="1.2" />
+    <line x1="960" y1="618.0" x2="-300" y2="1080" stroke="#7fd4d8" stroke-opacity="0.10" stroke-width="1.2" />
+    <line x1="960" y1="618.0" x2="-90" y2="1080" stroke="#7fd4d8" stroke-opacity="0.10" stroke-width="1.2" />
+    <line x1="960" y1="618.0" x2="120" y2="1080" stroke="#7fd4d8" stroke-opacity="0.10" stroke-width="1.2" />
+    <line x1="960" y1="618.0" x2="330" y2="1080" stroke="#7fd4d8" stroke-opacity="0.10" stroke-width="1.2" />
+    <line x1="960" y1="618.0" x2="540" y2="1080" stroke="#7fd4d8" stroke-opacity="0.10" stroke-width="1.2" />
+    <line x1="960" y1="618.0" x2="750" y2="1080" stroke="#7fd4d8" stroke-opacity="0.10" stroke-width="1.2" />
+    <line x1="960" y1="618.0" x2="960" y2="1080" stroke="#7fd4d8" stroke-opacity="0.10" stroke-width="1.2" />
+    <line x1="960" y1="618.0" x2="1170" y2="1080" stroke="#7fd4d8" stroke-opacity="0.10" stroke-width="1.2" />
+    <line x1="960" y1="618.0" x2="1380" y2="1080" stroke="#7fd4d8" stroke-opacity="0.10" stroke-width="1.2" />
+    <line x1="960" y1="618.0" x2="1590" y2="1080" stroke="#7fd4d8" stroke-opacity="0.10" stroke-width="1.2" />
+    <line x1="960" y1="618.0" x2="1800" y2="1080" stroke="#7fd4d8" stroke-opacity="0.10" stroke-width="1.2" />
+    <line x1="960" y1="618.0" x2="2010" y2="1080" stroke="#7fd4d8" stroke-opacity="0.10" stroke-width="1.2" />
+    <line x1="960" y1="618.0" x2="2220" y2="1080" stroke="#7fd4d8" stroke-opacity="0.10" stroke-width="1.2" />
+    <line x1="960" y1="618.0" x2="2430" y2="1080" stroke="#7fd4d8" stroke-opacity="0.10" stroke-width="1.2" />
+    <line x1="960" y1="618.0" x2="2640" y2="1080" stroke="#7fd4d8" stroke-opacity="0.10" stroke-width="1.2" />
+    <line x1="960" y1="618.0" x2="2850" y2="1080" stroke="#7fd4d8" stroke-opacity="0.10" stroke-width="1.2" />
+    <line x1="960" y1="618.0" x2="3060" y2="1080" stroke="#7fd4d8" stroke-opacity="0.10" stroke-width="1.2" />
+    <line x1="960" y1="618.0" x2="3270" y2="1080" stroke="#7fd4d8" stroke-opacity="0.10" stroke-width="1.2" />
+    <line x1="960" y1="618.0" x2="3480" y2="1080" stroke="#7fd4d8" stroke-opacity="0.10" stroke-width="1.2" />
+    <line x1="960" y1="618.0" x2="3690" y2="1080" stroke="#7fd4d8" stroke-opacity="0.10" stroke-width="1.2" />
+    <line x1="960" y1="618.0" x2="3900" y2="1080" stroke="#7fd4d8" stroke-opacity="0.10" stroke-width="1.2" />
+    <line x1="0" y1="631.8" x2="1920" y2="631.8" stroke="#7fd4d8" stroke-opacity="0.061" stroke-width="1.2" />
+    <line x1="0" y1="635.1" x2="1920" y2="635.1" stroke="#7fd4d8" stroke-opacity="0.068" stroke-width="1.2" />
+    <line x1="0" y1="639.3" x2="1920" y2="639.3" stroke="#7fd4d8" stroke-opacity="0.074" stroke-width="1.2" />
+    <line x1="0" y1="644.4" x2="1920" y2="644.4" stroke="#7fd4d8" stroke-opacity="0.082" stroke-width="1.2" />
+    <line x1="0" y1="650.7" x2="1920" y2="650.7" stroke="#7fd4d8" stroke-opacity="0.090" stroke-width="1.2" />
+    <line x1="0" y1="658.5" x2="1920" y2="658.5" stroke="#7fd4d8" stroke-opacity="0.100" stroke-width="1.2" />
+    <line x1="0" y1="668.3" x2="1920" y2="668.3" stroke="#7fd4d8" stroke-opacity="0.110" stroke-width="1.2" />
+    <line x1="0" y1="680.3" x2="1920" y2="680.3" stroke="#7fd4d8" stroke-opacity="0.121" stroke-width="1.2" />
+    <line x1="0" y1="695.3" x2="1920" y2="695.3" stroke="#7fd4d8" stroke-opacity="0.133" stroke-width="1.2" />
+    <line x1="0" y1="713.8" x2="1920" y2="713.8" stroke="#7fd4d8" stroke-opacity="0.147" stroke-width="1.2" />
+    <line x1="0" y1="736.8" x2="1920" y2="736.8" stroke="#7fd4d8" stroke-opacity="0.162" stroke-width="1.2" />
+    <line x1="0" y1="765.3" x2="1920" y2="765.3" stroke="#7fd4d8" stroke-opacity="0.178" stroke-width="1.2" />
+    <line x1="0" y1="800.7" x2="1920" y2="800.7" stroke="#7fd4d8" stroke-opacity="0.196" stroke-width="1.2" />
+    <line x1="0" y1="844.5" x2="1920" y2="844.5" stroke="#7fd4d8" stroke-opacity="0.216" stroke-width="1.2" />
+    <line x1="0" y1="898.9" x2="1920" y2="898.9" stroke="#7fd4d8" stroke-opacity="0.238" stroke-width="1.2" />
+    <line x1="0" y1="966.3" x2="1920" y2="966.3" stroke="#7fd4d8" stroke-opacity="0.262" stroke-width="1.2" />
+    <line x1="0" y1="1049.9" x2="1920" y2="1049.9" stroke="#7fd4d8" stroke-opacity="0.280" stroke-width="1.2" />
+  </g>
+
+  <line x1="0" y1="618.0" x2="1920" y2="618.0" stroke="#8fe0e4" stroke-opacity="0.32" stroke-width="1.4" />
+
+  <g>
+    <rect x="640" y="258" width="640" height="360" fill="url(#pane)" stroke="#9deaee" stroke-opacity="0.5" stroke-width="2" />
+    <line x1="640" y1="258" x2="640" y2="618" stroke="#9deaee" stroke-opacity="0.8" stroke-width="2" />
+    <line x1="1280" y1="258" x2="1280" y2="618" stroke="#9deaee" stroke-opacity="0.8" stroke-width="2" />
+  </g>
+</svg>

@@ -10,6 +10,7 @@
     "packages/core/src/ui/**",
     "apps/playground/components/ui/**",
     "apps/playground/app/slides/blocks/**",
+    "apps/demo/app/slides/blocks/**",
     "registry/themes/**"
   ],
   "ignorePatterns": [
@@ -20,7 +21,14 @@
     {
       "file": "apps/playground/deck/slides/**/*.slide.tsx",
       "exports": ["meta", "notes"]
+    },
+    {
+      "file": "apps/demo/deck/slides/**/*.slide.tsx",
+      "exports": ["meta", "notes"]
     }
   ],
-  "ignoreDependencies": ["postcss-load-config", "react-dom", "tailwindcss"]
+  "ignoreDependencies": ["postcss-load-config", "react-dom", "tailwindcss"],
+  "duplicates": {
+    "ignore": ["apps/demo/app/**", "apps/demo/deck/theme/**"]
+  }
 }

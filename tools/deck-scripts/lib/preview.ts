@@ -2,13 +2,20 @@ import { spawn, spawnSync } from "node:child_process"
 import fs from "node:fs"
 import path from "node:path"
 import process from "node:process"
+import { fileURLToPath } from "node:url"
 
 import type { Browser, Page } from "playwright"
 import { chromium } from "playwright"
 
 import type { ColorMode } from "./cli.ts"
 import { write } from "./cli.ts"
-import { projectRoot, workspaceRoot } from "./paths.ts"
+import { projectRoot } from "./paths.ts"
+
+// Resolved rather than assumed: in this workspace it is packages/core, and in a
+// published deck it is whatever node_modules the app installed.
+const corePackageRoot = path.dirname(
+  fileURLToPath(import.meta.resolve("@deckard/core/package.json"))
+)
 
 export interface BuildProfile {
   env: Record<string, string>
@@ -57,12 +64,15 @@ const buildInputs = [
   path.join(projectRoot, "components"),
   path.join(projectRoot, "deck"),
   path.join(projectRoot, "hooks"),
+  path.join(projectRoot, "lib"),
   path.join(projectRoot, "public"),
+  path.join(projectRoot, "components.json"),
   path.join(projectRoot, "next.config.mjs"),
   path.join(projectRoot, "package.json"),
   path.join(projectRoot, "postcss.config.mjs"),
-  path.join(workspaceRoot, "packages", "core", "src"),
-  path.join(workspaceRoot, "packages", "core", "package.json"),
+  path.join(projectRoot, "tsconfig.json"),
+  path.join(corePackageRoot, "src"),
+  path.join(corePackageRoot, "package.json"),
 ]
 
 function newestModification(target: string): number {
@@ -173,8 +183,11 @@ function startNextServer(port: number, env: Record<string, string>) {
     },
   }
 
-  process.on("SIGINT", () => {
+  // Once: a second Ctrl+C has nothing left to do, and the parent has to leave
+  // with the child rather than swallow the signal and outlive the server.
+  process.once("SIGINT", () => {
     child.kill("SIGTERM")
+    setTimeout(() => process.exit(130), 500)
   })
 
   return server

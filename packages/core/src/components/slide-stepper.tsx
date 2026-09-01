@@ -14,7 +14,9 @@ import {
 import { cn } from "../lib/utils"
 import {
   PRESENTER_CHANNEL_NAME,
+  PRESENTER_PREVIEW_STEP_MESSAGE,
   type PresenterChannelMessage,
+  type PresenterPreviewStepMessage,
 } from "../types/presenter"
 
 interface SlideStepContextValue {
@@ -81,15 +83,34 @@ export function SlideStepper({
   const [currentStep, setCurrentStep] = useState(clampedInitialStep)
 
   useEffect(() => {
-    if (readOnly) {
-      setCurrentStep(clampedInitialStep)
+    setCurrentStep(clampedInitialStep)
+  }, [clampedInitialStep])
+
+  const maxStepIndex = Math.max(stepCount - 1, 0)
+
+  // A presenter preview is an iframe the console owns. It steps the frame in
+  // place rather than reloading the slide document on every step press.
+  useEffect(() => {
+    if (!readOnly) {
       return
     }
 
-    setCurrentStep(0)
-  }, [clampedInitialStep, readOnly])
+    function onMessage(event: MessageEvent<PresenterPreviewStepMessage>) {
+      if (
+        event.origin !== window.location.origin ||
+        event.data?.type !== PRESENTER_PREVIEW_STEP_MESSAGE ||
+        typeof event.data.step !== "number"
+      ) {
+        return
+      }
 
-  const maxStepIndex = Math.max(stepCount - 1, 0)
+      setCurrentStep(Math.max(0, Math.min(event.data.step, maxStepIndex)))
+    }
+
+    window.addEventListener("message", onMessage)
+    return () => window.removeEventListener("message", onMessage)
+  }, [maxStepIndex, readOnly])
+
   const canAdvance = !readOnly && stepCount > 0 && currentStep < maxStepIndex
   const canRetreat = !readOnly && stepCount > 0 && currentStep > 0
 

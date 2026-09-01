@@ -47,6 +47,7 @@ interface ChromeState {
   isFullscreen: boolean
   showFooter: boolean
   showHeader: boolean
+  showUtilities: boolean
 }
 
 function resolveChrome({
@@ -65,6 +66,7 @@ function resolveChrome({
     showFooter: footerMode !== "hidden",
     showHeader:
       headerMode === "visible" || (headerMode === "auto" && !isFullscreen),
+    showUtilities: headerMode !== "hidden",
   }
 }
 
@@ -201,7 +203,7 @@ export function SlideShell({
       slide={slide}
       slides={slides}
       utilityBar={
-        chrome.showHeader ? (
+        chrome.showUtilities ? (
           <SlideUtilityBar
             currentNumber={slide.number}
             deckTitle={deck.title}
@@ -216,20 +218,6 @@ export function SlideShell({
           background={background}
           canvas={deck.canvas}
           chromeInset={chromeInset(chrome)}
-          footer={
-            chrome.showFooter ? (
-              <div className={chromeHiddenClass}>
-                <SlideNavigation
-                  mode={footerMode === "counter" ? "counter" : "visible"}
-                  next={next}
-                  prefetch={prefetch}
-                  previous={previous}
-                  slide={slide}
-                  total={slides.length}
-                />
-              </div>
-            ) : null
-          }
           frameClassName={frameClassName(chrome)}
           header={
             chrome.showHeader ? (
@@ -256,6 +244,19 @@ export function SlideShell({
           </SlideStepAdvanceArea>
         </SlideCanvas>
       </SlideViewport>
+
+      {chrome.showFooter ? (
+        <div className={chromeHiddenClass}>
+          <SlideNavigation
+            mode={footerMode === "counter" ? "counter" : "visible"}
+            next={next}
+            prefetch={prefetch}
+            previous={previous}
+            slide={slide}
+            total={slides.length}
+          />
+        </div>
+      ) : null}
     </SlideShellRuntime>
   )
 }

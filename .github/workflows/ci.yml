@@ -1,0 +1,104 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  DO_NOT_TRACK: "1"
+  NEXT_TELEMETRY_DISABLED: "1"
+  TURBO_TELEMETRY_DISABLED: "1"
+
+jobs:
+  checks:
+    name: Lint, types, unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          cache: pnpm
+          node-version: 24
+      - uses: actions/cache@v4
+        with:
+          key: ${{ runner.os }}-turbo-checks-${{ github.sha }}
+          path: .turbo
+          restore-keys: ${{ runner.os }}-turbo-checks-
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint:check
+      - run: pnpm typecheck
+      - run: pnpm test:unit
+
+  browser-tests:
+    name: Browser tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          cache: pnpm
+          node-version: 24
+      - uses: actions/cache@v4
+        with:
+          key: ${{ runner.os }}-turbo-browser-${{ github.sha }}
+          path: .turbo
+          restore-keys: ${{ runner.os }}-turbo-browser-
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test:browser:install
+      - run: pnpm test:browser
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          cache: pnpm
+          node-version: 24
+      - uses: actions/cache@v4
+        with:
+          key: ${{ runner.os }}-turbo-build-${{ github.sha }}
+          path: .turbo
+          restore-keys: ${{ runner.os }}-turbo-build-
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm registry:build
+
+  decks:
+    name: Deck gates
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          cache: pnpm
+          node-version: 24
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @deckard/core exec playwright install --with-deps chromium
+      - run: pnpm --filter @deckard/core build
+      - run: pnpm validate
+      - run: pnpm check-overflow
+
+  smokes:
+    name: Package and registry smokes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          cache: pnpm
+          node-version: 24
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm smoke

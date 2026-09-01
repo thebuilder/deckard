@@ -27,7 +27,7 @@ slide as a bullet list.
 - Click-to-advance reveal area for stepped slides
 - Command center (`Cmd/Ctrl + K`) for quick jump
 - Presenter popout window with `BroadcastChannel` sync
-- Presenter notes per slide via `notes` in `apps/playground/deck/slides.tsx`
+- Presenter notes per slide via `notes` in `deck/slides.tsx`
 - Presenter timer + 24h current-time clock
 - Presenter next-step preview (aware of reveal steps)
 - Presenter flow window (previous 2 + current + next 5 slide titles)
@@ -39,52 +39,60 @@ slide as a bullet list.
 - PDF export pipeline for static handout rendering
 - shadcn/ui components and tokens, so slides inherit your app theme
 
-## Quick start
+## Using Deckard in your own app
 
-```bash
-pnpm install
-pnpm dev
+A presentation built on Deckard is a plain Next.js app that you own.
+
+```
+my-talk/
+  app/                   layout, globals.css, and the slide routes
+  components/
+  deck/
+    deck.ts              defineDeck config
+    slides.tsx           the slide array
+    slides/*.slide.tsx   file-per-slide modules
+    theme/               installed from the registry, yours to edit
+  public/
+  next.config.mjs
+  package.json
 ```
 
-Open [http://localhost:3000](http://localhost:3000) for the playground deck.
-`pnpm --filter docs dev` serves the documentation site on port 3001.
+You do not clone this repository to build a deck, and you do not write your
+slides in `apps/playground`. This repository is where the framework is built.
+The full walkthrough lives on the docs site under Getting started, and the
+short version is below.
 
-## The monorepo
+### The package is not on npm yet
 
-This is a pnpm workspace run by Turborepo.
+`@deckard/core` is designed for npm distribution and is not published there
+yet. Publishing it is the plan before the API is called stable. Two paths work
+today:
 
-| Path | What it is |
-| --- | --- |
-| `packages/core` | `@deckard/core`, the deck contract and the slideshow runtime |
-| `apps/playground` | the reference deck, and the app the visual checks run against |
-| `apps/docs` | the documentation site |
-| `registry` | theme sources the playground does not use, published through the registry |
-| `tools/package-smoke` | proves the package installs into a plain Next.js app |
-| `tools/registry-smoke` | proves the registry installs into a plain Next.js app |
-
-Every script runs from the root:
+1. Pack a tarball here and install the file in your app.
+   `pnpm smoke:package` runs exactly that path into a scratch app on every
+   check, so it is the one with a test behind it.
+2. Build your deck inside this workspace as a second app, the way `apps/demo`
+   does, and move it out once the package publishes.
 
 ```bash
-pnpm dev            # playground on :3000, core rebuilding on save
-pnpm build          # every app
-pnpm typecheck
-pnpm test           # 85 tests across core and playground
-pnpm lint
-pnpm analyze
-pnpm deck:validate       # deck, theme, and registry integrity
-pnpm deck:check-overflow # fail on slides the canvas clips
-pnpm deck:screenshots    # one PNG per slide at canvas size
-pnpm deck:contact-sheet  # every screenshot in one grid image
-pnpm registry:build # write the shadcn registry to apps/docs/public/r
-pnpm smoke:package  # pack @deckard/core and build a scratch app against it
-pnpm smoke:registry # install the registry into a scratch app and build it
+# from the root of this repository
+pnpm --filter @deckard/core exec pnpm pack --pack-destination ~/code/my-talk
 ```
 
-`AGENTS.md` is the short version of the rules for a coding agent, and
-`.claude/skills/slide-authoring/SKILL.md` is the slide-authoring skill it loads
-when it writes or edits slides.
+```json
+{
+  "dependencies": {
+    "@deckard/core": "file:./deckard-core-0.0.1.tgz"
+  }
+}
+```
 
-### @deckard/core
+Once it publishes that becomes `pnpm add @deckard/core` and nothing else
+changes. `@deckard/deck-scripts` carries the same caveat: it is workspace-only
+today, so a standalone app gets `deck-validate` and the other checks when both
+packages publish.
+
+### One line of config
 
 The package compiles to `dist/` with `tsc`: ESM, `.d.ts`, and the `use client`
 directives preserved. No bundler, so a stack trace still points at a file that
@@ -144,6 +152,88 @@ export default Page
 | `createDeckSitemap(deck, { siteUrl })` | `app/sitemap.ts`, defaults to `NEXT_PUBLIC_SITE_URL` |
 | `createFirstSlideRedirect(deck)` | `app/page.tsx`, redirects to the first slide |
 
+### The theme and the blocks come from the registry
+
+Themes and slide blocks are deliberately not in the package. They install into
+your app as source files through shadcn, and you edit them from then on.
+
+```bash
+pnpm dlx shadcn@latest add @deckard/preset-deckard
+```
+
+The registry has no public host yet, so it is served from this repository's
+docs site on port 3001. See [Registry](#registry).
+
+### The routes come from the package
+
+`@deckard/core/next` ships the route logic. An app's `app/slides/[id]/page.tsx`,
+`app/presenter/page.tsx`, `app/sitemap.ts`, and `app/page.tsx` are thin
+re-exports of `createSlideRoute`, `createPresenterPage`, `createDeckSitemap`,
+and `createFirstSlideRedirect`. Every slide prerenders statically: the route
+reads no request, and the presenter preview flags are read on the client.
+
+## Working on the framework
+
+This repository is a pnpm workspace run by Turborepo. Everything in it exists
+to develop and prove the framework.
+
+| Path | What it is |
+| --- | --- |
+| `packages/core` | `@deckard/core`, the deck contract and the slideshow runtime |
+| `apps/playground` | the reference deck. It exercises every feature on purpose and the visual checks run against it, so it is a test surface, not a template |
+| `apps/demo` | a 19-slide conference talk shaped exactly like a consumer app, with its own theme and its own copies of the blocks |
+| `apps/docs` | the documentation site, which also serves the registry JSON at `/r/{name}.json` |
+| `registry` | theme sources the playground does not use, published through the registry |
+| `tools/deck-scripts` | `@deckard/deck-scripts`, the deck tooling every app runs |
+| `tools/package-smoke` | proves the package installs into a plain Next.js app |
+| `tools/registry-smoke` | proves the registry installs into a plain Next.js app |
+
+Slides added to the playground demonstrate the framework. They are nobody's
+presentation and they ship to nobody.
+
+```bash
+pnpm install
+pnpm dev                # playground on :3000
+pnpm demo               # the demo talk on :3002
+pnpm --filter docs dev  # the docs and the registry on :3001
+```
+
+Every script runs from the root:
+
+```bash
+pnpm build          # every app
+pnpm typecheck
+pnpm test           # 96 tests across core, the deck scripts, and both decks
+pnpm lint
+pnpm analyze
+pnpm deck:validate       # deck, theme, and registry integrity
+pnpm deck:check-overflow # fail on slides the canvas clips
+pnpm deck:screenshots    # one PNG per slide at canvas size
+pnpm deck:contact-sheet  # every screenshot in one grid image
+pnpm demo:validate  # the same checks against apps/demo, plus demo:check-overflow,
+                    # demo:screenshots, demo:contact-sheet, demo:export:pdf
+pnpm registry:build # write the shadcn registry to apps/docs/public/r
+pnpm smoke:package  # pack @deckard/core and build a scratch app against it
+pnpm smoke:registry # install the registry into a scratch app and build it
+```
+
+`AGENTS.md` is the short version of the rules for a coding agent, and
+`.claude/skills/slide-authoring/SKILL.md` is the slide-authoring skill it loads
+when it writes or edits slides. `docs/MIGRATION-NOTES.md` records what building
+`apps/demo` on this API proved, including the parts that pushed back.
+
+### Inside the demo
+
+`apps/demo` is the proof that a deck built on Deckard is a plain Next.js app. It
+consumes `@deckard/core` through the workspace, installs its blocks and its theme
+as files it owns, and runs the same deck scripts as the playground through
+`@deckard/deck-scripts`. It carries a 19-slide talk with a manual opening and
+close, nine discovered slide modules, an async Server Component that reads the
+workspace at build time, a nested client widget, step reveals, a fullscreen media
+slide, and a code walkthrough. Read `docs/MIGRATION-NOTES.md` for what building
+it cost. If you want to see what a real deck looks like, read this one, not the
+playground.
+
 ### Inside the playground
 
 - `apps/playground/deck/slides.tsx`: slide definitions
@@ -174,7 +264,7 @@ CSS cannot divide a length by a length in every engine Deckard targets. Slide
 content stays server rendered, and the canvas stays hidden until the first
 measurement lands so it never flashes at the wrong size.
 
-Configure it in `apps/playground/deck/deck.ts`:
+Configure it in `deck/deck.ts`:
 
 ```ts
 canvas: {
@@ -215,8 +305,9 @@ scrolling never steps the deck:
 
 `CodeBlock` takes an optional `maxHeight` and uses it for long samples.
 
-Utility controls (command center, presenter popout, color mode toggle) live outside
-the canvas so they keep their own size and hit targets at any scale.
+Deck chrome (footer navigation and counter, command center, presenter popout,
+color mode toggle) lives outside the canvas so it keeps its own size and hit
+targets at any scale, down to a phone.
 
 ## Slide model
 
@@ -260,7 +351,7 @@ title text inside the layout.
 - `"hidden"`: never render header
 - `"auto"`: render in default layout, hide in fullscreen layout
 
-Global default is configured in `apps/playground/deck/deck.ts`.
+Global default is configured in `deck/deck.ts`.
 
 ### Footer behavior
 
@@ -272,7 +363,7 @@ Global default is configured in `apps/playground/deck/deck.ts`.
 
 ## Adding slides
 
-Add entries to `apps/playground/deck/slides.tsx`.
+Add entries to your deck's `deck/slides.tsx`.
 
 Example content slide:
 
@@ -357,8 +448,8 @@ async function ReleaseSlide() {
 ```
 
 Interactivity goes one level down, in a nested client component the slide
-renders. Never put `"use client"` at the top of `apps/playground/deck/slides.tsx` or a slide
-module, `apps/playground/deck/slides.test.ts` fails on it.
+renders. Never put `"use client"` at the top of `deck/slides.tsx` or a slide
+module, `deck/slides.test.ts` fails on it.
 
 A slide can also live in its own file as a module that exports `default`,
 `meta`, and `notes`:
@@ -392,7 +483,7 @@ error page.
 
 ## Discovering slide modules
 
-`apps/playground/deck/slides.tsx` is a plain array and stays one. Discovery only saves you the
+`deck/slides.tsx` is a plain array and stays one. Discovery only saves you the
 imports:
 
 ```tsx
@@ -484,11 +575,11 @@ preview.
 
 `SlideBackground` renders one empty element carrying `data-slide-background`.
 What each variant paints lives in the deck theme, so change the look in
-`apps/playground/deck/theme/theme.css` and read `apps/playground/deck/theme/THEME.md` first.
+`deck/theme/theme.css` and read `deck/theme/THEME.md` first.
 
 ## Theme
 
-`apps/playground/deck/theme/` owns every audience-facing color, size, and background in the
+`deck/theme/` owns every audience-facing color, size, and background in the
 deck. The stylesheet is scoped to the theme class, which `SlideCanvas` puts on
 the canvas element, so the utility bar, command center, and presenter console
 keep the app tokens and stay readable whatever the deck looks like.
@@ -508,14 +599,22 @@ light/dark toggle. There is no runtime switching between named themes.
 
 Inside the canvas, style with semantic tokens (`bg-card`, `text-muted-foreground`)
 or slide tokens (`--slide-title-size`, `--slide-surface`). Never a hardcoded
-color. `apps/playground/deck/theme/THEME.md` lists the tokens and what they control.
+color. `deck/theme/THEME.md` lists the tokens and what they control.
 
 ## Checking a deck
 
-Four scripts in `apps/playground/scripts` cover the checks a deck needs. They
-share one harness: `scripts/lib/preview.ts` builds the app, starts `next start`
-on a spare port, and opens a page sized so the canvas renders at scale 1. The
-PDF export runs on the same harness.
+Four scripts in `tools/deck-scripts` cover the checks a deck needs. They share
+one harness: `lib/preview.ts` builds the app, starts `next start` on a spare
+port, and opens a page sized so the canvas renders at scale 1. The PDF export
+runs on the same harness.
+
+The package installs into an app as `@deckard/deck-scripts` and exposes each
+script as a bin, so a deck's `package.json` reads `"deck:validate":
+"deck-validate"`. The harness takes the invoking package's directory as the
+deck, which is what makes one copy serve every app in this repo. Pass
+`--registry=<path>` to `deck-validate` to also check a shadcn `registry.json`;
+without it the run covers the deck and its theme only. The package is
+workspace-only until it publishes, so a standalone app cannot install it yet.
 
 ```bash
 pnpm deck:validate
@@ -550,9 +649,9 @@ pnpm deck:contact-sheet
 ```
 
 `deck:screenshots` writes one PNG per slide at canvas size to
-`apps/playground/out/screenshots/<id>.png`, plus a manifest. `deck:contact-sheet`
-composes them into `apps/playground/out/contact-sheet.png`, a labelled grid of
-the whole deck. Both take `--light`; the contact sheet takes `--columns=N`.
+`out/screenshots/<id>.png` in the deck's own app, plus a manifest.
+`deck:contact-sheet` composes them into `out/contact-sheet.png`, a labelled grid
+of the whole deck. Both take `--light`; the contact sheet takes `--columns=N`.
 
 A build is reused when it is newer than everything in `app/`, `deck/`,
 `components/`, `assets/`, `public/`, and `packages/core/src`. Pass
@@ -574,9 +673,9 @@ Dark export theme:
 pnpm export:pdf -- --dark
 ```
 
-This runs a production build in `NEXT_PUBLIC_PDF_EXPORT=1` mode and writes:
-
-- `apps/playground/out/slides.pdf`
+This runs a production build in `NEXT_PUBLIC_PDF_EXPORT=1` mode and writes
+`out/slides.pdf` in the deck's app, which is `apps/playground/out/slides.pdf`
+for the playground.
 
 Slide routes are discovered from the app's `app/sitemap.ts` (`/sitemap.xml`) so export
 stays aligned with your published slide paths.
@@ -587,7 +686,7 @@ Export mode behavior:
 - animations/transitions disabled
 - deck header/footer hidden
 
-Page size comes from the `canvas` config in `apps/playground/deck/deck.ts`, so the export
+Page size comes from the `canvas` config in `deck/deck.ts`, so the export
 cannot drift from what the audience sees.
 
 Optional env vars:
@@ -610,17 +709,19 @@ outside the workspace and resolves nothing from this repo, so a missing
 dependency or a broken export map fails there instead of in someone else's
 project. It takes about 16 seconds.
 
-The fixture it copies lives in `tools/package-smoke/fixture` and covers a plain
-slide, an async slide, a discovered module, a stepped slide, and a client
-widget. The scratch directory is deleted afterwards. Pass `--keep` to inspect
-it.
+That run is also the proof behind the tarball install above. The fixture it
+copies lives in `tools/package-smoke/fixture` and covers a plain slide, an async
+slide, a discovered module, a stepped slide, and a client widget. The scratch
+directory is deleted afterwards. Pass `--keep` to inspect it.
 
 ## Registry
 
 `registry.json` at the root publishes the themes and blocks through shadcn.
 `pnpm registry:build` writes the item JSON to `apps/docs/public/r`, which is
 gitignored, so the docs site serves the registry at `/r/{name}.json`. The docs
-site lists every item at `/registry` with its install command.
+site lists every item at `/registry` with its install command. There is no
+public host for the registry yet, so a consuming app points at the docs site
+running locally on port 3001.
 
 There are seven items. `theme-deckard` and `theme-broadsheet` each install
 three files to `deck/theme/`, so adding one replaces the other.

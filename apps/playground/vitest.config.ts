@@ -3,7 +3,7 @@ import { defineConfig } from "vitest/config"
 export default defineConfig({
   test: {
     environment: "node",
-    include: ["deck/**/*.test.ts", "scripts/**/*.test.ts"],
+    include: ["deck/**/*.test.ts"],
     name: "playground",
   },
 })

@@ -66,6 +66,13 @@ describe("resolveSlides defaults", () => {
     expect(resolved.map((item) => item.title)).toEqual(["Slide 1", "Named"])
   })
 
+  it("only sets the authored title when the author wrote one", () => {
+    const resolved = resolveSlides([slide(), slide({ title: "Named" })])
+
+    expect(resolved[0].authoredTitle).toBeUndefined()
+    expect(resolved[1].authoredTitle).toBe("Named")
+  })
+
   it("applies deck defaults and a zero step count", () => {
     const resolved = resolveSlides(
       [slide(), slide({ background: "grid", stepCount: 3 })],

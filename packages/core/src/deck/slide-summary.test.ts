@@ -16,12 +16,20 @@ describe("toSlideSummary", () => {
     ])
 
     expect(toSlideSummary(resolved)).toEqual({
+      authoredTitle: "Deckard",
       href: "/slides/intro",
       id: "intro",
       number: 1,
       stepCount: 3,
       title: "Deckard",
     })
+  })
+
+  it("leaves the authored title off a slide that was never given one", () => {
+    const [resolved] = resolveSlides([{ body: null }])
+
+    expect(toSlideSummary(resolved).authoredTitle).toBeUndefined()
+    expect(toSlideSummary(resolved).title).toBe("Slide 1")
   })
 
   it("summarizes a whole deck in order", () => {

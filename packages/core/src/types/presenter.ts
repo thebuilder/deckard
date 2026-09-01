@@ -2,6 +2,15 @@ import type { SlideSummary } from "../deck/types"
 
 export const PRESENTER_CHANNEL_NAME = "slideshow-presenter-sync"
 
+export const PRESENTER_PREVIEW_STEP_MESSAGE = "deckard-preview-step"
+
+// Posted straight into a preview iframe, so a step press moves the frame that
+// is already loaded instead of fetching the slide document again.
+export interface PresenterPreviewStepMessage {
+  step: number
+  type: typeof PRESENTER_PREVIEW_STEP_MESSAGE
+}
+
 export interface PresenterPreviewState {
   id: string
   step: number

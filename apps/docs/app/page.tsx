@@ -34,16 +34,43 @@ export default function OverviewPage() {
         <li>PDF export at the deck canvas size</li>
       </ul>
 
-      <h2 className="pt-4 text-2xl">Packages</h2>
+      <h2 className="pt-4 text-2xl">How you use it</h2>
       <p>
-        <code>@deckard/core</code> holds the deck contract and the slideshow
-        runtime. It ships as TypeScript source and your Next.js app transpiles
-        it. The deck you write, its theme, and its blocks stay in your app.
+        A presentation is a Next.js app you own, with <code>app/</code>,{" "}
+        <code>components/</code>, <code>deck/</code>, <code>public/</code>, and{" "}
+        <code>package.json</code>. <code>@deckard/core</code> is a dependency in
+        it and holds the deck contract and the slideshow runtime. It ships as
+        TypeScript source that your app transpiles.
+      </p>
+      <p>
+        The theme and the slide blocks are deliberately not in the package. They
+        install as source files in your app through the shadcn registry, so a
+        measure that reads badly at your font is a line you edit rather than a
+        prop you wait for.
+      </p>
+      <p>
+        <code>@deckard/core</code> is built for npm and is not published there
+        yet. Today you install a packed tarball, or build your deck inside the
+        Deckard workspace. <Link href="/getting-started">Getting started</Link>{" "}
+        has both, and says which parts change once it publishes.
+      </p>
+
+      <h2 className="pt-4 text-2xl">The repository behind it</h2>
+      <p>
+        The Deckard repository is where the framework gets built, not where you
+        write your talk. It is a pnpm workspace with <code>packages/core</code>{" "}
+        and three apps: <code>apps/playground</code>, the reference deck the
+        visual checks run against, <code>apps/demo</code>, a 19-slide talk
+        shaped like a consumer app, and <code>apps/docs</code>, this site.
+        Slides added to the playground exercise the framework and ship to
+        nobody.
       </p>
       <p>
         <Link href="/getting-started">Getting started</Link> covers the install
         and the first slide. <Link href="/authoring">Authoring rules</Link>{" "}
-        covers what belongs on a slide and what breaks one.
+        covers what belongs on a slide and what breaks one.{" "}
+        <Link href="/registry">Registry</Link> covers the themes and blocks you
+        install into your app.
       </p>
     </>
   )

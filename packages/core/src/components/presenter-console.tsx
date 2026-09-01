@@ -5,8 +5,10 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import type { DeckCanvasConfig } from "../deck/types"
 import {
   PRESENTER_CHANNEL_NAME,
+  PRESENTER_PREVIEW_STEP_MESSAGE,
   type PresenterChannelMessage,
   type PresenterPreviewState,
+  type PresenterPreviewStepMessage,
   type PresenterSlideState,
 } from "../types/presenter"
 import { Button } from "../ui/button"
@@ -93,6 +95,7 @@ function PreviewLayer({
   isActive,
   title,
   onLoad,
+  onMount,
 }: {
   canvas: DeckCanvasConfig
   layer: 0 | 1
@@ -100,10 +103,18 @@ function PreviewLayer({
   isActive: boolean
   title: string
   onLoad: (layer: 0 | 1) => void
+  onMount: (layer: 0 | 1, frame: HTMLIFrameElement | null) => void
 }) {
   const handleLoad = useCallback(() => {
     onLoad(layer)
   }, [layer, onLoad])
+
+  const handleMount = useCallback(
+    (frame: HTMLIFrameElement | null) => {
+      onMount(layer, frame)
+    },
+    [layer, onMount]
+  )
 
   return (
     // biome-ignore lint/a11y/noNoninteractiveElementInteractions: onLoad is a resource lifecycle event, not a user interaction
@@ -112,6 +123,7 @@ function PreviewLayer({
         isActive ? "opacity-100" : "pointer-events-none opacity-0"
       }`}
       onLoad={handleLoad}
+      ref={handleMount}
       src={src}
       style={{
         height: canvas.height,
@@ -122,66 +134,122 @@ function PreviewLayer({
   )
 }
 
+function previewSrc(id: string, step: number) {
+  return `/slides/${id}?presenterPreview=1&step=${step}`
+}
+
+// The slide document is loaded once per slide and stepped from here. Putting the
+// step in the src instead would refetch two whole slides on every step press.
 function PreviewFrame({
   canvas,
-  previewUrl,
+  previewId,
+  step,
   emptyLabel = "End of deck",
   titlePrefix = "Preview",
 }: {
   canvas: DeckCanvasConfig
-  previewUrl: string | null
+  previewId: string | null
+  step: number
   emptyLabel?: string
   titlePrefix?: string
 }) {
   const [activeLayer, setActiveLayer] = useState<0 | 1>(0)
-  const [layerUrls, setLayerUrls] = useState<[string | null, string | null]>([
-    previewUrl,
+  const [layerIds, setLayerIds] = useState<[string | null, string | null]>([
+    previewId,
     null,
   ])
+  const [layerSrcs, setLayerSrcs] = useState<[string | null, string | null]>([
+    previewId ? previewSrc(previewId, step) : null,
+    null,
+  ])
+  // The iframe key is layer plus src, so a layer that already holds the wanted
+  // document never fires onLoad again. Reveal it from here instead.
+  const loadedIdsRef = useRef<[string | null, string | null]>([null, null])
+  const framesRef = useRef<
+    [HTMLIFrameElement | null, HTMLIFrameElement | null]
+  >([null, null])
+  const stepRef = useRef(step)
+
+  stepRef.current = step
+
+  const handleMount = useCallback(
+    (layer: 0 | 1, frame: HTMLIFrameElement | null) => {
+      framesRef.current[layer] = frame
+    },
+    []
+  )
 
   useEffect(() => {
-    if (!previewUrl) {
-      setLayerUrls((previous) => {
-        if (previous[0] === null && previous[1] === null) {
-          return previous
-        }
-
-        return [null, null]
-      })
+    if (!previewId) {
+      loadedIdsRef.current = [null, null]
+      setLayerIds((previous) =>
+        previous[0] === null && previous[1] === null ? previous : [null, null]
+      )
+      setLayerSrcs((previous) =>
+        previous[0] === null && previous[1] === null ? previous : [null, null]
+      )
       return
     }
 
-    setLayerUrls((previous) => {
-      const currentActiveUrl = previous[activeLayer]
+    if (layerIds[activeLayer] === previewId) {
+      return
+    }
 
-      if (currentActiveUrl === previewUrl) {
-        return previous
+    const hiddenLayer = activeLayer === 0 ? 1 : 0
+
+    if (layerIds[hiddenLayer] === previewId) {
+      if (loadedIdsRef.current[hiddenLayer] === previewId) {
+        setActiveLayer(hiddenLayer)
       }
 
-      const hiddenLayer = activeLayer === 0 ? 1 : 0
+      return
+    }
 
-      if (previous[hiddenLayer] === previewUrl) {
-        return previous
+    const nextIds: [string | null, string | null] = [...layerIds]
+    const nextSrcs: [string | null, string | null] = [...layerSrcs]
+    nextIds[hiddenLayer] = previewId
+    nextSrcs[hiddenLayer] = previewSrc(previewId, stepRef.current)
+    setLayerIds(nextIds)
+    setLayerSrcs(nextSrcs)
+  }, [activeLayer, layerIds, layerSrcs, previewId])
+
+  useEffect(() => {
+    if (!previewId) {
+      return
+    }
+
+    for (const layer of [0, 1] as const) {
+      if (
+        layerIds[layer] !== previewId ||
+        loadedIdsRef.current[layer] !== previewId
+      ) {
+        continue
       }
 
-      const nextUrls: [string | null, string | null] = [...previous]
-      nextUrls[hiddenLayer] = previewUrl
-      return nextUrls
-    })
-  }, [activeLayer, previewUrl])
+      framesRef.current[layer]?.contentWindow?.postMessage(
+        {
+          step,
+          type: PRESENTER_PREVIEW_STEP_MESSAGE,
+        } satisfies PresenterPreviewStepMessage,
+        window.location.origin
+      )
+    }
+  }, [layerIds, previewId, step])
 
   const handleLoad = useCallback(
     (layer: 0 | 1) => {
-      if (layerUrls[layer] !== previewUrl || !previewUrl) {
+      loadedIdsRef.current[layer] = layerIds[layer]
+
+      if (layerIds[layer] !== previewId || !previewId) {
         return
       }
 
       setActiveLayer(layer)
     },
-    [layerUrls, previewUrl]
+    [layerIds, previewId]
   )
 
-  if (!previewUrl) {
+  if (!previewId) {
     return (
       <div className="grid h-full place-items-center text-muted-foreground text-sm">
         {emptyLabel}
@@ -192,7 +260,7 @@ function PreviewFrame({
   return (
     <SlideViewport canvas={toPreviewCanvas(canvas)}>
       {([0, 1] as const).map((layer) => {
-        const src = layerUrls[layer]
+        const src = layerSrcs[layer]
 
         if (!src) {
           return null
@@ -205,6 +273,7 @@ function PreviewFrame({
             key={`${layer}-${src}`}
             layer={layer}
             onLoad={handleLoad}
+            onMount={handleMount}
             src={src}
             title={`${titlePrefix} ${layer + 1}`}
           />
@@ -226,11 +295,8 @@ function CurrentSlidePreview({
       <PreviewFrame
         canvas={canvas}
         emptyLabel="Waiting for current slide preview"
-        previewUrl={
-          state
-            ? `/slides/${state.slide.id}?presenterPreview=1&step=${state.currentStep}`
-            : null
-        }
+        previewId={state?.slide.id ?? null}
+        step={state?.currentStep ?? 0}
         titlePrefix="Current slide preview"
       />
     </SlideErrorBoundary>
@@ -248,11 +314,8 @@ function NextStepPreview({
     <SlideErrorBoundary slideId={preview?.id ?? "next"}>
       <PreviewFrame
         canvas={canvas}
-        previewUrl={
-          preview
-            ? `/slides/${preview.id}?presenterPreview=1&step=${preview.step}`
-            : null
-        }
+        previewId={preview?.id ?? null}
+        step={preview?.step ?? 0}
         titlePrefix="Next step preview"
       />
     </SlideErrorBoundary>
@@ -352,13 +415,15 @@ export function PresenterConsole({ canvas }: { canvas: DeckCanvasConfig }) {
   }, [])
 
   return (
-    <div className="grid h-svh grid-cols-1 overflow-hidden bg-background text-foreground lg:grid-cols-[22rem_1fr]">
-      <aside className="flex min-h-0 flex-col overflow-hidden border-border/70 border-b p-6 lg:border-r lg:border-b-0">
-        <p className="text-muted-foreground text-xs uppercase tracking-[0.22em]">
+    // Two panes side by side on a wide screen. Narrower than that they become
+    // one column the page scrolls, because a phone cannot hold two panes.
+    <div className="flex min-h-svh flex-col bg-background text-foreground lg:grid lg:h-svh lg:grid-cols-[22rem_1fr] lg:overflow-hidden">
+      <aside className="order-2 flex flex-col border-border/70 border-t p-6 lg:order-none lg:min-h-0 lg:overflow-hidden lg:border-t-0 lg:border-r">
+        <p className="order-1 text-muted-foreground text-xs uppercase tracking-[0.22em] lg:order-none">
           Presenter View
         </p>
 
-        <div className="mt-5 grid grid-cols-2 gap-3">
+        <div className="order-4 mt-5 grid grid-cols-2 gap-3 lg:order-none">
           <div className="rounded-xl border border-border/70 bg-card/60 p-3">
             <p className="font-semibold text-[0.65rem] text-muted-foreground uppercase tracking-[0.18em]">
               Timer
@@ -375,7 +440,7 @@ export function PresenterConsole({ canvas }: { canvas: DeckCanvasConfig }) {
           </div>
         </div>
 
-        <div className="mt-5 rounded-xl border border-border/70 bg-card/60 p-4">
+        <div className="order-3 mt-5 rounded-xl border border-border/70 bg-card/60 p-4 lg:order-none">
           <p className="font-semibold text-[0.65rem] text-muted-foreground uppercase tracking-[0.18em]">
             Next Step Preview
           </p>
@@ -387,7 +452,7 @@ export function PresenterConsole({ canvas }: { canvas: DeckCanvasConfig }) {
           </div>
         </div>
 
-        <div className="mt-4 rounded-xl border border-border/70 bg-card/60 p-3">
+        <div className="order-5 mt-4 rounded-xl border border-border/70 bg-card/60 p-3 lg:order-none">
           <p className="font-semibold text-[0.65rem] text-muted-foreground uppercase tracking-[0.18em]">
             Flow
           </p>
@@ -404,7 +469,7 @@ export function PresenterConsole({ canvas }: { canvas: DeckCanvasConfig }) {
           </div>
         </div>
 
-        <div className="mt-4 flex items-center justify-between gap-3">
+        <div className="order-2 mt-4 flex items-center justify-between gap-3 lg:order-none">
           <Button
             className="gap-2"
             disabled={!canNavigatePrevious}
@@ -412,7 +477,7 @@ export function PresenterConsole({ canvas }: { canvas: DeckCanvasConfig }) {
             type="button"
             variant="outline"
           >
-            <ChevronLeft className="size-4" />
+            <ChevronLeft className="size-4" data-icon="inline-start" />
             Previous
           </Button>
           <Button
@@ -422,18 +487,18 @@ export function PresenterConsole({ canvas }: { canvas: DeckCanvasConfig }) {
             type="button"
           >
             Next
-            <ChevronRight className="size-4" />
+            <ChevronRight className="size-4" data-icon="inline-end" />
           </Button>
         </div>
 
-        <p className="mt-auto pt-4 text-muted-foreground text-xs">
+        <p className="order-6 pt-4 text-muted-foreground text-xs lg:order-none lg:mt-auto">
           {connected
             ? "Connected via BroadcastChannel."
             : "Waiting for connection from the slideshow tab."}
         </p>
       </aside>
 
-      <section className="flex min-h-0 flex-col overflow-hidden p-5 sm:p-6">
+      <section className="order-1 flex flex-col p-5 sm:p-6 lg:order-none lg:min-h-0 lg:overflow-hidden">
         <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
           <div>
             <p className="font-semibold text-[0.65rem] text-muted-foreground uppercase tracking-[0.18em]">
@@ -465,8 +530,8 @@ export function PresenterConsole({ canvas }: { canvas: DeckCanvasConfig }) {
           <CurrentSlidePreview canvas={canvas} state={state} />
         </div>
 
-        <div className="mt-5 flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-border/80 bg-card/80">
-          <div className="min-h-0 flex-1 overflow-y-auto p-6">
+        <div className="mt-5 flex flex-col rounded-2xl border border-border/80 bg-card/80 lg:min-h-0 lg:flex-1 lg:overflow-hidden">
+          <div className="p-6 lg:min-h-0 lg:flex-1 lg:overflow-y-auto">
             <p
               className="whitespace-pre-wrap text-foreground"
               style={{
