@@ -2,7 +2,7 @@ import { spawnSync } from "node:child_process"
 import fs from "node:fs"
 import process from "node:process"
 
-import { type ParsedArgs, stringFlag } from "../args.ts"
+import { booleanFlag, type ParsedArgs, stringFlag } from "../args.ts"
 import { write } from "../output.ts"
 import { projectPath, projectRoot } from "../project.ts"
 
@@ -35,7 +35,7 @@ function itemUrl(template: string, item: string): string | null {
   }
 }
 
-async function assertReachable(url: string, item: string): Promise<void> {
+async function assertReachable(url: string): Promise<void> {
   const response = await fetch(url, {
     signal: AbortSignal.timeout(5000),
   }).catch(() => null)
@@ -47,11 +47,11 @@ async function assertReachable(url: string, item: string): Promise<void> {
   throw new Error(
     [
       `The registry at ${url} did not answer${response ? ` (HTTP ${response.status})` : ""}.`,
-      "Deckard has no public registry host yet. The docs app in the Deckard repository serves it:",
+      "Deckard has no public registry host yet. The docs app in the Deckard repository serves it on port 3001:",
       "",
       "  pnpm --filter docs dev",
       "",
-      `Then point components.json at it, or pass the URL: deckard add ${item} --registry http://localhost:3001/r/{name}.json`,
+      "Start that, or pass the host it is on with --registry <url>. The URL carries a {name} placeholder.",
     ].join("\n")
   )
 }
@@ -76,7 +76,8 @@ export async function runAdd(args: ParsedArgs): Promise<void> {
   }
 
   const item = `${kind}-${name}`
-  const template = stringFlag(args, "registry") ?? readRegistryUrl()
+  const override = stringFlag(args, "registry")
+  const template = override ?? readRegistryUrl()
 
   if (!template) {
     throw new Error(
@@ -95,17 +96,25 @@ export async function runAdd(args: ParsedArgs): Promise<void> {
     )
   }
 
-  await assertReachable(url, `${kind} ${name}`)
+  await assertReachable(url)
 
   write(`Installing @deckard/${item} from ${url}`)
 
+  // The namespace resolves through components.json. A --registry run bypasses
+  // that file, so shadcn takes the URL itself.
+  const target = override ? url : `@deckard/${item}`
+  const confirmed = booleanFlag(args, "yes") ? ["-y", "-o"] : []
   const result = spawnSync(
     "pnpm",
-    ["dlx", "shadcn@latest", "add", `@deckard/${item}`],
-    { cwd: projectRoot, env: process.env, stdio: "inherit" }
+    ["dlx", "shadcn@latest", "add", target, ...confirmed],
+    {
+      cwd: projectRoot,
+      env: process.env,
+      stdio: "inherit",
+    }
   )
 
   if (result.status !== 0) {
-    throw new Error(`shadcn add @deckard/${item} failed.`)
+    throw new Error(`shadcn add ${target} failed.`)
   }
 }

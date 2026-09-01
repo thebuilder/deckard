@@ -252,7 +252,8 @@ export default function GettingStartedPage() {
       </pre>
       <p>
         A theme lands in <code>deck/theme/</code> and replaces whatever theme
-        was there, because a deck has exactly one. Blocks land in{" "}
+        was there, because a deck has exactly one. shadcn asks before it does,
+        and <code>--yes</code> answers for it. Blocks land in{" "}
         <code>app/slides/blocks/</code>. The registry has no public host yet, so{" "}
         <code>init</code> points <code>components.json</code> at this docs site
         running locally on port 3001, and <code>deckard add</code> says so when

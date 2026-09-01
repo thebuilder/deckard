@@ -20,7 +20,7 @@ const { version } = JSON.parse(
 const previewFlags = ["light", "skip-build"]
 
 const specs: Record<string, FlagSpec> = {
-  add: { strings: ["registry"] },
+  add: { booleans: ["yes"], strings: ["registry"] },
   "check-overflow": { booleans: previewFlags, strings: ["port"] },
   "contact-sheet": { booleans: ["light"], strings: ["columns"] },
   doctor: {},
@@ -69,6 +69,8 @@ const help = `deckard ${version}
 
   deckard add theme <name>   install a theme from the registry, into deck/theme
   deckard add block <name>   install a block, into app/slides/blocks
+    --registry <url>             a registry URL carrying a {name} placeholder
+    --yes                        overwrite the files it installs without asking
 
 Every command except init runs against the deck in the current directory.
 `

@@ -90,7 +90,7 @@ in the current directory, which is how a generated app wires its own scripts.
 | `deckard screenshots` | one PNG per slide at canvas size, `--max <n>` to stop early |
 | `deckard contact-sheet` | every screenshot in one labelled grid |
 | `deckard export pdf` | one PDF page per slide |
-| `deckard add theme <name>` | install a registry theme into `deck/theme` |
+| `deckard add theme <name>` | install a registry theme into `deck/theme`, `--yes` to overwrite |
 | `deckard add block <name>` | install a registry block into `app/slides/blocks` |
 
 The four checks that need a browser build the app and serve it on a spare port.
@@ -197,9 +197,11 @@ pnpm dlx shadcn@latest add @deckard/preset-deckard
 ```
 
 `deckard add` reads the registry URL from `components.json`, or takes
-`--registry <url>`. The registry has no public host yet, so it is served from
-this repository's docs site on port 3001, which is what `deckard init` writes
-into `components.json`. See [Registry](#registry).
+`--registry <url>` and hands that URL straight to shadcn. It checks the host
+answers first and says what to start when it does not. shadcn asks before it
+overwrites a theme, and `--yes` answers for it. The registry has no public host
+yet, so it is served from this repository's docs site on port 3001, which is
+what `deckard init` writes into `components.json`. See [Registry](#registry).
 
 ### The routes come from the package
 
