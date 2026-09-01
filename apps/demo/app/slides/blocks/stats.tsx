@@ -6,7 +6,7 @@ export interface Stat {
 
 export function StatGrid({ items }: { items: Stat[] }) {
   return (
-    <div className="grid grid-cols-2 gap-x-12 gap-y-8">
+    <div className="grid grid-cols-2 gap-x-12 gap-y-8" data-slide-surface="">
       {items.map((item) => (
         <div
           className="border-[var(--slide-surface-border)] border-t pt-5"

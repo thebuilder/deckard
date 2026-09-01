@@ -12,7 +12,7 @@ import { FullscreenMediaSlide } from "@/app/slides/blocks/media"
 import { type Stat, StatGrid } from "@/app/slides/blocks/stats"
 import {
   BreakerSlide,
-  ContentSlideCard,
+  FocusSlide,
   HeroSlide,
   OpenContentSlide,
 } from "@/app/slides/blocks/templates"
@@ -80,13 +80,13 @@ async function DeckStatsSlide() {
   const stats = await readDeckStats()
 
   return (
-    <ContentSlideCard
+    <OpenContentSlide
       description="Every number below was read off disk while this page rendered. The slide is an async Server Component, so nothing here is a screenshot of a number that used to be true."
       eyebrow="Counted at build time"
       title="This deck, measured while it rendered"
     >
       <StatGrid items={stats} />
-    </ContentSlideCard>
+    </OpenContentSlide>
   )
 }
 
@@ -160,7 +160,10 @@ export const slides: SlideDefinition[] = [
 
 function FrictionPhase({ body, label }: { body: ReactNode; label: string }) {
   return (
-    <div className="grid grid-cols-[13rem_minmax(0,1fr)] items-baseline gap-6 border-[var(--slide-surface-border)] border-t pt-4">
+    <div
+      className="grid grid-cols-[13rem_minmax(0,1fr)] items-baseline gap-6 border-[var(--slide-surface-border)] border-t pt-4"
+      data-slide-surface=""
+    >
       <p className="font-semibold text-[length:var(--slide-label-size)] text-primary uppercase tracking-[var(--slide-label-tracking)]">
         {label}
       </p>
@@ -239,7 +242,7 @@ Keep this under a minute. An agenda slide that takes two minutes has cost you th
   },
   {
     body: (
-      <ContentSlideCard
+      <OpenContentSlide
         description="A Next.js app with a slideshow bolted into it. It worked, it shipped talks, and it was not a framework."
         eyebrow="Before"
         title="One app, and a file that kept growing"
@@ -263,7 +266,7 @@ Keep this under a minute. An agenda slide that takes two minutes has cost you th
             },
           ]}
         />
-      </ContentSlideCard>
+      </OpenContentSlide>
     ),
     notes: `Be specific and unflattering. A migration talk with no before state is a sales pitch.
 
@@ -277,15 +280,13 @@ Do not linger. Ninety seconds, then into the canvas.`,
 
   {
     body: (
-      <ContentSlideCard
-        description="The real file, trimmed. Nineteen slides, and this is all of the structure there is."
-        eyebrow="Authoring"
-        title="An array, a spread, and one async function"
-      >
-        <CodeBlock code={deckSource} language="tsx" maxHeight={540} />
-      </ContentSlideCard>
+      <FocusSlide kicker="deck/slides.tsx, trimmed">
+        <CodeBlock code={deckSource} language="tsx" maxHeight={720} />
+      </FocusSlide>
     ),
-    notes: `Scroll it while you talk. The block scrolls inside the slide, so the deck does not advance under you.
+    notes: `The real file, trimmed. Nineteen slides, and an array, a spread, and one async function is all of the structure there is.
+
+Scroll it while you talk. The block scrolls inside the slide, so the deck does not advance under you.
 
 Three things to point at, in order: the glob, the spread in the middle of the array, and the async function that is also a slide.
 
@@ -337,7 +338,7 @@ Then: everything before this was how the rectangle works. Everything after it is
   },
   {
     body: (
-      <ContentSlideCard
+      <OpenContentSlide
         description="Building this deck on the framework was the last check before calling the API stable. Four things pushed back."
         eyebrow="Honestly"
         title="What the migration actually cost"
@@ -396,7 +397,7 @@ Then: everything before this was how the rectangle works. Everything after it is
             />
           </SlideStep>
         </div>
-      </ContentSlideCard>
+      </OpenContentSlide>
     ),
     notes: `Four clicks, and do not soften any of them. A migration talk that reports no friction is a talk nobody believes.
 

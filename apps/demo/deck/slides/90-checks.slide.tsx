@@ -1,5 +1,5 @@
 import type { SlideMeta } from "@deckard/core"
-import { ContentSlideCard } from "@/app/slides/blocks/templates"
+import { OpenContentSlide } from "@/app/slides/blocks/templates"
 
 export const meta: SlideMeta = {
   title: "Checking a deck",
@@ -36,12 +36,12 @@ const scripts = [
 
 export default function ChecksSlide() {
   return (
-    <ContentSlideCard
+    <OpenContentSlide
       description="A deck is code, so it gets the same gate as code. All four run from the deck's own package."
       eyebrow="The gate"
       title="Four scripts decide whether a deck is done"
     >
-      <div className="grid grid-cols-2 gap-x-10 gap-y-6">
+      <div className="grid grid-cols-2 gap-x-10 gap-y-6" data-slide-surface="">
         {scripts.map((script) => (
           <div
             className="border-[var(--slide-surface-border)] border-t pt-4"
@@ -59,6 +59,6 @@ export default function ChecksSlide() {
           </div>
         ))}
       </div>
-    </ContentSlideCard>
+    </OpenContentSlide>
   )
 }
