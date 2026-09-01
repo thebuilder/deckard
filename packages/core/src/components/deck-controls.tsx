@@ -26,11 +26,12 @@ const controlsHiddenClass = "group-data-[slide-chrome=hidden]/shell:hidden"
 const revealDistance = 160
 
 // A hybrid laptop has a trackpad and a touchscreen, and (pointer: coarse) names
-// only the primary one. any-pointer asks whether a finger is available at all,
-// and hover asks whether anything on the machine can reveal by proximity, so a
-// hybrid gets the handle and the reveal rather than one or the other.
+// only the primary one. any-pointer asks per capability: a coarse pointer
+// anywhere earns the handle, a fine pointer anywhere earns the proximity
+// reveal, so a hybrid gets both. Fine rather than hover, because some desktop
+// engines report hover: none while still delivering pointermove.
 const touchQuery = "(any-pointer: coarse)"
-const hoverQuery = "(hover: hover)"
+const finePointerQuery = "(any-pointer: fine)"
 
 // Module scope on purpose: the cluster remounts on every slide navigation.
 // Without the last pointer position a reveal earned by proximity would drop
@@ -38,6 +39,11 @@ const hoverQuery = "(hover: hover)"
 // would mount hidden and blink back in one frame later.
 let lastPointerPosition: { x: number; y: number } | null = null
 let lastIsNear = false
+
+export function resetDeckControlsMemory() {
+  lastPointerPosition = null
+  lastIsNear = false
+}
 
 function useMediaQuery(query: string, serverValue: boolean) {
   const subscribe = useCallback(
@@ -182,8 +188,8 @@ export function DeckControls({
   const stepper = useSlideStepper()
   const anchor = useRef<HTMLElement | null>(null)
   const hasTouch = useMediaQuery(touchQuery, false)
-  const canHover = useMediaQuery(hoverQuery, true)
-  const isNear = usePointerProximity(anchor, canHover)
+  const hasFinePointer = useMediaQuery(finePointerQuery, true)
+  const isNear = usePointerProximity(anchor, hasFinePointer)
   const isFocused = useFocusWithin(anchor)
   const [isCommandOpen, setIsCommandOpen] = useState(false)
   const [isPinned, setIsPinned] = useState(false)

@@ -3,7 +3,7 @@ import { createRoot, type Root } from "react-dom/client"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import type { SlideSummary } from "../deck/types"
 import { pushed } from "./__fixtures__/next-navigation"
-import { DeckControls } from "./deck-controls"
+import { DeckControls, resetDeckControlsMemory } from "./deck-controls"
 
 // Pointer proximity and focus land outside any act() scope, the way they do in a
 // browser, so the flag is only raised around the renders this test drives itself.
@@ -115,6 +115,7 @@ function movePointerTo(x: number, y: number) {
 }
 
 beforeEach(() => {
+  resetDeckControlsMemory()
   pushed.length = 0
   container = document.createElement("div")
   container.style.position = "fixed"
@@ -197,7 +198,7 @@ describe("DeckControls", () => {
   it("gives a hybrid machine the handle and the proximity reveal", async () => {
     const restore = stubMediaQueries({
       "(any-pointer: coarse)": true,
-      "(hover: hover)": true,
+      "(any-pointer: fine)": true,
     })
 
     try {
