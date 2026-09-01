@@ -1,6 +1,6 @@
 export function BulletList({ items }: { items: React.ReactNode[] }) {
   return (
-    <div>
+    <div data-slide-surface="">
       {items.map((item, index) => (
         <div
           className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-6 border-[var(--slide-surface-border)] border-b py-6 last:border-b-0"
@@ -31,6 +31,7 @@ export function FeatureGrid({
       {items.map((item) => (
         <div
           className="rounded-[var(--slide-radius)] border border-[var(--slide-surface-border)] bg-[var(--slide-surface-muted)] p-5"
+          data-slide-surface=""
           key={item.title}
         >
           <h3 className="text-balance font-semibold text-xl tracking-tight">

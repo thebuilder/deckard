@@ -1,6 +1,6 @@
 import type { SlideMeta } from "@deckard/core"
 import { SlideStep } from "@deckard/core/components"
-import { ContentSlideCard } from "@/app/slides/blocks/templates"
+import { OpenContentSlide } from "@/app/slides/blocks/templates"
 
 export const meta: SlideMeta = {
   stepCount: 3,
@@ -33,6 +33,7 @@ function Phase({
           ? "border border-primary/45 bg-primary/8 p-5"
           : "border border-[var(--slide-surface-border)] bg-[var(--slide-surface-muted)] p-5"
       }
+      data-slide-surface=""
     >
       <p
         className={`font-semibold text-[length:var(--slide-label-size)] uppercase tracking-[var(--slide-label-tracking)] ${
@@ -53,7 +54,7 @@ function Phase({
 
 export default function ClippingSlide() {
   return (
-    <ContentSlideCard
+    <OpenContentSlide
       description="A slide that overflows is clipped, so overflow has to be loud in both places you would notice it."
       eyebrow="Clipping"
       title="The canvas clips, and CI fails on it"
@@ -84,6 +85,6 @@ export default function ClippingSlide() {
           />
         </SlideStep>
       </div>
-    </ContentSlideCard>
+    </OpenContentSlide>
   )
 }

@@ -1,6 +1,6 @@
 import type { SlideMeta } from "@deckard/core"
 import { FeatureGrid } from "@/app/slides/blocks/collections"
-import { ContentSlideCard } from "@/app/slides/blocks/templates"
+import { OpenContentSlide } from "@/app/slides/blocks/templates"
 
 export const meta: SlideMeta = {
   title: "The slide model",
@@ -12,7 +12,7 @@ If you get a question about titles becoming slugs: they never do. A title is dis
 
 export default function SlideModelSlide() {
   return (
-    <ContentSlideCard
+    <OpenContentSlide
       description="One required field and five optional ones. If you can hold the model in your head, you can rearrange a deck without opening the docs."
       eyebrow="The model"
       title="A slide is an object with a body"
@@ -51,6 +51,6 @@ export default function SlideModelSlide() {
           },
         ]}
       />
-    </ContentSlideCard>
+    </OpenContentSlide>
   )
 }

@@ -1,6 +1,6 @@
 import type { SlideMeta } from "@deckard/core"
 import { FeatureGrid } from "@/app/slides/blocks/collections"
-import { ContentSlideCard } from "@/app/slides/blocks/templates"
+import { OpenContentSlide } from "@/app/slides/blocks/templates"
 
 export const meta: SlideMeta = {
   title: "Discovery",
@@ -14,7 +14,7 @@ Kill the performance question before it arrives. The glob is eager. Extraction b
 
 export default function DiscoverySlide() {
   return (
-    <ContentSlideCard
+    <OpenContentSlide
       description="This slide is deck/slides/60-discovery.slide.tsx. The array it lands in never names the file."
       eyebrow="Discovery"
       title="Nine slides the deck array never mentions"
@@ -38,6 +38,6 @@ export default function DiscoverySlide() {
           },
         ]}
       />
-    </ContentSlideCard>
+    </OpenContentSlide>
   )
 }

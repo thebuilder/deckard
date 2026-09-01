@@ -35,7 +35,10 @@ export function ContentSlideCard({
     <div className="space-y-[var(--slide-content-gap)]">
       <SlideIntro description={description} eyebrow={eyebrow} title={title} />
 
-      <div className="grid gap-4 rounded-[var(--slide-radius-lg)] border border-[var(--slide-surface-border)] bg-[var(--slide-surface)] p-5 shadow-[var(--slide-surface-shadow)] backdrop-blur-sm">
+      <div
+        className="grid gap-4 rounded-[var(--slide-radius-lg)] border border-[var(--slide-surface-border)] bg-[var(--slide-surface)] p-5 shadow-[var(--slide-surface-shadow)] backdrop-blur-sm"
+        data-slide-panel=""
+      >
         {children}
       </div>
     </div>
@@ -53,6 +56,32 @@ export function OpenContentSlide({
       <SlideIntro description={description} eyebrow={eyebrow} title={title} />
       <div>{children}</div>
     </div>
+  )
+}
+
+/*
+ * The content is the slide. No heading, no lead, no panel: one block gets the
+ * whole frame to show more of itself at the normal type scale, with an
+ * optional kicker under it for orientation.
+ */
+export function FocusSlide({
+  children,
+  kicker,
+}: {
+  children: React.ReactNode
+  kicker?: string
+}) {
+  return (
+    <section className="flex h-full w-full flex-col items-center justify-center py-8">
+      <div className="grid min-h-0 w-full flex-1 grid-cols-[minmax(0,1fr)] items-center [&_:is(img,video)]:mx-auto [&_:is(img,video)]:h-auto [&_:is(img,video)]:max-h-full [&_:is(img,video)]:w-auto [&_:is(img,video)]:object-contain">
+        {children}
+      </div>
+      {kicker ? (
+        <p className="mt-10 shrink-0 text-center font-semibold text-[length:var(--slide-label-size)] text-muted-foreground uppercase tracking-[var(--slide-label-tracking)]">
+          {kicker}
+        </p>
+      ) : null}
+    </section>
   )
 }
 
