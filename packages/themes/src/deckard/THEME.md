@@ -135,10 +135,11 @@ The decoration tokens are `--slide-grid-color`, `--slide-grid-size`,
 six are part of the contract in `@deckard/core/styles.css`. Deckard paints with
 the first four and leaves `--slide-scanline` and `--slide-halo` at the
 contract's `none`. `--slide-hatch` is drawn in `--slide-grid-color`, this
-theme's own quiet ink, so a reserved plate stays quiet under body copy. Dark
-mode carries `--slide-grid-color` and `--slide-rule` at their own alphas,
-because a line that reads on paper disappears on a dark sheet. This theme adds
-no private tokens of its own.
+theme's own quiet ink, so a reserved plate stays quiet under body copy, and the
+dark block only has to move `--slide-grid-color` for the hatch to follow it.
+Dark mode sets `--slide-grid-color` and `--slide-rule` a good deal lighter and a
+touch under their light alphas, because a light line on a dark sheet carries
+further than a dark line on paper. This theme adds no private tokens of its own.
 
 ## Block parts
 
