@@ -2,9 +2,7 @@ import fs from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 
-export const templateRoot = fileURLToPath(
-  new URL("../../template/", import.meta.url)
-)
+const templateRoot = fileURLToPath(new URL("../../template/", import.meta.url))
 
 export type ThemeName = "broadsheet" | "deckard"
 
