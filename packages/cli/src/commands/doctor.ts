@@ -13,8 +13,9 @@ interface Check {
   ok: boolean
 }
 
-const minimumNodeMajor = 20
+const minimumNode = "20.9.0"
 const styleImport = '@import "@deckard/core/styles.css"'
+const versionPattern = /^(\d+)\.(\d+)\.(\d+)/
 
 const routeAdapters = [
   { adapter: "createSlideRoute", file: "app/slides/[id]/page.tsx" },
@@ -31,14 +32,32 @@ function read(relativePath: string): string | null {
   }
 }
 
-function checkNode(): Check {
-  const major = Number(process.versions.node.split(".")[0])
+function parts(version: string): number[] {
+  const [, major, minor, patch] = versionPattern.exec(version) ?? []
 
+  return [Number(major ?? 0), Number(minor ?? 0), Number(patch ?? 0)]
+}
+
+// 20.9.0 is a floor, not a major: node 20.5 fails it and node 20.9 passes.
+export function meetsMinimum(version: string, minimum: string): boolean {
+  const actual = parts(version)
+  const wanted = parts(minimum)
+
+  for (const [index, part] of wanted.entries()) {
+    if (actual[index] !== part) {
+      return actual[index] > part
+    }
+  }
+
+  return true
+}
+
+function checkNode(): Check {
   return {
     detail: `node ${process.versions.node}`,
-    fix: `Next 16 needs node ${minimumNodeMajor}.9 or newer. This repository runs node 24.`,
+    fix: `Next 16 needs node ${minimumNode} or newer. This repository runs node 24.`,
     name: "node",
-    ok: major >= minimumNodeMajor,
+    ok: meetsMinimum(process.versions.node, minimumNode),
   }
 }
 
