@@ -96,6 +96,29 @@ function copyAsset(name: string, asset: string): void {
   fs.copyFileSync(from, projectPath(localThemeDirectory, asset))
 }
 
+// A theme that self-hosts a typeface points at it from theme.css with a
+// relative url, so the woff2 files and the licence beside them have to land in
+// the ejected directory or the copy renders in the fallback stack.
+function copyFonts(name: string): string[] {
+  const from = builtInThemePath(name, "fonts")
+
+  if (!fs.existsSync(from)) {
+    return []
+  }
+
+  const to = projectPath(localThemeDirectory, "fonts")
+
+  fs.mkdirSync(to, { recursive: true })
+
+  const files = fs.readdirSync(from).sort()
+
+  for (const file of files) {
+    fs.copyFileSync(path.join(from, file), path.join(to, file))
+  }
+
+  return files.map((file) => path.join("fonts", file))
+}
+
 async function ejectTheme(args: ParsedArgs): Promise<void> {
   const source = readDeckSource()
   const name = chooseTheme(args, source)
@@ -113,6 +136,9 @@ async function ejectTheme(args: ParsedArgs): Promise<void> {
   fs.mkdirSync(projectPath(localThemeDirectory), { recursive: true })
   copyAsset(name, "theme.css")
   copyAsset(name, "THEME.md")
+
+  const fonts = copyFonts(name)
+
   fs.writeFileSync(
     projectPath(localThemeDirectory, "index.ts"),
     themeEntry(deck.theme)
@@ -121,7 +147,7 @@ async function ejectTheme(args: ParsedArgs): Promise<void> {
 
   write(`Ejected the ${name} theme into ${localThemeDirectory}/`)
 
-  for (const asset of ["theme.css", "index.ts", "THEME.md"]) {
+  for (const asset of ["theme.css", "index.ts", "THEME.md", ...fonts]) {
     write(`  ${path.join(localThemeDirectory, asset)}`)
   }
 

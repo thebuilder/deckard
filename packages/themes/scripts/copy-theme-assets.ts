@@ -16,6 +16,12 @@ const themesTarget = path.join(packageRoot, "dist")
 // over by hand.
 const assets = ["theme.css", "THEME.md"]
 
+// A theme that self-hosts a typeface resolves the woff2 files relative to
+// theme.css, so the directory has to land beside the copied stylesheet or the
+// published package ships a stylesheet pointing at nothing. OFL.txt rides along
+// with them: the licence has to travel wherever the binaries do.
+const fontsDirectory = "fonts"
+
 // An editor writing a file lands as more than one event, and the copy is twelve
 // files, so a burst is answered once the directory has been quiet this long.
 const settleMs = 50
@@ -26,6 +32,30 @@ function themeNames(): string[] {
     .filter((entry) => entry.isDirectory())
     .map((entry) => entry.name)
     .sort()
+}
+
+function copyFonts(theme: string): number {
+  const from = path.join(themesSource, theme, fontsDirectory)
+
+  if (!fs.existsSync(from)) {
+    return 0
+  }
+
+  const to = path.join(themesTarget, theme, fontsDirectory)
+
+  fs.mkdirSync(to, { recursive: true })
+
+  const files = fs.readdirSync(from).sort()
+
+  if (!files.includes("OFL.txt")) {
+    throw new Error(`src/${theme}/${fontsDirectory} is missing OFL.txt`)
+  }
+
+  for (const file of files) {
+    fs.copyFileSync(path.join(from, file), path.join(to, file))
+  }
+
+  return files.length
 }
 
 export function copyThemeAssets(): number {
@@ -44,6 +74,8 @@ export function copyThemeAssets(): number {
       fs.copyFileSync(from, path.join(themesTarget, theme, asset))
       copied += 1
     }
+
+    copied += copyFonts(theme)
   }
 
   return copied
