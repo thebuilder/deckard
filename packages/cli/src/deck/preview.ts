@@ -5,9 +5,9 @@ import process from "node:process"
 
 import type { Browser, Page } from "playwright"
 import { chromium } from "playwright"
-
 import type { ColorMode } from "../output.ts"
 import { write } from "../output.ts"
+import { deckPackageManager, execCommand } from "../package-manager.ts"
 import { projectRoot, resolveFromProject } from "../project.ts"
 
 // Resolved rather than assumed: in this workspace it is packages/core, and in a
@@ -307,7 +307,7 @@ export async function launchBrowser(): Promise<Browser> {
     return await chromium.launch({ headless: true })
   } catch (error) {
     throw new Error(
-      "Failed to launch Chromium. Run: pnpm exec playwright install chromium",
+      `Failed to launch Chromium. Run: ${execCommand(deckPackageManager(projectRoot), ["playwright", "install", "chromium"])}`,
       { cause: error }
     )
   }

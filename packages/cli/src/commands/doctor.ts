@@ -3,7 +3,8 @@ import process from "node:process"
 
 import { loadDeck } from "../deck/deck-module.ts"
 import { write } from "../output.ts"
-import { projectPath, resolveFromProject } from "../project.ts"
+import { addCommand, deckPackageManager } from "../package-manager.ts"
+import { projectPath, projectRoot, resolveFromProject } from "../project.ts"
 
 interface Check {
   detail: string
@@ -47,7 +48,7 @@ function checkCore(): Check {
   if (!resolved) {
     return {
       detail: "@deckard/core does not resolve from this directory",
-      fix: "Install it: pnpm add @deckard/core. Run deckard from the app root, next to package.json.",
+      fix: `Install it: ${addCommand(deckPackageManager(projectRoot), "@deckard/core")}. Run deckard from the app root, next to package.json.`,
       name: "core",
       ok: false,
     }

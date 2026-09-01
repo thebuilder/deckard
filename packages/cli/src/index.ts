@@ -44,7 +44,7 @@ const help = `deckard ${version}
   deckard init <dir>          create a deck: a Next.js app with slides, a theme, and the checks
     --theme deckard|broadsheet   which theme to install (default deckard)
     --empty                      two slides instead of the sample deck
-    --package-manager <name>     pnpm, npm, yarn, or bun (default pnpm)
+    --package-manager <name>     npm, pnpm, yarn, or bun (default: the one that ran init)
     --no-install                 write the files and stop
     --no-git                     skip git init and the first commit
     --core-tarball <path>        install @deckard/core from a local tarball

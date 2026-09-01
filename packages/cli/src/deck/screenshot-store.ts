@@ -1,6 +1,7 @@
 import fs from "node:fs"
 import path from "node:path"
 
+import { deckPackageManager, runScript } from "../package-manager.ts"
 import { projectRoot } from "../project.ts"
 
 export interface ScreenshotEntry {
@@ -27,7 +28,7 @@ export function writeManifest(manifest: ScreenshotManifest): void {
 export function readManifest(): ScreenshotManifest {
   if (!fs.existsSync(manifestPath)) {
     throw new Error(
-      `No screenshots at ${screenshotDirectory}. Run: pnpm deck:screenshots`
+      `No screenshots at ${screenshotDirectory}. Run: ${runScript(deckPackageManager(projectRoot), "deck:screenshots")}`
     )
   }
 

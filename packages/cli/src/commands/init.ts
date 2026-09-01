@@ -11,11 +11,16 @@ import {
 } from "../args.ts"
 import { scaffold, type ThemeName } from "../init/scaffold.ts"
 import { write } from "../output.ts"
+import {
+  type DetectedManager,
+  detectPackageManager,
+  isPackageManager,
+  type PackageManager,
+  packageManagers,
+  runScript,
+} from "../package-manager.ts"
 
-const packageManagers = ["bun", "npm", "pnpm", "yarn"] as const
 const themes = ["broadsheet", "deckard"] as const
-
-type PackageManager = (typeof packageManagers)[number]
 
 const defaultRegistryUrl = "http://localhost:3001/r/{name}.json"
 const namePattern = /[^a-z0-9-]+/g
@@ -117,9 +122,30 @@ function nextSteps(
     steps.push(`${manager} install`)
   }
 
-  steps.push(`${manager} run dev`)
+  steps.push(runScript(manager, "dev"))
 
   return steps
+}
+
+// The flag wins, then the manager that invoked this run, then a lockfile above
+// the target. Nothing here assumes pnpm: npx on a machine without it lands on
+// npm and the generated deck says so.
+function chooseManager(args: ParsedArgs, target: string): DetectedManager {
+  const forced = stringFlag(args, "package-manager")
+
+  if (forced === undefined) {
+    return detectPackageManager(path.dirname(target))
+  }
+
+  if (!isPackageManager(forced)) {
+    throw new Error(
+      `--package-manager takes one of ${packageManagers.join(", ")}, not "${forced}".`
+    )
+  }
+
+  const detected = detectPackageManager(path.dirname(target))
+
+  return detected.name === forced ? detected : { name: forced, version: null }
 }
 
 export function runInit(args: ParsedArgs, cliVersion: string): void {
@@ -133,7 +159,8 @@ export function runInit(args: ParsedArgs, cliVersion: string): void {
 
   assertEmptyTarget(target)
 
-  const manager = choiceFlag(args, "package-manager", packageManagers, "pnpm")
+  const detected = chooseManager(args, target)
+  const manager = detected.name
   const theme: ThemeName = choiceFlag(args, "theme", themes, "deckard")
   const sample = !booleanFlag(args, "empty")
   const name = toPackageName(target)
@@ -150,6 +177,7 @@ export function runInit(args: ParsedArgs, cliVersion: string): void {
     ),
     description: `${title}, a deck built with Deckard.`,
     name,
+    packageManager: detected,
     registryUrl: stringFlag(args, "registry") ?? defaultRegistryUrl,
     sample,
     target,
@@ -159,6 +187,7 @@ export function runInit(args: ParsedArgs, cliVersion: string): void {
 
   write(`Created ${name} in ${target}`)
   write(`  ${theme} theme, ${sample ? "sample deck" : "two empty slides"}`)
+  write(`  ${manager} is the package manager for this deck`)
 
   const installed = booleanFlag(args, "install", true)
 

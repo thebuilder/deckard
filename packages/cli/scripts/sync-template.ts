@@ -20,6 +20,16 @@ const blocks = [
 ]
 const themeFiles = ["THEME.md", "index.ts", "theme.css"]
 
+// The pins a generated deck writes into "packageManager" when the manager that
+// invoked it does not announce its own version. pnpm's comes from this
+// repository so the two never drift; the other three are the current stable
+// releases, read from the npm registry on 2026-09-01.
+const packageManagerPins = {
+  bun: "1.4.0",
+  npm: "12.0.2",
+  yarn: "4.18.0",
+}
+
 // The versions a generated deck installs are the versions the reference deck
 // runs, so a Next or Tailwind bump reaches new decks without a second edit.
 const pinnedFrom = {
@@ -60,6 +70,25 @@ function pick(source: Record<string, string>, names: string[]) {
   )
 }
 
+function packageManagers(): Record<string, string> {
+  const { packageManager } = JSON.parse(read("package.json")) as {
+    packageManager?: string
+  }
+
+  if (!packageManager?.startsWith("pnpm@")) {
+    throw new Error(
+      'The root package.json has no "packageManager": "pnpm@<version>" to pin the template to.'
+    )
+  }
+
+  return {
+    bun: packageManagerPins.bun,
+    npm: packageManagerPins.npm,
+    pnpm: packageManager.slice("pnpm@".length),
+    yarn: packageManagerPins.yarn,
+  }
+}
+
 function versionsFile(): string {
   const playground = JSON.parse(read("apps/playground/package.json")) as {
     dependencies: Record<string, string>
@@ -73,6 +102,7 @@ function versionsFile(): string {
         playground.devDependencies,
         pinnedFrom.devDependencies
       ),
+      packageManagers: packageManagers(),
     },
     null,
     2
