@@ -27,7 +27,7 @@
     "smoke:registry": "node tools/registry-smoke/run.ts",
     "test": "turbo run test",
     "test:browser": "turbo run test:browser",
-    "test:browser:install": "playwright install --with-deps chromium firefox webkit",
+    "test:browser:install": "pnpm --filter @deckard/core exec playwright install --with-deps chromium firefox webkit",
     "test:unit": "turbo run test:unit",
     "typecheck": "turbo run typecheck",
     "validate": "pnpm deck:validate && pnpm demo:validate"
