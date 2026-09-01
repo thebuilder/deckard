@@ -93,7 +93,9 @@ const appDirectory = path.join(scratch, "my-talk")
 const deckard = path.join(appDirectory, "node_modules/.bin/deckard")
 
 try {
-  run("pnpm", ["--filter", "@deckard/cli", "run", "build"], repoRoot)
+  // Through the root script, so turbo builds @deckard/core first. A direct
+  // filtered run leaves the cli compiling against types that do not exist yet.
+  run("pnpm", ["cli:build"], repoRoot)
 
   const core = pack("@deckard/core", scratch, "deckard-core")
   const cli = pack("@deckard/cli", scratch, "deckard-cli")
