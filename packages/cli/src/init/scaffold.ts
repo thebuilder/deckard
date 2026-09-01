@@ -8,7 +8,13 @@ import type { DetectedManager } from "../package-manager.ts"
 // checkout and from the installed package a tarball unpacks into.
 const templateRoot = fileURLToPath(new URL("../../template/", import.meta.url))
 
-export type ThemeName = "broadsheet" | "deckard"
+export type ThemeName =
+  | "broadsheet"
+  | "deckard"
+  | "ledger"
+  | "meridian"
+  | "nexus"
+  | "phosphor"
 
 export interface ScaffoldOptions {
   cliDependency: string

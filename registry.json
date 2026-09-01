@@ -54,6 +54,106 @@
       ]
     },
     {
+      "name": "theme-ledger",
+      "type": "registry:theme",
+      "title": "Ledger theme",
+      "description": "A bound report. Warm paper in light mode, warm ink in dark, oxblood accent turning rust after dark. Three families do three jobs: serif headings from a system stack, system sans body copy, mono for eyebrows and folio numbers. Every corner is 0rem and --slide-surface-shadow is none, so rules carry the structure and --slide-surface-border sits three steps darker than --border to pay for it. The grid variant is ledger paper, horizontal rules with one accent margin rule down the left; default and spotlight both close on a heavy folio rule set to the content measure. The scale drops hard from 5rem titles to 3.25rem headings, the way a chapter opener sits over the slide it introduces. Reach for it when the deck is a written argument with numbers in it and you want the slides to read as pages. Defines the same token contract as theme-deckard plus --slide-rule and --slide-margin-rule, scoped to .ledger-theme. Supports light and dark. Installs into deck/theme/ as three files you own and edit.",
+      "categories": ["theme", "deck"],
+      "docs": "The theme lands in deck/theme/ and replaces whatever theme was there, because a deck has exactly one theme. Point your deck at it with `import { theme } from \"@/deck/theme\"` and pass it to `defineDeck({ theme })`. Read deck/theme/THEME.md before changing tokens.",
+      "files": [
+        {
+          "path": "registry/themes/ledger/theme.css",
+          "type": "registry:file",
+          "target": "~/deck/theme/theme.css"
+        },
+        {
+          "path": "registry/themes/ledger/index.ts",
+          "type": "registry:file",
+          "target": "~/deck/theme/index.ts"
+        },
+        {
+          "path": "registry/themes/ledger/THEME.md",
+          "type": "registry:file",
+          "target": "~/deck/theme/THEME.md"
+        }
+      ]
+    },
+    {
+      "name": "theme-meridian",
+      "type": "registry:theme",
+      "title": "Meridian theme",
+      "description": "The quietest theme in the registry, and that is the whole brief. A near-white blue-gray sheet in light mode, a cool near-black in dark, one mid blue accent used once per slide. One system sans for everything. Cards are flat with a hairline border and 0.625rem corners; --slide-surface-shadow is none in both modes, so the border carries the separation the way the source design draws it. Headings carry -0.03em of tracking, which is the single most identifiable thing about the theme. The type scale is a step under the default theme at every size, because with no decoration the type is the only hierarchy. Backgrounds are half the alpha of every other theme here: one head wash, a drafting grid that fades out behind the copy, one wide radial. Reach for it for a product or planning review where the content should be the loudest thing on the slide. Supports light and dark. Installs into deck/theme/ as three files you own and edit.",
+      "categories": ["theme", "deck"],
+      "docs": "The theme lands in deck/theme/ and replaces whatever theme was there, because a deck has exactly one theme. Point your deck at it with `import { theme } from \"@/deck/theme\"` and pass it to `defineDeck({ theme })`. Read deck/theme/THEME.md before changing tokens.",
+      "files": [
+        {
+          "path": "registry/themes/meridian/theme.css",
+          "type": "registry:file",
+          "target": "~/deck/theme/theme.css"
+        },
+        {
+          "path": "registry/themes/meridian/index.ts",
+          "type": "registry:file",
+          "target": "~/deck/theme/index.ts"
+        },
+        {
+          "path": "registry/themes/meridian/THEME.md",
+          "type": "registry:file",
+          "target": "~/deck/theme/THEME.md"
+        }
+      ]
+    },
+    {
+      "name": "theme-nexus",
+      "type": "registry:theme",
+      "title": "Nexus theme",
+      "description": "A flight console. Dark is the home mode and defaultColorMode is pinned to dark, so a deck opens on the blue-black sheet; the light mode is complete and reads as the printed version of the same document. Every heading is uppercase with a hair of positive tracking, and h1 and h2 carry an amber --slide-halo text shadow that goes to none on paper. Surfaces are flat panels with a 0.125rem blueprint corner. The grid variant is the reason to pick it: a 1.75rem cell grid with every fifth line drawn heavier through --slide-grid-major, faded out behind the copy. Spotlight is an approach light off the top edge with a tube vignette under it. The light accent runs a step darker than the source design so an eyebrow clears 4.5:1 on paper. Reach for it for an engineering or systems talk that wants instrument-panel authority. Supports light and dark, dark by default. Installs into deck/theme/ as three files you own and edit.",
+      "categories": ["theme", "deck"],
+      "docs": "The theme lands in deck/theme/ and replaces whatever theme was there, because a deck has exactly one theme. Point your deck at it with `import { theme } from \"@/deck/theme\"` and pass it to `defineDeck({ theme })`. Read deck/theme/THEME.md before changing tokens.",
+      "files": [
+        {
+          "path": "registry/themes/nexus/theme.css",
+          "type": "registry:file",
+          "target": "~/deck/theme/theme.css"
+        },
+        {
+          "path": "registry/themes/nexus/index.ts",
+          "type": "registry:file",
+          "target": "~/deck/theme/index.ts"
+        },
+        {
+          "path": "registry/themes/nexus/THEME.md",
+          "type": "registry:file",
+          "target": "~/deck/theme/THEME.md"
+        }
+      ]
+    },
+    {
+      "name": "theme-phosphor",
+      "type": "registry:theme",
+      "title": "Phosphor theme",
+      "description": "A green CRT. Dark is the home mode and defaultColorMode is pinned to dark; light mode turns the tube off and gives you dark green ink on a pale green sheet for handouts and print. One monospace family sets every word on the slide, headings included, uppercase at weight 700. Scanlines are the first background layer of default, grid, and spotlight rather than an overlay, so only background none escapes them, and --slide-scanline is none in light mode. Display headings carry a phosphor bloom through --slide-halo. The grid variant draws a character cell, --slide-cell wide by --slide-grid-size tall; spotlight is the tube, bloom at the centre and falloff into every corner. Every corner is square. The type scale is the smallest here on purpose, since monospace runs about 20 percent wider than a proportional sans. Reach for it for a developer talk, a build report, or anything that should look like it is running rather than presented. Supports light and dark, dark by default. Installs into deck/theme/ as three files you own and edit.",
+      "categories": ["theme", "deck"],
+      "docs": "The theme lands in deck/theme/ and replaces whatever theme was there, because a deck has exactly one theme. Point your deck at it with `import { theme } from \"@/deck/theme\"` and pass it to `defineDeck({ theme })`. Read deck/theme/THEME.md before changing tokens.",
+      "files": [
+        {
+          "path": "registry/themes/phosphor/theme.css",
+          "type": "registry:file",
+          "target": "~/deck/theme/theme.css"
+        },
+        {
+          "path": "registry/themes/phosphor/index.ts",
+          "type": "registry:file",
+          "target": "~/deck/theme/index.ts"
+        },
+        {
+          "path": "registry/themes/phosphor/THEME.md",
+          "type": "registry:file",
+          "target": "~/deck/theme/THEME.md"
+        }
+      ]
+    },
+    {
       "name": "block-typography",
       "type": "registry:block",
       "title": "Slide typography",
@@ -113,10 +213,24 @@
       ]
     },
     {
+      "name": "block-metrics",
+      "type": "registry:block",
+      "title": "Slide metrics",
+      "description": "One export, StatGrid, for the three-figures slide every deck reaches for once. Each column is a figure at --slide-title-size with an optional unit at --slide-subheading-size, a caption at --slide-support-size capped to 24 characters a line, and a 2px rule across the top in --slide-surface-border. That is the whole component: it sets no color of its own, so the figures pick up the heading treatment of whatever theme is installed and the rule picks up the border weight. Take the caption seriously. A number on a slide without the thing it is measured against is decoration, and the 24ch measure is sized for \"up from 2.6k\", not for a sentence.",
+      "categories": ["deck", "metrics"],
+      "files": [
+        {
+          "path": "apps/playground/app/slides/blocks/metrics.tsx",
+          "type": "registry:file",
+          "target": "~/app/slides/blocks/metrics.tsx"
+        }
+      ]
+    },
+    {
       "name": "preset-deckard",
       "type": "registry:item",
       "title": "Deckard preset",
-      "description": "Everything a new deck needs in one add: the Deckard theme and all four block families. Use this once, right after installing @deckard/core, then write slides. It also adds the one stylesheet line a consumer cannot guess, the @import of @deckard/core/styles.css, which carries the slide token contract and registers the package's own Tailwind source so the runtime classes survive tree shaking. Nothing else has to be wired: @deckard/core ships compiled, so next.config stays empty.",
+      "description": "Everything a new deck needs in one add: the Deckard theme and all five block families. Use this once, right after installing @deckard/core, then write slides. It also adds the one stylesheet line a consumer cannot guess, the @import of @deckard/core/styles.css, which carries the slide token contract and registers the package's own Tailwind source so the runtime classes survive tree shaking. Nothing else has to be wired: @deckard/core ships compiled, so next.config stays empty.",
       "categories": ["deck", "preset"],
       "dependencies": ["@deckard/core"],
       "registryDependencies": [
@@ -124,7 +238,8 @@
         "@deckard/block-typography",
         "@deckard/block-slide-layouts",
         "@deckard/block-collections",
-        "@deckard/block-media"
+        "@deckard/block-media",
+        "@deckard/block-metrics"
       ],
       "css": {
         "@import \"@deckard/core/styles.css\"": {}

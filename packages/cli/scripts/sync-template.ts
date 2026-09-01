@@ -15,10 +15,15 @@ const checkOnly = process.argv.includes("--check")
 const blocks = [
   "collections.tsx",
   "media.tsx",
+  "metrics.tsx",
   "templates.tsx",
   "typography.tsx",
 ]
 const themeFiles = ["THEME.md", "index.ts", "theme.css"]
+
+// deckard is the reference deck's own theme; the rest live in the registry.
+// deckard init copies one of these directories into the new deck's deck/theme.
+const registryThemes = ["broadsheet", "ledger", "meridian", "nexus", "phosphor"]
 
 // The pins a generated deck writes into "packageManager" when the manager that
 // invoked it does not announce its own version. pnpm's comes from this
@@ -119,10 +124,12 @@ function collect(): CopiedFile[] {
       contents: read("apps/playground/deck/theme", file),
       target: path.join("deck/theme/deckard", file),
     })),
-    ...themeFiles.map((file) => ({
-      contents: read("registry/themes/broadsheet", file),
-      target: path.join("deck/theme/broadsheet", file),
-    })),
+    ...registryThemes.flatMap((theme) =>
+      themeFiles.map((file) => ({
+        contents: read("registry/themes", theme, file),
+        target: path.join("deck/theme", theme, file),
+      }))
+    ),
     { contents: versionsFile(), target: "versions.json" },
   ]
 }

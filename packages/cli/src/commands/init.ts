@@ -20,7 +20,14 @@ import {
   runScript,
 } from "../package-manager.ts"
 
-const themes = ["broadsheet", "deckard"] as const
+const themes = [
+  "broadsheet",
+  "deckard",
+  "ledger",
+  "meridian",
+  "nexus",
+  "phosphor",
+] as const
 
 const defaultRegistryUrl = "http://localhost:3001/r/{name}.json"
 const namePattern = /[^a-z0-9-]+/g

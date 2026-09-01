@@ -1,0 +1,213 @@
+/*
+ * Phosphor theme.
+ * Every rule is scoped to .phosphor-theme, which lives on the slide canvas.
+ * Nothing here reaches the utility bar, the command center, or the presenter console.
+ */
+
+.phosphor-theme {
+  --background: oklch(0.975 0.008 150);
+  --foreground: oklch(0.245 0.055 150);
+  --card: oklch(0.945 0.012 150);
+  --card-foreground: oklch(0.245 0.055 150);
+  --popover: oklch(0.945 0.012 150);
+  --popover-foreground: oklch(0.245 0.055 150);
+  --primary: oklch(0.475 0.135 148);
+  --primary-foreground: oklch(0.985 0.01 148);
+  --secondary: oklch(0.9 0.018 150);
+  --secondary-foreground: oklch(0.245 0.055 150);
+  --muted: oklch(0.945 0.012 150);
+  --muted-foreground: oklch(0.475 0.045 150);
+  --accent: oklch(0.9 0.018 150);
+  --accent-foreground: oklch(0.32 0.1 148);
+  --destructive: oklch(0.5 0.19 27);
+  --border: oklch(0.8 0.035 150);
+  --input: oklch(0.8 0.035 150);
+  --ring: oklch(0.475 0.135 148);
+  --radius: 0rem;
+
+  --slide-font-heading:
+    ui-monospace, SFMono-Regular, Menlo, "Cascadia Mono", Consolas, monospace;
+  --slide-font-body:
+    ui-monospace, SFMono-Regular, Menlo, "Cascadia Mono", Consolas, monospace;
+  --slide-font-mono:
+    ui-monospace, SFMono-Regular, Menlo, "Cascadia Mono", Consolas, monospace;
+
+  --slide-padding-inline: 2rem;
+  --slide-padding-block: 2.5rem;
+  --slide-content-gap: 1.5rem;
+
+  --slide-title-size: 3.75rem;
+  --slide-heading-size: 2.625rem;
+  --slide-subheading-size: 1.625rem;
+  --slide-lead-size: 1.25rem;
+  --slide-body-size: 1.5rem;
+  --slide-support-size: 0.9375rem;
+  --slide-label-size: 0.875rem;
+  --slide-label-tracking: 0.2em;
+
+  --slide-radius: 0rem;
+  --slide-radius-lg: 0rem;
+  --slide-surface: oklch(0.945 0.012 150 / 78%);
+  --slide-surface-muted: oklch(0.9 0.018 150 / 52%);
+  --slide-surface-border: oklch(0.8 0.035 150);
+  --slide-surface-shadow: none;
+
+  --slide-wash: oklch(0.6 0.11 148 / 8%);
+  --slide-veil: oklch(0.45 0.05 150 / 8%);
+  --slide-glow: oklch(0.475 0.135 148 / 6%);
+  --slide-grid-color: oklch(0.45 0.05 150 / 10%);
+  --slide-grid-size: 2.25rem;
+  --slide-spotlight: oklch(0.6 0.1 148 / 10%);
+  --slide-scanline: none;
+  --slide-cell: 1.25rem;
+  --slide-halo: none;
+  color-scheme: light;
+}
+
+.phosphor-theme:where(.dark, .dark *):where(
+  :not([data-slide-color-mode="light"])
+),
+.phosphor-theme:where([data-slide-color-mode="dark"]) {
+  --background: oklch(0.145 0.012 155);
+  --foreground: oklch(0.905 0.075 150);
+  --card: oklch(0.185 0.016 155);
+  --card-foreground: oklch(0.905 0.075 150);
+  --popover: oklch(0.185 0.016 155);
+  --popover-foreground: oklch(0.905 0.075 150);
+  --primary: oklch(0.855 0.185 148);
+  --primary-foreground: oklch(0.145 0.02 148);
+  --secondary: oklch(0.235 0.02 155);
+  --secondary-foreground: oklch(0.905 0.075 150);
+  --muted: oklch(0.235 0.02 155);
+  --muted-foreground: oklch(0.665 0.055 150);
+  --accent: oklch(0.235 0.02 155);
+  --accent-foreground: oklch(0.855 0.15 148);
+  --destructive: oklch(0.68 0.2 25);
+  --border: oklch(0.335 0.045 150);
+  --input: oklch(0.335 0.045 150);
+  --ring: oklch(0.855 0.185 148);
+
+  --slide-surface: oklch(0.185 0.016 155 / 84%);
+  --slide-surface-muted: oklch(0.235 0.02 155 / 58%);
+  --slide-surface-border: oklch(0.335 0.045 150);
+  --slide-surface-shadow: none;
+
+  --slide-wash: oklch(0.855 0.185 148 / 10%);
+  --slide-veil: oklch(0.05 0.01 155 / 46%);
+  --slide-glow: oklch(0.855 0.185 148 / 9%);
+  --slide-grid-color: oklch(0.855 0.12 148 / 8%);
+  --slide-spotlight: oklch(0.855 0.14 148 / 11%);
+  --slide-scanline: repeating-linear-gradient(
+    0deg,
+    oklch(0 0 0 / 26%) 0 2px,
+    transparent 2px 5px
+  );
+  --slide-halo: 0 0 0.45em oklch(0.855 0.185 148 / 38%);
+  color-scheme: dark;
+}
+
+.phosphor-theme {
+  font-family: var(--slide-font-body);
+}
+
+/* One family for the whole deck. The hierarchy is size, weight, and capitals. */
+
+.phosphor-theme :is(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--slide-font-heading);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.015em;
+}
+
+.phosphor-theme :is(h1, h2) {
+  text-shadow: var(--slide-halo);
+}
+
+.phosphor-theme :is(code, kbd, pre, samp) {
+  font-family: var(--slide-font-mono);
+  text-transform: none;
+}
+
+/* Background variants. The runtime only renders the hook element and the variant name. */
+
+.phosphor-theme .slide-background {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.phosphor-theme .slide-background::before,
+.phosphor-theme .slide-background::after {
+  position: absolute;
+  pointer-events: none;
+  content: "";
+}
+
+/* Scanlines ride on top of every variant. They are the theme, not decoration,
+ * so each variant lists --slide-scanline as its first background layer. */
+
+.phosphor-theme .slide-background[data-slide-background="default"] {
+  background-image:
+    var(--slide-scanline),
+    radial-gradient(ellipse at 50% 38%, var(--slide-wash), transparent 62%);
+}
+
+.phosphor-theme .slide-background[data-slide-background="default"]::before {
+  inset: auto 0 0;
+  height: calc(var(--canvas-height) * 0.28);
+  background-image: linear-gradient(to top, var(--slide-glow), transparent);
+}
+
+/* A character cell grid, the shape of the text buffer underneath the picture. */
+
+.phosphor-theme .slide-background[data-slide-background="grid"] {
+  background-image:
+    var(--slide-scanline),
+    linear-gradient(to right, var(--slide-grid-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--slide-grid-color) 1px, transparent 1px);
+  background-size:
+    auto,
+    var(--slide-cell) 100%,
+    100% var(--slide-grid-size);
+}
+
+.phosphor-theme .slide-background[data-slide-background="grid"]::before {
+  inset: 0;
+  background-image: radial-gradient(
+    ellipse at 50% 44%,
+    var(--slide-wash),
+    transparent 58%
+  );
+}
+
+.phosphor-theme .slide-background[data-slide-background="grid"]::after {
+  inset: 0;
+  background-image: radial-gradient(
+    ellipse at 50% 48%,
+    transparent 40%,
+    var(--background) 94%
+  );
+}
+
+/* The tube: bloom at the centre, falloff into every corner. */
+
+.phosphor-theme .slide-background[data-slide-background="spotlight"] {
+  background-image:
+    var(--slide-scanline),
+    radial-gradient(ellipse at 50% 44%, var(--slide-spotlight), transparent 58%);
+}
+
+.phosphor-theme .slide-background[data-slide-background="spotlight"]::before {
+  inset: 0;
+  background-image: radial-gradient(
+    ellipse at 50% 48%,
+    transparent 40%,
+    var(--slide-veil)
+  );
+}
+
+.phosphor-theme .slide-background[data-slide-background="spotlight"]::after {
+  inset: auto 0 0;
+  height: calc(var(--canvas-height) * 0.22);
+  background-image: linear-gradient(to top, var(--slide-glow), transparent);
+}
