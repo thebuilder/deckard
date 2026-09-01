@@ -107,31 +107,49 @@ function copyAsset(name: string, asset: string): void {
 // A face is named <family>[-<weight>][-italic]-<subset>.woff2 and its licence is
 // <family>.OFL.txt, so the family is whatever stands before the subset once the
 // weight, when it is a three digit one, and the slope are taken off.
+const faceUrl = /url\("\.\.\/fonts\/([\w.-]+\.woff2)"\)/g
+const faceVariant = /-(?:italic|\d{3})$/
+
 function licenceFor(file: string): string {
   const family = file.slice(0, file.indexOf("-latin"))
 
-  return `${family.replace(/-(?:italic|\d{3})$/, "")}.OFL.txt`
+  return `${family.replace(faceVariant, "")}.OFL.txt`
+}
+
+export interface FontPlan {
+  css: string
+  files: string[]
 }
 
 // The built-in themes share one fonts directory, so a stylesheet reaches its
 // faces at ../fonts. An ejected theme is a directory the deck owns and moves
 // around, so it takes a copy of only the faces it names, at ./fonts, and the
 // stylesheet is repointed to match. The licence travels with the binaries.
-function copyFonts(css: string): { css: string; files: string[] } {
-  const named = [...css.matchAll(/url\("\.\.\/fonts\/([\w.-]+\.woff2)"\)/g)].map(
-    (match) => match[1]
-  )
+export function planFonts(css: string): FontPlan {
+  const named = [...css.matchAll(faceUrl)].map((match) => match[1])
 
   if (named.length === 0) {
     return { css, files: [] }
   }
 
-  const wanted = [...new Set([...named, ...named.map(licenceFor)])].sort()
+  return {
+    css: css.replaceAll('url("../fonts/', 'url("./fonts/'),
+    files: [...new Set([...named, ...named.map(licenceFor)])].sort(),
+  }
+}
+
+function copyFonts(css: string): FontPlan {
+  const plan = planFonts(css)
+
+  if (plan.files.length === 0) {
+    return plan
+  }
+
   const to = projectPath(localThemeDirectory, "fonts")
 
   fs.mkdirSync(to, { recursive: true })
 
-  for (const file of wanted) {
+  for (const file of plan.files) {
     const from = builtInThemePath("fonts", file)
 
     if (!fs.existsSync(from)) {
@@ -143,10 +161,7 @@ function copyFonts(css: string): { css: string; files: string[] } {
     fs.copyFileSync(from, path.join(to, file))
   }
 
-  return {
-    css: css.replaceAll('url("../fonts/', 'url("./fonts/'),
-    files: wanted.map((file) => path.join("fonts", file)),
-  }
+  return { css: plan.css, files: plan.files.map((file) => `fonts/${file}`) }
 }
 
 async function ejectTheme(args: ParsedArgs): Promise<void> {

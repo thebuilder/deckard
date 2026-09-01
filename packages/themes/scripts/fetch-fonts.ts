@@ -16,11 +16,11 @@ interface FontFace {
 }
 
 interface FontFamily {
+  faces: FontFace[]
   family: string
   licence: string
   slug: string
   version: string
-  faces: FontFace[]
 }
 
 // Every family here is SIL Open Font License 1.1, which is what makes shipping
@@ -187,14 +187,14 @@ async function download(url: string): Promise<Buffer> {
   return Buffer.from(await response.arrayBuffer())
 }
 
-async function fetchFamily(entry: FontFamily): Promise<void> {
-  for (const face of entry.faces) {
-    const body = await download(face.url)
+async function fetchFace(face: FontFace): Promise<void> {
+  const body = await download(face.url)
 
-    fs.writeFileSync(path.join(fontsDirectory, face.file), body)
-    process.stdout.write(`${face.file} ${body.length}\n`)
-  }
+  fs.writeFileSync(path.join(fontsDirectory, face.file), body)
+  process.stdout.write(`${face.file} ${body.length}\n`)
+}
 
+async function fetchLicence(entry: FontFamily): Promise<void> {
   const licence = await download(entry.licence)
   const file = `${entry.slug}.OFL.txt`
 
@@ -204,6 +204,9 @@ async function fetchFamily(entry: FontFamily): Promise<void> {
 
 fs.mkdirSync(fontsDirectory, { recursive: true })
 
-for (const entry of families) {
-  await fetchFamily(entry)
-}
+await Promise.all(
+  families.flatMap((entry) => [
+    ...entry.faces.map(fetchFace),
+    fetchLicence(entry),
+  ])
+)

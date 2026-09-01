@@ -15,10 +15,28 @@ const keepScratch = process.argv.includes("--keep")
 // @source the package stylesheet registers against its own compiled output.
 const runtimeUtilities = ["min-h-16", "backdrop-blur-sm", "data-slide-chrome"]
 
+// A face is named <family>[-<weight>][-italic]-<subset>.woff2 and its licence is
+// <family>.OFL.txt.
+const faceVariant = /-(?:italic|\d{3})$/
+
 // The fixture deck imports one built-in theme and nothing else. Its stylesheet
 // has to reach the build with no wiring, and the other five have to stay out of
 // it, because the barrel re-exports all six from one module.
 const importedTheme = ".phosphor-theme"
+
+// phosphor self-hosts JetBrains Mono, so the fixture is also the proof that a
+// theme carries its typeface with no wiring in the consuming app. The woff2 has
+// to be inside the tarball, emitted into the build, and reached by an @font-face
+// rule; the faces of every other family have to stay out of the build.
+const importedFace = "jetbrains-mono-latin"
+const unimportedFaces = [
+  "ibm-plex-mono",
+  "ibm-plex-sans",
+  "orbitron",
+  "public-sans",
+  "schibsted-grotesk",
+  "source-serif-4",
+]
 const unimportedThemes = [
   ".broadsheet-theme",
   ".deckard-theme",
@@ -98,6 +116,64 @@ function assertBuiltInTheme(css: string) {
   }
 }
 
+// The licence has to be in the tarball beside the binaries it covers.
+function assertPackedFonts(tarball: string) {
+  const result = spawnSync("tar", ["-tzf", tarball], { encoding: "utf8" })
+
+  if (result.status !== 0) {
+    throw new Error(`Could not list ${tarball}`)
+  }
+
+  const entries = result.stdout.split("\n")
+  const fonts = entries.filter((entry) => entry.endsWith(".woff2"))
+
+  if (fonts.length === 0) {
+    throw new Error(
+      "The @deckard/themes tarball ships no woff2 files, so a theme that self-hosts a typeface would render in its fallback stack"
+    )
+  }
+
+  const unlicensed = fonts.filter(
+    (font) =>
+      !entries.includes(
+        `${path.dirname(font)}/${path.basename(font).slice(0, path.basename(font).indexOf("-latin")).replace(faceVariant, "")}.OFL.txt`
+      )
+  )
+
+  if (unlicensed.length > 0) {
+    throw new Error(
+      `The tarball ships fonts with no licence beside them: ${unlicensed.join(", ")}`
+    )
+  }
+}
+
+function assertBuiltFonts(directory: string, css: string) {
+  const emitted = fs
+    .readdirSync(path.join(directory, ".next/static"), { recursive: true })
+    .map((entry) => path.basename(String(entry)))
+    .filter((entry) => entry.endsWith(".woff2"))
+
+  if (!emitted.some((font) => font.startsWith(importedFace))) {
+    throw new Error(
+      `The build emitted no ${importedFace} woff2, so the theme stylesheet did not carry its typeface out of node_modules`
+    )
+  }
+
+  if (!css.includes("@font-face")) {
+    throw new Error("The built CSS declares no @font-face for the theme")
+  }
+
+  const leaked = unimportedFaces.filter((face) =>
+    emitted.some((font) => font.startsWith(face))
+  )
+
+  if (leaked.length > 0) {
+    throw new Error(
+      `The build emitted fonts no theme in this deck asks for: ${leaked.join(", ")}`
+    )
+  }
+}
+
 function pack(filter: string, destination: string, name: string) {
   const before = new Set(fs.readdirSync(destination))
   const result = spawnSync(
@@ -165,6 +241,8 @@ try {
 
   assertRuntimeStyles(css)
   assertBuiltInTheme(css)
+  assertPackedFonts(path.join(scratch, "deckard-themes.tgz"))
+  assertBuiltFonts(appDirectory, css)
 
   process.stdout.write(
     "\n@deckard/core and @deckard/themes build and style a standalone Next.js app\n"

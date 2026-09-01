@@ -29,10 +29,12 @@ const settleMs = 50
 // A face is named <family>[-<weight>][-italic]-<subset>.woff2 and its licence is
 // <family>.OFL.txt, so the family is whatever stands before the subset once the
 // weight, when it is a three digit one, and the slope are taken off.
+const faceVariant = /-(?:italic|\d{3})$/
+
 function licenceSlug(file: string): string {
   const family = file.slice(0, file.indexOf("-latin"))
 
-  return `${family.replace(/-(?:italic|\d{3})$/, "")}.OFL`
+  return `${family.replace(faceVariant, "")}.OFL`
 }
 
 function themeNames(): string[] {
@@ -57,7 +59,10 @@ function copyFonts(): number {
   const files = fs.readdirSync(from).sort()
 
   for (const file of files) {
-    if (file.endsWith(".woff2") && !files.includes(`${licenceSlug(file)}.txt`)) {
+    if (
+      file.endsWith(".woff2") &&
+      !files.includes(`${licenceSlug(file)}.txt`)
+    ) {
       throw new Error(`src/${fontsDirectory}/${file} has no licence beside it`)
     }
 
