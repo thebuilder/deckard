@@ -31,19 +31,46 @@ new markup only when none of these fits.
 | Block                                     | Use it for                                        |
 | ----------------------------------------- | ------------------------------------------------- |
 | `HeroSlide` (templates.tsx)               | the opener, one headline and a credit row         |
+| `HeroSplitSlide` (templates.tsx)          | the opener with its facts stood up in a rail      |
+| `HeroCenteredSlide` (templates.tsx)       | the centered opener, with an optional pill badge  |
 | `BreakerSlide` (templates.tsx)            | a section divider, with an optional index         |
+| `MinimalBreakerSlide` (templates.tsx)     | a rule and a title, centered, nothing else        |
+| `StatementSlide` (templates.tsx)          | one sentence at display size                      |
+| `CodeSplitSlide` (templates.tsx)          | a block one side, numbered notes the other        |
 | `ContentSlideCard` (templates.tsx)        | intro copy above a bordered panel                 |
 | `OpenContentSlide` (templates.tsx)        | the same intro with no panel                      |
 | `FocusSlide` (templates.tsx)              | one block and no heading at all                   |
 | `BulletList` (collections.tsx)            | four to six numbered points                       |
+| `ContentsList` (collections.tsx)          | an agenda: numeral, section, folio                |
+| `ColumnGrid` (collections.tsx)            | parallel points as ruled, numbered columns        |
 | `FeatureGrid` (collections.tsx)           | three parallel cards                              |
+| `CardGrid` (collections.tsx)              | cards on two or three columns, one of them tinted |
 | `StatGrid` (metrics.tsx)                  | two to four figures with their comparisons        |
-| `ImageShowcaseSlide` (media.tsx)          | an image beside a caption panel                   |
+| `QuoteSlide` (prose.tsx)                  | someone else's sentence, attributed on a rule     |
+| `ProseSlide` (prose.tsx)                  | a label rail beside running copy                  |
+| `DataTable` (tables.tsx)                  | columns of figures, one row highlighted           |
+| `Timeline` (tables.tsx)                   | milestones as columns on one rule                 |
+| `LogList` (tables.tsx)                    | timestamped rows with a status                    |
+| `ImageShowcaseSlide` (media.tsx)          | copy left, one image right, caption under it      |
+| `MediaPair` (media.tsx)                   | two captioned frames side by side                 |
+| `MediaGallery` (media.tsx)                | captioned frames on a grid                        |
 | `FullscreenMediaSlide` (media.tsx)        | an image or video bleeding to every canvas edge   |
 | `Eyebrow`, `SlideHeading` (typography.tsx)| your own layout, with the deck's type rhythm      |
 
 Prefer an explicit variant component over a boolean prop. `ContentSlideCard`,
-`OpenContentSlide`, and `FocusSlide` are three components on purpose.
+`OpenContentSlide`, and `FocusSlide` are three components on purpose, and so are
+`HeroSlide`, `HeroSplitSlide`, and `HeroCenteredSlide`.
+
+Every block is left aligned and fills the padded frame. `HeroCenteredSlide` and
+`MinimalBreakerSlide` are the only two that centre anything. No `mx-auto` on a
+block's outer element, and cap a measure only where prose needs it, in canvas
+pixels the way `typography.tsx` does.
+
+Counts are yours. `FeatureGrid` is three across, but `ContentsList`,
+`ColumnGrid`, `CardGrid`, `Timeline`, `MediaGallery`, and `DataTable` take as
+many items as you give them, and the overflow check is what tells you when that
+is too many. Two blocks say no in the type: `StatGrid` takes two to four, and
+`MediaPair` takes exactly two.
 
 ## Card, open, or focus
 

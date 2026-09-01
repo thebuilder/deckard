@@ -14,13 +14,17 @@ That is the point. A block that assumed your theme would be a block you fight. `
 | Item | Installs | Contains |
 | --- | --- | --- |
 | `block-typography` | `typography.tsx` | `Eyebrow`, `SlideHeading`. Every other block depends on it. |
-| `block-slide-layouts` | `templates.tsx` | `HeroSlide`, `BreakerSlide`, `ContentSlideCard`, `OpenContentSlide`, `FocusSlide`. |
-| `block-collections` | `collections.tsx` | `BulletList`, `FeatureGrid`. |
-| `block-media` | `media.tsx` | `ImageShowcaseSlide`, `FullscreenMediaSlide`. |
+| `block-slide-layouts` | `templates.tsx` | `HeroSlide`, `HeroSplitSlide`, `HeroCenteredSlide`, `BreakerSlide`, `MinimalBreakerSlide`, `StatementSlide`, `CodeSplitSlide`, `ContentSlideCard`, `OpenContentSlide`, `FocusSlide`. |
+| `block-collections` | `collections.tsx` | `BulletList`, `ContentsList`, `ColumnGrid`, `FeatureGrid`, `CardGrid`. |
+| `block-prose` | `prose.tsx` | `QuoteSlide`, `ProseSlide`. |
+| `block-tables` | `tables.tsx` | `DataTable`, `Timeline`, `LogList`. |
+| `block-media` | `media.tsx` | `ImageShowcaseSlide`, `MediaPair`, `MediaGallery`, `FullscreenMediaSlide`. |
 | `block-metrics` | `metrics.tsx` | `StatGrid`. |
-| `preset-blocks` | all five | Plus the one stylesheet line a consumer cannot guess. |
+| `preset-blocks` | all seven | Plus the one stylesheet line a consumer cannot guess. |
 
-`preset-blocks` is the one to run. Alongside the five block files it adds `@import "@deckard/core/styles.css"` to your app stylesheet, which carries the token contract and registers the package's own compiled output as a Tailwind source. That import is the entire build wiring. There is no `transpilePackages` entry and no `@source` line for you to add.
+`preset-blocks` is the one to run. Alongside the seven block files it adds `@import "@deckard/core/styles.css"` to your app stylesheet, which carries the token contract and registers the package's own compiled output as a Tailwind source. That import is the entire build wiring. There is no `transpilePackages` entry and no `@source` line for you to add.
+
+Every block is left aligned and fills the padded frame. That is not a default you talk it out of: the source designs put content at the left margin and run it to the right one, and only `HeroCenteredSlide` and `MinimalBreakerSlide` centre anything. A measure is capped in one place, `ProseSlide`, where running copy needs it, and the cap is in canvas pixels rather than `ch`, because the canvas is 1920 wide and never changes.
 
 Themes used to be registry items and are not any more. They ship as `@deckard/themes`, so a deck gets one by importing it rather than by installing six files it did not ask to own.
 
@@ -133,6 +137,12 @@ Both pad against `--slide-chrome-top` and `--slide-chrome-bottom`, so the deck h
 
 ### Known edges
 
-`FeatureGrid` renders three columns. Four items give you three on one row and one alone on the next; write a local 2x2 grid instead, which is ten minutes and the right answer for one deck.
+`FeatureGrid` renders three columns. Four items give you three on one row and one alone on the next; reach for `CardGrid` with `columns={2}` instead.
+
+`MediaPair` takes a tuple of exactly two panels, so a third is a compile error. Two frames side by side is the layout; three is `MediaGallery`, which puts them on a grid rather than squeezing the row until none of them reads.
+
+`DataTable` caps nothing. How many rows fit depends on the theme's type scale, so `deck:check-overflow` is the thing that tells you, not the type. Four or five rows and four columns is what the source templates show.
+
+`CardGrid` marks one card with `accent`, which takes `--slide-accent-soft`. Marking two marks neither.
 
 `StatGrid` takes two to four stats, typed as a union of tuples, so a fifth is a compile error: at five, figures stop being figures and start being a table. Each one takes an optional `unit` suffix and an optional `meter`, a proportion from 0 to 1 that draws a bar under the figure. Leave the meter out unless you can say what it is a proportion of. Captions are capped at a 26-character measure, sized for "up from 2.6k" and not for a sentence, because a number on a slide without the thing it is measured against is decoration.
