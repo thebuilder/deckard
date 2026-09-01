@@ -95,8 +95,13 @@ Inside the canvas, style with semantic tokens (`bg-card`, `text-muted-foreground
 `--slide-radius`). Never a hardcoded color. Changing how a background variant
 looks is a `deck/theme/theme.css` edit, not a component edit.
 
-Outside the canvas, in the utility bar, command center, presenter console, and
+Outside the canvas, in the deck controls, command center, presenter console, and
 dialogs, keep the app tokens from `app/globals.css`.
+
+The deck header and footer are inside the canvas and belong to the theme. Core
+renders `[data-slide-header]` and `[data-slide-footer]` with named parts for the
+brand, the slide title, the date, the counter, and `[data-slide-progress]`;
+`deck/theme/theme.css` decides what they look like.
 
 ## Metadata
 
