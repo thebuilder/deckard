@@ -1,0 +1,122 @@
+---
+title: Presenting
+description: Keyboard navigation, the command center, the presenter window, speaker notes, step reveals, and the deck controls cluster.
+sidebar:
+  icon: presentation
+---
+
+## Keyboard
+
+| Keys | What happens |
+| --- | --- |
+| `→` `↓` `PageDown` `Space` | Next step, then next slide |
+| `←` `↑` `PageUp` | Previous step, then previous slide |
+| `Cmd/Ctrl + K` | Toggle the command center |
+| `P` | Open the presenter window |
+
+Navigation keys are ignored while you are typing in a field, when the event already had `preventDefault` called on it, and when a modifier is held, so browser zoom (`Cmd +`, `Cmd -`) still zooms.
+
+On a stepped slide the arrow keys walk the steps first and only then move to the next slide, so one key drives the whole deck.
+
+## The command center
+
+`Cmd/Ctrl + K` opens a searchable list of every slide by number and title. Pick one and the deck navigates. It opens whether or not the controls cluster is showing.
+
+## The deck controls
+
+The command center trigger, presenter popout, color mode toggle, and compact previous and next buttons sit in one cluster in the bottom right corner, outside the canvas.
+
+The cluster is hidden at rest. It reveals when the pointer comes within 160px of the corner, when anything inside it takes focus, or while the command dialog is open. A device matching `(any-pointer: coarse)` also gets a handle in the corner that expands the cluster on tap, and the proximity reveal is on wherever `(any-pointer: fine)` matches. Both queries ask per capability rather than about the primary pointer, so a hybrid laptop with a trackpad and a touchscreen gets both affordances.
+
+Hidden means transparent, not absent. The buttons stay in the accessibility tree and tabbing into them reveals the cluster. A presenter preview and a PDF export drop the cluster entirely and keep the header and footer.
+
+## The presenter window
+
+Press `P` or click the popout button. A second window opens at `/presenter` and syncs with the deck over a `BroadcastChannel`, so the two stay in step without a server.
+
+What it shows:
+
+- The current slide, and a preview of what comes next (aware of reveal steps, so the preview advances with them)
+- Speaker notes for the current slide, with font-size controls
+- A timer you start, and a 24-hour clock
+- A flow window: the previous two slides, the current one, and the next five, by title. Click any of them to jump the deck there.
+
+Arrow keys in either window drive both.
+
+### Notes
+
+`notes` is speaker-only text on a slide. It never renders in the deck.
+
+```tsx
+{
+  title: "Pricing",
+  notes: "They will ask about the enterprise tier. The answer is 'call us'.",
+  body: <PricingSlide />,
+}
+```
+
+In a slide module, export it:
+
+```tsx deck/slides/pricing.slide.tsx
+export const notes = "They will ask about the enterprise tier."
+```
+
+Notes written the way a speaker writes them run three or four paragraphs. That is the usual reason a slide earns its own file.
+
+### Detecting the preview
+
+The presenter preview renders slide routes with `?presenterPreview=1`. A client component inside a slide can detect it:
+
+```tsx
+"use client"
+import { useIsPresenterPreview } from "@deckard/core/components"
+
+export function Chart() {
+  const isPreview = useIsPresenterPreview()
+  return isPreview ? <ChartStill /> : <ChartAnimated />
+}
+```
+
+Use it to skip autoplay, audio, canvas work, or anything else expensive inside the preview iframe. The built-in video primitive already suppresses autoplay there.
+
+The slide route itself never reads the query. `?presenterPreview=1` and `?step=` are read on the client inside a Suspense boundary that holds nothing but the reader, which is what lets every slide prerender as static HTML.
+
+## Step reveals
+
+Set `stepCount` on the slide and wrap each phase in `SlideStep`:
+
+```tsx
+{
+  title: "The argument",
+  stepCount: 3,
+  body: (
+    <OpenContentSlide eyebrow="Three parts" title="The argument">
+      <SlideStep step={0}>Everyone agrees on the premise.</SlideStep>
+      <SlideStep step={1}>Almost nobody acts on it.</SlideStep>
+      <SlideStep step={2}>Here is what that costs.</SlideStep>
+    </OpenContentSlide>
+  ),
+}
+```
+
+`step` is zero-based. A step is visible once the current step reaches it, so step `0` shows immediately.
+
+:::note
+Hidden steps stay in the layout, so a stepped slide takes its full height from the first step. That is deliberate, since content that reflows as it reveals is worse than content that fades in, but it does mean [`check-overflow`](/reference/cli#deckard-check-overflow) measures the fully revealed slide.
+:::
+
+| Prop | Default | What it does |
+| --- | --- | --- |
+| `step` | required | The zero-based index this content appears at. |
+| `mountOnReveal` | `false` | Render an empty placeholder until the step arrives, instead of a hidden copy. Use it for something expensive. |
+| `className` | | Applied to the step wrapper. |
+
+`SlideStepAdvanceArea` wraps content in a click-to-advance surface. Clicks on links, buttons, inputs, and anything marked `data-step-ignore-click="true"` pass through untouched.
+
+`useSlideStepper()` returns the current step, the count, and `advance` / `retreat` / `canAdvance` / `canRetreat` / `isReadOnly`, for a slide that wants to drive its own reveal. It returns `null` outside a stepper.
+
+## Color mode
+
+A theme declares which color modes it carries and what a browser opens on. `defaultColorMode: "system"` needs both modes listed. A theme that lists one pins the canvas to it and hides the light/dark toggle in the controls. There is no runtime switching between named themes.
+
+`defaultColorMode` decides what a browser opens on, not what the checks capture. `--light` and the light PDF export force the mode they name, and a capture that came out in the other mode fails naming the slide rather than being written.

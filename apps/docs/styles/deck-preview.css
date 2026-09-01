@@ -1,0 +1,275 @@
+/*
+ * A slide canvas at 1920x1080, scaled to whatever box it is dropped into.
+ *
+ * The markup inside .deck-preview-canvas is the markup SlideShell renders, and
+ * the theme stylesheet imported alongside this file is the one the deck ships,
+ * so the preview cannot drift from the theme. Nothing here may declare a color,
+ * a family, or a type size: every one of those reads a token the theme sets.
+ *
+ * Everything that touches the canvas sits in the base layer, because a theme
+ * ships unlayered CSS and has to win. phosphor holds its status bar thinner
+ * than the default footer, and that rule has the same specificity as the one
+ * below it.
+ */
+
+.deck-preview {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  container-type: inline-size;
+  overflow: hidden;
+  background-color: var(--blume-muted);
+  border: 1px solid var(--blume-border);
+  border-radius: var(--blume-radius);
+}
+
+@layer base {
+  .deck-preview-canvas {
+    /*
+     * The measured fit DeckPreview's script writes inline outranks both of
+     * these. This is what a reader with no script gets: one number per usage,
+     * set from the component's scale prop, sized to the narrowest that stage
+     * ever gets so the canvas is never clipped.
+     */
+    --deck-preview-scale-default: 0.17;
+    --deck-preview-scale: var(--deck-preview-scale-default);
+
+    /* A theme takes its sans and its mono from the app, the way a deck does. */
+    --font-sans: var(--blume-font-body);
+    --font-mono: var(--blume-font-mono);
+
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    width: var(--canvas-width);
+    height: var(--canvas-height);
+    overflow: hidden;
+    color: var(--foreground);
+    background-color: var(--background);
+    transform: scale(var(--deck-preview-scale));
+    transform-origin: 0 0;
+  }
+
+  /*
+   * tan(atan2(a, b)) is a divided by b as a plain number, which is how a length
+   * over a length reaches scale() with no script. Safari's atan2 accepts
+   * numbers and angles only, so the declaration is invalid there and would
+   * leave the canvas at 1920px inside its stage. The query keeps it away from
+   * any engine that cannot parse it, and the default above stands instead.
+   */
+  @supports (transform: scale(tan(atan2(1px, 2px)))) {
+    .deck-preview-canvas {
+      --deck-preview-scale: tan(atan2(100cqw, var(--canvas-width)));
+    }
+  }
+
+  .deck-preview-chrome-top,
+  .deck-preview-chrome-bottom {
+    position: absolute;
+    inset-inline: 0;
+    z-index: 40;
+  }
+
+  .deck-preview-chrome-top {
+    inset-block-start: 0;
+    min-block-size: 4rem;
+  }
+
+  .deck-preview-chrome-bottom {
+    inset-block-end: 0;
+    min-block-size: 3.5rem;
+  }
+
+  /* SlideShell's default frame: centred to the content measure, with the chrome
+   * space the theme asks for reserved as padding. */
+  .deck-preview-frame {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    align-items: stretch;
+    max-width: 72rem;
+    padding-block: var(--slide-header-space) var(--slide-footer-space);
+    padding-inline: var(--slide-padding-inline);
+    margin-inline: auto;
+  }
+
+  .deck-preview-body {
+    display: grid;
+    gap: var(--slide-content-gap);
+    align-content: start;
+    width: 100%;
+  }
+
+  /* HeroSlide: the opener runs past --slide-title-size on purpose, because a
+   * theme sizes a heading for a slide that also carries body copy. */
+  .deck-preview-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding-block: 3rem;
+    text-align: center;
+  }
+
+  .deck-preview-hero-title {
+    margin-block-start: 2.5rem;
+    font-size: calc(var(--slide-title-size) * 1.5);
+    font-weight: 700;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  .deck-preview-hero-lead {
+    max-width: 46ch;
+    margin-block-start: 2.25rem;
+    font-size: calc(var(--slide-lead-size) * 1.4);
+    line-height: 1.45;
+    color: var(--muted-foreground);
+    text-wrap: balance;
+  }
+
+  .deck-preview-breaker {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding-block: 3rem;
+  }
+
+  .deck-preview-breaker-body {
+    display: grid;
+    gap: var(--slide-content-gap);
+    max-width: 56rem;
+  }
+
+  .deck-preview-breaker-title {
+    max-width: 56rem;
+    font-size: var(--slide-title-size);
+    font-weight: 600;
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+    text-wrap: pretty;
+  }
+
+  .deck-preview-intro,
+  .deck-preview-headings {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .deck-preview-eyebrow {
+    font-size: var(--slide-label-size);
+    font-weight: 600;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: var(--slide-label-tracking);
+  }
+
+  .deck-preview-heading {
+    max-width: 64rem;
+    font-size: var(--slide-heading-size);
+    font-weight: 600;
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+
+  .deck-preview-lead {
+    max-width: 48rem;
+    font-size: var(--slide-lead-size);
+    line-height: 1.55;
+    color: var(--muted-foreground);
+  }
+
+  .deck-preview-breaker-body .deck-preview-lead {
+    line-height: 1.6;
+  }
+
+  .deck-preview-footnote {
+    max-width: 60ch;
+    font-size: var(--slide-support-size);
+    line-height: 1.45;
+    color: var(--muted-foreground);
+  }
+
+  /* BulletList: a numbered row per item, ruled off between them. */
+  .deck-preview-bullets > div {
+    display: grid;
+    grid-template-columns: 4.5rem minmax(0, 1fr);
+    gap: 1.5rem;
+    padding-block: 1.5rem;
+    border-block-end: 1px solid var(--slide-surface-border);
+  }
+
+  .deck-preview-bullets > div:last-child {
+    border-block-end: 0;
+  }
+
+  .deck-preview-bullet-index {
+    font-size: var(--slide-support-size);
+    font-weight: 600;
+    color: var(--muted-foreground);
+    text-transform: uppercase;
+    letter-spacing: var(--slide-label-tracking);
+  }
+
+  .deck-preview-bullet-text {
+    max-width: 64ch;
+    font-size: var(--slide-body-size);
+    line-height: 1.45;
+  }
+
+  .deck-preview-panel {
+    display: grid;
+    gap: 1rem;
+    padding: 1.25rem;
+    background-color: var(--slide-surface);
+    border: 1px solid var(--slide-surface-border);
+    border-radius: var(--slide-radius-lg);
+    box-shadow: var(--slide-surface-shadow);
+    backdrop-filter: blur(4px);
+  }
+
+  /* StatGrid, declaration for declaration. The figure sits above its caption
+   * through column-reverse, which is why the caption carries the margin. */
+  .deck-preview-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2.5rem;
+  }
+
+  .deck-preview-stat {
+    display: flex;
+    flex-direction: column-reverse;
+    padding-block-start: 1.75rem;
+    border-block-start: 2px solid var(--slide-surface-border);
+  }
+
+  .deck-preview-stats-flat .deck-preview-stat {
+    padding-block-start: 0;
+    border-block-start: 0;
+  }
+
+  .deck-preview-stat dd {
+    font-family: var(--slide-font-heading);
+    font-size: var(--slide-title-size);
+    font-weight: 600;
+    line-height: 0.86;
+    letter-spacing: -0.025em;
+  }
+
+  .deck-preview-stat dd span {
+    font-size: var(--slide-subheading-size);
+    color: var(--muted-foreground);
+  }
+
+  .deck-preview-stat dt {
+    max-width: 24ch;
+    margin-block-start: 1.25rem;
+    font-size: var(--slide-support-size);
+    line-height: 1.45;
+    color: var(--muted-foreground);
+  }
+}

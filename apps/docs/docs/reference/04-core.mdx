@@ -1,0 +1,137 @@
+---
+title: "@deckard/core"
+description: Every entry point the package exposes, what each one exports, and the four Next.js route adapters an app re-exports.
+sidebar:
+  label: Core API
+  icon: box
+---
+
+The package compiles to `dist/` with `tsc`: ESM, `.d.ts`, and `"use client"` directives preserved. No bundler, so a stack trace still points at a file that matches the source. An app installs it and imports it like any other package, with no `transpilePackages` entry and no Tailwind `@source` of its own.
+
+## Entry points
+
+| Entry point | Contents |
+| --- | --- |
+| `@deckard/core` | `defineDeck`, slide resolution, summaries, theme helpers, every type |
+| `@deckard/core/components` | The runtime components and slide context hooks |
+| `@deckard/core/code-block` | `CodeBlock`, kept off the components barrel because shiki loads WebAssembly |
+| `@deckard/core/discovery` | `discoverSlides` |
+| `@deckard/core/next` | The four route adapters |
+| `@deckard/core/slide-from-module` | `slideFromModule` |
+| `@deckard/core/ui` | The shadcn primitives the runtime renders |
+| `@deckard/core/utils` | `cn` |
+| `@deckard/core/styles.css` | The `--slide-*` token contract |
+
+`CodeBlock` is split out for a real reason: shiki pulls in a WebAssembly regex engine, and importing it through the components barrel would turn every discovered slide module async, which discovery refuses. A slide that shows highlighted code belongs in the `slides` array.
+
+## @deckard/core
+
+| Export | What it does |
+| --- | --- |
+| `defineDeck(config)` | Resolve a `DeckConfig` into a `Deck`. |
+| `resolveCanvas(partial)` | Fill in and validate the canvas config. |
+| `resolveSlides(slides, defaults)` | Resolve a slide array. `defineDeck` calls it. |
+| `getSlideById(slides, id)` | Find a resolved slide by its id. |
+| `normalizeFooterMode(mode)` | Collapse `"counter"` into `"visible"`. |
+| `toSlideSummary(slide)` / `toSlideSummaries(slides)` | The serializable shape client components receive. |
+| `resolveTheme(theme)` | Fill in and validate a `SlideTheme`. |
+| `toDeckPresentation(deck)` | The serializable slice the shell needs. |
+| `canSwitchColorMode(theme)` / `forcedColorMode(theme)` | What the color-mode toggle does for a given theme. |
+| `isPdfExport()` / `pdfExportColorMode()` | Read the export environment variables. |
+| `PRESENTER_CHANNEL_NAME` | The `BroadcastChannel` name presenter mode uses. |
+
+Types: `Deck`, `DeckConfig`, `DeckCanvasConfig`, `DeckHeaderConfig`, `DeckFooterConfig`, `DeckPresentation`, `ResolvedSlide`, `SlideDefinition`, `SlideMeta`, `SlideModule`, `SlideComponent`, `SlideDefaults`, `SlideSummary`, `SlideTheme`, `SlideColorMode`, `SlideHeaderMode`, `SlideFooterMode`, `SlideFooterModeInput`, `SlideLayoutMode`, `SlideBackgroundMode`, `PresenterChannelMessage`, `PresenterPreviewState`, `PresenterSlideState`.
+
+## @deckard/core/components
+
+| Export | What it does |
+| --- | --- |
+| `SlideShell` | Assembles a slide: frame, canvas chrome, deck controls. |
+| `SlideViewport` | Fits the canvas to the browser window and publishes `--deckard-scale`. |
+| `SlideCanvas` | The fixed coordinate space slides are authored in. |
+| `SlideCanvasHeader`, `SlideCanvasFooter` | The themed chrome inside the canvas. |
+| `SlideBackground` | The empty element carrying `data-slide-background`. |
+| `SlideScrollArea` | A scroll region that does not step the deck. |
+| `SlideStepper`, `SlideStep`, `SlideStepAdvanceArea`, `useSlideStepper` | Step reveals. |
+| `SlideCommandCenter` | The `Cmd/Ctrl + K` jump dialog. |
+| `DeckControls` | The corner cluster. |
+| `PresenterConsole`, `PresenterPopoutButton` | Presenter mode. |
+| `ColorModeProvider`, `SlideshowColorModeToggle` | Light and dark. |
+| `SlideContextProvider`, `useSlideTitle`, `useIsPresenterPreview` | Slide context. |
+| `SlideErrorBoundary` | The inline error card a throwing slide renders under `next dev`. |
+| `SlideMediaVideo` | A `<video>` that suppresses autoplay in the presenter preview. |
+| `SlidePrefetch` | Prefetches the neighbouring slides. |
+| `StaticMediaBoundary` | Freezes video and audio inside a slide the audience is not on, so a presenter preview never plays. |
+
+### useSlideTitle
+
+Returns the current slide's authored title, or `null`. Layout blocks call it so a slide's title stays defined in one place, and only take an explicit `title` prop when you want to override the text inside the layout.
+
+### useIsPresenterPreview
+
+Returns `true` inside the presenter console's preview iframe. Use it in a client component to skip autoplay, audio, canvas work, or anything else expensive.
+
+### useSlideStepper
+
+Returns `{ currentStep, stepCount, advance, retreat, canAdvance, canRetreat, isReadOnly }`, or `null` outside a stepper.
+
+## Route adapters
+
+`@deckard/core/next` ships the route logic, so an app owns its deck and nothing else. Each adapter takes the resolved deck and returns the route pieces.
+
+| Adapter | File | Returns |
+| --- | --- | --- |
+| `createSlideRoute(deck)` | `app/slides/[id]/page.tsx` | `Page`, `generateMetadata`, `generateStaticParams` |
+| `createPresenterPage(deck)` | `app/presenter/page.tsx` | `Page`, `metadata` |
+| `createDeckSitemap(deck, { siteUrl })` | `app/sitemap.ts` | The sitemap function |
+| `createFirstSlideRedirect(deck)` | `app/page.tsx` | `Page`, which redirects to the first slide |
+
+<CodeGroup>
+
+```tsx app/slides/[id]/page.tsx
+import { createSlideRoute } from "@deckard/core/next"
+import { deck } from "@/deck/deck"
+
+const { Page, generateMetadata, generateStaticParams } = createSlideRoute(deck)
+
+export { generateMetadata, generateStaticParams }
+export default Page
+```
+
+```tsx app/presenter/page.tsx
+import { createPresenterPage } from "@deckard/core/next"
+import { deck } from "@/deck/deck"
+
+const { Page, metadata } = createPresenterPage(deck)
+
+export { metadata }
+export default Page
+```
+
+```ts app/sitemap.ts
+import { createDeckSitemap } from "@deckard/core/next"
+import { deck } from "@/deck/deck"
+
+export default createDeckSitemap(deck)
+```
+
+```tsx app/page.tsx
+import { createFirstSlideRedirect } from "@deckard/core/next"
+import { deck } from "@/deck/deck"
+
+export default createFirstSlideRedirect(deck)
+```
+
+</CodeGroup>
+
+Every slide prerenders statically. The route reads no request: `?presenterPreview=1` and `?step=` are read on the client, inside a Suspense boundary holding nothing but the reader.
+
+`createDeckSitemap` falls back to `NEXT_PUBLIC_SITE_URL` and then to `http://localhost:3000` when you pass no `siteUrl`. That sitemap is also how `deckard screenshots`, `check-overflow`, and `export pdf` find the slide list, so an app that drops the route breaks those three.
+
+Nothing forces the adapters. The components they compose are still exported, so a deck that genuinely needs its own route writes one.
+
+## The dependency direction
+
+`@deckard/core` holds nothing deck-specific. Colors, sizes, and backgrounds live in a theme, and a theme is data: the runtime depends on the token contract in `styles.css` and never on a preset.
+
+`@deckard/themes` takes `SlideTheme` from core as a type-only import and names core a peer dependency, so nothing crosses at runtime and core does not know the themes exist.

@@ -1,0 +1,65 @@
+/*
+ * All six themes at a glance inside a guide. Each frame is the slide the
+ * gallery renders, at the color mode its theme opens on, and links to that
+ * theme in the gallery, which is where the light and dark switch and the
+ * enlarge control live.
+ *
+ * The column count steps up so that a frame is never narrower than the 150px
+ * the DeckPreview scale prop below is set for: one column under 23rem, where
+ * two would leave 140px each, and three only from 40rem, where the content
+ * column is wide enough to carry them.
+ */
+
+.theme-strip {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem 0.75rem;
+  padding: 0;
+  margin-block: 1.5rem;
+  list-style: none;
+}
+
+@media (min-width: 23rem) {
+  .theme-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 40rem) {
+  .theme-strip {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.theme-strip-link {
+  display: grid;
+  gap: 0.4375rem;
+  color: inherit;
+  text-decoration: none;
+  border-radius: var(--blume-radius);
+}
+
+.theme-strip-link:focus-visible {
+  outline: 2px solid var(--blume-accent);
+  outline-offset: 3px;
+}
+
+.theme-strip-link .deck-preview {
+  transition: border-color 120ms ease;
+}
+
+.theme-strip-link:hover .deck-preview {
+  border-color: var(--blume-accent);
+}
+
+.theme-strip-name {
+  font-family: var(--blume-font-mono);
+  font-size: 0.8125rem;
+  line-height: 1;
+  color: var(--blume-muted-foreground);
+  transition: color 120ms ease;
+}
+
+.theme-strip-link:hover .theme-strip-name {
+  color: var(--blume-foreground);
+}

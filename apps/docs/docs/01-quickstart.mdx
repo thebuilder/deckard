@@ -1,0 +1,156 @@
+---
+title: Quickstart
+description: Scaffold a deck with deckard init, run it, and change a slide. Includes the tarball install that works while the packages are unpublished.
+sidebar:
+  label: Quickstart
+  order: 1
+---
+
+`deckard init` writes a Next.js app with a five-slide deck in it, installs the dependencies, makes the first commit, and typechecks the result.
+
+:::warning
+`@deckard/core`, `@deckard/themes`, and `@deckard/cli` are built for npm but not published there yet, so the `npx` line below does not work from a clean machine. [Install from tarballs](#installing-before-the-packages-publish) until they land.
+:::
+
+## Scaffold a deck
+
+<Steps>
+  <Step title="Run init">
+    ```bash
+    npx @deckard/cli init my-talk
+    ```
+
+    `init` uses whichever package manager invoked it. Through `npx` that is npm, through `pnpm dlx` it is pnpm, and it records the choice in the generated `package.json` under `packageManager`, so every later `deckard` command reads that field instead of guessing.
+
+  </Step>
+  <Step title="Start the dev server">
+    ```bash
+    cd my-talk
+    npm run dev
+    ```
+
+    The app redirects `/` to the first slide. Arrow keys move through the deck.
+
+  </Step>
+  <Step title="Edit a slide">
+    Open `deck/slides.tsx`. Change the `title` of the first entry and save. That is the whole loop.
+  </Step>
+</Steps>
+
+## What it writes
+
+<FileTree>
+
+- my-talk/
+  - app/
+    - slides/
+      - blocks/ (the five block families, yours to edit)
+      - [id]/page.tsx
+    - presenter/page.tsx
+    - page.tsx
+    - sitemap.ts
+    - not-found.tsx
+    - layout.tsx
+    - globals.css
+  - deck/
+    - deck.ts (the defineDeck config)
+    - slides.tsx (the slide array)
+    - slides/ (file-per-slide modules, sample deck only)
+  - lib/utils.ts
+  - public/
+  - components.json
+  - next.config.ts
+  - package.json
+
+</FileTree>
+
+The theme is not a file. `init` writes it as an import from `@deckard/themes` in `deck/deck.ts`, so `--theme phosphor` changes one identifier.
+
+## init flags
+
+| Flag | Default | What it does |
+| --- | --- | --- |
+| `--theme <name>` | `deckard` | One of `broadsheet`, `deckard`, `ledger`, `meridian`, `nexus`, `phosphor`. |
+| `--empty` | off | Two slides instead of the five-slide sample deck. |
+| `--package-manager <name>` | detected | `bun`, `npm`, `pnpm`, or `yarn`. |
+| `--no-install` | install runs | Write the files and stop. Skips the typecheck too. |
+| `--no-git` | git runs | Skip `git init` and the first commit. |
+| `--registry <url>` | `http://localhost:3001/r/{name}.json` | The `@deckard` registry written into `components.json`. |
+| `--core-tarball <path>` | `^<cli version>` | Install `@deckard/core` from a local tarball. |
+| `--themes-tarball <path>` | `^<cli version>` | Same, for `@deckard/themes`. |
+| `--cli-tarball <path>` | `^<cli version>` | Same, for `@deckard/cli`. |
+
+`init` refuses a directory that already has files in it. It asks no questions.
+
+## Installing before the packages publish
+
+Pack all three from a checkout of the Deckard repository and point `init` at the tarballs:
+
+```bash
+pnpm cli:build
+pnpm --filter @deckard/core exec pnpm pack --pack-destination /tmp/deckard
+pnpm --filter @deckard/themes exec pnpm pack --pack-destination /tmp/deckard
+pnpm --filter @deckard/cli exec pnpm pack --pack-destination /tmp/deckard
+
+node packages/cli/bin/deckard.mjs init ~/code/my-talk \
+  --core-tarball /tmp/deckard/deckard-core-0.0.1.tgz \
+  --themes-tarball /tmp/deckard/deckard-themes-0.0.1.tgz \
+  --cli-tarball /tmp/deckard/deckard-cli-0.0.1.tgz
+```
+
+The generated app is identical either way. When the packages publish, `npx @deckard/cli init` becomes the whole install and nothing in the app changes.
+
+The blocks are not affected by any of this. `init` ships them inside the CLI package and copies them in, because a brand-new app has no shadcn config yet and the registry has no public host. Adding a block *later* does need a registry, which today means the Deckard docs site running locally on port 3001. See [Blocks and the registry](/guides/blocks-and-the-registry).
+
+## Adding a deck to an app you already have
+
+`init` writes a new directory. Do the same four things by hand when the deck has to live inside an existing Next.js app.
+
+<Steps>
+  <Step title="Install the packages">
+    ```bash
+    pnpm add @deckard/core @deckard/themes
+    pnpm add -D @deckard/cli
+    ```
+  </Step>
+  <Step title="Import the stylesheet">
+    ```css app/globals.css
+    @import "tailwindcss";
+    @import "@deckard/core/styles.css";
+    ```
+
+    That sheet carries the `--slide-*` token contract and registers the package's own compiled output as a Tailwind source, so the runtime's utility classes survive without you naming a path inside `node_modules`. There is no `transpilePackages` entry to add.
+
+  </Step>
+  <Step title="Write the deck">
+    Create `deck/deck.ts` and `deck/slides.tsx` as shown on the [Introduction](/introduction).
+  </Step>
+  <Step title="Re-export the four routes">
+    ```tsx app/slides/[id]/page.tsx
+    import { createSlideRoute } from "@deckard/core/next"
+    import { deck } from "@/deck/deck"
+
+    const { Page, generateMetadata, generateStaticParams } =
+      createSlideRoute(deck)
+
+    export { generateMetadata, generateStaticParams }
+    export default Page
+    ```
+
+    The other three are `app/presenter/page.tsx`, `app/sitemap.ts`, and `app/page.tsx`. See [Route adapters](/reference/core#route-adapters).
+
+  </Step>
+</Steps>
+
+Run `deckard doctor` afterwards. It checks exactly these things and names the one you missed.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Writing slides" href="/guides/writing-slides" icon="file-text">
+    Which block to reach for, and when a slide earns its own file.
+  </Card>
+  <Card title="Presenting" href="/guides/presenting" icon="presentation">
+    Keys, the command center, the presenter window, notes, step reveals.
+  </Card>
+</CardGroup>
