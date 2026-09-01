@@ -2,7 +2,6 @@ import fs from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 import type { BuiltInTheme } from "../deck/theme-source.ts"
-import type { DetectedManager } from "../package-manager.ts"
 
 // Relative to this module, so the template resolves the same way from a source
 // checkout and from the installed package a tarball unpacks into.
@@ -13,7 +12,6 @@ export interface ScaffoldOptions {
   coreDependency: string
   description: string
   name: string
-  packageManager: DetectedManager
   registryUrl: string
   sample: boolean
   target: string
@@ -25,7 +23,6 @@ export interface ScaffoldOptions {
 interface Versions {
   dependencies: Record<string, string>
   devDependencies: Record<string, string>
-  packageManagers: Record<string, string>
 }
 
 function templatePath(...segments: string[]): string {
@@ -62,16 +59,9 @@ function copyTree(from: string, to: string): void {
   fs.cpSync(from, to, { recursive: true })
 }
 
-// The manager that ran init reports its own version, so the field records what
-// actually built the deck. A forced --package-manager falls back to the pin the
-// template carries.
-function packageManagerField(
-  manager: DetectedManager,
-  pins: Record<string, string>
-): string {
-  return `${manager.name}@${manager.version ?? pins[manager.name]}`
-}
-
+// No packageManager field on purpose: corepack treats it as an enforcement
+// lock, so writing the manager that happened to run init would refuse every
+// other manager afterwards. Later deckard commands read the lockfile instead.
 function packageJson(options: ScaffoldOptions): string {
   const versions = readVersions()
 
@@ -81,10 +71,6 @@ function packageJson(options: ScaffoldOptions): string {
       version: "0.1.0",
       private: true,
       type: "module",
-      packageManager: packageManagerField(
-        options.packageManager,
-        versions.packageManagers
-      ),
       scripts: {
         build: "next build",
         "deck:check-overflow": "deckard check-overflow",

@@ -51,9 +51,10 @@ That writes the app below, installs it, makes the first commit, and typechecks
 it. The deck it lands with is five slides you delete.
 
 `init` uses the package manager that ran it. Through `npx` that is npm, through
-`pnpm dlx` it is pnpm, and the generated `package.json` records the one it used
-in its `packageManager` field. Nothing in the generated app assumes pnpm, and
-every later `deckard` command reads that field rather than guessing.
+`pnpm dlx` it is pnpm. The generated `package.json` deliberately carries no
+`packageManager` field, since corepack enforces that as a lock against every
+other manager. Later `deckard` commands read the deck's lockfile instead, and
+respect a `packageManager` field only if you add one yourself.
 
 ```
 my-talk/
@@ -967,8 +968,8 @@ it, captures one screenshot with `--max 1`, then runs `deckard eject theme` and
 validates and typechecks the deck against the copy it wrote. The npm pass is the `npx` flow
 on a machine without pnpm: install, typecheck, build, and the same prerender
 assertion, with no browser. Both passes check that the generated
-`packageManager` field names the manager that ran init and that no generated
-script names a package manager at all. The whole run takes about 70 seconds and
+`package.json` carries no `packageManager` field and that no generated script
+names a package manager at all. The whole run takes about 70 seconds and
 prints a per-phase breakdown.
 
 There is one gap worth naming: the template's dependency versions and the two
