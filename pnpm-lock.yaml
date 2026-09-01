@@ -182,6 +182,9 @@ importers:
       playwright:
         specifier: ^1.62.1
         version: 1.62.1
+      shadcn:
+        specifier: ^4.19.1
+        version: 4.19.1(typescript@7.0.2)
       vite:
         specifier: ^8.2.2
         version: 8.2.2(@types/node@26.4.0)(jiti@2.7.0)(yaml@2.9.0)

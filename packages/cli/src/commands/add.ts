@@ -1,5 +1,7 @@
 import { spawnSync } from "node:child_process"
 import fs from "node:fs"
+import { createRequire } from "node:module"
+import path from "node:path"
 import process from "node:process"
 
 import { booleanFlag, type ParsedArgs, stringFlag } from "../args.ts"
@@ -9,6 +11,46 @@ import { projectPath, projectRoot } from "../project.ts"
 const kinds = ["block", "theme"] as const
 
 type Kind = (typeof kinds)[number]
+
+// shadcn does not publish its package.json through its export map, so the
+// manifest that names the binary is found by walking up from the entry it does
+// publish.
+function packageRoot(entry: string): string {
+  let directory = path.dirname(entry)
+  let parent = path.dirname(directory)
+
+  while (directory !== parent) {
+    if (fs.existsSync(path.join(directory, "package.json"))) {
+      return directory
+    }
+
+    directory = parent
+    parent = path.dirname(parent)
+  }
+
+  throw new Error(`No package.json above ${entry}`)
+}
+
+// shadcn is a dependency of this package, so the version that runs is the
+// version that was installed with it. No dlx, no download, and no per-manager
+// difference in what "latest" means on the day someone runs this.
+function shadcnEntry(): string {
+  const require = createRequire(import.meta.url)
+
+  try {
+    const root = packageRoot(require.resolve("shadcn"))
+    const { bin } = JSON.parse(
+      fs.readFileSync(path.join(root, "package.json"), "utf8")
+    ) as { bin: Record<string, string> | string }
+
+    return path.join(root, typeof bin === "string" ? bin : bin.shadcn)
+  } catch (error) {
+    throw new Error(
+      "shadcn does not resolve from @deckard/cli. Reinstall the deck's dependencies.",
+      { cause: error }
+    )
+  }
+}
 
 function readRegistryUrl(): string | null {
   try {
@@ -105,8 +147,8 @@ export async function runAdd(args: ParsedArgs): Promise<void> {
   const target = override ? url : `@deckard/${item}`
   const confirmed = booleanFlag(args, "yes") ? ["-y", "-o"] : []
   const result = spawnSync(
-    "pnpm",
-    ["dlx", "shadcn@latest", "add", target, ...confirmed],
+    process.execPath,
+    [shadcnEntry(), "add", target, ...confirmed],
     {
       cwd: projectRoot,
       env: process.env,
