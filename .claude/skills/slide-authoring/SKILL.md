@@ -133,8 +133,9 @@ dialogs, keep the app tokens from `app/globals.css`.
 
 The deck header and footer are inside the canvas and belong to the theme. Core
 renders `[data-slide-header]` and `[data-slide-footer]` with named parts for the
-brand, the slide title, the date, the counter, and `[data-slide-progress]`;
-the theme's `theme.css` decides what they look like.
+brand, the slide title, the meta line, the counter, and `[data-slide-progress]`;
+the theme's `theme.css` decides what they look like. `footer: { progress: false }`
+in `deck.ts` leaves the progress element out of the deck entirely.
 
 ## Metadata
 

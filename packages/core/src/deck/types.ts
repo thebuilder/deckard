@@ -101,6 +101,10 @@ export interface DeckHeaderConfig {
 
 export interface DeckFooterConfig {
   mode: SlideFooterModeInput
+  // The bar across the footer edge showing how far into the deck a slide sits.
+  // On unless a deck turns it off, and gone entirely rather than transparent, so
+  // a theme cannot paint over the decision.
+  progress?: boolean
 }
 
 export interface DeckConfig {
@@ -127,6 +131,7 @@ export interface Deck {
 export interface DeckPresentation {
   canvas: DeckCanvasConfig
   meta?: string
+  showProgress: boolean
   theme: SlideTheme
   title: string
   titleHref: string

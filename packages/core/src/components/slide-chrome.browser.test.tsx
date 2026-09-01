@@ -19,12 +19,14 @@ function renderChrome({
   brand = "Deckard",
   meta,
   number,
+  showProgress,
   title,
   total,
 }: {
   brand?: string
   meta?: string
   number: number
+  showProgress?: boolean
   title?: string
   total: number
 }) {
@@ -33,7 +35,13 @@ function renderChrome({
       <SlideCanvas
         background="none"
         canvas={canvas}
-        footer={<SlideCanvasFooter number={number} total={total} />}
+        footer={
+          <SlideCanvasFooter
+            number={number}
+            showProgress={showProgress}
+            total={total}
+          />
+        }
         header={
           <SlideCanvasHeader
             brand={brand}
@@ -132,6 +140,13 @@ describe("canvas chrome", () => {
     expect(
       Number(getComputedStyle(progress).getPropertyValue("--slide-progress"))
     ).toBeCloseTo(0.25, 5)
+  })
+
+  it("leaves the progress bar out when the deck turns it off", () => {
+    renderChrome({ number: 3, showProgress: false, total: 12 })
+
+    expect(container.querySelector("[data-slide-progress]")).toBeNull()
+    expect(element("[data-slide-counter]")).not.toBeNull()
   })
 
   it("reaches a full fraction on the last slide", () => {

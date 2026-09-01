@@ -467,6 +467,15 @@ previous and next buttons. Those buttons are in the deck controls now, so
 `"counter"` and `"visible"` describe the same footer; a deck that still says
 `"counter"` resolves to `"visible"`.
 
+The progress bar is on by default and comes off with one line, for a deck that
+would rather not tell the room how much is left:
+
+```ts
+footer: { mode: "visible", progress: false }
+```
+
+That drops the element rather than hiding it, so no theme can paint it back.
+
 ## Deck chrome
 
 The header and the footer are painted inside the canvas, so they scale with the

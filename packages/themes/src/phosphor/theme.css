@@ -281,18 +281,10 @@
   content: "/";
 }
 
-/* Progress is drawn in character cells, so it fills in steps rather than sliding. */
+/* A solid bar of phosphor across the status line. Cells were tempting, but the
+ * fill ends wherever the deck is, and a cell cut in half reads as a glitch. */
 
 .phosphor-theme [data-slide-progress] {
   inset-block: auto 0;
-  height: 4px;
-}
-
-.phosphor-theme [data-slide-progress]::after {
-  background-color: transparent;
-  background-image: repeating-linear-gradient(
-    to right,
-    currentcolor 0 0.5rem,
-    transparent 0.5rem 0.75rem
-  );
+  height: 3px;
 }
