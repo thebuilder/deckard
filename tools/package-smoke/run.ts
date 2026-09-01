@@ -15,6 +15,18 @@ const keepScratch = process.argv.includes("--keep")
 // @source the package stylesheet registers against its own compiled output.
 const runtimeUtilities = ["min-h-16", "backdrop-blur-sm", "data-slide-chrome"]
 
+// The fixture deck imports one built-in theme and nothing else. Its stylesheet
+// has to reach the build with no wiring, and the other five have to stay out of
+// it, because the barrel re-exports all six from one module.
+const importedTheme = ".phosphor-theme"
+const unimportedThemes = [
+  ".broadsheet-theme",
+  ".deckard-theme",
+  ".ledger-theme",
+  ".meridian-theme",
+  ".nexus-theme",
+]
+
 function run(command: string, args: string[], cwd: string) {
   const result = spawnSync(command, args, {
     cwd,
@@ -31,7 +43,7 @@ function run(command: string, args: string[], cwd: string) {
 // doing for them cannot appear in it.
 function assertPlainConsumer() {
   const config = fs.readFileSync(
-    path.join(fixtureSource, "next.config.mjs"),
+    path.join(fixtureSource, "next.config.ts"),
     "utf8"
   )
 
@@ -49,15 +61,18 @@ function assertPlainConsumer() {
   }
 }
 
-function assertRuntimeStyles(directory: string) {
+function builtCss(directory: string) {
   const staticDirectory = path.join(directory, ".next/static")
-  const css = fs
+
+  return fs
     .readdirSync(staticDirectory, { recursive: true })
     .map((entry) => path.join(staticDirectory, String(entry)))
     .filter((entry) => entry.endsWith(".css"))
     .map((entry) => fs.readFileSync(entry, "utf8"))
     .join("\n")
+}
 
+function assertRuntimeStyles(css: string) {
   const missing = runtimeUtilities.filter((utility) => !css.includes(utility))
 
   if (missing.length > 0) {
@@ -67,12 +82,29 @@ function assertRuntimeStyles(directory: string) {
   }
 }
 
-function packCore(destination: string) {
+function assertBuiltInTheme(css: string) {
+  if (!css.includes(importedTheme)) {
+    throw new Error(
+      `The built CSS is missing ${importedTheme}, so importing a theme from @deckard/themes did not carry its stylesheet`
+    )
+  }
+
+  const leaked = unimportedThemes.filter((selector) => css.includes(selector))
+
+  if (leaked.length > 0) {
+    throw new Error(
+      `The built CSS carries themes the deck never imported: ${leaked.join(", ")}`
+    )
+  }
+}
+
+function pack(filter: string, destination: string, name: string) {
+  const before = new Set(fs.readdirSync(destination))
   const result = spawnSync(
     "pnpm",
     [
       "--filter",
-      "@deckard/core",
+      filter,
       "exec",
       "pnpm",
       "pack",
@@ -83,20 +115,20 @@ function packCore(destination: string) {
   )
 
   if (result.status !== 0) {
-    throw new Error("pnpm pack failed")
+    throw new Error(`pnpm pack failed for ${filter}`)
   }
 
   const packed = fs
     .readdirSync(destination)
-    .find((entry) => entry.endsWith(".tgz"))
+    .find((entry) => entry.endsWith(".tgz") && !before.has(entry))
 
   if (!packed) {
-    throw new Error("pnpm pack produced no tarball")
+    throw new Error(`pnpm pack produced no tarball for ${filter}`)
   }
 
   fs.renameSync(
     path.join(destination, packed),
-    path.join(destination, "deckard-core.tgz")
+    path.join(destination, `${name}.tgz`)
   )
 }
 
@@ -105,8 +137,20 @@ const appDirectory = path.join(scratch, "app")
 
 try {
   assertPlainConsumer()
-  run("pnpm", ["--filter", "@deckard/core", "run", "build"], repoRoot)
-  packCore(scratch)
+  run(
+    "pnpm",
+    [
+      "--filter",
+      "@deckard/core",
+      "--filter",
+      "@deckard/themes",
+      "run",
+      "build",
+    ],
+    repoRoot
+  )
+  pack("@deckard/core", scratch, "deckard-core")
+  pack("@deckard/themes", scratch, "deckard-themes")
   fs.cpSync(fixtureSource, appDirectory, { recursive: true })
 
   run(
@@ -116,10 +160,14 @@ try {
   )
   run("pnpm", ["run", "typecheck"], appDirectory)
   run("pnpm", ["run", "build"], appDirectory)
-  assertRuntimeStyles(appDirectory)
+
+  const css = builtCss(appDirectory)
+
+  assertRuntimeStyles(css)
+  assertBuiltInTheme(css)
 
   process.stdout.write(
-    "\n@deckard/core builds and styles a standalone Next.js app\n"
+    "\n@deckard/core and @deckard/themes build and style a standalone Next.js app\n"
   )
 } finally {
   if (keepScratch) {

@@ -22,6 +22,7 @@ function stubServerOnly(): Plugin {
 }
 
 // The deck array is TSX with an import.meta.glob, a path alias, and asset imports, so node cannot import it on its own. A throwaway Vite server can, in under a second, without a Next build.
+// The two Deckard packages are bundled rather than externalized: their compiled output is written for a bundler, extensionless specifiers and a css import included, which node's own ESM resolver cannot follow.
 export async function loadDeck(): Promise<Deck> {
   const server = await createServer({
     appType: "custom",
@@ -34,7 +35,9 @@ export async function loadDeck(): Promise<Deck> {
     },
     root: projectRoot,
     server: { hmr: false, middlewareMode: true, watch: null },
-    ssr: { noExternal: ["@deckard/core", "server-only"] },
+    ssr: {
+      noExternal: ["@deckard/core", "@deckard/themes", "server-only"],
+    },
   })
 
   try {

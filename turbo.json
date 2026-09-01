@@ -5,9 +5,7 @@
     "biome.json",
     ".fallowrc.json",
     "apps/playground/app/slides/blocks/**",
-    "apps/playground/deck/theme/**",
-    "apps/playground/package.json",
-    "registry/themes/**"
+    "apps/playground/package.json"
   ],
   "globalEnv": [
     "NEXT_PUBLIC_PDF_EXPORT",

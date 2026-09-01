@@ -7,7 +7,11 @@
     "ultracite/biome/vitest"
   ],
   "files": {
-    "includes": ["!**/*.svg", "!packages/cli/template"]
+    "includes": [
+      "!**/*.svg",
+      "!packages/cli/template",
+      "!packages/cli/template-src"
+    ]
   },
   "javascript": {
     "formatter": {
@@ -26,7 +30,8 @@
         "packages/core/src/index.ts",
         "packages/core/src/components/index.ts",
         "packages/core/src/ui/index.ts",
-        "apps/demo/lib/utils.ts"
+        "apps/demo/lib/utils.ts",
+        "packages/themes/src/index.ts"
       ],
       "linter": {
         "rules": {

@@ -1,4 +1,5 @@
 import { defineDeck } from "@deckard/core"
+import { phosphor } from "@deckard/themes"
 
 import { slides } from "./slides"
 
@@ -8,5 +9,6 @@ export const deck = defineDeck({
   footer: { mode: "visible" },
   header: { brand: "Smoke", href: "/", mode: "auto" },
   slides,
+  theme: phosphor,
   title: "Smoke",
 })

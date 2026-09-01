@@ -26,6 +26,10 @@ const themeCss = `
 .test-theme:where(.dark, .dark *) { --background: black; --border: silver; }
 `
 
+function stylesheet(css: string) {
+  return { css, source: "deck/theme/theme.css" }
+}
+
 describe("checkSlides", () => {
   it("counts inline, discovered, slugged, and numbered slides", () => {
     const deck = buildDeck([
@@ -62,22 +66,28 @@ describe("checkSlides", () => {
 
 describe("checkTheme", () => {
   it("passes a theme whose class and color blocks line up", () => {
-    const section = checkTheme(theme, themeCss)
+    const section = checkTheme(theme, stylesheet(themeCss))
 
     expect(section.problems).toEqual([])
     expect(section.summary[1]).toBe(
-      "2 tokens in the light block, 2 dark overrides"
+      "2 tokens in the light block, 2 dark overrides, from deck/theme/theme.css"
     )
   })
 
   it("reports a className the stylesheet never selects", () => {
-    const section = checkTheme({ ...theme, className: "tets-theme" }, themeCss)
+    const section = checkTheme(
+      { ...theme, className: "tets-theme" },
+      stylesheet(themeCss)
+    )
 
     expect(section.problems[0]).toContain(".tets-theme")
   })
 
   it("reports a missing stylesheet", () => {
-    const section = checkTheme(theme, null)
+    const section = checkTheme(theme, {
+      css: null,
+      source: "deck/theme/theme.css",
+    })
 
     expect(section.problems[0]).toContain("deck/theme/theme.css is missing")
   })
@@ -85,7 +95,9 @@ describe("checkTheme", () => {
   it("reports a token only the dark block defines", () => {
     const section = checkTheme(
       theme,
-      `${themeCss}\n.test-theme:where([data-slide-color-mode="dark"]) { --accent: blue; }`
+      stylesheet(
+        `${themeCss}\n.test-theme:where([data-slide-color-mode="dark"]) { --accent: blue; }`
+      )
     )
 
     expect(section.problems[0]).toContain("--accent")
@@ -94,14 +106,17 @@ describe("checkTheme", () => {
   it("reports a dark block the theme does not claim to support", () => {
     const section = checkTheme(
       { ...theme, colorModes: ["light"], defaultColorMode: "light" },
-      themeCss
+      stylesheet(themeCss)
     )
 
     expect(section.problems[0]).toContain('does not list "dark" in colorModes')
   })
 
   it("reports a claimed dark mode the stylesheet never paints", () => {
-    const section = checkTheme(theme, ".test-theme { --background: white; }")
+    const section = checkTheme(
+      theme,
+      stylesheet(".test-theme { --background: white; }")
+    )
 
     expect(section.problems[0]).toContain("has no dark block")
   })
@@ -109,39 +124,18 @@ describe("checkTheme", () => {
 
 describe("checkRegistry", () => {
   const files = new Map([
-    ["themes/x/index.ts", 'export const theme = { className: "x-theme" }'],
-    ["themes/x/theme.css", ".x-theme { --background: white; }"],
+    ["blocks/typography.tsx", "export function Eyebrow() {}"],
+    ["blocks/metrics.tsx", "export function StatGrid() {}"],
   ])
   const readFile = (relativePath: string) => files.get(relativePath) ?? null
 
   it("reports a path that is not in the repository", () => {
     const section = checkRegistry(
-      [{ files: [{ path: "themes/x/missing.css" }], name: "theme-x" }],
+      [{ files: [{ path: "blocks/missing.tsx" }], name: "block-missing" }],
       readFile
     )
 
-    expect(section.problems[0]).toContain("themes/x/missing.css")
-  })
-
-  it("reports a registry theme whose class the stylesheet never selects", () => {
-    const section = checkRegistry(
-      [
-        {
-          files: [
-            { path: "themes/x/index.ts" },
-            { path: "themes/x/theme.css" },
-          ],
-          name: "theme-x",
-          type: "registry:theme",
-        },
-      ],
-      (relativePath) =>
-        relativePath === "themes/x/theme.css"
-          ? ".y-theme { --background: white; }"
-          : readFile(relativePath)
-    )
-
-    expect(section.problems[0]).toContain("has no rule for .x-theme")
+    expect(section.problems[0]).toContain("blocks/missing.tsx")
   })
 
   it("passes a registry whose files all resolve", () => {
@@ -149,11 +143,10 @@ describe("checkRegistry", () => {
       [
         {
           files: [
-            { path: "themes/x/index.ts" },
-            { path: "themes/x/theme.css" },
+            { path: "blocks/typography.tsx" },
+            { path: "blocks/metrics.tsx" },
           ],
-          name: "theme-x",
-          type: "registry:theme",
+          name: "block-typography",
         },
       ],
       readFile

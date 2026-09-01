@@ -7,6 +7,7 @@ import { runAdd } from "./commands/add.ts"
 import { runCheckOverflow } from "./commands/check-overflow.ts"
 import { runContactSheet } from "./commands/contact-sheet.ts"
 import { runDoctor } from "./commands/doctor.ts"
+import { runEject } from "./commands/eject.ts"
 import { runExportPdf } from "./commands/export-pdf.ts"
 import { runInit } from "./commands/init.ts"
 import { runScreenshots } from "./commands/screenshots.ts"
@@ -24,6 +25,7 @@ const specs: Record<string, FlagSpec> = {
   "check-overflow": { booleans: previewFlags, strings: ["port"] },
   "contact-sheet": { booleans: ["light"], strings: ["columns"] },
   doctor: {},
+  eject: { strings: ["theme"] },
   export: { booleans: ["dark", "skip-build"], strings: ["port"] },
   init: {
     booleans: ["empty", "git", "install"],
@@ -33,6 +35,7 @@ const specs: Record<string, FlagSpec> = {
       "package-manager",
       "registry",
       "theme",
+      "themes-tarball",
     ],
   },
   screenshots: { booleans: previewFlags, strings: ["max", "port"] },
@@ -50,6 +53,7 @@ const help = `deckard ${version}
     --no-git                     skip git init and the first commit
     --core-tarball <path>        install @deckard/core from a local tarball
     --cli-tarball <path>         install @deckard/cli from a local tarball
+    --themes-tarball <path>      install @deckard/themes from a local tarball
     --registry <url>             the @deckard registry for components.json
 
   deckard validate           load the deck, check its slides and its theme
@@ -68,8 +72,10 @@ const help = `deckard ${version}
   The four checks above build the app and serve it. They take --port <n> and
   --skip-build, and every one but the PDF export takes --light.
 
-  deckard add theme <name>   install a theme from the registry, into deck/theme
-  deckard add block <name>   install a block, into app/slides/blocks
+  deckard add theme <name>   point deck/deck.ts at another built-in theme
+  deckard eject theme        copy the built-in the deck uses into deck/theme, yours to edit
+    --theme <name>               eject that built-in instead of the imported one
+  deckard add block <name>   install a block from the registry, into app/slides/blocks
     --registry <url>             a registry URL carrying a {name} placeholder
     --yes                        overwrite the files it installs without asking
 
@@ -108,6 +114,8 @@ async function dispatch(argv: string[]): Promise<void> {
       return await runContactSheet(args)
     case "doctor":
       return await runDoctor()
+    case "eject":
+      return await runEject(args)
     case "export":
       return await runExport(args.positionals[0], args)
     case "init":

@@ -42,18 +42,22 @@ export default function OverviewPage() {
         A presentation is a Next.js app you own, with <code>app/</code>,{" "}
         <code>deck/</code>, <code>public/</code>, and <code>package.json</code>.{" "}
         <code>@deckard/core</code> is a dependency in it and holds the deck
-        contract and the slideshow runtime, compiled. <code>@deckard/cli</code>{" "}
-        is the <code>deckard</code> binary that generated the app and then
-        checks it, screenshots it, and exports it.
+        contract and the slideshow runtime, compiled.{" "}
+        <code>@deckard/themes</code> is the second dependency and holds the six
+        deck themes. <code>@deckard/cli</code> is the <code>deckard</code>{" "}
+        binary that generated the app and then checks it, screenshots it, and
+        exports it.
       </p>
       <p>
-        The theme and the slide blocks are deliberately not in the package. They
-        are source files in your app from the first commit, so a measure that
-        reads badly at your font is a line you edit rather than a prop you wait
-        for.
+        The slide blocks are deliberately not in the package. They are source
+        files in your app from the first commit, so a measure that reads badly
+        at your font is a line you edit rather than a prop you wait for. The six
+        themes do ship as a package, reached by import;{" "}
+        <code>deckard eject theme</code> turns the one you use into source files
+        too.
       </p>
       <p>
-        Neither package is on npm yet, so that <code>npx</code> line does not
+        None of the three is on npm yet, so that <code>npx</code> line does not
         work from a clean machine. Today you point the init at packed tarballs,
         or build your deck inside the Deckard workspace.{" "}
         <Link href="/getting-started">Getting started</Link> has both, and says

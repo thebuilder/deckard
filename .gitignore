@@ -23,6 +23,9 @@ node_modules/
 # built shadcn registry
 apps/docs/public/r/
 
+# generated deckard init template
+packages/cli/template/
+
 # production
 /build
 

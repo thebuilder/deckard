@@ -21,16 +21,22 @@ apply there, against their own `deck/` directory.
   that the framework works outside the playground. `docs/MIGRATION-NOTES.md`
   records what that migration surfaced.
 - `apps/docs` is the documentation site.
-- `registry` holds theme sources the playground does not use. `registry.json` at
-  the root publishes them and the blocks through shadcn.
+- `packages/themes` is `@deckard/themes`, the six deck themes. Each one is a
+  `theme.css`, an `index.ts` exporting one `SlideTheme`, and a `THEME.md`. It
+  compiles to `dist/` with `tsc` and `scripts/copy-theme-assets.ts` carries the
+  stylesheets and the documents across.
+- `registry.json` at the root publishes the blocks through shadcn. Themes are
+  not in it.
 - `packages/cli` is `@deckard/cli`, the one public binary: `deckard init`,
   `validate`, `doctor`, `check-overflow`, `screenshots`, `contact-sheet`,
-  `export pdf`, and `add`. It compiles to `dist/` with `tsc` and treats the
-  current working directory as the deck. `packages/cli/template` is what `init`
-  writes, and `scripts/sync-template.ts` copies the blocks, both themes, the
-  pinned dependency versions, and the package manager pins into it from the
-  playground, `registry/`, and the root `package.json`. Edit the sources, never
-  the copies.
+  `export pdf`, `add`, and `eject`. It compiles to `dist/` with `tsc` and treats
+  the current working directory as the deck. `packages/cli/template` is what
+  `init` writes, and it is build output: gitignored, rebuilt by
+  `scripts/sync-template.ts` on every CLI build and again on `prepack`. The
+  hand-authored half is `packages/cli/template-src`; the blocks, the pinned
+  dependency versions, and the package manager pins are copied in from the
+  playground and the root `package.json`. Edit `template-src` or the playground,
+  never `template`.
 - `tools/package-smoke` packs the package and builds a scratch app against it.
 - `tools/registry-smoke` installs the registry into a scratch app and builds it.
 - `tools/cli-smoke` installs the packed CLI outside the workspace and runs
@@ -49,7 +55,7 @@ All of these run from the root.
 | `pnpm test`                | vitest, node and browser projects                            |
 | `pnpm lint`                | ultracite fix, warnings are errors                           |
 | `pnpm analyze`             | fallow dead code, duplication, health                        |
-| `pnpm cli:build`           | builds `@deckard/core` and `@deckard/cli`                    |
+| `pnpm cli:build`           | builds `@deckard/core`, `@deckard/themes`, and `@deckard/cli` |
 | `pnpm deck:validate`       | deck resolves, theme is coherent, registry paths exist       |
 | `pnpm deck:doctor`         | node, package resolution, stylesheet import, deck, routes    |
 | `pnpm deck:check-overflow` | fails listing slides whose content the canvas clips          |
@@ -74,19 +80,20 @@ Read `.claude/skills/slide-authoring/SKILL.md` first. It covers the blocks, when
 a slide earns its own file, the Server Component boundary, canvas sizing, tokens,
 metadata, and discovery ordering.
 
-Read `apps/playground/deck/theme/THEME.md` before changing a color or a size
-token.
+Read `packages/themes/src/deckard/THEME.md` before changing a color or a
+size token in the default theme. Each of the six themes carries its own.
 
 Keep deck-specific content out of `packages/core`. Colors, sizes, backgrounds,
 and copy belong to the deck that owns them. If a component names the deck, a
 color, or a slide, it is deck content.
 
 A presentation built on Deckard is a plain Next.js app: `app/`, `components/`,
-`deck/`, `public/`, `package.json`, plus one `@import "@deckard/core/styles.css"`.
+`deck/`, `public/`, `package.json`, plus one `@import "@deckard/core/styles.css"`
+and one theme imported from `@deckard/themes`.
 No `transpilePackages`, no Tailwind `@source`. Nothing about the workspace
 layout leaks into the app someone generates from the framework. `deckard init`
 is what generates it, so a change to that shape belongs in
-`packages/cli/template` and has to survive `pnpm smoke:cli`.
+`packages/cli/template-src` and has to survive `pnpm smoke:cli`.
 
 ## Where things live
 
@@ -104,8 +111,10 @@ is what generates it, so a change to that shape belongs in
 - The fixed canvas: `slide-viewport.tsx` fits and centers it,
   `slide-canvas.tsx` is the 1920x1080 coordinate space, and the size comes from
   `deck.ts` through `packages/core/src/deck/canvas.ts`.
-- The deck theme: `apps/playground/deck/theme/`. `SlideCanvas` puts the theme
-  class on the canvas, so the theme reaches the slide and nothing else.
+- The themes: `packages/themes/src/<name>/`, each a `theme.css`, an
+  `index.ts` exporting one `SlideTheme`, and a `THEME.md`. `SlideCanvas` puts
+  the theme class on the canvas, so the theme reaches the slide and nothing
+  else. `apps/demo/deck/theme` is an ejected fork and stays local.
 - Color mode: `packages/core/src/components/color-mode-provider.tsx`. It is
   light and dark only. The deck theme is static config and never switches at
   runtime.
@@ -114,7 +123,8 @@ is what generates it, so a change to that shape belongs in
 
 ## The package boundary
 
-- Apps import the runtime through the package exports only: `@deckard/core`, `/components`, `/code-block`, `/discovery`, `/next`, `/slide-from-module`, `/ui`, `/utils`, `/styles.css`. Never a deep path into `packages/core/src`.
+- Apps import the runtime through the package exports only: `@deckard/core`, `/components`, `/code-block`, `/discovery`, `/next`, `/slide-from-module`, `/ui`, `/utils`, `/styles.css`, and `@deckard/themes` for the presets. Never a deep path into `packages/core/src` or `packages/themes/src`.
+- The runtime depends on the token contract, never on a preset. Presets live in `@deckard/themes`, a theme is data the deck chooses, and `packages/core` must not reference it: the dependency runs one way, `@deckard/themes` takes `SlideTheme` from `@deckard/core` as a type-only import and names it a peer, so nothing crosses at runtime. A theme's stylesheet is copied into `dist` next to its compiled module by `scripts/copy-theme-assets.ts`, which is why importing the module carries its CSS.
 - New runtime code goes in `packages/core` and gets an export. New deck content goes in `apps/playground`. If a component names the deck, a color, or a slide, it is deck content.
 - A new export means adding it to the matching index file, and a new subpath means adding it to the `exports` map in `packages/core/package.json`, where every entry points at `dist`. `packages/core/src/index.ts`, `src/components/index.ts`, and `src/ui/index.ts` are the only barrels, and biome allows barrels only there.
 - Route files belong to `@deckard/core/next`. An app's `app/slides/[id]/page.tsx`, `app/presenter/page.tsx`, `app/sitemap.ts`, and `app/page.tsx` are re-exports of `createSlideRoute`, `createPresenterPage`, `createDeckSitemap`, and `createFirstSlideRedirect`.
@@ -132,4 +142,4 @@ is what generates it, so a change to that shape belongs in
 - Read the Next.js docs for the pinned version in `node_modules/next/dist/docs/`
   before writing App Router code. The APIs move fast, and `next dev` is
   configured not to inject its own agent-rules block into this file
-  (`agentRules: false` in each app's `next.config.mjs`).
+  (`agentRules: false` in each app's `next.config.ts`).

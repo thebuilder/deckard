@@ -63,16 +63,15 @@ my-talk/
     deck.ts              defineDeck config
     slides.tsx           the slide array
     slides/*.slide.tsx   file-per-slide modules
-    theme/               the theme you picked, yours to edit
   public/
   components.json
-  next.config.mjs
+  next.config.ts
   package.json
 ```
 
 `init` takes `--theme <name>` to pick one of deckard, broadsheet, ledger,
-meridian, nexus, or phosphor, `--empty` for two slides instead of the sample
-deck, `--package-manager npm|pnpm|yarn|bun` to override the one it detected,
+meridian, nexus, or phosphor, which it writes as an import rather than a copy,
+`--empty` for two slides instead of the sample deck, `--package-manager npm|pnpm|yarn|bun` to override the one it detected,
 and `--no-install` or `--no-git` to skip those steps. It asks no questions.
 
 A presentation built on Deckard is a plain Next.js app that you own. You do not
@@ -95,7 +94,8 @@ in the current directory, which is how a generated app wires its own scripts.
 | `deckard screenshots` | one PNG per slide at canvas size, `--max <n>` to stop early |
 | `deckard contact-sheet` | every screenshot in one labelled grid |
 | `deckard export pdf` | one PDF page per slide |
-| `deckard add theme <name>` | install a registry theme into `deck/theme`, `--yes` to overwrite |
+| `deckard add theme <name>` | point `deck/deck.ts` at another built-in theme |
+| `deckard eject theme` | copy the built-in the deck uses into `deck/theme`, yours to edit |
 | `deckard add block <name>` | install a registry block into `app/slides/blocks` |
 
 The four checks that need a browser build the app and serve it on a spare port.
@@ -104,20 +104,26 @@ takes `--light`.
 
 ### The packages are not on npm yet
 
-`@deckard/core` and `@deckard/cli` are built for npm and are not published
-there. Publishing them is the plan before the API is called stable, so the
-`npx` line above does not work yet from a clean machine. Until it does, pack
-both here and point the init at the tarballs:
+`@deckard/core`, `@deckard/themes`, and `@deckard/cli` are built for npm and are
+not published there. Publishing them is the plan before the API is called
+stable, so the `npx` line above does not work yet from a clean machine. Until it
+does, pack all three here and point the init at the tarballs:
 
 ```bash
 # from the root of this repository
 pnpm cli:build
 pnpm --filter @deckard/core exec pnpm pack --pack-destination /tmp/deckard
+pnpm --filter @deckard/themes exec pnpm pack --pack-destination /tmp/deckard
 pnpm --filter @deckard/cli exec pnpm pack --pack-destination /tmp/deckard
 node packages/cli/bin/deckard.mjs init ~/code/my-talk \
   --core-tarball /tmp/deckard/deckard-core-0.0.1.tgz \
+  --themes-tarball /tmp/deckard/deckard-themes-0.0.1.tgz \
   --cli-tarball /tmp/deckard/deckard-cli-0.0.1.tgz
 ```
+
+The three version together, so `init` writes the same `^<cli version>` range for
+all three when you do not pass a tarball. Splitting their versions is a decision
+for the day one of them needs to move without the others.
 
 That is the in-repo path, and it runs the working copy of the binary. What
 `pnpm smoke:cli` proves is the published one: it installs the CLI tarball into a
@@ -150,7 +156,11 @@ in the next render.
 | `@deckard/core/styles.css` | the `--slide-*` token contract |
 
 The package holds nothing deck-specific. Colors, sizes, and backgrounds live in
-the deck theme of the app that owns them.
+a theme, and a theme is data: the runtime depends on the token contract in
+`styles.css` and never on a preset. `@deckard/themes` is where the presets live,
+and the dependency runs one way. It takes `SlideTheme` from `@deckard/core` as a
+type-only import and names core a peer, so nothing crosses at runtime and core
+does not know the themes exist.
 
 ### Adding Deckard to an app you already have
 
@@ -191,23 +201,51 @@ export default Page
 | `createDeckSitemap(deck, { siteUrl })` | `app/sitemap.ts`, defaults to `NEXT_PUBLIC_SITE_URL` |
 | `createFirstSlideRedirect(deck)` | `app/page.tsx`, redirects to the first slide |
 
-### The theme and the blocks come from the registry
+### The themes come with the package
 
-Themes and slide blocks are deliberately not in the package. They install into
-your app as source files through shadcn, and you edit them from then on.
+`@deckard/themes` is the second package a deck installs, and the six themes are
+its only export. A deck picks one by importing it and handing it to
+`defineDeck`, and importing the module pulls in its stylesheet, so there is
+nothing else to wire.
+
+```ts
+// deck/deck.ts
+import { defineDeck } from "@deckard/core"
+import { phosphor } from "@deckard/themes"
+
+import { slides } from "@/deck/slides"
+
+export const deck = defineDeck({ slides, theme: phosphor, title: "My talk" })
+```
+
+`deckard add theme <name>` makes that edit for you. Only the theme a deck
+imports reaches the bundle: the barrel re-exports all six, and the bundler drops
+the modules nothing uses, stylesheets included.
+
+`deckard eject theme` is the way out. It copies the theme the deck imports out
+of the installed package into `deck/theme/` as `theme.css`, `index.ts`, and
+`THEME.md`, and repoints `deck/deck.ts` at the copy. From then on the theme is
+your source and the package never touches it. It refuses when `deck/theme/`
+already exists, because a deck has exactly one theme. `apps/demo` is that
+arrangement in the repository: an ejected fork of broadsheet it has since
+edited.
+
+### The blocks come from the registry
+
+Slide blocks are deliberately not in the package. They install into your app as
+source files through shadcn, and you edit them from then on.
 
 ```bash
-deckard add theme phosphor
 deckard add block metrics
 
 # or straight through shadcn
-pnpm dlx shadcn@latest add @deckard/preset-deckard
+pnpm dlx shadcn@latest add @deckard/preset-blocks
 ```
 
-`deckard add` reads the registry URL from `components.json`, or takes
+`deckard add block` reads the registry URL from `components.json`, or takes
 `--registry <url>` and hands that URL straight to shadcn. It checks the host
 answers first and says what to start when it does not. shadcn asks before it
-overwrites a theme, and `--yes` answers for it. The registry has no public host
+overwrites a file, and `--yes` answers for it. The registry has no public host
 yet, so it is served from this repository's docs site on port 3001, which is
 what `deckard init` writes into `components.json`. See [Registry](#registry).
 
@@ -232,11 +270,11 @@ to develop and prove the framework.
 | Path | What it is |
 | --- | --- |
 | `packages/core` | `@deckard/core`, the deck contract and the slideshow runtime |
+| `packages/themes` | `@deckard/themes`, the six deck themes |
 | `apps/playground` | the reference deck. It exercises every feature on purpose and the visual checks run against it, so it is a test surface, not a template |
-| `apps/demo` | a 19-slide conference talk shaped exactly like a consumer app, with its own theme and its own copies of the blocks |
+| `apps/demo` | a 19-slide conference talk shaped exactly like a consumer app, with an ejected theme of its own and its own copies of the blocks |
 | `apps/docs` | the documentation site, which also serves the registry JSON at `/r/{name}.json` |
-| `packages/cli` | `@deckard/cli`, the `deckard` binary: init, the deck checks, add, doctor |
-| `registry` | theme sources the playground does not use, published through the registry |
+| `packages/cli` | `@deckard/cli`, the `deckard` binary: init, the deck checks, add, eject, doctor |
 | `tools/package-smoke` | proves the package installs into a plain Next.js app |
 | `tools/registry-smoke` | proves the registry installs into a plain Next.js app |
 | `tools/cli-smoke` | proves `deckard init` produces a deck that builds |
@@ -259,7 +297,7 @@ pnpm typecheck
 pnpm test           # 96 tests across core, the CLI, and both decks
 pnpm lint
 pnpm analyze
-pnpm cli:build           # build @deckard/core and @deckard/cli
+pnpm cli:build           # build @deckard/core, @deckard/themes, and @deckard/cli
 pnpm deck:validate       # deck, theme, and registry integrity
 pnpm deck:doctor         # the app-shape checks against the playground
 pnpm deck:check-overflow # fail on slides the canvas clips
@@ -269,7 +307,7 @@ pnpm demo:validate  # the same checks against apps/demo, plus demo:doctor,
                     # demo:check-overflow, demo:screenshots, demo:contact-sheet,
                     # demo:export:pdf
 pnpm registry:build # write the shadcn registry to apps/docs/public/r
-pnpm smoke:package  # pack @deckard/core and build a scratch app against it
+pnpm smoke:package  # pack @deckard/core and @deckard/themes, build a scratch app on them
 pnpm smoke:registry # install the registry into a scratch app and build it
 pnpm smoke:cli      # deckard init from the packed CLI on pnpm and npm, then build it
 ```
@@ -286,8 +324,8 @@ when it writes or edits slides. `docs/MIGRATION-NOTES.md` records what building
 ### Inside the demo
 
 `apps/demo` is the proof that a deck built on Deckard is a plain Next.js app. It
-consumes `@deckard/core` through the workspace, installs its blocks and its theme
-as files it owns, and runs the same checks as the playground through the
+consumes `@deckard/core` through the workspace, owns its blocks and its ejected
+theme as files, and runs the same checks as the playground through the
 `deckard` binary. It carries a 19-slide talk with a manual opening and
 close, nine discovered slide modules, an async Server Component that reads the
 workspace at build time, a nested client widget, step reveals, a fullscreen media
@@ -299,8 +337,7 @@ playground.
 
 - `apps/playground/deck/slides.tsx`: slide definitions
 - `apps/playground/deck/slides/*.slide.tsx`: file-per-slide modules, discovered by one glob or wired in with `slideFromModule`
-- `apps/playground/deck/deck.ts`: deck config (title, description, canvas, theme, header and footer defaults) wrapped in `defineDeck`
-- `apps/playground/deck/theme/`: the deck theme (`theme.css`, the `SlideTheme` export, and `THEME.md`)
+- `apps/playground/deck/deck.ts`: deck config (title, description, canvas, theme, header and footer defaults) wrapped in `defineDeck`, with the deckard theme imported from `@deckard/themes`
 - `apps/playground/app/slides/blocks/*`: deck-authoring building blocks (layout, typography, collections, media)
 - `apps/playground/components/ui/*`: shadcn primitives this app adds on top of the ones the runtime ships
 
@@ -692,19 +729,26 @@ preview.
 - `"none"`
 
 `SlideBackground` renders one empty element carrying `data-slide-background`.
-What each variant paints lives in the deck theme, so change the look in
-`deck/theme/theme.css` and read `deck/theme/THEME.md` first.
+What each variant paints lives in the theme, so change the look in its
+`theme.css` and read its `THEME.md` first. Run `deckard eject theme` when the
+theme is still an import.
 
 ## Theme
 
-`deck/theme/` owns every audience-facing color, size, and background in the
-deck, including the header and the footer. The stylesheet is scoped to the
-theme class, which `SlideCanvas` puts on the canvas element, so the deck
-controls, command center, and presenter console keep the app tokens and stay
-readable whatever the deck looks like.
+A theme owns every audience-facing color, size, and background in the deck,
+including the header and the footer. Its stylesheet is scoped to the theme
+class, which `SlideCanvas` puts on the canvas element, so the deck controls,
+command center, and presenter console keep the app tokens and stay readable
+whatever the deck looks like.
+
+A theme is three files: `theme.css`, an `index.ts` exporting one `SlideTheme`,
+and a `THEME.md` naming every token. The six built-ins live in
+`packages/themes/src/<name>` and reach a deck through
+`@deckard/themes`; an ejected theme is the same three files in
+`deck/theme/`.
 
 ```ts
-export const theme = {
+export const deckard = {
   className: "deckard-theme",
   colorModes: ["light", "dark"],
   defaultColorMode: "system",
@@ -723,7 +767,7 @@ the other mode fails naming the slide instead of being written.
 
 Inside the canvas, style with semantic tokens (`bg-card`, `text-muted-foreground`)
 or slide tokens (`--slide-title-size`, `--slide-surface`). Never a hardcoded
-color. `deck/theme/THEME.md` lists the tokens and what they control.
+color. The theme's `THEME.md` lists the tokens and what they control.
 
 ## Checking a deck
 
@@ -750,11 +794,12 @@ reports:
   module reports is a file on disk. A duplicate slug, an unsafe slug, or a
   module without a default export comes back as one line naming the slide or the
   file, not a stack trace at build time
-- the theme class in `deck/theme/index.ts` is a selector in `deck/theme/theme.css`,
+- the theme class is a selector in the stylesheet the deck actually renders,
   the dark block defines nothing the light block does not, and `colorModes`
-  matches the blocks the stylesheet actually carries
-- every `files[].path` in the root `registry.json` exists, and every registry
-  theme's class is a selector in the stylesheet it ships
+  matches the blocks that stylesheet carries. It reads `deck/theme/theme.css`
+  when the deck ejected its theme and the copy inside the installed
+  `@deckard/core` when the deck imports a built-in, and names which one it read
+- every `files[].path` in the root `registry.json` exists
 
 It exits nonzero on any of those and prints slide counts otherwise.
 
@@ -838,8 +883,9 @@ pnpm export:pdf -- --skip-build
 
 ## Package compatibility
 
-`pnpm smoke:package` packs `@deckard/core` with `pnpm pack`, installs the
-tarball into a scratch app under the system temp directory, and runs
+`pnpm smoke:package` packs `@deckard/core` and `@deckard/themes` with
+`pnpm pack`, installs both tarballs into a scratch app under the system temp
+directory, and runs
 `next typegen`, `tsc --noEmit`, and `next build` there. The scratch app sits
 outside the workspace and resolves nothing from this repo, so a missing
 dependency or a broken export map fails there instead of in someone else's
@@ -847,21 +893,27 @@ project. It takes about 16 seconds.
 
 That run is also the proof behind the tarball install above. The fixture it
 copies lives in `tools/package-smoke/fixture` and covers a plain slide, an async
-slide, a discovered module, a stepped slide, and a client widget. The scratch
+slide, a discovered module, a stepped slide, and a client widget. Its deck
+imports the phosphor theme, and the run asserts `.phosphor-theme` reaches the
+built stylesheet while the other five stay out of it, which is the tree shaking
+across the barrel proved rather than assumed. The scratch
 directory is deleted afterwards. Pass `--keep` to inspect it.
 
 `pnpm smoke:cli` proves the same thing for the generator, and it proves it from
 the tarball rather than from the checkout. It runs `pnpm cli:build`, so
-`@deckard/core` is built before the CLI compiles against its types, and packs
-both packages. Then it installs the CLI tarball into a scratch directory outside
+`@deckard/core` and `@deckard/themes` are built before the CLI compiles against
+their types, and packs
+all three packages. Then it installs the CLI tarball into a scratch directory outside
 the workspace and runs `deckard init` through that installed copy, with
-`--core-tarball` and `--cli-tarball`, letting the init do its own install. The
+`--core-tarball`, `--themes-tarball`, and `--cli-tarball`, letting the init do
+its own install. The
 template files it writes can only have come from inside the installed package.
 
 It does that twice. The pnpm pass typechecks and builds the generated app,
 asserts that `/slides/intro`, `/slides/keyboard`, and `/slides/2` are
 prerendered HTML on disk, runs `deckard validate` and `deckard doctor` inside
-it, and captures one screenshot with `--max 1`. The npm pass is the `npx` flow
+it, captures one screenshot with `--max 1`, then runs `deckard eject theme` and
+validates and typechecks the deck against the copy it wrote. The npm pass is the `npx` flow
 on a machine without pnpm: install, typecheck, build, and the same prerender
 assertion, with no browser. Both passes check that the generated
 `packageManager` field names the manager that ran init and that no generated
@@ -874,43 +926,49 @@ against the code in the working tree, not against whatever is on npm.
 
 ## Registry
 
-`registry.json` at the root publishes the themes and blocks through shadcn.
+`registry.json` at the root publishes the blocks through shadcn.
 `pnpm registry:build` writes the item JSON to `apps/docs/public/r`, which is
 gitignored, so the docs site serves the registry at `/r/{name}.json`. The docs
 site lists every item at `/registry` with its install command. There is no
 public host for the registry yet, so a consuming app points at the docs site
 running locally on port 3001.
 
-There are twelve items. The six themes, `theme-deckard`, `theme-broadsheet`,
-`theme-ledger`, `theme-meridian`, `theme-nexus`, and `theme-phosphor`, each
-install three files to `deck/theme/`, so adding one replaces whichever was
-there. `block-typography`, `block-slide-layouts`, `block-collections`,
-`block-media`, and `block-metrics` install to `app/slides/blocks/`.
-`preset-deckard` pulls in the default theme and every block, and writes the one
-line the app stylesheet needs, `@import "@deckard/core/styles.css"`. That sheet
+There are six items. `block-typography`, `block-slide-layouts`,
+`block-collections`, `block-media`, and `block-metrics` install to
+`app/slides/blocks/`. `preset-blocks` pulls in all five and writes the one line
+the app stylesheet needs, `@import "@deckard/core/styles.css"`. That sheet
 registers the package's own Tailwind source, so there is nothing left to wire in
-`next.config.mjs`.
+`next.config.ts`.
 
-Theme sources live in two places. The deckard theme is published straight out
-of `apps/playground/deck/theme`, where the reference deck uses it, so the
-registry ships the file the playground renders. The other five have no such home
-and live in `registry/themes/<name>`.
+The themes used to be registry items and are not any more. They ship as
+`@deckard/themes`, so a deck gets one by importing it rather than by installing
+six files it did not ask to own. `deckard eject theme` is the install, on
+demand, from the copy already on disk.
 
 `pnpm smoke:registry` proves the whole path. It builds the registry, serves it
-on a spare port, packs `@deckard/core`, and installs both into a scratch app
-outside the workspace. It checks the files land where the items claim, that the
-preset wrote the stylesheet import and nothing else, that the app builds with
-an empty `next.config.mjs`, and that both an edit to the installed `theme.css`
-and the runtime's own utility classes reach the built stylesheet. Then it swaps
-in `theme-broadsheet` and typechecks again. It takes about a minute.
+on a spare port, packs `@deckard/core` and `@deckard/themes`, and installs all
+three into a scratch app
+outside the workspace. It checks the blocks land where the items claim and that
+nothing installs a `deck/theme`, that the preset wrote the stylesheet import and
+nothing else, that the app builds with an empty `next.config.ts`, and that an
+edit to an installed block, the stylesheet of the built-in theme the fixture
+deck imports, and the runtime's own utility classes all reach the built
+stylesheet. It takes about a minute.
 
 ### The init template comes from the same sources
 
 `deckard init` cannot reach the registry, because a new app has no shadcn
-config and the registry has no host. So the CLI ships the same files inside
-`packages/cli/template`, and `packages/cli/scripts/sync-template.ts` copies them
-there from the canonical sources: the five blocks and the deckard theme from
-`apps/playground`, the other five themes from `registry/themes`, and the pinned versions of
-next, react, and tailwind out of the playground's `package.json`. The sync runs
-on every CLI build, and `pnpm test` runs it again with `--check`, which fails
-naming any file that drifted. Edit the playground's blocks, not the copies.
+config and the registry has no host. So the CLI ships the blocks inside
+`packages/cli/template`.
+
+That directory is build output. It is gitignored, and
+`packages/cli/scripts/sync-template.ts` rebuilds it from scratch on every CLI
+build and again on `prepack`: the hand-authored app shell, routes, tsconfig, and
+sample slides come from `packages/cli/template-src`, the five blocks from
+`apps/playground`, and the pinned versions of next, react, and tailwind out of
+the playground's `package.json`. Nothing is committed twice, so there is no
+drift gate to run and nothing to keep in sync by hand. Edit `template-src` or
+the playground's blocks.
+
+The theme is not in the template at all. `init` writes the import instead, so
+`--theme phosphor` is one identifier in the generated `deck/deck.ts`.

@@ -122,7 +122,7 @@ to turn on for one file I wrote myself. Next's own error message suggests the
 `unoptimized` prop, and the media block had no way to pass it.
 
 Fixed in the block, in both the registry source and the demo copy. The demo's
-`next.config.mjs` never had to grow a key for it.
+`next.config.ts` never had to grow a key for it.
 
 This one was worth fixing rather than documenting. A deck full of diagrams is a
 normal deck, diagrams are SVG, and the first thing a consumer would have found is

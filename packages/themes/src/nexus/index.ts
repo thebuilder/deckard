@@ -1,0 +1,10 @@
+import type { SlideTheme } from "@deckard/core"
+
+import "./theme.css"
+
+export const nexus = {
+  className: "nexus-theme",
+  colorModes: ["light", "dark"],
+  defaultColorMode: "dark",
+  id: "nexus",
+} satisfies SlideTheme

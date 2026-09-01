@@ -8,16 +8,17 @@
     "packages/core/src/deck/slide-from-module.tsx",
     "packages/core/src/lib/utils.ts",
     "packages/core/src/ui/**",
+    "packages/themes/src/index.ts",
     "apps/playground/components/ui/**",
     "apps/playground/app/slides/blocks/**",
     "apps/demo/app/slides/blocks/**",
-    "registry/themes/**",
     "packages/cli/src/index.ts"
   ],
   "ignorePatterns": [
     "tools/package-smoke/fixture/**",
     "tools/registry-smoke/fixture/**",
-    "packages/cli/template/**"
+    "packages/cli/template/**",
+    "packages/cli/template-src/**"
   ],
   "ignoreExports": [
     {
@@ -29,7 +30,7 @@
       "exports": ["meta", "notes"]
     }
   ],
-  "ignoreDependencies": ["postcss-load-config", "react-dom", "tailwindcss"],
+  "ignoreDependencies": ["react-dom", "tailwindcss"],
   "duplicates": {
     "ignore": ["apps/demo/app/**", "apps/demo/deck/theme/**"]
   }

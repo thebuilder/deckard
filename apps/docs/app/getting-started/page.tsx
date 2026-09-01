@@ -23,26 +23,27 @@ const appTree = `my-talk/
     deck.ts
     slides.tsx
     slides/*.slide.tsx
-    theme/               the theme you picked, yours to edit
   lib/utils.ts
   public/
   components.json
-  next.config.mjs
+  next.config.ts
   package.json`
 
 const tarballInit = `# from the root of a Deckard checkout
 pnpm cli:build
 pnpm --filter @deckard/core exec pnpm pack --pack-destination /tmp/deckard
+pnpm --filter @deckard/themes exec pnpm pack --pack-destination /tmp/deckard
 pnpm --filter @deckard/cli exec pnpm pack --pack-destination /tmp/deckard
 
 node packages/cli/bin/deckard.mjs init ~/code/my-talk \\
   --core-tarball /tmp/deckard/deckard-core-0.0.1.tgz \\
+  --themes-tarball /tmp/deckard/deckard-themes-0.0.1.tgz \\
   --cli-tarball /tmp/deckard/deckard-cli-0.0.1.tgz`
 
 const deckConfig = `import { defineDeck } from "@deckard/core"
+import { deckard } from "@deckard/themes"
 
 import { slides } from "@/deck/slides"
-import { theme } from "@/deck/theme"
 
 export const deck = defineDeck({
   canvas: { fit: "contain", height: 1080, mode: "fixed", width: 1920 },
@@ -50,7 +51,7 @@ export const deck = defineDeck({
   footer: { mode: "visible" },
   header: { brand: "My talk", date: "March 2026", href: "/", mode: "auto" },
   slides,
-  theme,
+  theme: deckard,
   title: "My talk",
 })`
 
@@ -60,8 +61,10 @@ pnpm deck:check-overflow
 pnpm deck:screenshots
 pnpm deck:contact-sheet`
 
-const addCommands = `deckard add theme phosphor
-deckard add block metrics`
+const themeCommands = `deckard add theme phosphor
+deckard eject theme`
+
+const addCommands = "deckard add block metrics"
 
 const slideArray = `import type { SlideDefinition } from "@deckard/core"
 
@@ -138,7 +141,8 @@ export default function GettingStartedPage() {
       <ul className="list-disc space-y-1 pl-6">
         <li>
           <code>--theme &lt;name&gt;</code> picks the look: deckard, broadsheet,
-          ledger, meridian, nexus, or phosphor. The default is deckard.
+          ledger, meridian, nexus, or phosphor. The default is deckard. It
+          writes the import, not a copy of the theme.
         </li>
         <li>
           <code>--empty</code> writes two slides instead of the sample deck.
@@ -159,21 +163,23 @@ export default function GettingStartedPage() {
         <code>{appTree}</code>
       </pre>
       <p>
-        <code>@deckard/core</code> is a dependency inside it. The theme and the
-        slide blocks are source files in your repository from the first commit,
-        and you edit them from then on. You do not clone the Deckard repository
-        to build a deck, and you do not write slides in its playground. That
-        repository is where the framework itself gets built, which is the last
-        section on this page.
+        <code>@deckard/core</code> is a dependency inside it. The slide blocks
+        are source files in your repository from the first commit, and you edit
+        them from then on. The theme is an import until you eject it. You do not
+        clone the Deckard repository to build a deck, and you do not write
+        slides in its playground. That repository is where the framework itself
+        gets built, which is the last section on this page.
       </p>
 
       <h2 className="pt-4 text-2xl">Where the packages stand today</h2>
       <p>
-        <code>@deckard/core</code> and <code>@deckard/cli</code> are built for
-        npm and are not published there yet. Publishing them is the plan before
-        the API is called stable, so the <code>npx</code> line above does not
-        work from a clean machine yet. Until it does, pack both out of a
-        checkout and point the init at the tarballs.
+        <code>@deckard/core</code>, <code>@deckard/themes</code>, and{" "}
+        <code>@deckard/cli</code> are built for npm and are not published there
+        yet. Publishing them is the plan before the API is called stable, so the{" "}
+        <code>npx</code> line above does not work from a clean machine yet.
+        Until it does, pack all three out of a checkout and point the init at
+        the tarballs. They version together, so <code>init</code> writes the
+        same range for all three when you pass no tarball.
       </p>
       <pre>
         <code>{tarballInit}</code>
@@ -243,26 +249,46 @@ export default function GettingStartedPage() {
         one but the PDF export takes <code>--light</code>.
       </p>
 
-      <h2 className="pt-4 text-2xl">Install another theme or block</h2>
+      <h2 className="pt-4 text-2xl">Switch or eject the theme</h2>
       <p>
-        Themes and slide blocks are not in the package. They install into your
-        app as files you own, through the shadcn registry.{" "}
-        <code>deckard add</code> is a wrapper around <code>shadcn add</code>{" "}
-        that reads the registry URL from <code>components.json</code>, or takes{" "}
-        <code>--registry</code>.
+        The six Deckard themes are the whole of <code>@deckard/themes</code>,
+        the second package <code>init</code> installs. A deck picks one by
+        importing it from <code>@deckard/themes</code> and passing it to{" "}
+        <code>defineDeck</code>, so switching is a one-line edit and nothing is
+        copied into your app. <code>deckard add theme &lt;name&gt;</code> makes
+        that edit for you.
+      </p>
+      <pre>
+        <code>{themeCommands}</code>
+      </pre>
+      <p>
+        <code>deckard eject theme</code> is the other direction. It copies the
+        theme the deck currently imports out of the installed package and into{" "}
+        <code>deck/theme/</code> as <code>theme.css</code>,{" "}
+        <code>index.ts</code>, and <code>THEME.md</code>, then repoints{" "}
+        <code>deck/deck.ts</code> at the copy. From then on the theme is your
+        source: edit a token and it lands. Eject once you want to change how the
+        deck looks, not before. It refuses if <code>deck/theme/</code> already
+        exists, because a deck has exactly one theme.
+      </p>
+
+      <h2 className="pt-4 text-2xl">Install a block</h2>
+      <p>
+        Slide blocks are not in the package. They install into your app as files
+        you own, through the shadcn registry. <code>deckard add block</code> is
+        a wrapper around <code>shadcn add</code> that reads the registry URL
+        from <code>components.json</code>, or takes <code>--registry</code>.
       </p>
       <pre>
         <code>{addCommands}</code>
       </pre>
       <p>
-        A theme lands in <code>deck/theme/</code> and replaces whatever theme
-        was there, because a deck has exactly one. shadcn asks before it does,
-        and <code>--yes</code> answers for it. Blocks land in{" "}
-        <code>app/slides/blocks/</code>. The registry has no public host yet, so{" "}
-        <code>init</code> points <code>components.json</code> at this docs site
-        running locally on port 3001, and <code>deckard add</code> says so when
-        nothing answers there. <Link href="/registry">Registry</Link> covers
-        what each item contains and how to run the server.
+        Blocks land in <code>app/slides/blocks/</code>. The registry has no
+        public host yet, so <code>init</code> points{" "}
+        <code>components.json</code> at this docs site running locally on port
+        3001, and <code>deckard add</code> says so when nothing answers there.{" "}
+        <Link href="/registry">Registry</Link> covers what each item contains
+        and how to run the server.
       </p>
 
       <h2 className="pt-4 text-2xl">Describe the deck</h2>
@@ -341,7 +367,8 @@ export default function GettingStartedPage() {
       <p>
         <code>styles.css</code> defines the slide token contract, the{" "}
         <code>--slide-*</code> variables every block and every theme reads. A
-        deck with no theme installed renders on those defaults.
+        deck that passes no theme to <code>defineDeck</code> renders on those
+        defaults.
       </p>
       <p>
         Point the <code>utils</code> alias in <code>components.json</code> at{" "}
@@ -357,12 +384,13 @@ export default function GettingStartedPage() {
         <code>{registryConfig}</code>
       </pre>
       <pre>
-        <code>pnpm dlx shadcn@latest add @deckard/preset-deckard</code>
+        <code>pnpm dlx shadcn@latest add @deckard/preset-blocks</code>
       </pre>
       <p>
-        That writes <code>deck/theme/</code> and <code>app/slides/blocks/</code>{" "}
-        into your app, plus the stylesheet import above. It leaves{" "}
-        <code>next.config.mjs</code> alone, and there is nothing to add there.
+        That writes <code>app/slides/blocks/</code> into your app, plus the
+        stylesheet import above. It leaves <code>next.config.ts</code> alone,
+        and there is nothing to add there. The theme is not part of it: import
+        one from <code>@deckard/themes</code> instead.
       </p>
       <p>
         Then the routes. <code>@deckard/core/next</code> ships them, so an app
@@ -400,13 +428,15 @@ export default function GettingStartedPage() {
         <li>
           <code>apps/playground</code> is the reference deck, and the app the
           visual checks run against. It exercises every feature on purpose, so
-          it is a test surface, not a template. Its blocks and its theme are
-          also the source the <code>init</code> template is copied from.
+          it is a test surface, not a template. Its blocks are also the source
+          the <code>init</code> template is built from, and it imports its theme
+          from <code>@deckard/themes</code> the way a generated deck does.
         </li>
         <li>
           <code>apps/demo</code> is a 19-slide conference talk shaped exactly
-          like a consumer app, with its own theme and its own copies of the
-          blocks. Read it when you want to see what a real deck looks like.
+          like a consumer app, with an ejected theme of its own and its own
+          copies of the blocks. Read it when you want to see what a real deck
+          looks like.
         </li>
         <li>
           <code>apps/docs</code> is this site, and it also serves the registry
