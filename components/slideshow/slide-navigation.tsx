@@ -6,27 +6,30 @@ import { useCallback, useEffect } from "react"
 
 import { useSlideStepper } from "@/components/slideshow/slide-stepper"
 import { Button, buttonVariants } from "@/components/ui/button"
+import type { SlideSummary } from "@/lib/deck/types"
 import { cn } from "@/lib/utils"
 
 interface SlideNavigationProps {
-  current: number
   mode?: "visible" | "counter"
-  nextHref?: string
-  prefetchHrefs?: string[]
-  previousHref?: string
+  next?: SlideSummary
+  prefetch?: SlideSummary[]
+  previous?: SlideSummary
+  slide: SlideSummary
   total: number
 }
 
 export function SlideNavigation({
-  current,
+  slide,
   total,
-  previousHref,
-  nextHref,
+  previous,
+  next,
   mode = "visible",
-  prefetchHrefs = [],
+  prefetch = [],
 }: SlideNavigationProps) {
   const router = useRouter()
   const stepper = useSlideStepper()
+  const previousHref = previous?.href
+  const nextHref = next?.href
 
   const handlePrevious = useCallback(() => {
     if (stepper?.canRetreat) {
@@ -55,12 +58,12 @@ export function SlideNavigation({
   const isCounterOnly = mode === "counter"
 
   useEffect(() => {
-    const uniqueHrefs = [...new Set(prefetchHrefs.filter(Boolean))]
+    const uniqueHrefs = new Set(prefetch.map((item) => item.href))
 
     for (const href of uniqueHrefs) {
       router.prefetch(href)
     }
-  }, [prefetchHrefs, router])
+  }, [prefetch, router])
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 border-border/70 border-t bg-background/75 backdrop-blur-xl">
@@ -91,7 +94,7 @@ export function SlideNavigation({
 
         <div className="min-w-0 text-center">
           <p className="font-medium text-muted-foreground text-xs uppercase tabular-nums tracking-[0.2em]">
-            Slide {current} of {total}
+            Slide {slide.number} of {total}
           </p>
         </div>
 

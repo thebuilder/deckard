@@ -48,7 +48,8 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Project structure
 
-- `deck/slides.tsx`: slide definitions only
+- `deck/slides.tsx`: slide definitions
+- `deck/slides/*.slide.tsx`: file-per-slide modules wired in with `slideFromModule`
 - `deck/deck.ts`: deck config (title, description, header and footer defaults) wrapped in `defineDeck`
 - `lib/deck/*`: slide model, id resolution, and validation
 - `app/slides/blocks/*`: deck-authoring building blocks (layout, typography, collections, media)
@@ -177,6 +178,52 @@ Example fullscreen video slide with autoplay:
 - `variant: "framed" | "background"` (`background` is edge-to-edge)
 - `overlay: "none" | "subtle" | "medium" | "strong"` for text readability over media
 - `media.fit: "cover" | "contain"` (defaults to `"cover"`)
+
+## Server components and slide modules
+
+Slides are Server Components. A slide body can be async and await its own data
+before it renders:
+
+```tsx
+async function ReleaseSlide() {
+  const releases = await loadReleases()
+
+  return <ContentSlideCard eyebrow="Releases" title="Shipped this quarter">
+    <FeatureGrid items={releases} />
+  </ContentSlideCard>
+}
+```
+
+Interactivity goes one level down, in a nested client component the slide
+renders. Never put `"use client"` at the top of `deck/slides.tsx` or a slide
+module, `deck/slides.test.ts` fails on it.
+
+A slide can also live in its own file as a module that exports `default`,
+`meta`, and `notes`:
+
+```tsx
+// deck/slides/pricing.slide.tsx
+export const meta: SlideMeta = { slug: "pricing", title: "Pricing" }
+export const notes = "Speaker-only context."
+export default async function PricingSlide() {
+  return <PricingTable plans={await loadPlans()} />
+}
+```
+
+```tsx
+// deck/slides.tsx
+slideFromModule(pricingSlide, "deck/slides/pricing.slide.tsx")
+```
+
+Props that cross into a client component have to be serializable. The chrome
+passes `SlideSummary` values (`id`, `number`, `title`, `href`, `stepCount`)
+built from the resolved deck, and the rendered slide body crosses only as
+`children`.
+
+A slide that throws under `next dev` renders an inline error card with the
+slide id and the message, and navigation keeps working. In a production build a
+Server Component that throws is fatal to the route, so Next serves its own
+error page.
 
 ## Presenter preview context
 

@@ -24,6 +24,14 @@ export type SlideDefinition = Omit<SlideMeta, "order"> & {
   sourcePath?: string
 }
 
+export type SlideComponent = () => ReactNode | Promise<ReactNode>
+
+export interface SlideModule {
+  default: SlideComponent
+  meta?: SlideMeta
+  notes?: string
+}
+
 export interface SlideDefaults {
   background: SlideBackgroundMode
   footer: SlideFooterMode
@@ -44,6 +52,15 @@ export interface ResolvedSlide {
   number: number
   slug?: string
   sourcePath?: string
+  stepCount: number
+  title: string
+}
+
+// Crosses the server/client boundary and BroadcastChannel, so every field has to stay serializable.
+export interface SlideSummary {
+  href: string
+  id: string
+  number: number
   stepCount: number
   title: string
 }

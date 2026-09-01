@@ -1,21 +1,28 @@
 import Link from "next/link"
 import { SlideShell } from "@/components/slideshow/slide-shell"
 import { deck } from "@/deck/deck"
+import { toSlideSummaries } from "@/lib/deck/slide-summary"
+import type { SlideSummary } from "@/lib/deck/types"
+
+const notFoundSlide: SlideSummary = {
+  href: "/slides/not-found",
+  id: "not-found",
+  number: 1,
+  stepCount: 0,
+  title: "Page not found",
+}
 
 export default function SlidesNotFoundPage() {
   return (
     <SlideShell
-      current={1}
-      currentId="not-found"
       deckTitle={deck.header.brand}
       deckTitleHref={deck.header.href}
       footerMode="hidden"
       headerMode={deck.header.mode}
       layout="default"
-      slideOptions={[]}
-      slideTitle="Page not found"
-      stepCount={0}
-      total={1}
+      presenterEnabled={false}
+      slide={notFoundSlide}
+      slides={toSlideSummaries(deck.slides)}
     >
       <section className="flex min-h-[calc(100svh-16rem)] items-center py-8 sm:py-12">
         <div className="space-y-6">
