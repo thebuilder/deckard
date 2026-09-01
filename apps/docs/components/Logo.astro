@@ -1,0 +1,31 @@
+---
+interface Props {
+  logo?: { href?: string; svg?: string; text?: string } | null
+  site: { title: string }
+}
+
+const { logo, site } = Astro.props
+const wordmark = logo?.text ?? site.title
+---
+
+<a
+  class="inline-flex min-w-0 items-center gap-2.5 text-base text-foreground"
+  href={logo?.href ?? "/"}
+>
+  {
+    logo?.svg && (
+      <span
+        aria-hidden="true"
+        class="inline-flex h-6 shrink-0 items-center [&>svg]:h-6 [&>svg]:w-auto"
+        set:html={logo.svg}
+      />
+    )
+  }
+  {
+    wordmark && (
+      <span class="truncate font-display font-medium text-[0.95rem] tracking-[0.04em]">
+        {wordmark}
+      </span>
+    )
+  }
+</a>

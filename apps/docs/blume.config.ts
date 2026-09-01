@@ -12,6 +12,18 @@ export default defineConfig({
     owner: "thebuilder",
     repo: "deckard",
   },
+  logo: {
+    image: "/icon.svg",
+    text: "Deckard",
+  },
+  markdown: {
+    codeBlocks: {
+      theme: {
+        dark: "github-dark-high-contrast",
+        light: "github-light-high-contrast",
+      },
+    },
+  },
   navigation: {
     sidebar: {
       display: "flat",
@@ -33,6 +45,9 @@ export default defineConfig({
   },
   theme: {
     accent: "teal",
+    fonts: {
+      display: { name: "Orbitron", provider: "google", weights: [500, 700] },
+    },
     mode: "system",
     radius: "md",
   },
