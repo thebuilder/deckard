@@ -15,6 +15,10 @@ export function SlideCanvasHeader({
   date?: string
   title?: string
 }) {
+  // A title slide is usually named after the deck, and a header that says the
+  // same thing twice is worse than one that says it once.
+  const showTitle = Boolean(title) && title !== brand
+
   return (
     <header
       className="absolute inset-x-0 top-0 z-40 flex min-h-16 items-center"
@@ -23,7 +27,7 @@ export function SlideCanvasHeader({
       <Link data-slide-header-brand="" href={brandHref}>
         {brand}
       </Link>
-      {title ? <span data-slide-header-title="">{title}</span> : null}
+      {showTitle ? <span data-slide-header-title="">{title}</span> : null}
       {date ? <time data-slide-header-date="">{date}</time> : null}
     </header>
   )

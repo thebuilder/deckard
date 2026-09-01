@@ -246,7 +246,12 @@
   content: "::";
 }
 
+/* A status bar is one line of cells, not a band, so it holds itself thinner
+ * than the base footer. */
+
 .phosphor-theme [data-slide-footer] {
+  min-block-size: 2.5rem;
+  padding-block: 0.5rem;
   color: var(--primary-foreground);
   background-color: var(--primary);
   border-block-start: 0;

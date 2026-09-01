@@ -98,6 +98,12 @@ describe("canvas chrome", () => {
     expect(container.querySelector("[data-slide-header-title]")).toBeNull()
   })
 
+  it("drops a slide title that only repeats the deck name", () => {
+    renderChrome({ number: 1, title: "Deckard", total: 12 })
+
+    expect(container.querySelector("[data-slide-header-title]")).toBeNull()
+  })
+
   it("renders a date the deck did set", () => {
     renderChrome({ date: "March 2026", number: 3, total: 12 })
 

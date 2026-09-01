@@ -106,8 +106,10 @@
     margin-inline-start: auto;
   }
 
+  /* Left, because the deck controls dock in the bottom right corner and the
+   * counter would sit under them. */
   [data-slide-canvas] [data-slide-counter] {
-    margin-inline-start: auto;
+    margin-inline-end: auto;
     font-variant-numeric: tabular-nums;
     letter-spacing: var(--slide-chrome-tracking);
   }
