@@ -160,7 +160,11 @@ export function SlideShell({
           chromeInset={chromeInset(chrome)}
           footer={
             chrome.showFooter ? (
-              <SlideCanvasFooter number={slide.number} total={slides.length} />
+              <SlideCanvasFooter
+                number={slide.number}
+                showProgress={deck.showProgress}
+                total={slides.length}
+              />
             ) : null
           }
           frameClassName={frameClassName(chrome)}

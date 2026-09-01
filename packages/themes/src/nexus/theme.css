@@ -273,25 +273,10 @@
   color: var(--primary);
 }
 
-/* The strip reads as a readout: ticks the whole width, lit up to the current
- * slide. --slide-progress is the fraction, so the mask is the only moving part. */
+/* A lit bar on an unlit track. Solid rather than ticked: the fill ends at an
+ * arbitrary fraction of the width, and a repeating gradient gets cut mid-tick. */
 
 .nexus-theme [data-slide-progress] {
   inset-block: 0 auto;
-  height: 6px;
-  background-color: transparent;
-  background-image: repeating-linear-gradient(
-    to right,
-    var(--slide-progress-track) 0 2px,
-    transparent 2px 0.75rem
-  );
-}
-
-.nexus-theme [data-slide-progress]::after {
-  background-color: transparent;
-  background-image: repeating-linear-gradient(
-    to right,
-    var(--slide-progress-fill) 0 2px,
-    transparent 2px 0.75rem
-  );
+  height: 3px;
 }

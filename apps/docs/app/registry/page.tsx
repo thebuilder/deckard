@@ -67,7 +67,7 @@ const themes = [
     modes: "Light and dark, dark by default",
     name: "nexus",
     summary:
-      "A flight console. Blue-black sheet, amber accent, every heading uppercase with an amber halo behind the first two levels. Panels take a 0.125rem blueprint corner. The grid variant is the draw: a 1.75rem cell grid with every fifth line heavier, faded out behind the copy. Spotlight is an approach light off the top edge over a tube vignette. Light mode is complete and reads as the printed version of the same document. The deck header and footer are console strips in wide capitals over a tick readout of the progress.",
+      "A flight console. Blue-black sheet, amber accent, every heading uppercase with an amber halo behind the first two levels. Panels take a 0.125rem blueprint corner. The grid variant is the draw: a 1.75rem cell grid with every fifth line heavier, faded out behind the copy. Spotlight is an approach light off the top edge over a tube vignette. Light mode is complete and reads as the printed version of the same document. The deck header and footer are console strips in wide capitals over a lit progress bar.",
     swatches: readThemeSwatches("packages/themes/src/nexus/theme.css"),
     title: "Nexus",
     when: "An engineering or systems talk that wants instrument-panel authority.",
@@ -77,7 +77,7 @@ const themes = [
     modes: "Light and dark, dark by default",
     name: "phosphor",
     summary:
-      "A green CRT. One monospace family sets every word on the slide, headings included, uppercase with a phosphor bloom. Scanlines are the first background layer of every variant rather than an overlay, so only background none escapes them. The grid variant draws a character cell; spotlight is the tube, bloom at the centre and falloff into the corners. Every corner is square. Light mode turns the tube off for handouts. The deck header is a command line and the footer a reverse-video status bar with the progress in character cells.",
+      "A green CRT. One monospace family sets every word on the slide, headings included, uppercase with a phosphor bloom. Scanlines are the first background layer of every variant rather than an overlay, so only background none escapes them. The grid variant draws a character cell; spotlight is the tube, bloom at the centre and falloff into the corners. Every corner is square. Light mode turns the tube off for handouts. The deck header is a command line and the footer a reverse-video status bar with a lit progress bar along its edge.",
     swatches: readThemeSwatches("packages/themes/src/phosphor/theme.css"),
     title: "Phosphor",
     when: "A developer talk or a build report that should look like it is running rather than presented.",

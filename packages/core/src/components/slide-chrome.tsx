@@ -36,9 +36,11 @@ export function SlideCanvasHeader({
 
 export function SlideCanvasFooter({
   number,
+  showProgress = true,
   total,
 }: {
   number: number
+  showProgress?: boolean
   total: number
 }) {
   const progress = total > 0 ? number / total : 0
@@ -48,11 +50,13 @@ export function SlideCanvasFooter({
       className="absolute inset-x-0 bottom-0 z-40 min-h-14"
       data-slide-footer=""
     >
-      <div
-        aria-hidden="true"
-        data-slide-progress=""
-        style={{ "--slide-progress": progress } as CSSProperties}
-      />
+      {showProgress ? (
+        <div
+          aria-hidden="true"
+          data-slide-progress=""
+          style={{ "--slide-progress": progress } as CSSProperties}
+        />
+      ) : null}
       <p data-slide-counter="">
         <span data-slide-counter-current="">{number}</span>
         <span data-slide-counter-separator=""> of </span>

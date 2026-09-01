@@ -125,9 +125,9 @@ Nexus runs console strips. Both are set in capitals at `0.28em`, the deck name i
 the date in the mono face at a tighter tracking. The counter lights its current
 number in the accent.
 
-The progress element is a tick readout: the track repeats 2px ticks across the
-full width in `--slide-grid-major`, and the fill repeats the same ticks in
-`--primary` up to `--slide-progress`. Nothing animates but the width.
+The progress element is a solid 3px bar: an unlit track in
+`--slide-grid-major` with the lit part in `--primary` up to `--slide-progress`.
+Nothing animates but the width.
 
 ## Safe to change
 

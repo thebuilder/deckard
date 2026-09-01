@@ -141,9 +141,9 @@ than the base footer and gives that line back to the slide:
 `--slide-footer-space` is `5rem` here rather than the `6rem` in the token
 contract.
 
-The progress bar sits along the bottom of that bar and is drawn in character
-cells, a repeating gradient in `currentcolor`, so it fills in steps rather than
-sliding.
+The progress bar sits along the bottom of that bar, a solid 3px fill in
+`currentcolor` so it reads as one lit run rather than a row of cells cut
+wherever the deck happens to be.
 
 ## Safe to change
 
