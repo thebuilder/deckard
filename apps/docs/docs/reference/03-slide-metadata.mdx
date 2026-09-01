@@ -1,0 +1,121 @@
+---
+title: Slide metadata
+description: Every field on a slide definition and on a slide module, what each one does, and what the deck defaults resolve them to.
+sidebar:
+  icon: tags
+---
+
+A slide is a `body` and optional metadata. Two shapes carry it: an entry in the `slides` array, and a module in `deck/slides/*.slide.tsx`.
+
+## SlideDefinition
+
+An entry in the array. `body` is required, everything else is optional.
+
+<TypeTable
+  type={{
+    body: {
+      type: "ReactNode",
+      required: true,
+      description: "The slide itself.",
+    },
+    slug: {
+      type: "string",
+      description: "Fixes the URL at /slides/<slug>. Lowercase letters, digits, and hyphens, unique across the deck, never all digits. Without one the slide is served at its 1-based position.",
+    },
+    title: {
+      type: "string",
+      description: "Names the slide in the header, the command center, and the presenter flow. A slide without one shows \"Slide 4\". Never becomes a slug.",
+    },
+    notes: {
+      type: "string",
+      description: "Speaker-only text. Reaches the presenter window and never renders in the deck.",
+    },
+    stepCount: {
+      type: "number",
+      default: "0",
+      description: "How many reveal steps the slide has. Pair it with SlideStep.",
+    },
+    header: {
+      type: '"visible" | "hidden" | "auto"',
+      default: "the deck's header.mode",
+      description: '"auto" renders in the default layout and hides in fullscreen.',
+    },
+    footer: {
+      type: '"visible" | "hidden" | "counter"',
+      default: "the deck's footer.mode",
+      description: '"counter" resolves to "visible".',
+    },
+    layout: {
+      type: '"default" | "fullscreen"',
+      default: '"default"',
+      description: "fullscreen hands the whole canvas to the slide so media can bleed to every edge.",
+    },
+    background: {
+      type: '"default" | "none" | "spotlight" | "grid"',
+      default: '"default"',
+      description: "Which background variant the theme paints. SlideBackground renders one empty element carrying data-slide-background.",
+    },
+    sourcePath: {
+      type: "string",
+      description: "Set by slideFromModule and discoverSlides. deckard validate checks it is a file on disk.",
+    },
+  }}
+/>
+
+Use `layout`, `header`, `footer`, and `background` to change the frame for one slide, rather than special-casing the route.
+
+## SlideMeta
+
+What a slide module exports as `meta`. Same fields as `SlideDefinition` minus `body` and `sourcePath`, plus one:
+
+<TypeTable
+  type={{
+    order: {
+      type: "number",
+      description: "Sorts this module inside the discovered group when discoverSlides runs with sort: \"order\". It cannot move the group. discoverSlides consumes it and leaves it off the definition, so a module can never push itself past a manual slide.",
+    },
+  }}
+/>
+
+`notes` can be exported either on `meta` or as its own top-level export. The top-level export wins.
+
+```tsx deck/slides/pricing.slide.tsx
+import type { SlideMeta } from "@deckard/core"
+
+export const meta: SlideMeta = { slug: "pricing", title: "Pricing", order: 20 }
+export const notes = "Pause on the middle tier."
+
+export default async function PricingSlide() {
+  return <PricingTable plans={await loadPlans()} />
+}
+```
+
+A module has to export its component as `default`. Discovery throws naming the file when it does not, and when the module is async, because an eager glob hands back a promise instead of the exports.
+
+## Slide ids
+
+The `slides` array defines deck order. `resolveSlides` never reorders it, so moving a slide in the array is the only way to move it in the deck.
+
+Ids are matched exactly. A slugged slide is served only at its slug and never at its position, so there is one URL per slide.
+
+The deck fails to build on a duplicate slug, an empty slug, a slug with characters unsafe in a URL path, or a slug made only of digits.
+
+## Step reveals
+
+```tsx
+{
+  title: "The argument",
+  stepCount: 3,
+  body: (
+    <OpenContentSlide eyebrow="Three parts" title="The argument">
+      <SlideStep step={0}>Everyone agrees on the premise.</SlideStep>
+      <SlideStep step={1}>Almost nobody acts on it.</SlideStep>
+      <SlideStep step={2}>Here is what that costs.</SlideStep>
+    </OpenContentSlide>
+  ),
+}
+```
+
+`step` is zero-based, and a step shows once the current step reaches it. Hidden steps stay in the layout, so a stepped slide takes its full height from the first step and `deckard check-overflow` measures it fully revealed.
+
+The current step also rides in the URL as `?step=`, read on the client, which is how the presenter preview stays in sync without making the route dynamic.

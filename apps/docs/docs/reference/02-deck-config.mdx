@@ -1,0 +1,182 @@
+---
+title: Deck config
+description: Every field defineDeck accepts, what it resolves them into, and the markup the deck header and footer render inside the canvas.
+sidebar:
+  icon: settings
+---
+
+`defineDeck` takes a `DeckConfig` and returns a resolved `Deck`. It resolves the canvas, resolves every slide into an id, a number, a URL and its chrome defaults, and validates the theme.
+
+```ts deck/deck.ts
+import { defineDeck } from "@deckard/core"
+import { deckard } from "@deckard/themes"
+import { slides } from "@/deck/slides"
+
+export const deck = defineDeck({
+  canvas: { fit: "contain", height: 1080, mode: "fixed", width: 1920 },
+  description: "Beautiful React presentations with shadcn-native theming.",
+  footer: { mode: "visible" },
+  header: { brand: "Deckard", href: "/", meta: "March 2026", mode: "auto" },
+  slides,
+  theme: deckard,
+  title: "Deckard",
+})
+```
+
+## DeckConfig
+
+<TypeTable
+  type={{
+    title: {
+      type: "string",
+      required: true,
+      description: "The deck title. Used as the document title and in slide metadata.",
+    },
+    description: {
+      type: "string",
+      required: true,
+      description: "One line describing the deck.",
+    },
+    slides: {
+      type: "SlideDefinition[]",
+      required: true,
+      description: "The deck, in order. Never reordered.",
+    },
+    header: {
+      type: "DeckHeaderConfig",
+      required: true,
+      description: "The header inside the canvas: brand, link, optional meta line, and the default header mode.",
+    },
+    footer: {
+      type: "DeckFooterConfig",
+      required: true,
+      description: "The footer inside the canvas: the default footer mode and whether the progress element exists.",
+    },
+    canvas: {
+      type: "Partial<DeckCanvasConfig>",
+      description: "Overrides on the fixed coordinate space.",
+      default: "1920x1080, fit contain, margin 0",
+    },
+    theme: {
+      type: "SlideTheme",
+      description: "The theme object. A deck without one renders in neutral defaults.",
+    },
+  }}
+/>
+
+## canvas
+
+<TypeTable
+  type={{
+    mode: { type: '"fixed"', default: '"fixed"', description: "The only mode." },
+    width: { type: "number", default: "1920", description: "Logical pixels. Has to be positive." },
+    height: { type: "number", default: "1080", description: "Logical pixels. Has to be positive." },
+    fit: { type: '"contain"', default: '"contain"', description: "How the canvas fits the window." },
+    margin: {
+      type: "number",
+      default: "0",
+      description: "Browser pixels between the canvas and the window edge. Zero or more.",
+    },
+  }}
+/>
+
+`resolveCanvas` throws naming the field when `width` or `height` is not a positive number, or when `margin` is negative.
+
+## header
+
+<TypeTable
+  type={{
+    brand: {
+      type: "string",
+      required: true,
+      description: "The name at the left of the header. Rendered as a link.",
+    },
+    href: {
+      type: "string",
+      required: true,
+      description: "Where the brand links to.",
+    },
+    mode: {
+      type: '"visible" | "hidden" | "auto"',
+      required: true,
+      description: "The deck-wide default. A slide can override it.",
+    },
+    meta: {
+      type: "string",
+      description: "One line of standing detail at the right of the header, printed as written: \"March 2026\", \"Rev. C\", \"Internal\".",
+    },
+  }}
+/>
+
+`"auto"` renders the header in the default layout and hides it in a fullscreen layout.
+
+## footer
+
+<TypeTable
+  type={{
+    mode: {
+      type: '"visible" | "hidden" | "counter"',
+      required: true,
+      description: "The deck-wide default. A slide can override it.",
+    },
+    progress: {
+      type: "boolean",
+      default: "true",
+      description: "Whether the progress element exists at all. Setting false drops the element rather than hiding it, so no theme can paint it back.",
+    },
+  }}
+/>
+
+`"counter"` named the footer back when a visible footer also carried previous and next buttons. Those moved into the deck controls, so `"counter"` and `"visible"` now describe the same footer, and a deck that still says `"counter"` resolves to `"visible"`.
+
+```ts
+footer: { mode: "visible", progress: false }
+```
+
+## theme
+
+See [Themes](/guides/themes) for the full object. `defineDeck` validates it: `defaultColorMode: "system"` needs both modes in `colorModes`, and a theme listing one mode pins the canvas to it and hides the light/dark toggle.
+
+## What defineDeck returns
+
+`Deck` is `DeckConfig` with `canvas`, `slides`, and `theme` resolved. Each slide becomes a `ResolvedSlide`:
+
+| Field | What it holds |
+| --- | --- |
+| `id` | The URL segment: the slug, or the 1-based position. |
+| `href` | `/slides/<id>`. |
+| `index` | Zero-based position in the array. |
+| `number` | One-based position, what the counter shows. |
+| `title` | The authored title, or the generated `Slide 4` fallback. |
+| `authoredTitle` | Set only when the author gave the slide a title. The fallback in `title` names a slide in chrome but must never render as its own heading. |
+| `header` `footer` `layout` `background` | The slide's own value, or the deck default. |
+| `stepCount` | Defaults to `0`. |
+| `notes` `slug` `sourcePath` | As authored. |
+| `body` | The slide's React node. |
+
+Only `SlideSummary` (`id`, `number`, `title`, `authoredTitle`, `href`, `stepCount`) crosses into client components, because it has to survive `BroadcastChannel` serialization for presenter mode. The rendered slide body crosses only as `children`.
+
+## Deck chrome
+
+The header and footer are painted inside the canvas, so they scale with the deck, print into the PDF, and show up in a presenter preview. The runtime renders the structure and the theme decides the look:
+
+```html
+<header data-slide-header>
+  <a data-slide-header-brand href="/">Deckard</a>
+  <span data-slide-header-title>Themed chrome</span>
+  <span data-slide-header-meta>March 2026</span>
+</header>
+
+<footer data-slide-footer>
+  <div data-slide-progress style="--slide-progress: 0.25"></div>
+  <p data-slide-counter>
+    <span data-slide-counter-current>3</span>
+    <span data-slide-counter-separator> of </span>
+    <span data-slide-counter-total>12</span>
+  </p>
+</footer>
+```
+
+The title renders only for a slide that has one, and the meta line only when the deck sets `header.meta`. `--slide-progress` is the position in the deck as a fraction, which is what a theme reads to paint a bar, a row of dots, or nothing at all.
+
+The header row is one line inside a canvas that cannot grow. Every part clips itself rather than running off the edge, and the slide title carries by far the largest shrink factor, so it truncates before the brand loses any of itself. Both overflow checks measure the header and footer alongside the frame, so a deck finds out when its chrome asks for more room than it has.

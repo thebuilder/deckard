@@ -1,0 +1,216 @@
+/*
+ * The gallery runs on a checkbox and two radios per card, so the previews swap
+ * and the card expands with the page's JavaScript turned off. The inputs are
+ * clipped rather than hidden, which keeps them reachable from the keyboard, and
+ * every visible state below is driven off :checked.
+ */
+
+.theme-gallery {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-block: 2rem;
+}
+
+@media (min-width: 48rem) {
+  .theme-gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.theme-card {
+  display: grid;
+  grid-template-rows: auto auto auto;
+  gap: 0.875rem;
+  align-content: start;
+  padding: 0.875rem;
+  border: 1px solid var(--blume-border);
+  border-radius: calc(var(--blume-radius) + 0.375rem);
+}
+
+.theme-card:has(.theme-card-input[data-expand]:checked) {
+  grid-column: 1 / -1;
+  background-color: var(--blume-muted);
+}
+
+.theme-card-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+.theme-card-stage {
+  display: grid;
+}
+
+.theme-card-input[data-mode="light"]:checked
+  ~ .theme-card-stage
+  .deck-preview[data-mode="dark"],
+.theme-card-input[data-mode="dark"]:checked
+  ~ .theme-card-stage
+  .deck-preview[data-mode="light"] {
+  display: none;
+}
+
+.theme-card-body {
+  display: grid;
+  gap: 0.25rem;
+  padding-inline: 0.25rem;
+}
+
+.theme-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.625rem;
+  align-items: baseline;
+}
+
+.theme-card-badge {
+  font-size: 0.625rem;
+  font-weight: 500;
+  color: var(--blume-muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+}
+
+.theme-card-name {
+  font-family: var(--blume-font-mono);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--blume-foreground);
+}
+
+.theme-card-summary {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--blume-muted-foreground);
+  text-wrap: pretty;
+}
+
+.theme-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: 0.25rem;
+}
+
+.theme-card-modes {
+  display: flex;
+  padding: 2px;
+  background-color: var(--blume-muted);
+  border: 1px solid var(--blume-border);
+  border-radius: 999px;
+}
+
+.theme-card-modes label,
+.theme-card-enlarge {
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--blume-muted-foreground);
+  cursor: pointer;
+  border-radius: 999px;
+  transition:
+    color 120ms ease,
+    background-color 120ms ease;
+}
+
+.theme-card-modes label {
+  padding: 0.375rem 0.75rem;
+}
+
+.theme-card-enlarge {
+  padding: 0.375rem 0.75rem;
+  border: 1px solid var(--blume-border);
+}
+
+.theme-card-enlarge:hover,
+.theme-card-modes label:hover {
+  color: var(--blume-foreground);
+}
+
+.theme-card-input[data-mode="light"]:checked
+  ~ .theme-card-actions
+  label[data-mode="light"],
+.theme-card-input[data-mode="dark"]:checked
+  ~ .theme-card-actions
+  label[data-mode="dark"] {
+  color: var(--blume-foreground);
+  background-color: var(--blume-background);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 8%);
+}
+
+.theme-card-input[data-mode="light"]:focus-visible
+  ~ .theme-card-actions
+  label[data-mode="light"],
+.theme-card-input[data-mode="dark"]:focus-visible
+  ~ .theme-card-actions
+  label[data-mode="dark"],
+.theme-card-input[data-expand]:focus-visible
+  ~ .theme-card-actions
+  .theme-card-enlarge {
+  outline: 2px solid var(--blume-accent);
+  outline-offset: 2px;
+}
+
+.theme-card-enlarge [data-when="open"],
+.theme-card-input[data-expand]:checked
+  ~ .theme-card-actions
+  .theme-card-enlarge
+  [data-when="closed"] {
+  display: none;
+}
+
+.theme-card-input[data-expand]:checked
+  ~ .theme-card-actions
+  .theme-card-enlarge
+  [data-when="open"] {
+  display: inline;
+}
+
+.theme-card-detail {
+  display: none;
+  padding-block-end: 0.25rem;
+  padding-inline: 0.25rem;
+  font-size: 0.8125rem;
+  color: var(--blume-muted-foreground);
+}
+
+.theme-card-input[data-expand]:checked ~ .theme-card-detail {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.theme-card-detail dl {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 0.375rem 1rem;
+  align-items: baseline;
+}
+
+.theme-card-detail dt {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.theme-card-detail dd {
+  color: var(--blume-foreground);
+}
+
+.theme-card-detail code {
+  font-family: var(--blume-font-mono);
+  font-size: 0.8125rem;
+}
+
+.theme-card-detail a {
+  justify-self: start;
+  color: var(--blume-accent);
+  text-decoration-line: underline;
+  text-underline-offset: 3px;
+}

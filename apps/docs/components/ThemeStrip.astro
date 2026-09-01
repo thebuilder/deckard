@@ -1,0 +1,28 @@
+---
+import "../styles/theme-strip.css"
+import DeckPreview from "./DeckPreview.astro"
+import { gallerySlide, galleryTheme, themeNames } from "../lib/deck-preview"
+---
+
+<ul class="theme-strip not-prose">
+  {
+    themeNames.map((name) => {
+      const entry = galleryTheme[name]
+
+      return (
+        <li>
+          <a class="theme-strip-link" href={`/themes#${name}`}>
+            <DeckPreview
+              background={entry.background}
+              mode={entry.defaultColorMode === "dark" ? "dark" : "light"}
+              scale={0.078}
+              slide={gallerySlide}
+              theme={name}
+            />
+            <span class="theme-strip-name">{name}</span>
+          </a>
+        </li>
+      )
+    })
+  }
+</ul>

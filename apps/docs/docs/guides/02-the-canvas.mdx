@@ -1,0 +1,99 @@
+---
+title: The canvas
+description: Every slide is authored in one fixed 1920x1080 coordinate space. What that buys, what it costs, and how to handle content that does not fit.
+sidebar:
+  icon: frame
+---
+
+Every slide is authored in one fixed coordinate space, 1920x1080 by default. `SlideViewport` measures the browser window, scales the canvas to fit, and centers it. `SlideCanvas` holds the header, footer, background, and slide body inside that space.
+
+A slide looks the same on a laptop, a projector, a phone, and in the PDF. Only the scale changes.
+
+## Why fixed
+
+A presentation is not a website. It is shown once, at one size, to a room, and the thing you are optimising for is that the version you rehearsed is the version they see. Responsive layout inside a slide means every venue is a new layout you did not test.
+
+The fit is measured in the browser and published as `--deckard-scale`, because CSS cannot divide a length by a length in every engine Deckard targets. Slide content stays server rendered, and the canvas stays hidden until the first measurement lands so it never flashes at the wrong size.
+
+## Configuring it
+
+```ts deck/deck.ts
+canvas: {
+  mode: "fixed",
+  width: 1920,
+  height: 1080,
+  fit: "contain",
+  margin: 0,
+}
+```
+
+`margin` is the gap in browser pixels between the canvas and the window edge. At the default `0`, a window with the canvas aspect ratio shows the canvas edge to edge. Raise it if a deck wants the canvas to float inside the window.
+
+Content spacing is a slide concern, not a canvas one: the default frame keeps slide bodies off the canvas edges, and `layout: "fullscreen"` hands the whole canvas to the slide so media can bleed to every edge.
+
+`resolveCanvas` throws when `width` or `height` is not a positive number, or when `margin` is negative.
+
+## No viewport units, no breakpoints
+
+Size slide content against the canvas, with `h-full`, percentages, and fixed values.
+
+:::warning
+`svh`, `vh`, `vw`, and responsive breakpoints (`sm:`, `lg:`) react to the browser window, not to the slide. Inside the canvas they are measuring the wrong box.
+:::
+
+The same goes for colors and type sizes. Style with semantic tokens (`bg-card`, `text-muted-foreground`, `border-border`) or slide tokens (`--slide-title-size`, `--slide-code-size`, `--slide-surface`), never a hardcoded color and never a raw font size where a token exists. Changing how something looks is a `theme.css` edit, not a component edit. See the [token contract](/reference/tokens).
+
+Outside the canvas the rules invert: the deck controls, command center, presenter console, and dialogs keep the app tokens from `app/globals.css`, so they stay readable whatever the deck looks like.
+
+## Overflow
+
+The canvas clips what does not fit. Three things tell you about it:
+
+<Steps>
+  <Step title="Development">
+    `next dev` draws an amber outline around an overflowing slide and logs a
+    warning.
+  </Step>
+  <Step title="The overflow check">
+    `deckard check-overflow` builds the deck, opens every slide, and exits
+    non-zero listing each one the canvas clips and by how much. It measures the
+    slide frame, the header, and the footer, with a 1px tolerance.
+  </Step>
+  <Step title="The contact sheet">
+    `deckard screenshots` then `deckard contact-sheet` puts the whole deck in
+    one grid. Nothing else catches a slide that fits but looks unfinished.
+  </Step>
+</Steps>
+
+The usual fix is deleting a sentence, and the slide is usually better for it.
+
+## SlideScrollArea
+
+When content genuinely has to scroll, wrap it. `SlideScrollArea` keeps wheel, touch, and key scrolling inside itself, so scrolling never steps the deck:
+
+```tsx
+import { SlideScrollArea } from "@deckard/core/components"
+
+<SlideScrollArea label="Full config" maxHeight={360}>
+  <ConfigTable />
+</SlideScrollArea>
+```
+
+| Prop | Type | Notes |
+| --- | --- | --- |
+| `label` | `string` | Required. Names the scrollable region for assistive tech. |
+| `maxHeight` | `number` | Height cap in canvas pixels. |
+| `className` | `string` | Applied to the scroll container. |
+| `children` | `ReactNode` | Required. |
+
+`CodeBlock` takes its own optional `maxHeight` and uses it for long samples.
+
+## Where the chrome lives
+
+Chrome splits in two, and the split is the whole design.
+
+**Inside the canvas** sit the deck header and footer. They scale with the deck, print into the PDF export, show up in a presenter preview, and belong to the theme.
+
+**Outside the canvas** sit the deck controls: the command center trigger, the presenter popout, the color mode toggle, and compact previous and next buttons. They keep their own size and hit targets at any scale, down to a phone.
+
+Two tokens decide how much of the canvas the chrome gets: `--slide-header-space` (`8rem`) and `--slide-footer-space` (`6rem`). The frame reserves them as padding, and a fullscreen slide republishes them as `--slide-chrome-top` and `--slide-chrome-bottom`, the inset a bleeding layout has to clear. A theme that redesigns the chrome to a different height sets those two and the slide content moves with it. `phosphor` does exactly that, taking `--slide-footer-space` down to `5rem` for its thinner status bar.

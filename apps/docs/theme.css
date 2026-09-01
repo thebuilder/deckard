@@ -1,0 +1,161 @@
+/*
+ * The Deckard brand palette.
+ *
+ * Ink #0f172a  Graphite #111827  Slate #64748b  Mist #e2e8f0
+ * Surface #f8fafc  Teal #22d3ee  Cyan #14f1d9  Blue #3b82f6
+ *
+ * Dark is the primary look, and there the mapping is literal. Light mode needs
+ * three derived tones, each one the brand color moved along its own hue until
+ * it clears WCAG AA. Every deviation is noted where it happens.
+ */
+
+:root {
+  /* Surface page, Ink text: 17.1:1. */
+  --blume-background: #f8fafc;
+  --blume-foreground: #0f172a;
+
+  /* Blume's muted token is the raised surface under callouts, panels, and
+     table headers, which is the card role in this palette. White on Surface. */
+  --blume-muted: #ffffff;
+
+  /* Body copy resolves through muted-foreground, not foreground. Slate reads
+     4.6:1 on Surface and 4.8:1 on a white card. */
+  --blume-muted-foreground: #64748b;
+
+  --blume-border: #e2e8f0;
+
+  /* Derived: brand Teal at 1.7:1 on Surface cannot carry text, and Blume uses
+     the accent for text as often as for fills. This is Teal's own hue taken
+     down to oklch L 0.50, which reads 5.2:1 as text on Surface and takes white
+     at 5.4:1 as a fill. Dark mode keeps the brand value untouched. */
+  --blume-accent: #00748a;
+  --blume-accent-foreground: #ffffff;
+
+  /* Blue is the secondary. It fills at 4.9:1 under Ink. */
+  --blume-action: #3b82f6;
+  --blume-action-foreground: #0f172a;
+
+  --blume-code-background: #ffffff;
+
+  /* Cyan is the third brand color. It owns the code-block markers, and the
+     focus ring below. On Surface it needs the same darkening as the accent. */
+  --blume-code-highlight: #00748a1a;
+  --blume-code-highlight-border: #00748a8c;
+  --blume-code-word: #00748a26;
+  --blume-code-word-border: #00748a80;
+
+  --blume-radius: 0.625rem;
+}
+
+:root[data-theme="dark"] {
+  --blume-background: #0f172a;
+  --blume-foreground: #e2e8f0;
+
+  /* Graphite as given sits within 0.005 oklch L of Ink, so every raised surface
+     that reads it -- the active sidebar row, callouts, table headers, keyboard
+     chips, 27 usages in all -- dissolves into the page. This is Graphite's own
+     hue lifted to oklch L 0.255, which is the smallest step that makes a panel
+     visible without turning it into a second background. */
+  --blume-muted: #1b2332;
+
+  /* Derived: Slate is 3.8:1 on Ink, which fails AA for body copy. This is
+     Slate's own hue at oklch L 0.72, which reads 7.2:1 on Ink and 7.2:1 on
+     Graphite. */
+  --blume-muted-foreground: #95a6bf;
+
+  /* Mist at full strength is a 14.5:1 hairline around every panel, which is far
+     too loud. Held at 16% it stays Mist and stays quiet. */
+  --blume-border: #e2e8f029;
+
+  /* Literal: Teal fill, Ink on top, 9.9:1 in both directions. */
+  --blume-accent: #22d3ee;
+  --blume-accent-foreground: #0f172a;
+
+  --blume-action: #3b82f6;
+  --blume-action-foreground: #0f172a;
+
+  /* One step below the panel tone, so a code block inside a callout still
+     separates from it. Mist holds 13.4:1 on this. */
+  --blume-code-background: #181f2e;
+
+  --blume-code-highlight: #14f1d92e;
+  --blume-code-highlight-border: #14f1d999;
+  --blume-code-word: #14f1d938;
+  --blume-code-word-border: #14f1d98c;
+}
+
+/*
+ * Orbitron is a wide display face. The base theme tracks every heading at
+ * -0.05em, which is tuned for a text family promoted to headings and closes
+ * Orbitron's counters up until the caps collide. h1 and the wordmark get it
+ * open instead.
+ */
+h1,
+.prose :where(h1) {
+  letter-spacing: -0.01em;
+}
+
+/*
+ * Orbitron stops at h1. At h2 and below the wide, even-width letterforms stop
+ * reading as a scannable hierarchy and start reading as a second h1, so the
+ * body sans takes over with the base theme's own tracking.
+ */
+h2,
+h3,
+h4,
+h5,
+h6,
+.prose :where(h2, h3, h4, h5, h6) {
+  font-family: var(--blume-font-body);
+  letter-spacing: -0.03em;
+}
+
+/*
+ * Cyan is the brand's focus color. It is 12.4:1 on Ink and 1.4:1 on Surface, so
+ * light mode falls back to the darkened accent teal.
+ */
+:focus-visible {
+  outline-color: var(--blume-accent);
+}
+
+:root[data-theme="dark"] :focus-visible {
+  outline-color: #14f1d9;
+}
+
+/*
+ * The icon ships its own light and dark values behind prefers-color-scheme, but
+ * Blume resolves the theme to a data-theme attribute on <html>, so the reader's
+ * explicit choice and the OS preference disagree half the time. These two rules
+ * are more specific than the file's own svg.deckard-icon, so the attribute
+ * wins in both directions. The file itself is untouched.
+ */
+:root[data-theme="light"] svg.deckard-icon {
+  --deckard-icon-surface: #ffffff;
+  --deckard-icon-ink: #0f172a;
+}
+
+:root[data-theme="dark"] svg.deckard-icon {
+  --deckard-icon-surface: #0f172a;
+  --deckard-icon-ink: #e2e8f0;
+}
+
+/*
+ * The brand mark, styled on Blume's own logo markup rather than through the
+ * layout.Logo override. PageLayout does not forward layout overrides, so a
+ * custom page and a docs page would otherwise render two different logos.
+ */
+[data-blume-header] a:has(svg) {
+  gap: 0.625rem;
+  font-weight: 500;
+}
+
+[data-blume-header] a svg {
+  width: auto;
+  height: 1.5rem;
+}
+
+[data-blume-header] a > span:not(:has(svg)) {
+  font-family: var(--blume-font-display);
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+}

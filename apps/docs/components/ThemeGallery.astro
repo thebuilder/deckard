@@ -1,0 +1,105 @@
+---
+import "../styles/theme-gallery.css"
+import DeckPreview from "./DeckPreview.astro"
+import { galleryTheme, themeNames } from "../lib/deck-preview"
+---
+
+<div class="theme-gallery not-prose">
+  {
+    themeNames.map((name) => {
+      const entry = galleryTheme[name]
+      const opensDark = entry.defaultColorMode === "dark"
+
+      return (
+        <article aria-labelledby={`gallery-${name}-name`} class="theme-card">
+          <input
+            aria-label={`${name} light`}
+            checked={!opensDark}
+            class="theme-card-input"
+            data-mode="light"
+            id={`gallery-${name}-light`}
+            name={`gallery-${name}-mode`}
+            type="radio"
+          />
+          <input
+            aria-label={`${name} dark`}
+            checked={opensDark}
+            class="theme-card-input"
+            data-mode="dark"
+            id={`gallery-${name}-dark`}
+            name={`gallery-${name}-mode`}
+            type="radio"
+          />
+          <input
+            class="theme-card-input"
+            data-expand
+            id={`gallery-${name}-expand`}
+            type="checkbox"
+          />
+
+          <div class="theme-card-stage">
+            <DeckPreview
+              background={entry.background}
+              class="theme-card-preview"
+              mode="light"
+              scale={0.14}
+              theme={name}
+            />
+            <DeckPreview
+              background={entry.background}
+              class="theme-card-preview"
+              mode="dark"
+              scale={0.14}
+              theme={name}
+            />
+          </div>
+
+          <div class="theme-card-body">
+            <div class="theme-card-head">
+              <h3 class="theme-card-name" id={`gallery-${name}-name`}>
+                {name}
+              </h3>
+              <span class="theme-card-badge">
+                opens {entry.defaultColorMode}
+              </span>
+            </div>
+            <p class="theme-card-summary">{entry.summary}</p>
+          </div>
+
+          <div class="theme-card-actions">
+            <div class="theme-card-modes">
+              <label data-mode="light" for={`gallery-${name}-light`}>
+                Light
+              </label>
+              <label data-mode="dark" for={`gallery-${name}-dark`}>
+                Dark
+              </label>
+            </div>
+            <label class="theme-card-enlarge" for={`gallery-${name}-expand`}>
+              <span data-when="closed">Enlarge</span>
+              <span data-when="open">Collapse</span>
+            </label>
+          </div>
+
+          <div class="theme-card-detail">
+            <dl>
+              <dt>Import</dt>
+              <dd>
+                <code>{`import { ${name} } from "@deckard/themes"`}</code>
+              </dd>
+              <dt>Canvas class</dt>
+              <dd>
+                <code>.{name}-theme</code>
+              </dd>
+              <dt>Opens in</dt>
+              <dd>
+                {entry.defaultColorMode}, and carries both light and dark
+              </dd>
+            </dl>
+            <a href={`#${name}`}>Read the notes on {name}</a>
+          </div>
+        </article>
+      )
+    })
+  }
+</div>
