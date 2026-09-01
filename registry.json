@@ -1,0 +1,135 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "deckard",
+  "homepage": "https://github.com/thebuilder/next-slideshow-template",
+  "items": [
+    {
+      "name": "theme-deckard",
+      "type": "registry:theme",
+      "title": "Deckard theme",
+      "description": "The default deck look. Quiet off-white paper in light mode, a blue-black sheet in dark mode, one teal accent on eyebrows, buttons, and focus rings. Content sits on near-opaque cards with a hairline border and a soft shadow, corners at 1rem. Backgrounds are soft: a top wash, a 44px grid, or a wide spotlight, each with a blurred corner glow. Use it when you want a deck that reads as a modern product presentation and you do not want to design a theme. It defines the full slide token contract from @deckard/core/styles.css (--slide-font-*, the seven size tokens, --slide-padding-*, --slide-radius*, --slide-surface*, and the background colors) plus the shadcn color tokens, all scoped to .deckard-theme on the slide canvas so the app chrome around the deck keeps its own theme. Supports light and dark. Installs into deck/theme/ as three files you own and edit; THEME.md explains which token does what.",
+      "categories": ["theme", "deck"],
+      "docs": "The theme lands in deck/theme/. Point your deck at it with `import { theme } from \"@/deck/theme\"` and pass it to `defineDeck({ theme })`. Read deck/theme/THEME.md before changing tokens. Installing another Deckard theme overwrites these three files, because a deck has exactly one theme.",
+      "files": [
+        {
+          "path": "apps/playground/deck/theme/theme.css",
+          "type": "registry:file",
+          "target": "~/deck/theme/theme.css"
+        },
+        {
+          "path": "apps/playground/deck/theme/index.ts",
+          "type": "registry:file",
+          "target": "~/deck/theme/index.ts"
+        },
+        {
+          "path": "apps/playground/deck/theme/THEME.md",
+          "type": "registry:file",
+          "target": "~/deck/theme/THEME.md"
+        }
+      ]
+    },
+    {
+      "name": "theme-broadsheet",
+      "type": "registry:theme",
+      "title": "Broadsheet theme",
+      "description": "An editorial print look. Warm newsprint in light mode, warm ink in dark mode, oxblood accent in light and terracotta in dark. Everything is serif, from a system stack that loads no web font, and everything is flat: --slide-radius is 0.125rem and --slide-surface-shadow is none, so a content card is a panel with a hairline rule instead of a floating object. Backgrounds are print furniture: horizontal ruled lines for the grid variant, two vertical column rules at the thirds for spotlight. Type runs one step larger at the top of the scale and one step smaller at the bottom than the default theme, and headings carry -0.015em tracking. Use it for a talk that should read as a written argument rather than a product demo, or as a worked example of a second theme built on the same token contract. Defines the same tokens as theme-deckard, scoped to .broadsheet-theme. Supports light and dark. Installs into deck/theme/ as three files you own and edit.",
+      "categories": ["theme", "deck"],
+      "docs": "The theme lands in deck/theme/ and replaces whatever theme was there, because a deck has exactly one theme. Point your deck at it with `import { theme } from \"@/deck/theme\"` and pass it to `defineDeck({ theme })`. Read deck/theme/THEME.md before changing tokens.",
+      "files": [
+        {
+          "path": "registry/themes/broadsheet/theme.css",
+          "type": "registry:file",
+          "target": "~/deck/theme/theme.css"
+        },
+        {
+          "path": "registry/themes/broadsheet/index.ts",
+          "type": "registry:file",
+          "target": "~/deck/theme/index.ts"
+        },
+        {
+          "path": "registry/themes/broadsheet/THEME.md",
+          "type": "registry:file",
+          "target": "~/deck/theme/THEME.md"
+        }
+      ]
+    },
+    {
+      "name": "block-typography",
+      "type": "registry:block",
+      "title": "Slide typography",
+      "description": "Two primitives every other block builds on. Eyebrow is an uppercase accent label at --slide-label-size with --slide-label-tracking letter spacing, in --primary. SlideHeading is an h1 at --slide-heading-size capped at max-w-5xl with an optional lead paragraph at --slide-lead-size in --muted-foreground. Both read the theme's size tokens rather than Tailwind text sizes, so they resize when you retune the type scale. Add this if you are writing your own slide layouts and want the deck's heading rhythm without copying class strings. Every other Deckard block depends on it.",
+      "categories": ["deck", "typography"],
+      "files": [
+        {
+          "path": "apps/playground/app/slides/blocks/typography.tsx",
+          "type": "registry:file",
+          "target": "~/app/slides/blocks/typography.tsx"
+        }
+      ]
+    },
+    {
+      "name": "block-slide-layouts",
+      "type": "registry:block",
+      "title": "Slide layouts",
+      "description": "The four whole-slide frames a deck reaches for most. HeroSlide centers a big --slide-title-size headline with an eyebrow and a lead, for an opener. BreakerSlide is the same type at the same size but left-aligned and vertically centered, for a section divider. ContentSlideCard puts an eyebrow, heading, and lead above a bordered --slide-surface panel that holds the slide body. OpenContentSlide is the same intro with no panel, for content that brings its own frame such as a chart or a table. All four pull the title from useSlideTitle() when you do not pass one, so a slide's title stays defined in one place. They respect --slide-content-gap, --slide-radius-lg, --slide-surface, --slide-surface-border, and --slide-surface-shadow, which means a theme swap restyles them with no edits.",
+      "categories": ["deck", "layout"],
+      "dependencies": ["@deckard/core"],
+      "registryDependencies": ["@deckard/block-typography"],
+      "files": [
+        {
+          "path": "apps/playground/app/slides/blocks/templates.tsx",
+          "type": "registry:file",
+          "target": "~/app/slides/blocks/templates.tsx"
+        }
+      ]
+    },
+    {
+      "name": "block-collections",
+      "type": "registry:block",
+      "title": "Slide collections",
+      "description": "Two ways to put a list on a slide without it turning into a wall of bullets. BulletList numbers each item 01, 02, 03 in a left rail and rules the rows off with a bottom border, at --slide-body-size. FeatureGrid lays three cards across on --slide-surface-muted, each with a title and a supporting paragraph at --slide-support-size. Both are presentational and take plain arrays, so a server component can await the data and pass it straight in. Use BulletList for four to six sequential points and FeatureGrid for three parallel ones. Neither scrolls, so trim the copy instead of adding a seventh item.",
+      "categories": ["deck", "layout"],
+      "files": [
+        {
+          "path": "apps/playground/app/slides/blocks/collections.tsx",
+          "type": "registry:file",
+          "target": "~/app/slides/blocks/collections.tsx"
+        }
+      ]
+    },
+    {
+      "name": "block-media",
+      "type": "registry:block",
+      "title": "Slide media",
+      "description": "Photo and video slides that fill the 1920x1080 canvas properly. FullscreenMediaSlide bleeds an image or a video to every edge and lays optional copy over the bottom on one of three scrims, from --slide-media-overlay-subtle to -strong; the framed variant insets it in a bordered surface instead. ImageShowcaseSlide splits the canvas 1.2fr to 0.8fr, image left and a caption panel right. Both take next/image sources, forward blurDataURL from a static import when the source carries one, and use SlideMediaVideo from @deckard/core so video pauses on slides the audience is not looking at. Both pad against --slide-chrome-top and --slide-chrome-bottom, so the deck header and slide counter never sit on top of a caption. Use these instead of dropping an img on a slide, which will not fit the canvas and will not respect the chrome.",
+      "categories": ["deck", "media"],
+      "dependencies": ["@deckard/core"],
+      "files": [
+        {
+          "path": "apps/playground/app/slides/blocks/media.tsx",
+          "type": "registry:file",
+          "target": "~/app/slides/blocks/media.tsx"
+        }
+      ]
+    },
+    {
+      "name": "preset-deckard",
+      "type": "registry:item",
+      "title": "Deckard preset",
+      "description": "Everything a new deck needs in one add: the Deckard theme and all four block families. Use this once, right after installing @deckard/core, then write slides. It also adds the one stylesheet line a consumer cannot guess, the @import of @deckard/core/styles.css, which carries the slide token contract and registers the package's own Tailwind source so the runtime classes survive tree shaking. Nothing else has to be wired: @deckard/core ships compiled, so next.config stays empty.",
+      "categories": ["deck", "preset"],
+      "dependencies": ["@deckard/core"],
+      "registryDependencies": [
+        "@deckard/theme-deckard",
+        "@deckard/block-typography",
+        "@deckard/block-slide-layouts",
+        "@deckard/block-collections",
+        "@deckard/block-media"
+      ],
+      "css": {
+        "@import \"@deckard/core/styles.css\"": {}
+      },
+      "docs": "The theme lands in deck/theme/ and the blocks in app/slides/blocks/, and the stylesheet import above is the whole build wiring. @deckard/core ships compiled output and its stylesheet registers its own Tailwind source, so there is no transpilePackages entry and no @source line for you to add. What is left is deck code: create deck/deck.ts, pass the installed theme to defineDeck, then render the deck from app/slides/[id]/page.tsx with createSlideRoute from @deckard/core/next."
+    }
+  ]
+}

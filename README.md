@@ -58,7 +58,9 @@ This is a pnpm workspace run by Turborepo.
 | `packages/core` | `@deckard/core`, the deck contract and the slideshow runtime |
 | `apps/playground` | the reference deck, and the app the visual checks run against |
 | `apps/docs` | the documentation site |
+| `registry` | theme sources the playground does not use, published through the registry |
 | `tools/package-smoke` | proves the package installs into a plain Next.js app |
+| `tools/registry-smoke` | proves the registry installs into a plain Next.js app |
 
 Every script runs from the root:
 
@@ -69,7 +71,9 @@ pnpm typecheck
 pnpm test           # 73 tests across core and playground
 pnpm lint
 pnpm analyze
+pnpm registry:build # write the shadcn registry to apps/docs/public/r
 pnpm smoke:package  # pack @deckard/core and build a scratch app against it
+pnpm smoke:registry # install the registry into a scratch app and build it
 ```
 
 ### @deckard/core
@@ -552,3 +556,31 @@ The fixture it copies lives in `tools/package-smoke/fixture` and covers a plain
 slide, an async slide, a discovered module, a stepped slide, and a client
 widget. The scratch directory is deleted afterwards. Pass `--keep` to inspect
 it.
+
+## Registry
+
+`registry.json` at the root publishes the themes and blocks through shadcn.
+`pnpm registry:build` writes the item JSON to `apps/docs/public/r`, which is
+gitignored, so the docs site serves the registry at `/r/{name}.json`. The docs
+site lists every item at `/registry` with its install command.
+
+There are seven items. `theme-deckard` and `theme-broadsheet` each install
+three files to `deck/theme/`, so adding one replaces the other.
+`block-typography`, `block-slide-layouts`, `block-collections`, and
+`block-media` install to `app/slides/blocks/`. `preset-deckard` pulls in the
+default theme and every block, and writes the one line the app stylesheet
+needs, `@import "@deckard/core/styles.css"`. That sheet registers the package's
+own Tailwind source, so there is nothing left to wire in `next.config.mjs`.
+
+Theme sources live in two places. The deckard theme is published straight out
+of `apps/playground/deck/theme`, where the reference deck uses it, so the
+registry ships the file the playground renders. Broadsheet has no such home and
+lives in `registry/themes/broadsheet`.
+
+`pnpm smoke:registry` proves the whole path. It builds the registry, serves it
+on a spare port, packs `@deckard/core`, and installs both into a scratch app
+outside the workspace. It checks the files land where the items claim, that the
+preset wrote the stylesheet import and nothing else, that the app builds with
+an empty `next.config.mjs`, and that both an edit to the installed `theme.css`
+and the runtime's own utility classes reach the built stylesheet. Then it swaps
+in `theme-broadsheet` and typechecks again. It takes about a minute.
