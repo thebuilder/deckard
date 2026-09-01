@@ -658,6 +658,11 @@ export const theme = {
 modes. A theme that lists one mode pins the canvas to it and hides the
 light/dark toggle. There is no runtime switching between named themes.
 
+`defaultColorMode` decides what a browser opens on, not what the checks capture.
+`--light` and the light PDF export force the mode they name, so a deck that
+defaults to dark still shoots light when asked, and a capture that came out in
+the other mode fails naming the slide instead of being written.
+
 Inside the canvas, style with semantic tokens (`bg-card`, `text-muted-foreground`)
 or slide tokens (`--slide-title-size`, `--slide-surface`). Never a hardcoded
 color. `deck/theme/THEME.md` lists the tokens and what they control.
