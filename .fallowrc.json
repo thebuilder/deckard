@@ -17,7 +17,8 @@
   "ignorePatterns": [
     "tools/package-smoke/fixture/**",
     "tools/registry-smoke/fixture/**",
-    "packages/cli/template/**"
+    "packages/cli/template/**",
+    "packages/cli/template-src/**"
   ],
   "ignoreExports": [
     {

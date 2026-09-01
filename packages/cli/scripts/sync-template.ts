@@ -9,8 +9,8 @@ const packageRoot = path.resolve(
   ".."
 )
 const repoRoot = path.resolve(packageRoot, "../..")
+const templateSource = path.join(packageRoot, "template-src")
 const templateRoot = path.join(packageRoot, "template")
-const checkOnly = process.argv.includes("--check")
 
 const blocks = [
   "collections.tsx",
@@ -19,6 +19,7 @@ const blocks = [
   "templates.tsx",
   "typography.tsx",
 ]
+
 // The pins a generated deck writes into "packageManager" when the manager that
 // invoked it does not announce its own version. pnpm's comes from this
 // repository so the two never drift; the other three are the current stable
@@ -44,7 +45,7 @@ const pinnedFrom = {
   ],
 }
 
-interface CopiedFile {
+interface GeneratedFile {
   contents: string
   target: string
 }
@@ -108,7 +109,7 @@ function versionsFile(): string {
   )}\n`
 }
 
-function collect(): CopiedFile[] {
+function generated(): GeneratedFile[] {
   return [
     ...blocks.map((file) => ({
       contents: read("apps/playground/app/slides/blocks", file),
@@ -118,33 +119,20 @@ function collect(): CopiedFile[] {
   ]
 }
 
-function check(files: CopiedFile[]): void {
-  const stale = files.filter((file) => {
-    const target = path.join(templateRoot, file.target)
-
-    return (
-      !fs.existsSync(target) ||
-      fs.readFileSync(target, "utf8") !== file.contents
-    )
-  })
-
-  if (stale.length === 0) {
-    process.stdout.write(`template is in sync (${files.length} files)\n`)
-    return
-  }
-
-  process.stderr.write(
-    [
-      `${stale.length} template file${stale.length === 1 ? "" : "s"} drifted from the canonical source:`,
-      ...stale.map((file) => `  template/${file.target}`),
-      "Run: pnpm --filter @deckard/cli exec node scripts/sync-template.ts",
-      "",
-    ].join("\n")
-  )
-  process.exit(1)
+function countFiles(directory: string): number {
+  return fs
+    .readdirSync(directory, { recursive: true })
+    .filter((entry) =>
+      fs.statSync(path.join(directory, String(entry))).isFile()
+    ).length
 }
 
-function sync(files: CopiedFile[]): void {
+function sync(): void {
+  const files = generated()
+
+  fs.rmSync(templateRoot, { force: true, recursive: true })
+  fs.cpSync(templateSource, templateRoot, { recursive: true })
+
   for (const file of files) {
     const target = path.join(templateRoot, file.target)
 
@@ -152,13 +140,7 @@ function sync(files: CopiedFile[]): void {
     fs.writeFileSync(target, file.contents)
   }
 
-  process.stdout.write(`template synced (${files.length} files)\n`)
+  process.stdout.write(`template built (${countFiles(templateRoot)} files)\n`)
 }
 
-const templateFiles = collect()
-
-if (checkOnly) {
-  check(templateFiles)
-} else {
-  sync(templateFiles)
-}
+sync()

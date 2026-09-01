@@ -8,5 +8,11 @@
     "tsBuildInfoFile": "./tsconfig.build.tsbuildinfo"
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist", "template", "src/**/*.test.ts"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/**/*.test.ts",
+    "template",
+    "template-src"
+  ]
 }

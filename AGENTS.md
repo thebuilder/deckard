@@ -28,9 +28,12 @@ apply there, against their own `deck/` directory.
   `validate`, `doctor`, `check-overflow`, `screenshots`, `contact-sheet`,
   `export pdf`, `add`, and `eject`. It compiles to `dist/` with `tsc` and treats
   the current working directory as the deck. `packages/cli/template` is what
-  `init` writes, and `scripts/sync-template.ts` copies the blocks, the pinned
-  dependency versions, and the package manager pins into it from the playground
-  and the root `package.json`. Edit the sources, never the copies.
+  `init` writes, and it is build output: gitignored, rebuilt by
+  `scripts/sync-template.ts` on every CLI build and again on `prepack`. The
+  hand-authored half is `packages/cli/template-src`; the blocks, the pinned
+  dependency versions, and the package manager pins are copied in from the
+  playground and the root `package.json`. Edit `template-src` or the playground,
+  never `template`.
 - `tools/package-smoke` packs the package and builds a scratch app against it.
 - `tools/registry-smoke` installs the registry into a scratch app and builds it.
 - `tools/cli-smoke` installs the packed CLI outside the workspace and runs
@@ -87,7 +90,7 @@ and one theme imported from `@deckard/core/themes`.
 No `transpilePackages`, no Tailwind `@source`. Nothing about the workspace
 layout leaks into the app someone generates from the framework. `deckard init`
 is what generates it, so a change to that shape belongs in
-`packages/cli/template` and has to survive `pnpm smoke:cli`.
+`packages/cli/template-src` and has to survive `pnpm smoke:cli`.
 
 ## Where things live
 

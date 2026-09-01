@@ -7,7 +7,11 @@
     "ultracite/biome/vitest"
   ],
   "files": {
-    "includes": ["!**/*.svg", "!packages/cli/template"]
+    "includes": [
+      "!**/*.svg",
+      "!packages/cli/template",
+      "!packages/cli/template-src"
+    ]
   },
   "javascript": {
     "formatter": {

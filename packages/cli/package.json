@@ -29,8 +29,9 @@
   ],
   "scripts": {
     "build": "node scripts/sync-template.ts && tsc --project tsconfig.build.json",
-    "test": "node scripts/sync-template.ts --check && vitest run --passWithNoTests",
-    "test:unit": "node scripts/sync-template.ts --check && vitest run --passWithNoTests",
+    "prepack": "node scripts/sync-template.ts",
+    "test": "vitest run --passWithNoTests",
+    "test:unit": "vitest run --passWithNoTests",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

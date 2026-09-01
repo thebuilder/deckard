@@ -942,11 +942,17 @@ stylesheet. It takes about a minute.
 ### The init template comes from the same sources
 
 `deckard init` cannot reach the registry, because a new app has no shadcn
-config and the registry has no host. So the CLI ships the same files inside
-`packages/cli/template`, and `packages/cli/scripts/sync-template.ts` copies them
-there from the canonical sources: the five blocks from `apps/playground` and the
-pinned versions of next, react, and tailwind out of the playground's
-`package.json`. The theme is not among them any more; `init` writes the import
-instead. The sync runs
-on every CLI build, and `pnpm test` runs it again with `--check`, which fails
-naming any file that drifted. Edit the playground's blocks, not the copies.
+config and the registry has no host. So the CLI ships the blocks inside
+`packages/cli/template`.
+
+That directory is build output. It is gitignored, and
+`packages/cli/scripts/sync-template.ts` rebuilds it from scratch on every CLI
+build and again on `prepack`: the hand-authored app shell, routes, tsconfig, and
+sample slides come from `packages/cli/template-src`, the five blocks from
+`apps/playground`, and the pinned versions of next, react, and tailwind out of
+the playground's `package.json`. Nothing is committed twice, so there is no
+drift gate to run and nothing to keep in sync by hand. Edit `template-src` or
+the playground's blocks.
+
+The theme is not in the template at all. `init` writes the import instead, so
+`--theme phosphor` is one identifier in the generated `deck/deck.ts`.
