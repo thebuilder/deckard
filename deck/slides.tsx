@@ -1,47 +1,44 @@
-import type { SlideDefinition } from "@/types/slides"
-
-import { CodeBlock } from "@/components/slideshow/code-block"
+import { BulletList, FeatureGrid } from "@/app/slides/blocks/collections"
 import {
-  BulletList,
-  FeatureGrid,
-} from "@/app/slides/blocks/collections"
+  FullscreenMediaSlide,
+  ImageShowcaseSlide,
+} from "@/app/slides/blocks/media"
 import {
   BreakerSlide,
   ContentSlideCard,
   HeroSlide,
   OpenContentSlide,
 } from "@/app/slides/blocks/templates"
-import {
-  FullscreenMediaSlide,
-  ImageShowcaseSlide,
-} from "@/app/slides/blocks/media"
 import { Eyebrow } from "@/app/slides/blocks/typography"
-import { SlideStep } from "@/components/slideshow/slide-stepper"
 import exampleBackgroundImage from "@/assets/example-background.png"
 import templateCapabilitiesImage from "@/assets/template-capabilities.svg"
+import { CodeBlock } from "@/components/slideshow/code-block"
+import { SlideStep } from "@/components/slideshow/slide-stepper"
+import "server-only"
+
+import type { SlideDefinition } from "@/lib/deck/types"
 
 export const slides: SlideDefinition[] = [
   {
     slug: "intro",
-    title: "Slideshow Base",
+    title: "Deckard",
     notes:
       "Welcome the audience, set context in one sentence, and preview what they will get from this walkthrough.",
     body: (
       <HeroSlide
-        eyebrow="Reusable Next.js template"
+        eyebrow="React presentation framework"
         title="Build polished slides fast"
         description="Keyboard controls, step reveals, command center, themed UI, and flexible layout options out of the box."
       />
     ),
   },
   {
-    slug: "capabilities",
     title: "Capabilities",
     body: (
       <ContentSlideCard
         eyebrow="Capabilities"
-        title="A production-ready slideshow baseline"
-        description="The template focuses on practical presentation features you can reuse in demos, talks, and product walkthroughs."
+        title="A production-ready presentation baseline"
+        description="Deckard focuses on practical presentation features you can reuse in demos, talks, and product walkthroughs."
       >
         <FeatureGrid
           items={[
@@ -81,7 +78,6 @@ export const slides: SlideDefinition[] = [
     ),
   },
   {
-    slug: "navigation",
     title: "Navigation",
     body: (
       <OpenContentSlide
@@ -112,7 +108,6 @@ export const slides: SlideDefinition[] = [
     ),
   },
   {
-    slug: "step-reveals",
     title: "Step Reveals",
     notes:
       "Pause between each reveal and ask a short alignment question before advancing to the next step.",
@@ -125,10 +120,10 @@ export const slides: SlideDefinition[] = [
         <div className="grid gap-3">
           <SlideStep step={0}>
             <div className="rounded-2xl border border-border/70 bg-card/70 p-4">
-              <p className="text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">
+              <p className="font-semibold text-muted-foreground text-xs uppercase tracking-[0.2em]">
                 Step 1
               </p>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <p className="mt-2 text-muted-foreground text-sm">
                 Start with the core problem or context.
               </p>
             </div>
@@ -136,10 +131,10 @@ export const slides: SlideDefinition[] = [
 
           <SlideStep step={1}>
             <div className="rounded-2xl border border-border/70 bg-card/70 p-4">
-              <p className="text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">
+              <p className="font-semibold text-muted-foreground text-xs uppercase tracking-[0.2em]">
                 Step 2
               </p>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <p className="mt-2 text-muted-foreground text-sm">
                 Add supporting evidence once the audience is aligned.
               </p>
             </div>
@@ -147,10 +142,10 @@ export const slides: SlideDefinition[] = [
 
           <SlideStep step={2}>
             <div className="rounded-2xl border border-border/70 bg-card/70 p-4">
-              <p className="text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">
+              <p className="font-semibold text-muted-foreground text-xs uppercase tracking-[0.2em]">
                 Step 3
               </p>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <p className="mt-2 text-muted-foreground text-sm">
                 Show options and tradeoffs before deciding.
               </p>
             </div>
@@ -158,10 +153,10 @@ export const slides: SlideDefinition[] = [
 
           <SlideStep step={3}>
             <div className="rounded-2xl border border-primary/40 bg-primary/8 p-4">
-              <p className="text-xs font-semibold tracking-[0.2em] text-primary uppercase">
+              <p className="font-semibold text-primary text-xs uppercase tracking-[0.2em]">
                 Step 4
               </p>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <p className="mt-2 text-muted-foreground text-sm">
                 Land on one recommendation and the next action.
               </p>
             </div>
@@ -172,7 +167,6 @@ export const slides: SlideDefinition[] = [
     stepCount: 4,
   },
   {
-    slug: "layout-and-background",
     title: "Layout and Background",
     body: (
       <BreakerSlide
@@ -184,23 +178,22 @@ export const slides: SlideDefinition[] = [
     background: "spotlight",
   },
   {
-    slug: "image-slide",
     title: "Image Slide",
     body: (
       <ImageShowcaseSlide
         image={{
           src: templateCapabilitiesImage,
-          alt: "Capability map for the slideshow template",
+          alt: "Capability map for Deckard",
           fit: "contain",
           caption: "Use this for diagrams, mockups, or campaign visuals.",
           credit: "Generated template asset",
         }}
       >
         <Eyebrow>Image slide</Eyebrow>
-        <h2 className="text-3xl font-semibold tracking-tight">
+        <h2 className="font-semibold text-3xl tracking-tight">
           Media-first storytelling
         </h2>
-        <p className="text-sm leading-7 text-muted-foreground">
+        <p className="text-muted-foreground text-sm leading-7">
           Keep image slides as regular `body` composition with reusable
           components.
         </p>
@@ -210,7 +203,6 @@ export const slides: SlideDefinition[] = [
     background: "grid",
   },
   {
-    slug: "fullscreen",
     title: "Fullscreen",
     body: (
       <FullscreenMediaSlide
@@ -225,10 +217,10 @@ export const slides: SlideDefinition[] = [
         }}
       >
         <Eyebrow>Fullscreen mode</Eyebrow>
-        <h1 className="mt-3 text-4xl font-semibold tracking-tight text-balance text-white sm:text-5xl lg:text-6xl">
+        <h1 className="mt-3 text-balance font-semibold text-4xl text-white tracking-tight sm:text-5xl lg:text-6xl">
           Image and video can take over the full canvas
         </h1>
-        <p className="mt-3 max-w-3xl text-base leading-7 text-white/85 sm:text-lg">
+        <p className="mt-3 max-w-3xl text-base text-white/85 leading-7 sm:text-lg">
           Use fullscreen media for transitions, product trailers, launch
           moments, or immersive visual slides.
         </p>
@@ -252,7 +244,7 @@ Mention the practical editing flow:
 
 Pause briefly on the code snippet and explicitly point to the commented fullscreen media example.
 
-Close by reinforcing that this pattern is what makes the template scalable for future decks with different visual styles but identical navigation and presenter tooling.`,
+Close by reinforcing that this pattern is what makes Deckard scalable for future decks with different visual styles but identical navigation and presenter tooling.`,
     body: (
       <ContentSlideCard
         eyebrow="Authoring"
@@ -284,22 +276,13 @@ Close by reinforcing that this pattern is what makes the template scalable for f
     ),
   },
   {
-    slug: "outro",
     title: "Use It",
     body: (
       <HeroSlide
         eyebrow="Ready"
-        title="Start from this template"
+        title="Start from Deckard"
         description="Replace the demo slides, keep the structure, and ship presentation-grade decks faster."
       />
     ),
   },
 ]
-
-export function getAllSlideSlugs() {
-  return slides.map((slide) => slide.slug)
-}
-
-export function getSlideBySlug(slug: string) {
-  return slides.find((slide) => slide.slug === slug)
-}

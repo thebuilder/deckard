@@ -1,40 +1,40 @@
-import Image from "next/image"
 import type { ImageProps } from "next/image"
+import Image from "next/image"
 
 import { SlideMediaVideo } from "@/components/slideshow/slide-media-video"
 
-export type ImageShowcaseConfig = {
-  src: ImageProps["src"]
+export interface ImageShowcaseConfig {
   alt?: string
-  fit?: "cover" | "contain"
-  placeholder?: ImageProps["placeholder"]
   blurDataURL?: string
-  sizes?: string
-  priority?: boolean
   caption?: React.ReactNode
   credit?: React.ReactNode
-}
-
-type FullscreenImageMedia = {
-  kind: "image"
-  src: ImageProps["src"]
-  alt?: string
   fit?: "cover" | "contain"
   placeholder?: ImageProps["placeholder"]
-  blurDataURL?: string
-  sizes?: string
   priority?: boolean
+  sizes?: string
+  src: ImageProps["src"]
 }
 
-type FullscreenVideoMedia = {
-  kind: "video"
-  src: string
-  poster?: ImageProps["src"]
+interface FullscreenImageMedia {
+  alt?: string
+  blurDataURL?: string
   fit?: "cover" | "contain"
+  kind: "image"
+  placeholder?: ImageProps["placeholder"]
+  priority?: boolean
+  sizes?: string
+  src: ImageProps["src"]
+}
+
+interface FullscreenVideoMedia {
   autoplay?: boolean
-  muted?: boolean
-  loop?: boolean
   controls?: boolean
+  fit?: "cover" | "contain"
+  kind: "video"
+  loop?: boolean
+  muted?: boolean
+  poster?: ImageProps["src"]
+  src: string
 }
 
 export type FullscreenMediaConfig = FullscreenImageMedia | FullscreenVideoMedia
@@ -64,7 +64,7 @@ function resolveSourceBlurDataURL(src: ImageProps["src"]): string | undefined {
 }
 
 function resolvePosterSrc(
-  poster: FullscreenVideoMedia["poster"],
+  poster: FullscreenVideoMedia["poster"]
 ): string | undefined {
   if (!poster) {
     return undefined
@@ -81,6 +81,28 @@ function resolvePosterSrc(
   return poster.default.src
 }
 
+function resolvePlaceholder(
+  media: FullscreenMediaConfig,
+  blurDataURL: string | undefined
+): ImageProps["placeholder"] {
+  if (media.kind !== "image") {
+    return undefined
+  }
+
+  if (media.placeholder === "blur" && !blurDataURL) {
+    return undefined
+  }
+
+  return media.placeholder
+}
+
+const overlayClassNames: Record<FullscreenMediaOverlay, string> = {
+  medium: "bg-gradient-to-t from-black/55 via-black/20 to-transparent",
+  none: "",
+  strong: "bg-gradient-to-t from-black/75 via-black/35 to-transparent",
+  subtle: "bg-gradient-to-t from-black/35 via-black/10 to-transparent",
+}
+
 export function FullscreenMediaSlide({
   media,
   variant = "framed",
@@ -94,57 +116,45 @@ export function FullscreenMediaSlide({
 }) {
   const resolvedBlurDataURL =
     media.kind === "image"
-      ? media.blurDataURL ?? resolveSourceBlurDataURL(media.src)
+      ? (media.blurDataURL ?? resolveSourceBlurDataURL(media.src))
       : undefined
-  const resolvedPlaceholder =
-    media.kind === "image" &&
-    media.placeholder === "blur" &&
-    !resolvedBlurDataURL
-      ? undefined
-      : media.kind === "image"
-        ? media.placeholder
-        : undefined
+  const resolvedPlaceholder = resolvePlaceholder(media, resolvedBlurDataURL)
 
   const containerClassName =
     variant === "background"
       ? "relative h-full min-h-[16rem] w-full overflow-hidden"
       : "relative min-h-[calc(100svh-9rem)] overflow-hidden rounded-3xl border border-border/70 bg-card/60"
-  const overlayClassName =
-    overlay === "none"
-      ? ""
-      : overlay === "subtle"
-        ? "bg-gradient-to-t from-black/35 via-black/10 to-transparent"
-        : overlay === "strong"
-          ? "bg-gradient-to-t from-black/75 via-black/35 to-transparent"
-          : "bg-gradient-to-t from-black/55 via-black/20 to-transparent"
+  const overlayClassName = overlayClassNames[overlay]
 
   return (
     <section className={containerClassName}>
       {media.kind === "image" ? (
         <Image
-          src={media.src}
           alt={media.alt ?? ""}
-          fill
-          className={media.fit === "contain" ? "object-contain" : "object-cover"}
-          placeholder={resolvedPlaceholder}
           blurDataURL={resolvedBlurDataURL}
-          sizes={media.sizes}
+          className={
+            media.fit === "contain" ? "object-contain" : "object-cover"
+          }
+          fill
+          placeholder={resolvedPlaceholder}
           priority={media.priority}
+          sizes={media.sizes}
+          src={media.src}
         />
       ) : (
         <SlideMediaVideo
-          src={media.src}
-          poster={resolvePosterSrc(media.poster)}
+          autoplay={media.autoplay}
           className={
             media.fit === "contain"
               ? "h-full w-full object-contain"
               : "h-full w-full object-cover"
           }
-          autoplay={media.autoplay}
+          controls={media.controls}
+          loop={media.loop}
           muted={media.muted}
           playsInline
-          loop={media.loop}
-          controls={media.controls}
+          poster={resolvePosterSrc(media.poster)}
+          src={media.src}
         />
       )}
 
@@ -185,24 +195,24 @@ export function ImageShowcaseSlide({
     <section className="grid min-h-[calc(100svh-10rem)] gap-6 lg:grid-cols-[1.2fr_0.8fr]">
       <div className="relative min-h-[20rem] overflow-hidden rounded-3xl border border-border/70 bg-card/60">
         <Image
-          src={src}
           alt={alt ?? ""}
-          fill
-          className={fit === "contain" ? "object-contain" : "object-cover"}
-          placeholder={resolvedPlaceholder}
           blurDataURL={resolvedBlurDataURL}
-          sizes={sizes}
+          className={fit === "contain" ? "object-contain" : "object-cover"}
+          fill
+          placeholder={resolvedPlaceholder}
           priority={priority}
+          sizes={sizes}
+          src={src}
         />
       </div>
 
       <div className="flex flex-col justify-end gap-4 rounded-3xl border border-border/70 bg-card/70 p-6 backdrop-blur-sm">
         {children}
         {caption ? (
-          <p className="text-sm leading-7 text-muted-foreground">{caption}</p>
+          <p className="text-muted-foreground text-sm leading-7">{caption}</p>
         ) : null}
         {credit ? (
-          <p className="text-xs tracking-[0.2em] text-muted-foreground uppercase">
+          <p className="text-muted-foreground text-xs uppercase tracking-[0.2em]">
             {credit}
           </p>
         ) : null}

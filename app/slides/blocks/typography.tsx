@@ -1,6 +1,6 @@
 export function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-sm font-semibold tracking-[0.3em] text-primary uppercase">
+    <p className="font-semibold text-primary text-sm uppercase tracking-[0.3em]">
       {children}
     </p>
   )
@@ -15,11 +15,11 @@ export function SlideHeading({
 }) {
   return (
     <div className="space-y-3">
-      <h1 className="max-w-5xl text-3xl font-semibold tracking-tight text-balance sm:text-4xl lg:text-[3.5rem] lg:leading-[1.02]">
+      <h1 className="max-w-5xl text-balance font-semibold text-3xl tracking-tight sm:text-4xl lg:text-[3.5rem] lg:leading-[1.02]">
         {title}
       </h1>
       {description ? (
-        <p className="max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg">
+        <p className="max-w-3xl text-base text-muted-foreground leading-7 sm:text-lg">
           {description}
         </p>
       ) : null}

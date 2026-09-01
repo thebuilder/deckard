@@ -6,8 +6,8 @@ import process from "node:process"
 import { fileURLToPath } from "node:url"
 
 import { PDFDocument } from "pdf-lib"
-import { chromium } from "playwright"
 import type { Browser } from "playwright"
+import { chromium } from "playwright"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -18,7 +18,7 @@ const width = Number(process.env.PDF_EXPORT_WIDTH ?? 1920)
 const height = Number(process.env.PDF_EXPORT_HEIGHT ?? 1080)
 const outputPath = path.resolve(
   projectRoot,
-  process.env.PDF_EXPORT_OUTPUT ?? "out/slides.pdf",
+  process.env.PDF_EXPORT_OUTPUT ?? "out/slides.pdf"
 )
 const skipBuild = process.argv.includes("--skip-build")
 const darkMode = process.argv.includes("--dark")
@@ -31,12 +31,12 @@ function runBuild(): void {
 
   const result = spawnSync("pnpm", ["build"], {
     cwd: projectRoot,
-    stdio: "inherit",
     env: {
       ...process.env,
       NEXT_PUBLIC_PDF_EXPORT: "1",
       NEXT_PUBLIC_PDF_THEME: pdfTheme,
     },
+    stdio: "inherit",
   })
 
   if (result.status !== 0) {
@@ -54,6 +54,7 @@ async function waitForServer(baseUrl: string): Promise<void> {
 
   while (Date.now() - start < timeoutMs) {
     try {
+      // biome-ignore lint/performance/noAwaitInLoops: polling the dev server has to be sequential
       const response = await fetch(baseUrl)
       if (response.ok) {
         return
@@ -68,7 +69,7 @@ async function waitForServer(baseUrl: string): Promise<void> {
   throw new Error(`Timed out waiting for server at ${baseUrl}`)
 }
 
-async function readSlideSlugsFromSitemap(baseUrl: string): Promise<string[]> {
+async function readSlideIdsFromSitemap(baseUrl: string): Promise<string[]> {
   const sitemapUrl = `${baseUrl}/sitemap.xml`
   const response = await fetch(sitemapUrl)
 
@@ -79,7 +80,7 @@ async function readSlideSlugsFromSitemap(baseUrl: string): Promise<string[]> {
   const xml = await response.text()
   const locMatches = [...xml.matchAll(/<loc>(.*?)<\/loc>/g)]
 
-  const slugs = locMatches
+  const ids = locMatches
     .map((match) => match[1]?.trim() ?? "")
     .map((loc) => {
       try {
@@ -90,15 +91,15 @@ async function readSlideSlugsFromSitemap(baseUrl: string): Promise<string[]> {
     })
     .filter((pathname) => pathname.startsWith("/slides/"))
     .map((pathname) => decodeURIComponent(pathname.replace("/slides/", "")))
-    .filter((slug) => slug.length > 0)
+    .filter((id) => id.length > 0)
 
-  if (slugs.length === 0) {
+  if (ids.length === 0) {
     throw new Error(
-      `No slide routes found in sitemap. Ensure app/sitemap.ts includes /slides/* entries.`,
+      "No slide routes found in sitemap. Ensure app/sitemap.ts includes /slides/* entries."
     )
   }
 
-  return [...new Set(slugs)]
+  return [...new Set(ids)]
 }
 
 function pxToPt(px: number): number {
@@ -106,10 +107,10 @@ function pxToPt(px: number): number {
 }
 
 async function exportPdf({
-  slugs,
+  ids,
   baseUrl,
 }: {
-  slugs: string[]
+  ids: string[]
   baseUrl: string
 }): Promise<void> {
   let browser: Browser
@@ -117,27 +118,29 @@ async function exportPdf({
     browser = await chromium.launch({ headless: true })
   } catch (error) {
     throw new Error(
-      `Failed to launch Chromium for PDF export. Run: pnpm exec playwright install chromium\n${error instanceof Error ? error.message : String(error)}`,
+      "Failed to launch Chromium for PDF export. Run: pnpm exec playwright install chromium",
+      { cause: error }
     )
   }
 
   try {
     const context = await browser.newContext({
-      viewport: { width, height },
       colorScheme: pdfTheme === "dark" ? "dark" : "light",
+      viewport: { height, width },
     })
 
     const page = await context.newPage()
     const pdf = await PDFDocument.create()
 
-    for (const slug of slugs) {
-      const url = `${baseUrl}/slides/${slug}`
+    for (const id of ids) {
+      const url = `${baseUrl}/slides/${id}`
+      // biome-ignore lint/performance/noAwaitInLoops: slides are captured one at a time on a single page
       await page.goto(url, { waitUntil: "networkidle" })
       await page.waitForTimeout(80)
 
       const imageBuffer = await page.screenshot({
-        type: "png",
         animations: "disabled",
+        type: "png",
       })
 
       const image = await pdf.embedPng(imageBuffer)
@@ -146,13 +149,13 @@ async function exportPdf({
       const pdfPage = pdf.addPage([pdfWidth, pdfHeight])
 
       pdfPage.drawImage(image, {
+        height: pdfHeight,
+        width: pdfWidth,
         x: 0,
         y: 0,
-        width: pdfWidth,
-        height: pdfHeight,
       })
 
-      process.stdout.write(`Exported slide: ${slug}\n`)
+      process.stdout.write(`Exported slide: ${id}\n`)
     }
 
     const pdfBytes = await pdf.save()
@@ -172,13 +175,13 @@ async function main(): Promise<void> {
   const baseUrl = `http://127.0.0.1:${port}`
   const server = spawn("pnpm", ["start", "-p", String(port)], {
     cwd: projectRoot,
-    stdio: "inherit",
     env: {
       ...process.env,
-      NODE_ENV: "production",
       NEXT_PUBLIC_PDF_EXPORT: "1",
       NEXT_PUBLIC_PDF_THEME: pdfTheme,
+      NODE_ENV: "production",
     },
+    stdio: "inherit",
   })
 
   const shutdown = () => {
@@ -192,8 +195,8 @@ async function main(): Promise<void> {
 
   try {
     await waitForServer(baseUrl)
-    const slugs = await readSlideSlugsFromSitemap(baseUrl)
-    await exportPdf({ slugs, baseUrl })
+    const ids = await readSlideIdsFromSitemap(baseUrl)
+    await exportPdf({ baseUrl, ids })
   } finally {
     shutdown()
   }
@@ -201,7 +204,7 @@ async function main(): Promise<void> {
 
 main().catch((error: unknown) => {
   process.stderr.write(
-    `${error instanceof Error ? error.message : String(error)}\n`,
+    `${error instanceof Error ? error.message : String(error)}\n`
   )
   process.exit(1)
 })

@@ -40,3 +40,4 @@ posters
 **/*.pptx
 **/*.docx
 **/*.zip
+.claude/launch.json

@@ -1,19 +1,19 @@
 "use client"
 
-import * as React from "react"
+import { createContext, type ReactNode, useContext } from "react"
 
-type SlideContextValue = {
-  title?: React.ReactNode
+interface SlideContextValue {
   isPresenterPreview: boolean
+  title?: ReactNode
 }
 
 type SlideContextProviderProps = SlideContextValue & {
-  children: React.ReactNode
+  children: ReactNode
 }
 
-const SlideContext = React.createContext<SlideContextValue>({
-  title: undefined,
+const SlideContext = createContext<SlideContextValue>({
   isPresenterPreview: false,
+  title: undefined,
 })
 
 export function SlideContextProvider({
@@ -22,14 +22,14 @@ export function SlideContextProvider({
   children,
 }: SlideContextProviderProps) {
   return (
-    <SlideContext.Provider value={{ title, isPresenterPreview }}>
+    <SlideContext.Provider value={{ isPresenterPreview, title }}>
       {children}
     </SlideContext.Provider>
   )
 }
 
-export function useSlideContext() {
-  return React.useContext(SlideContext)
+function useSlideContext() {
+  return useContext(SlideContext)
 }
 
 export function useSlideTitle() {

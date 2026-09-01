@@ -224,8 +224,8 @@
   .reveal-item,
   .reveal-body-stagger > * {
     opacity: 1;
-    animation: none;
     transform: none;
+    animation: none;
   }
 }
 

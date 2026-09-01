@@ -1,19 +1,19 @@
 "use client"
 
-import * as React from "react"
 import { usePathname } from "next/navigation"
+import { type ReactNode, useEffect, useRef } from "react"
 
-type StaticMediaBoundaryProps = {
-  children: React.ReactNode
-  enabled?: boolean
-  className?: string
+interface StaticMediaBoundaryProps {
   activePath?: string
+  children: ReactNode
+  className?: string
+  enabled?: boolean
 }
 
 function freezeMedia(root: HTMLElement) {
   const mediaNodes = root.querySelectorAll<HTMLMediaElement>("video, audio")
 
-  mediaNodes.forEach((media) => {
+  for (const media of mediaNodes) {
     media.muted = true
     media.autoplay = false
     media.pause()
@@ -24,7 +24,7 @@ function freezeMedia(root: HTMLElement) {
         media.controls = false
       }
     }
-  })
+  }
 }
 
 export function StaticMediaBoundary({
@@ -33,16 +33,19 @@ export function StaticMediaBoundary({
   className,
   activePath,
 }: StaticMediaBoundaryProps) {
-  const rootRef = React.useRef<HTMLDivElement | null>(null)
+  const rootRef = useRef<HTMLDivElement | null>(null)
   const pathname = usePathname()
 
-  React.useEffect(() => {
-    if (!rootRef.current) {
+  useEffect(() => {
+    const root = rootRef.current
+
+    // biome-ignore lint/suspicious/noUnnecessaryConditions: TypeScript types ref.current as nullable, so the guard is required to compile
+    if (!root) {
       return
     }
 
     if (activePath && pathname !== activePath) {
-      freezeMedia(rootRef.current)
+      freezeMedia(root)
       return
     }
 
@@ -50,17 +53,13 @@ export function StaticMediaBoundary({
       return
     }
 
-    freezeMedia(rootRef.current)
+    freezeMedia(root)
 
     const observer = new MutationObserver(() => {
-      if (!rootRef.current) {
-        return
-      }
-
-      freezeMedia(rootRef.current)
+      freezeMedia(root)
     })
 
-    observer.observe(rootRef.current, {
+    observer.observe(root, {
       childList: true,
       subtree: true,
     })
@@ -68,9 +67,9 @@ export function StaticMediaBoundary({
     return () => observer.disconnect()
   }, [activePath, enabled, pathname])
 
-  React.useEffect(() => {
+  useEffect(() => {
     function handleVisibilityChange() {
-      if (!document.hidden || !rootRef.current) {
+      if (!(document.hidden && rootRef.current)) {
         return
       }
 
@@ -78,11 +77,12 @@ export function StaticMediaBoundary({
     }
 
     document.addEventListener("visibilitychange", handleVisibilityChange)
-    return () => document.removeEventListener("visibilitychange", handleVisibilityChange)
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange)
   }, [])
 
   return (
-    <div ref={rootRef} className={className}>
+    <div className={className} ref={rootRef}>
       {children}
     </div>
   )

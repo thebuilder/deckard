@@ -1,6 +1,12 @@
-# Slideshow Base (Next.js)
+# Deckard
 
-Reusable slideshow template built with Next.js, React, Tailwind, and shadcn/ui.
+Beautiful React presentations with shadcn-native theming.
+
+Deckard is a React presentation framework for building polished, fixed-canvas
+slides with reusable components, custom React content, presenter tooling, and
+shadcn-native themes. It runs on Next.js and Tailwind, and every slide is a
+React component, so a chart, a live demo, or a form is as easy to put on a
+slide as a bullet list.
 
 ## Screenshots
 
@@ -12,15 +18,15 @@ Reusable slideshow template built with Next.js, React, Tailwind, and shadcn/ui.
 
 ![Presenter view](assets/presenter-view.png)
 
-## What this template includes
+## What you get
 
-- Route-per-slide presentation flow (`/slides/[slug]`)
+- Route-per-slide presentation flow (`/slides/[id]`)
 - Keyboard navigation (`Arrow`, `PageUp/PageDown`, `Space`)
 - Step reveals with `stepCount` + `SlideStep`
 - Click-to-advance reveal area for stepped slides
 - Command center (`Cmd/Ctrl + K`) for quick jump
 - Presenter popout window with `BroadcastChannel` sync
-- Presenter notes per slide via `notes` in `app/slides.tsx`
+- Presenter notes per slide via `notes` in `deck/slides.tsx`
 - Presenter timer + 24h current-time clock
 - Presenter next-step preview (aware of reveal steps)
 - Presenter flow window (previous 2 + current + next 5 slide titles)
@@ -29,6 +35,7 @@ Reusable slideshow template built with Next.js, React, Tailwind, and shadcn/ui.
 - Slide-level layout/background/header controls
 - Typed image slide support
 - PDF export pipeline for static handout rendering
+- shadcn/ui components and tokens, so slides inherit your app theme
 
 ## Quick start
 
@@ -41,9 +48,9 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Project structure
 
-- `app/slides.tsx`: slide definitions only
-- `types/slides.ts`: slide model/types
-- `app/slideshow-config.ts`: global slideshow config (title, description, header defaults)
+- `deck/slides.tsx`: slide definitions only
+- `deck/deck.ts`: deck config (title, description, header and footer defaults) wrapped in `defineDeck`
+- `lib/deck/*`: slide model, id resolution, and validation
 - `app/slides/blocks/*`: deck-authoring building blocks (layout, typography, collections, media)
 - `components/slideshow/slide-shell.tsx`: slideshow chrome (header, navigation, frame)
 - `components/slideshow/slide-background.tsx`: shared background variants
@@ -52,11 +59,33 @@ Open [http://localhost:3000](http://localhost:3000).
 
 `SlideDefinition` supports:
 
-- Core: `slug`, `title`, `body`
+- Required: `body`
+- Optional identity: `slug`, `title`
 - Optional flow: `stepCount`, `notes`
 - Optional chrome/layout: `header`, `footer`, `layout`, `background`
 
-Slide primitives can read the current slide `title` from context, so template
+### Slide ids
+
+The exported `slides` array in `deck/slides.tsx` always defines deck order.
+`resolveSlides` never reorders it, so moving a slide in the array is the only
+way to move it in the deck.
+
+Every slide gets an id, and the id is the URL. A slide without a `slug` is
+served at its 1-based position, so the fourth slide is `/slides/4`. Give a
+slide a `slug` when you want a link that survives reordering, and it is served
+at `/slides/<slug>` instead. Slugs accept lowercase letters, digits, and
+hyphens.
+
+Ids are matched exactly. A slugged slide is served only at its slug, never
+at its position, so there is one URL per slide.
+
+Titles never become slugs. A slide with no `title` falls back to `Slide 4` in
+the header, command center, and presenter flow.
+
+The deck fails to build on a duplicate slug, an empty slug, a slug with
+characters that are unsafe in a URL path, or a slug made only of digits.
+
+Slide primitives can read the current slide `title` from context, so layout
 blocks only need an explicit `title` prop when you want to override the slide
 title text inside the layout.
 
@@ -68,7 +97,7 @@ title text inside the layout.
 - `"hidden"`: never render header
 - `"auto"`: render in default layout, hide in fullscreen layout
 
-Global default is configured in `app/slideshow-config.ts`.
+Global default is configured in `deck/deck.ts`.
 
 ### Footer behavior
 
@@ -80,16 +109,25 @@ Global default is configured in `app/slideshow-config.ts`.
 
 ## Adding slides
 
-Add entries to `app/slides.tsx`.
+Add entries to `deck/slides.tsx`.
 
 Example content slide:
 
 ```tsx
 {
-  slug: "my-slide",
   title: "My Slide",
   body: <MySlideComponent />,
   background: "spotlight",
+}
+```
+
+Example slide with a stable route:
+
+```tsx
+{
+  slug: "pricing",
+  title: "Pricing",
+  body: <MySlideComponent />,
 }
 ```
 
@@ -97,7 +135,6 @@ Presenter notes example:
 
 ```tsx
 {
-  slug: "my-slide",
   title: "My Slide",
   notes: "Speaker-only context and reminders shown in /presenter.",
   body: <MySlideComponent />,
@@ -108,7 +145,6 @@ Example image slide:
 
 ```tsx
 {
-  slug: "diagram",
   title: "Architecture Diagram",
   body: (
     <ImageShowcaseSlide
@@ -124,7 +160,6 @@ Example fullscreen video slide with autoplay:
 
 ```tsx
 {
-  slug: "launch-video",
   title: "Launch Video",
   body: (
     <FullscreenMediaSlide
@@ -186,13 +221,13 @@ This runs a production build in `NEXT_PUBLIC_PDF_EXPORT=1` mode and writes:
 - `out/slides.pdf`
 
 Slide routes are discovered from `app/sitemap.ts` (`/sitemap.xml`) so export
-stays aligned with your actual published slideshow paths.
+stays aligned with your published slide paths.
 
 Export mode behavior:
 
 - fixed viewport (default `1920x1080`)
 - animations/transitions disabled
-- slideshow header/footer hidden
+- deck header/footer hidden
 
 Optional env vars:
 
@@ -206,3 +241,10 @@ Skip build (reuse existing `.next` build):
 ```bash
 pnpm export:pdf -- --skip-build
 ```
+
+## Packages
+
+Deckard is one app today. The reusable parts, the deck contract in `lib/deck`
+and the chrome in `components/slideshow`, are being pulled out into `@deckard`
+packages, so keep new code inside those directories free of deck-specific
+content.

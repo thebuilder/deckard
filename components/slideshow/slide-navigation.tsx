@@ -1,21 +1,20 @@
 "use client"
 
-import * as React from "react"
-import { useRouter } from "next/navigation"
 import { ArrowLeft, ArrowRight } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useCallback, useEffect } from "react"
 
 import { useSlideStepper } from "@/components/slideshow/slide-stepper"
-import { Button } from "@/components/ui/button"
-import { buttonVariants } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
-type SlideNavigationProps = {
+interface SlideNavigationProps {
   current: number
-  total: number
-  previousHref?: string
-  nextHref?: string
   mode?: "visible" | "counter"
+  nextHref?: string
   prefetchHrefs?: string[]
+  previousHref?: string
+  total: number
 }
 
 export function SlideNavigation({
@@ -29,7 +28,7 @@ export function SlideNavigation({
   const router = useRouter()
   const stepper = useSlideStepper()
 
-  function handlePrevious() {
+  const handlePrevious = useCallback(() => {
     if (stepper?.canRetreat) {
       stepper.retreat()
       return
@@ -38,9 +37,9 @@ export function SlideNavigation({
     if (previousHref) {
       router.push(previousHref)
     }
-  }
+  }, [previousHref, router, stepper])
 
-  function handleNext() {
+  const handleNext = useCallback(() => {
     if (stepper?.canAdvance) {
       stepper.advance()
       return
@@ -49,40 +48,41 @@ export function SlideNavigation({
     if (nextHref) {
       router.push(nextHref)
     }
-  }
+  }, [nextHref, router, stepper])
 
   const hasPrevious = Boolean(previousHref || stepper?.canRetreat)
   const hasNext = Boolean(nextHref || stepper?.canAdvance)
   const isCounterOnly = mode === "counter"
 
-  React.useEffect(() => {
+  useEffect(() => {
     const uniqueHrefs = [...new Set(prefetchHrefs.filter(Boolean))]
-    uniqueHrefs.forEach((href) => {
+
+    for (const href of uniqueHrefs) {
       router.prefetch(href)
-    })
+    }
   }, [prefetchHrefs, router])
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-background/75 backdrop-blur-xl">
+    <div className="fixed inset-x-0 bottom-0 z-40 border-border/70 border-t bg-background/75 backdrop-blur-xl">
       <div
         className={cn(
           "px-4 py-3 sm:px-6",
           isCounterOnly
             ? "flex items-center justify-center"
-            : "flex items-center justify-between gap-3",
+            : "flex items-center justify-between gap-3"
         )}
       >
         {isCounterOnly ? null : (
           <Button
+            className={cn(
+              buttonVariants({ size: "sm", variant: "outline" }),
+              !hasPrevious && "pointer-events-none opacity-50"
+            )}
+            disabled={!hasPrevious}
+            onClick={handlePrevious}
+            size="sm"
             type="button"
             variant="outline"
-            size="sm"
-            onClick={handlePrevious}
-            disabled={!hasPrevious}
-            className={cn(
-              buttonVariants({ variant: "outline", size: "sm" }),
-              !hasPrevious && "pointer-events-none opacity-50",
-            )}
           >
             <ArrowLeft />
             Previous
@@ -90,22 +90,22 @@ export function SlideNavigation({
         )}
 
         <div className="min-w-0 text-center">
-          <p className="text-xs font-medium tabular-nums uppercase tracking-[0.2em] text-muted-foreground">
+          <p className="font-medium text-muted-foreground text-xs uppercase tabular-nums tracking-[0.2em]">
             Slide {current} of {total}
           </p>
         </div>
 
         {isCounterOnly ? null : (
           <Button
+            className={cn(
+              buttonVariants({ size: "sm", variant: "default" }),
+              !hasNext && "pointer-events-none opacity-50"
+            )}
+            disabled={!hasNext}
+            onClick={handleNext}
+            size="sm"
             type="button"
             variant="default"
-            size="sm"
-            onClick={handleNext}
-            disabled={!hasNext}
-            className={cn(
-              buttonVariants({ variant: "default", size: "sm" }),
-              !hasNext && "pointer-events-none opacity-50",
-            )}
           >
             Next
             <ArrowRight />

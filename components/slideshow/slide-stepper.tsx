@@ -1,25 +1,34 @@
 "use client"
 
-import * as React from "react"
 import { useRouter } from "next/navigation"
-
+import {
+  createContext,
+  type MouseEvent,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react"
+import { cn } from "@/lib/utils"
 import {
   PRESENTER_CHANNEL_NAME,
   type PresenterChannelMessage,
 } from "@/types/presenter"
-import { cn } from "@/lib/utils"
 
-type SlideStepContextValue = {
-  currentStep: number
-  stepCount: number
+interface SlideStepContextValue {
+  advance: () => void
   canAdvance: boolean
   canRetreat: boolean
+  currentStep: number
   isReadOnly: boolean
-  advance: () => void
   retreat: () => void
+  stepCount: number
 }
 
-const SlideStepContext = React.createContext<SlideStepContextValue | null>(null)
+const SlideStepContext = createContext<SlideStepContextValue | null>(null)
 
 function isInteractiveTarget(target: EventTarget | null) {
   if (!(target instanceof HTMLElement)) {
@@ -28,13 +37,29 @@ function isInteractiveTarget(target: EventTarget | null) {
 
   return Boolean(
     target.closest(
-      "a, button, input, textarea, select, summary, details, [role='button'], [contenteditable='true'], [data-step-ignore-click='true']",
-    ),
+      "a, button, input, textarea, select, summary, details, [role='button'], [contenteditable='true'], [data-step-ignore-click='true']"
+    )
+  )
+}
+
+const previousKeys = ["ArrowLeft", "ArrowUp", "PageUp"]
+const nextKeys = ["ArrowRight", "ArrowDown", "PageDown", " "]
+const zoomKeys = ["+", "=", "-", "_"]
+const zoomCodes = ["Equal", "Minus", "NumpadAdd", "NumpadSubtract"]
+
+function isIgnoredKeyEvent(event: KeyboardEvent) {
+  return (
+    event.defaultPrevented ||
+    event.metaKey ||
+    event.ctrlKey ||
+    event.altKey ||
+    zoomKeys.includes(event.key) ||
+    zoomCodes.includes(event.code)
   )
 }
 
 export function useSlideStepper() {
-  return React.useContext(SlideStepContext)
+  return useContext(SlideStepContext)
 }
 
 export function SlideStepper({
@@ -45,7 +70,7 @@ export function SlideStepper({
   previousHref,
   nextHref,
 }: {
-  children: React.ReactNode
+  children: ReactNode
   stepCount?: number
   initialStep?: number
   readOnly?: boolean
@@ -54,114 +79,103 @@ export function SlideStepper({
 }) {
   const router = useRouter()
   const clampedInitialStep = Math.max(0, Math.min(initialStep, stepCount - 1))
-  const [currentStep, setCurrentStep] = React.useState(clampedInitialStep)
+  const [currentStep, setCurrentStep] = useState(clampedInitialStep)
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (readOnly) {
       setCurrentStep(clampedInitialStep)
       return
     }
 
     setCurrentStep(0)
-  }, [clampedInitialStep, readOnly, stepCount, nextHref, previousHref])
+  }, [clampedInitialStep, readOnly])
 
   const maxStepIndex = Math.max(stepCount - 1, 0)
   const canAdvance = !readOnly && stepCount > 0 && currentStep < maxStepIndex
   const canRetreat = !readOnly && stepCount > 0 && currentStep > 0
 
-  const advance = React.useCallback(() => {
+  const advance = useCallback(() => {
     if (readOnly) {
       return
     }
 
-    setCurrentStep((value) => Math.min(value + 1, maxStepIndex))
+    setCurrentStep((step) => Math.min(step + 1, maxStepIndex))
   }, [maxStepIndex, readOnly])
 
-  const retreat = React.useCallback(() => {
+  const retreat = useCallback(() => {
     if (readOnly) {
       return
     }
 
-    setCurrentStep((value) => Math.max(value - 1, 0))
+    setCurrentStep((step) => Math.max(step - 1, 0))
   }, [readOnly])
 
-  const value = React.useMemo(
+  const goPrevious = useCallback(() => {
+    if (canRetreat) {
+      retreat()
+      return true
+    }
+
+    if (previousHref) {
+      router.push(previousHref)
+      return true
+    }
+
+    return false
+  }, [canRetreat, previousHref, retreat, router])
+
+  const goNext = useCallback(() => {
+    if (canAdvance) {
+      advance()
+      return true
+    }
+
+    if (nextHref) {
+      router.push(nextHref)
+      return true
+    }
+
+    return false
+  }, [advance, canAdvance, nextHref, router])
+
+  const value = useMemo(
     () => ({
-      currentStep,
-      stepCount,
+      advance,
       canAdvance,
       canRetreat,
+      currentStep,
       isReadOnly: readOnly,
-      advance,
       retreat,
+      stepCount,
     }),
-    [advance, canAdvance, canRetreat, currentStep, readOnly, retreat, stepCount],
+    [advance, canAdvance, canRetreat, currentStep, readOnly, retreat, stepCount]
   )
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (readOnly) {
       return
     }
 
     function onKeyDown(event: KeyboardEvent) {
-      if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.altKey) {
+      if (isIgnoredKeyEvent(event) || isInteractiveTarget(event.target)) {
         return
       }
 
-      if (
-        ["+", "=", "-", "_"].includes(event.key) ||
-        ["Equal", "Minus", "NumpadAdd", "NumpadSubtract"].includes(event.code)
-      ) {
+      if (previousKeys.includes(event.key) && goPrevious()) {
+        event.preventDefault()
         return
       }
 
-      if (isInteractiveTarget(event.target)) {
-        return
-      }
-
-      if (["ArrowLeft", "ArrowUp", "PageUp"].includes(event.key)) {
-        if (canRetreat) {
-          event.preventDefault()
-          retreat()
-          return
-        }
-
-        if (previousHref) {
-          event.preventDefault()
-          router.push(previousHref)
-        }
-
-        return
-      }
-
-      if (["ArrowRight", "ArrowDown", "PageDown", " "].includes(event.key)) {
-        if (canAdvance) {
-          event.preventDefault()
-          advance()
-          return
-        }
-
-        if (nextHref) {
-          event.preventDefault()
-          router.push(nextHref)
-        }
+      if (nextKeys.includes(event.key) && goNext()) {
+        event.preventDefault()
       }
     }
 
     window.addEventListener("keydown", onKeyDown)
     return () => window.removeEventListener("keydown", onKeyDown)
-  }, [
-    advance,
-    canAdvance,
-    canRetreat,
-    nextHref,
-    previousHref,
-    readOnly,
-    retreat,
-    router,
-  ])
+  }, [goNext, goPrevious, readOnly])
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (readOnly || typeof BroadcastChannel === "undefined") {
       return
     }
@@ -170,28 +184,12 @@ export function SlideStepper({
 
     function handleMessage(event: MessageEvent<PresenterChannelMessage>) {
       if (event.data?.type === "navigate-previous") {
-        if (canRetreat) {
-          retreat()
-          return
-        }
-
-        if (previousHref) {
-          router.push(previousHref)
-        }
-
+        goPrevious()
         return
       }
 
       if (event.data?.type === "navigate-next") {
-        if (canAdvance) {
-          advance()
-          return
-        }
-
-        if (nextHref) {
-          router.push(nextHref)
-        }
-
+        goNext()
         return
       }
 
@@ -206,18 +204,13 @@ export function SlideStepper({
       channel.removeEventListener("message", handleMessage)
       channel.close()
     }
-  }, [
-    advance,
-    canAdvance,
-    canRetreat,
-    nextHref,
-    previousHref,
-    readOnly,
-    retreat,
-    router,
-  ])
+  }, [goNext, goPrevious, readOnly, router])
 
-  return <SlideStepContext.Provider value={value}>{children}</SlideStepContext.Provider>
+  return (
+    <SlideStepContext.Provider value={value}>
+      {children}
+    </SlideStepContext.Provider>
+  )
 }
 
 export function SlideStep({
@@ -227,16 +220,16 @@ export function SlideStep({
   mountOnReveal = false,
 }: {
   step: number
-  children: React.ReactNode
+  children: ReactNode
   className?: string
   mountOnReveal?: boolean
 }) {
   const context = useSlideStepper()
   const isVisible = context ? step <= context.currentStep : true
-  const stepRef = React.useRef<HTMLDivElement | null>(null)
+  const stepRef = useRef<HTMLDivElement | null>(null)
 
-  React.useEffect(() => {
-    if (!context || !isVisible || context.currentStep !== step) {
+  useEffect(() => {
+    if (!(context && isVisible) || context.currentStep !== step) {
       return
     }
 
@@ -253,22 +246,22 @@ export function SlideStep({
   if (mountOnReveal && !isVisible) {
     return (
       <div
-        ref={stepRef}
         aria-hidden
         className={cn("scroll-mt-32 scroll-mb-28 sm:scroll-mb-32", className)}
+        ref={stepRef}
       />
     )
   }
 
   return (
     <div
-      ref={stepRef}
       aria-hidden={!isVisible}
       className={cn(
         "scroll-mt-32 scroll-mb-28 transition-opacity duration-300 ease-out sm:scroll-mb-32",
         !isVisible && "pointer-events-none opacity-0",
-        className,
+        className
       )}
+      ref={stepRef}
     >
       {children}
     </div>
@@ -279,20 +272,26 @@ export function SlideStepAdvanceArea({
   children,
   className,
 }: {
-  children: React.ReactNode
+  children: ReactNode
   className?: string
 }) {
   const context = useSlideStepper()
 
-  function handleClick(event: React.MouseEvent<HTMLDivElement>) {
-    if (!context?.canAdvance || isInteractiveTarget(event.target)) {
-      return
-    }
+  const handleClick = useCallback(
+    (event: MouseEvent<HTMLDivElement>) => {
+      if (!context?.canAdvance || isInteractiveTarget(event.target)) {
+        return
+      }
 
-    context.advance()
-  }
+      context.advance()
+    },
+    [context]
+  )
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: click-to-advance surface wraps arbitrary slide content, so it cannot be an interactive element
+    // biome-ignore lint/a11y/noNoninteractiveElementInteractions: click-to-advance surface wraps arbitrary slide content, so it cannot be an interactive element
+    // biome-ignore lint/a11y/useKeyWithClickEvents: stepping is already bound to arrow, page, and space keys on the window
     <div className={className} onClick={handleClick}>
       {children}
     </div>

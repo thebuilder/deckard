@@ -1,47 +1,36 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.12/schema.json",
-  "vcs": {
-    "enabled": true,
-    "clientKind": "git",
-    "useIgnoreFile": true
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": [
+    "ultracite/biome/core",
+    "ultracite/biome/react",
+    "ultracite/biome/next",
+    "ultracite/biome/vitest"
+  ],
+  "files": {
+    "includes": ["!**/*.svg"]
   },
-  "formatter": {
-    "enabled": false
-  },
-  "assist": {
-    "actions": {
-      "source": {
-        "organizeImports": "off"
-      }
-    }
-  },
-  "linter": {
-    "enabled": true,
-    "rules": {
-      "recommended": true,
-      "a11y": {
-        "noStaticElementInteractions": "off",
-        "useKeyWithClickEvents": "off",
-        "useSemanticElements": "off"
-      },
-      "complexity": {
-        "noImportantStyles": "off"
-      },
-      "correctness": {
-        "useExhaustiveDependencies": "off"
-      },
-      "security": {
-        "noDangerouslySetInnerHtml": "off"
-      },
-      "suspicious": {
-        "noArrayIndexKey": "off"
-      }
+  "javascript": {
+    "formatter": {
+      "semicolons": "asNeeded"
     }
   },
   "css": {
     "parser": {
-      "tailwindDirectives": true,
-      "cssModules": true
+      "cssModules": true,
+      "tailwindDirectives": true
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["deck/slides.tsx"],
+      "assist": {
+        "actions": {
+          "source": {
+            "useSortedAttributes": "off",
+            "useSortedKeys": "off"
+          }
+        }
+      }
+    }
+  ]
 }
