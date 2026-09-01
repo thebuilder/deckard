@@ -259,6 +259,7 @@ export function SlideStep({
         !isVisible && "pointer-events-none opacity-0",
         className
       )}
+      inert={isVisible ? undefined : true}
     >
       {children}
     </div>
