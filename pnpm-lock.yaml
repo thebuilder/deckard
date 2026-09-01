@@ -82,6 +82,12 @@ importers:
         specifier: ^1.5.3
         version: 1.5.3(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@shikijs/themes@4.4.3)(@types/node@26.4.0)(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(@vercel/functions@3.9.5(ws@8.21.3))(csstype@3.2.3)(esbuild@0.28.2)(next@16.3.3(@babel/core@7.29.7)(@opentelemetry/api@1.9.0)(@types/node@26.4.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(prettier@3.9.6)(vite@8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0))(ws@8.21.3)(yaml@2.9.0)
     devDependencies:
+      '@deckard/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@deckard/themes':
+        specifier: workspace:*
+        version: link:../../packages/themes
       '@types/node':
         specifier: ^26.4.0
         version: 26.4.0

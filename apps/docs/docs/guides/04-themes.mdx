@@ -46,6 +46,16 @@ export const deck = defineDeck({ slides, theme: phosphor, /* ... */ })
 
 Only the theme a deck imports reaches the bundle. The barrel re-exports all six and the bundler drops the modules nothing uses, stylesheets included.
 
+### The stylesheet on its own
+
+`@deckard/themes/<name>/theme.css` is the same file the module imports, exported as a subpath so something that is not a deck can load it:
+
+```ts
+import "@deckard/themes/ledger/theme.css"
+```
+
+A deck never needs this. It exists for a page that renders a slide outside the runtime, such as the [theme gallery](/themes) on this site, which builds a scaled-down canvas out of the real markup and lets the six stylesheets paint it.
+
 ## Ejecting
 
 `deckard eject theme` copies the theme the deck imports out of the installed package into `deck/theme/` as `theme.css`, `index.ts`, and `THEME.md`, then repoints `deck/deck.ts` at the copy. From then on the theme is your source and the package never touches it.
