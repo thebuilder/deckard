@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest"
 
-import { canSwitchColorMode, forcedColorMode, resolveTheme } from "./theme"
+import { defineDeck } from "./define-deck"
+import {
+  canSwitchColorMode,
+  forcedColorMode,
+  resolveTheme,
+  toDeckPresentation,
+} from "./theme"
 import type { SlideTheme } from "./types"
 
 const bothModes: SlideTheme = {
@@ -95,5 +101,42 @@ describe("color mode switching", () => {
   it("leaves the canvas free when a theme supports both modes", () => {
     expect(forcedColorMode(bothModes)).toBeUndefined()
     expect(canSwitchColorMode(bothModes)).toBe(true)
+  })
+})
+
+describe("toDeckPresentation", () => {
+  it("hands the shell the header brand, link, and date", () => {
+    const presentation = toDeckPresentation(
+      defineDeck({
+        description: "Test deck",
+        footer: { mode: "visible" },
+        header: {
+          brand: "Test brand",
+          date: "March 2026",
+          href: "/start",
+          mode: "auto",
+        },
+        slides: [{ body: null, title: "One" }],
+        title: "Test deck title",
+      })
+    )
+
+    expect(presentation.title).toBe("Test brand")
+    expect(presentation.titleHref).toBe("/start")
+    expect(presentation.date).toBe("March 2026")
+  })
+
+  it("leaves the date out when the deck sets none", () => {
+    const presentation = toDeckPresentation(
+      defineDeck({
+        description: "Test deck",
+        footer: { mode: "visible" },
+        header: { brand: "Test brand", href: "/", mode: "auto" },
+        slides: [{ body: null, title: "One" }],
+        title: "Test deck title",
+      })
+    )
+
+    expect(presentation.date).toBeUndefined()
   })
 })

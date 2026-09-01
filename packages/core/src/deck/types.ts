@@ -3,13 +3,14 @@ import type { ReactNode } from "react"
 import type {
   SlideBackgroundMode,
   SlideFooterMode,
+  SlideFooterModeInput,
   SlideHeaderMode,
   SlideLayoutMode,
 } from "../types/slides"
 
 export interface SlideMeta {
   background?: SlideBackgroundMode
-  footer?: SlideFooterMode
+  footer?: SlideFooterModeInput
   header?: SlideHeaderMode
   layout?: SlideLayoutMode
   notes?: string
@@ -34,7 +35,7 @@ export interface SlideModule {
 
 export interface SlideDefaults {
   background: SlideBackgroundMode
-  footer: SlideFooterMode
+  footer: SlideFooterModeInput
   header: SlideHeaderMode
   layout: SlideLayoutMode
 }
@@ -91,12 +92,14 @@ export interface SlideTheme {
 
 export interface DeckHeaderConfig {
   brand: string
+  // Rendered as written, so a deck picks its own format: "March 2026", "2026-03-04", "Rev. C".
+  date?: string
   href: string
   mode: SlideHeaderMode
 }
 
 export interface DeckFooterConfig {
-  mode: SlideFooterMode
+  mode: SlideFooterModeInput
 }
 
 export interface DeckConfig {
@@ -122,6 +125,7 @@ export interface Deck {
 // Everything the shell needs from the deck. Crosses into client components, so it stays serializable.
 export interface DeckPresentation {
   canvas: DeckCanvasConfig
+  date?: string
   theme: SlideTheme
   title: string
   titleHref: string

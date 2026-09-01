@@ -61,6 +61,14 @@
   --slide-scanline: none;
   --slide-cell: 1.25rem;
   --slide-halo: none;
+
+  --slide-chrome-foreground: var(--muted-foreground);
+  --slide-chrome-emphasis: var(--primary);
+  --slide-chrome-border: var(--border);
+  --slide-chrome-size: 0.875rem;
+  --slide-chrome-tracking: 0.16em;
+  --slide-progress-track: transparent;
+  --slide-progress-fill: currentcolor;
   color-scheme: light;
 }
 
@@ -210,4 +218,76 @@
   inset: auto 0 0;
   height: calc(var(--canvas-height) * 0.22);
   background-image: linear-gradient(to top, var(--slide-glow), transparent);
+}
+
+/* Deck chrome. The header is a command line and the footer is the status bar
+ * under it, held in reverse video the way a terminal holds one. */
+
+.phosphor-theme :is([data-slide-header], [data-slide-footer]) {
+  text-transform: uppercase;
+  letter-spacing: var(--slide-chrome-tracking);
+}
+
+.phosphor-theme [data-slide-header] {
+  border-block-end-style: dashed;
+}
+
+.phosphor-theme [data-slide-header-brand] {
+  text-shadow: var(--slide-halo);
+}
+
+.phosphor-theme [data-slide-header-brand]::before {
+  margin-inline-end: 0.5ch;
+  content: ">";
+}
+
+.phosphor-theme [data-slide-header-title]::before {
+  margin-inline-end: 0.5ch;
+  content: "::";
+}
+
+/* A status bar is one line of cells, not a band, so it holds itself thinner
+ * than the base footer. */
+
+.phosphor-theme [data-slide-footer] {
+  min-block-size: 2.5rem;
+  padding-block: 0.5rem;
+  color: var(--primary-foreground);
+  background-color: var(--primary);
+  border-block-start: 0;
+}
+
+.phosphor-theme [data-slide-counter]::before {
+  content: "[";
+}
+
+.phosphor-theme [data-slide-counter]::after {
+  content: "]";
+}
+
+/* The separator is a slash in a status bar, not a word. */
+
+.phosphor-theme [data-slide-counter-separator] {
+  font-size: 0;
+}
+
+.phosphor-theme [data-slide-counter-separator]::before {
+  font-size: var(--slide-chrome-size);
+  content: "/";
+}
+
+/* Progress is drawn in character cells, so it fills in steps rather than sliding. */
+
+.phosphor-theme [data-slide-progress] {
+  inset-block: auto 0;
+  height: 4px;
+}
+
+.phosphor-theme [data-slide-progress]::after {
+  background-color: transparent;
+  background-image: repeating-linear-gradient(
+    to right,
+    currentcolor 0 0.5rem,
+    transparent 0.5rem 0.75rem
+  );
 }

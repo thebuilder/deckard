@@ -4,9 +4,11 @@ This directory is the deck's look. `theme.css` holds every audience-facing color
 size, and background in the deck, scoped to `.deckard-theme` on the slide canvas.
 `index.ts` exports the `SlideTheme` that `deck/deck.ts` hands to `defineDeck`.
 
-Nothing here reaches the utility bar, the command center, the presenter console,
-or any dialog. Those keep the app tokens in `app/globals.css` so they stay
-readable whatever the deck looks like.
+The header and the footer belong to this file. They are painted inside the
+canvas, so they scale with the deck and print with it. Nothing here reaches the
+deck controls in the corner, the command center, the presenter console, or any
+dialog. Those keep the app tokens in `app/globals.css` so they stay readable
+whatever the deck looks like.
 
 ## Visual direction
 
@@ -79,6 +81,29 @@ The colors come from `--slide-wash`, `--slide-veil`, `--slide-glow`,
 carries them at roughly double the alpha, because a wash that reads on paper
 disappears on a dark sheet.
 
+## Deck chrome
+
+The runtime renders the header and the footer and names their parts, the way it
+does with backgrounds. The header holds `[data-slide-header-brand]`, the deck
+name as a link; `[data-slide-header-title]`, the current slide, rendered only
+when the slide has a title of its own; and `[data-slide-header-date]`, rendered
+only when `deck.ts` sets one. The footer holds `[data-slide-counter]`, split
+into `[data-slide-counter-current]`, `[data-slide-counter-separator]`, and
+`[data-slide-counter-total]`, and `[data-slide-progress]`, which carries the
+position in the deck as a fraction on `--slide-progress`.
+
+Deckard drops both rules and lets the type carry the line: the deck name in the
+text weight, a slash before the slide title in the border color, the date on the
+right in tabular figures, and the counter at the far end in small uppercase. The
+progress bar moves to the bottom edge of the canvas and fills in `--primary`, so
+the one line in the chrome is the one that means something.
+
+`--slide-chrome-foreground`, `--slide-chrome-emphasis`, `--slide-chrome-border`,
+`--slide-chrome-size`, `--slide-chrome-tracking`, `--slide-chrome-gap`,
+`--slide-progress-track`, and `--slide-progress-fill` are the tokens behind it.
+Setting `--slide-progress-fill: transparent` is how a deck turns the bar off
+without touching the markup.
+
 ## Safe to change
 
 Every token in `theme.css` is meant to be edited. Change the accent by moving
@@ -112,7 +137,7 @@ Styling a background variant in the React component. The component is a hook. If
 a variant needs a third layer, add it here as a pseudo-element.
 
 Redefining app tokens outside the theme class. A rule on `:root` or `.dark`
-changes the utility bar and the presenter console too. Everything in this file
+changes the deck controls and the presenter console too. Everything in this file
 starts at `.deckard-theme`.
 
 Adding a color mode to `colorModes` without writing its block. `defineDeck`

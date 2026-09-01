@@ -5,9 +5,11 @@ size, and background in the deck, scoped to `.broadsheet-theme` on the slide
 canvas. `index.ts` exports the `SlideTheme` that `deck/deck.ts` hands to
 `defineDeck`.
 
-Nothing here reaches the utility bar, the command center, the presenter console,
-or any dialog. Those keep the app tokens in `app/globals.css` so they stay
-readable whatever the deck looks like.
+The header and the footer belong to this file. They are painted inside the
+canvas, so they scale with the deck and print with it. Nothing here reaches the
+deck controls in the corner, the command center, the presenter console, or any
+dialog. Those keep the app tokens in `app/globals.css` so they stay readable
+whatever the deck looks like.
 
 ## Visual direction
 
@@ -85,6 +87,25 @@ The colors come from `--slide-wash`, `--slide-veil`, `--slide-glow`,
 carries them at higher alpha, because a wash that reads on paper disappears on a
 dark sheet.
 
+## Deck chrome
+
+The runtime renders the header and the footer and names their parts, the way it
+does with backgrounds. The header holds `[data-slide-header-brand]`, the deck
+name as a link; `[data-slide-header-title]`, the current slide, rendered only
+when the slide has a title of its own; and `[data-slide-header-date]`, rendered
+only when `deck.ts` sets one. The footer holds `[data-slide-counter]`, split
+into `[data-slide-counter-current]`, `[data-slide-counter-separator]`, and
+`[data-slide-counter-total]`, and `[data-slide-progress]`, which carries the
+position in the deck as a fraction on `--slide-progress`.
+
+Broadsheet sets a running head. The deck name reads as a masthead in small caps,
+the slide title runs italic in the middle of the line, and the date sits right in
+old-style figures, all in the serif the deck is set in. The foot centers the
+folio in small caps under a rule.
+
+There is no progress bar. `--slide-progress-fill` is `transparent`, because a
+newspaper page has no scrollbar. A deck that wants one sets it to `--primary`.
+
 ## Safe to change
 
 Every token in `theme.css` is meant to be edited. Move the accent by changing
@@ -118,7 +139,7 @@ sized to carry the separation on their own. A shadow on top of them reads as a
 mistake rather than as depth.
 
 Redefining app tokens outside the theme class. A rule on `:root` or `.dark`
-changes the utility bar and the presenter console too. Everything in this file
+changes the deck controls and the presenter console too. Everything in this file
 starts at `.broadsheet-theme`.
 
 Assuming `.dark` on `<html>` is the only switch. A deck can pin the canvas

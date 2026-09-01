@@ -1,9 +1,11 @@
 export { ColorModeProvider } from "./color-mode-provider"
 export { SlideshowColorModeToggle } from "./color-mode-toggle"
+export { DeckControls } from "./deck-controls"
 export { PresenterConsole } from "./presenter-console"
 export { PresenterPopoutButton } from "./presenter-controls"
 export { SlideBackground } from "./slide-background"
 export { SlideCanvas } from "./slide-canvas"
+export { SlideCanvasFooter, SlideCanvasHeader } from "./slide-chrome"
 export { SlideCommandCenter } from "./slide-command-center"
 export {
   SlideContextProvider,
@@ -12,7 +14,7 @@ export {
 } from "./slide-context"
 export { SlideErrorBoundary } from "./slide-error-boundary"
 export { SlideMediaVideo } from "./slide-media-video"
-export { SlideNavigation } from "./slide-navigation"
+export { SlidePrefetch } from "./slide-prefetch"
 export { SlideScrollArea } from "./slide-scroll-area"
 export { SlideShell } from "./slide-shell"
 export {

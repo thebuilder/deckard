@@ -5,9 +5,11 @@ size, and background in the deck, scoped to `.phosphor-theme` on the slide
 canvas. `index.ts` exports the `SlideTheme` that `deck/deck.ts` hands to
 `defineDeck`.
 
-Nothing here reaches the utility bar, the command center, the presenter console,
-or any dialog. Those keep the app tokens in `app/globals.css` so they stay
-readable whatever the deck looks like.
+The header and the footer belong to this file. They are painted inside the
+canvas, so they scale with the deck and print with it. Nothing here reaches the
+deck controls in the corner, the command center, the presenter console, or any
+dialog. Those keep the app tokens in `app/globals.css` so they stay readable
+whatever the deck looks like.
 
 ## Visual direction
 
@@ -111,6 +113,27 @@ ratio is `1.25rem` to `2.25rem`, which is close to a real terminal's cell.
 All three are defined in the light block and overridden in dark, like every
 other token here.
 
+## Deck chrome
+
+The runtime renders the header and the footer and names their parts, the way it
+does with backgrounds. The header holds `[data-slide-header-brand]`, the deck
+name as a link; `[data-slide-header-title]`, the current slide, rendered only
+when the slide has a title of its own; and `[data-slide-header-date]`, rendered
+only when `deck.ts` sets one. The footer holds `[data-slide-counter]`, split
+into `[data-slide-counter-current]`, `[data-slide-counter-separator]`, and
+`[data-slide-counter-total]`, and `[data-slide-progress]`, which carries the
+position in the deck as a fraction on `--slide-progress`.
+
+Phosphor reads the pair as a terminal. The head is a command line: a dashed rule
+under it, `>` before the deck name in the halo the headings carry, and `::`
+before the slide title. The foot is the status bar, held in reverse video on
+`--primary`, with the counter in brackets and the separator swapped for a slash
+through `[data-slide-counter-separator]`.
+
+The progress bar sits along the bottom of that bar and is drawn in character
+cells, a repeating gradient in `currentcolor`, so it fills in steps rather than
+sliding.
+
 ## Safe to change
 
 Every token in `theme.css` is meant to be edited. The source design ships amber
@@ -156,7 +179,7 @@ Hardcoding a color inside the canvas. `text-white`, `bg-slate-900`, and
 semantic token (`text-foreground`, `bg-card`) or a slide token.
 
 Redefining app tokens outside the theme class. A rule on `:root` or `.dark`
-changes the utility bar and the presenter console too. Everything in this file
+changes the deck controls and the presenter console too. Everything in this file
 starts at `.phosphor-theme`.
 
 Assuming `.dark` on `<html>` is the only switch. This theme defaults the canvas

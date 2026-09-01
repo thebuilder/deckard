@@ -59,6 +59,14 @@
   --slide-spotlight: oklch(0.6 0.1 48 / 11%);
   --slide-grid-major: oklch(0.45 0.05 258 / 16%);
   --slide-halo: none;
+
+  --slide-chrome-foreground: var(--muted-foreground);
+  --slide-chrome-emphasis: var(--foreground);
+  --slide-chrome-border: var(--slide-grid-major);
+  --slide-chrome-size: 0.875rem;
+  --slide-chrome-tracking: 0.28em;
+  --slide-progress-track: var(--slide-grid-major);
+  --slide-progress-fill: var(--primary);
   color-scheme: light;
 }
 
@@ -230,4 +238,60 @@
   background-color: var(--slide-glow);
   border-radius: 9999px;
   filter: blur(72px);
+}
+
+/* Deck chrome. Console strips: everything set in capitals, spaced out, and
+ * ruled off in the accent, the way the headings are. */
+
+.nexus-theme :is([data-slide-header], [data-slide-footer]) {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--slide-chrome-tracking);
+}
+
+.nexus-theme [data-slide-header-brand] {
+  color: var(--primary);
+  text-shadow: var(--slide-halo);
+}
+
+.nexus-theme [data-slide-header-title]::before {
+  margin-inline-end: var(--slide-chrome-gap);
+  color: var(--primary);
+  content: "//";
+}
+
+.nexus-theme [data-slide-header-date] {
+  font-family: var(--slide-font-mono);
+  letter-spacing: 0.12em;
+}
+
+.nexus-theme [data-slide-footer] {
+  border-block-start: 0;
+}
+
+.nexus-theme [data-slide-counter-current] {
+  color: var(--primary);
+}
+
+/* The strip reads as a readout: ticks the whole width, lit up to the current
+ * slide. --slide-progress is the fraction, so the mask is the only moving part. */
+
+.nexus-theme [data-slide-progress] {
+  inset-block: 0 auto;
+  height: 6px;
+  background-color: transparent;
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--slide-progress-track) 0 2px,
+    transparent 2px 0.75rem
+  );
+}
+
+.nexus-theme [data-slide-progress]::after {
+  background-color: transparent;
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--slide-progress-fill) 0 2px,
+    transparent 2px 0.75rem
+  );
 }

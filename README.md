@@ -307,7 +307,9 @@ playground.
 ### Inside the package
 
 - `packages/core/src/deck/*`: slide model, id resolution, validation, discovery
-- `packages/core/src/components/slide-shell.tsx`: slideshow chrome (header, navigation, frame)
+- `packages/core/src/components/slide-shell.tsx`: the shell that assembles a slide (frame, canvas chrome, deck controls)
+- `packages/core/src/components/slide-chrome.tsx`: the themed header and footer inside the canvas
+- `packages/core/src/components/deck-controls.tsx`: the corner cluster that drives the deck
 - `packages/core/src/components/slide-viewport.tsx`: fits the canvas to the browser viewport
 - `packages/core/src/components/slide-canvas.tsx`: the fixed coordinate space slides are authored in
 - `packages/core/src/components/slide-background.tsx`: the background hook the theme paints
@@ -366,9 +368,11 @@ scrolling never steps the deck:
 
 `CodeBlock` takes an optional `maxHeight` and uses it for long samples.
 
-Deck chrome (footer navigation and counter, command center, presenter popout,
-color mode toggle) lives outside the canvas so it keeps its own size and hit
-targets at any scale, down to a phone.
+Chrome splits in two. The header and the footer are deck layout: they live
+inside the canvas, scale with it, and belong to the theme. The deck controls
+(command center, presenter popout, color mode toggle, previous and next) live
+outside the canvas, so they keep their own size and hit targets at any scale,
+down to a phone.
 
 ## Slide model
 
@@ -418,9 +422,62 @@ Global default is configured in `deck/deck.ts`.
 
 `footer` can be:
 
-- `"visible"`: full previous/next controls + counter
-- `"counter"`: counter only (`Slide x of y`)
+- `"visible"`: the slide counter and the progress hook
 - `"hidden"`: no footer
+
+`"counter"` was the third mode, back when a visible footer also carried
+previous and next buttons. Those buttons are in the deck controls now, so
+`"counter"` and `"visible"` describe the same footer; a deck that still says
+`"counter"` resolves to `"visible"`.
+
+## Deck chrome
+
+The header and the footer are painted inside the canvas, so they scale with the
+deck, print into the PDF export, and show up in a presenter preview. The runtime
+renders the structure and the theme decides the look:
+
+```html
+<header data-slide-header>
+  <a data-slide-header-brand href="/">Deckard</a>
+  <span data-slide-header-title>Themed chrome</span>
+  <time data-slide-header-date>March 2026</time>
+</header>
+
+<footer data-slide-footer>
+  <div data-slide-progress style="--slide-progress: 0.25"></div>
+  <p data-slide-counter>
+    <span data-slide-counter-current>3</span>
+    <span data-slide-counter-separator> of </span>
+    <span data-slide-counter-total>12</span>
+  </p>
+</footer>
+```
+
+The title renders only for a slide that has one, and the date only when
+`deck/deck.ts` sets `header.date`. It is printed as written, so a deck picks its
+own format. `--slide-progress` is the position in the deck as a fraction, which
+is what a theme reads to paint a bar, a row of dots, or nothing.
+
+`@deckard/core/styles.css` carries a neutral default on eight tokens:
+`--slide-chrome-foreground`, `--slide-chrome-emphasis`, `--slide-chrome-border`,
+`--slide-chrome-size`, `--slide-chrome-tracking`, `--slide-chrome-gap`,
+`--slide-progress-track`, and `--slide-progress-fill`. Every theme in the
+registry overrides them and styles the attributes above; each `THEME.md` has a
+`Deck chrome` section describing what that theme does.
+
+### Deck controls
+
+The command center, the presenter popout, the color mode toggle, and compact
+previous and next buttons sit in one cluster in the bottom right corner, outside
+the canvas. The cluster is hidden at rest and reveals when the pointer comes
+within 160px of the corner, when anything inside it takes focus, or while the
+command dialog is open. On a touch device, where there is no hover, a handle
+sits in the corner and expands the cluster on tap.
+
+Hidden means transparent, not absent: the buttons stay in the accessibility
+tree, tabbing into them reveals the cluster, and `Cmd/Ctrl+K` opens the command
+center whether the cluster is showing or not. A presenter preview and a PDF
+export drop the cluster entirely and keep the header and footer.
 
 ## Adding slides
 
@@ -641,9 +698,10 @@ What each variant paints lives in the deck theme, so change the look in
 ## Theme
 
 `deck/theme/` owns every audience-facing color, size, and background in the
-deck. The stylesheet is scoped to the theme class, which `SlideCanvas` puts on
-the canvas element, so the utility bar, command center, and presenter console
-keep the app tokens and stay readable whatever the deck looks like.
+deck, including the header and the footer. The stylesheet is scoped to the
+theme class, which `SlideCanvas` puts on the canvas element, so the deck
+controls, command center, and presenter console keep the app tokens and stay
+readable whatever the deck looks like.
 
 ```ts
 export const theme = {
@@ -761,7 +819,8 @@ Export mode behavior:
 
 - one page per slide at the deck canvas size, captured from the canvas element
 - animations/transitions disabled
-- deck header/footer hidden
+- the deck header and footer print, exactly as the slide's own modes say
+- the deck controls do not render
 
 Page size comes from the `canvas` config in `deck/deck.ts`, so the export
 cannot drift from what the audience sees.

@@ -1,7 +1,11 @@
 export { resolveCanvas } from "./deck/canvas"
 export { defineDeck } from "./deck/define-deck"
 export { isPdfExport, pdfExportColorMode } from "./deck/pdf-export"
-export { getSlideById, resolveSlides } from "./deck/resolve-slides"
+export {
+  getSlideById,
+  normalizeFooterMode,
+  resolveSlides,
+} from "./deck/resolve-slides"
 export { toSlideSummaries, toSlideSummary } from "./deck/slide-summary"
 export {
   canSwitchColorMode,
@@ -35,6 +39,7 @@ export { PRESENTER_CHANNEL_NAME } from "./types/presenter"
 export type {
   SlideBackgroundMode,
   SlideFooterMode,
+  SlideFooterModeInput,
   SlideHeaderMode,
   SlideLayoutMode,
 } from "./types/slides"

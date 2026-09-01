@@ -58,14 +58,13 @@ export function createSlideRoute(deck: Deck) {
     const prefetch = [previousSlide, nextSlide, nextNextSlide]
       .filter((item) => item !== undefined)
       .map(toSlideSummary)
-    const isChromeHidden = isPdfExport()
-
     return (
       <SlideShell
         background={slide.background}
+        controlsHidden={isPdfExport()}
         deck={toDeckPresentation(deck)}
-        footerMode={isChromeHidden ? "hidden" : slide.footer}
-        headerMode={isChromeHidden ? "hidden" : slide.header}
+        footerMode={slide.footer}
+        headerMode={slide.header}
         layout={slide.layout}
         next={nextSlide ? toSlideSummary(nextSlide) : undefined}
         notes={slide.notes}

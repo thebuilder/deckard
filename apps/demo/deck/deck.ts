@@ -8,10 +8,11 @@ export const deck = defineDeck({
   description:
     "The story of turning a slideshow app into a presentation framework, and what the migration proved.",
   footer: {
-    mode: "counter",
+    mode: "visible",
   },
   header: {
     brand: "Deckard",
+    date: "March 2026",
     href: "/",
     mode: "auto",
   },

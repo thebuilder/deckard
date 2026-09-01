@@ -62,6 +62,74 @@
     --slide-grid-color: transparent;
     --slide-grid-size: 44px;
     --slide-spotlight: transparent;
+
+    --slide-chrome-foreground: var(--muted-foreground);
+    --slide-chrome-emphasis: var(--foreground);
+    --slide-chrome-border: var(--border);
+    --slide-chrome-size: var(--slide-support-size);
+    --slide-chrome-tracking: 0.08em;
+    --slide-chrome-gap: 1rem;
+    --slide-progress-track: transparent;
+    --slide-progress-fill: var(--slide-chrome-border);
+  }
+
+  /*
+   * Deck layout, not runtime UI: the header and the footer are painted inside the
+   * canvas, so they scale with the deck and print. The runtime renders the
+   * elements and the attributes below, and a theme decides what they look like.
+   */
+  [data-slide-canvas] :is([data-slide-header], [data-slide-footer]) {
+    column-gap: var(--slide-chrome-gap);
+    padding-block: 1rem;
+    padding-inline: var(--slide-padding-inline);
+    font-family: var(--slide-font-body);
+    font-size: var(--slide-chrome-size);
+    line-height: 1.2;
+    color: var(--slide-chrome-foreground);
+  }
+
+  [data-slide-canvas] [data-slide-header] {
+    border-block-end: 1px solid var(--slide-chrome-border);
+  }
+
+  [data-slide-canvas] [data-slide-footer] {
+    border-block-start: 1px solid var(--slide-chrome-border);
+  }
+
+  [data-slide-canvas] [data-slide-header-brand] {
+    font-weight: 600;
+    color: var(--slide-chrome-emphasis);
+    text-decoration: none;
+  }
+
+  [data-slide-canvas] [data-slide-header-date] {
+    margin-inline-start: auto;
+  }
+
+  /* Left, because the deck controls dock in the bottom right corner and the
+   * counter would sit under them. */
+  [data-slide-canvas] [data-slide-counter] {
+    margin-inline-end: auto;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: var(--slide-chrome-tracking);
+  }
+
+  /* --slide-progress is the position in the deck as a fraction, set by the runtime. */
+  [data-slide-canvas] [data-slide-progress] {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: 0;
+    height: 2px;
+    background-color: var(--slide-progress-track);
+  }
+
+  [data-slide-canvas] [data-slide-progress]::after {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    width: calc(var(--slide-progress, 0) * 100%);
+    content: "";
+    background-color: var(--slide-progress-fill);
   }
 }
 

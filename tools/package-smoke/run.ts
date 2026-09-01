@@ -13,7 +13,7 @@ const keepScratch = process.argv.includes("--keep")
 
 // Classes only the runtime writes. Tailwind can only reach them through the
 // @source the package stylesheet registers against its own compiled output.
-const runtimeUtilities = ["min-h-16", "backdrop-blur-xl", "data-slide-chrome"]
+const runtimeUtilities = ["min-h-16", "backdrop-blur-sm", "data-slide-chrome"]
 
 function run(command: string, args: string[], cwd: string) {
   const result = spawnSync(command, args, {

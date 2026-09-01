@@ -58,6 +58,14 @@
   --slide-grid-size: 3.5rem;
   --slide-spotlight: oklch(0.48 0.06 205 / 14%);
   --slide-horizon: oklch(0.44 0.088 205 / 13%);
+
+  --slide-chrome-foreground: var(--muted-foreground);
+  --slide-chrome-emphasis: var(--foreground);
+  --slide-chrome-border: var(--border);
+  --slide-chrome-size: 0.875rem;
+  --slide-chrome-tracking: 0.14em;
+  --slide-progress-track: transparent;
+  --slide-progress-fill: var(--primary);
   color-scheme: light;
 }
 
@@ -215,4 +223,39 @@
   inset: auto 0 0;
   height: calc(var(--canvas-height) * 0.12);
   background-image: linear-gradient(to top, var(--background), transparent);
+}
+
+/* Deck chrome. Broadsheet's running head, kept for a talk rather than a page:
+ * the folio stays centred, and the deck keeps a progress rule in the accent. */
+
+.demo-theme :is([data-slide-header], [data-slide-footer]) {
+  font-family: var(--slide-font-heading);
+}
+
+.demo-theme [data-slide-header-brand] {
+  font-variant-caps: small-caps;
+  letter-spacing: var(--slide-chrome-tracking);
+}
+
+.demo-theme [data-slide-header-title] {
+  margin-inline: auto;
+  font-style: italic;
+}
+
+.demo-theme [data-slide-header-date] {
+  letter-spacing: 0.06em;
+}
+
+.demo-theme [data-slide-footer] {
+  border-block-start-color: var(--slide-chrome-border);
+}
+
+.demo-theme [data-slide-counter] {
+  margin-inline: auto;
+  font-variant-caps: small-caps;
+}
+
+.demo-theme [data-slide-progress] {
+  inset-block: auto 0;
+  height: 2px;
 }

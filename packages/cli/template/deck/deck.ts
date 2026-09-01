@@ -11,7 +11,7 @@ export const deck = defineDeck({
   },
   description: "__DECK_DESCRIPTION__",
   footer: {
-    mode: "counter",
+    mode: "visible",
   },
   header: {
     brand: "__DECK_TITLE__",

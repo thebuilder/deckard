@@ -20,7 +20,7 @@ const themes = [
     modes: "Light and dark",
     name: "theme-deckard",
     summary:
-      "The default. Off-white paper in light mode, a blue-black sheet in dark, one teal accent on eyebrows, buttons, and focus rings. Cards are near-opaque with a hairline border, a soft shadow, and 1rem corners. Backgrounds are a top wash, a 44px grid, or a wide spotlight, each with a blurred corner glow.",
+      "The default. Off-white paper in light mode, a blue-black sheet in dark, one teal accent on eyebrows, buttons, and focus rings. Cards are near-opaque with a hairline border, a soft shadow, and 1rem corners. Backgrounds are a top wash, a 44px grid, or a wide spotlight, each with a blurred corner glow. The deck header and footer drop their rules and let the type carry the line, with the progress bar on the canvas edge in the accent.",
     swatches: readThemeSwatches("apps/playground/deck/theme/theme.css"),
     title: "Deckard",
     when: "You want a deck that reads as a modern product presentation and you do not want to design a theme.",
@@ -30,7 +30,7 @@ const themes = [
     modes: "Light and dark",
     name: "theme-broadsheet",
     summary:
-      "Editorial print. Warm newsprint in light mode, warm ink in dark, oxblood accent turning terracotta after dark. Serif throughout, from a system stack that loads no web font. Corners are 0.125rem and there is no shadow anywhere, so a card is a panel with a rule around it. The grid variant paints horizontal rules like ruled paper; spotlight paints two column rules at the thirds.",
+      "Editorial print. Warm newsprint in light mode, warm ink in dark, oxblood accent turning terracotta after dark. Serif throughout, from a system stack that loads no web font. Corners are 0.125rem and there is no shadow anywhere, so a card is a panel with a rule around it. The grid variant paints horizontal rules like ruled paper; spotlight paints two column rules at the thirds. The deck header is a running head and the footer centers the folio under a rule.",
     swatches: readThemeSwatches("registry/themes/broadsheet/theme.css"),
     title: "Broadsheet",
     when: "A talk that should read as a written argument rather than a product demo. Also the worked example of a second theme on the same token contract.",
@@ -40,7 +40,7 @@ const themes = [
     modes: "Light and dark",
     name: "theme-ledger",
     summary:
-      "A bound report. Warm paper turning warm ink after dark, oxblood accent turning rust. Three families doing three jobs: serif headings, sans body, mono eyebrows and folio numbers. Zero radius and no shadow anywhere, so rules carry the structure and the surface border sits three steps darker than the border to pay for it. The grid variant is ledger paper with an accent margin rule down the left; default and spotlight close on a heavy folio rule.",
+      "A bound report. Warm paper turning warm ink after dark, oxblood accent turning rust. Three families doing three jobs: serif headings, sans body, mono eyebrows and folio numbers. Zero radius and no shadow anywhere, so rules carry the structure and the surface border sits three steps darker than the border to pay for it. The grid variant is ledger paper with an accent margin rule down the left; default and spotlight close on a heavy folio rule. The deck header is a folio line and the footer centers mono page numbers, with no progress bar.",
     swatches: readThemeSwatches("registry/themes/ledger/theme.css"),
     title: "Ledger",
     when: "The deck is a written argument with numbers in it and you want the slides to read as pages.",
@@ -50,7 +50,7 @@ const themes = [
     modes: "Light and dark",
     name: "theme-meridian",
     summary:
-      "The quietest theme here. Near-white blue-gray turning cool near-black, one mid blue accent used once per slide, one system sans for everything. Flat cards with a hairline border and 0.625rem corners, no shadow in either mode. Headings carry -0.03em of tracking, which is the whole identity. Backgrounds run at half the alpha of every other theme: one head wash, a drafting grid that fades out behind the copy, one wide radial.",
+      "The quietest theme here. Near-white blue-gray turning cool near-black, one mid blue accent used once per slide, one system sans for everything. Flat cards with a hairline border and 0.625rem corners, no shadow in either mode. Headings carry -0.03em of tracking, which is the whole identity. Backgrounds run at half the alpha of every other theme: one head wash, a drafting grid that fades out behind the copy, one wide radial. The deck header and footer are nearly silent: no rules, no capitals, and a 1px progress hairline.",
     swatches: readThemeSwatches("registry/themes/meridian/theme.css"),
     title: "Meridian",
     when: "A product or planning review where the content should be the loudest thing on the slide.",
@@ -60,7 +60,7 @@ const themes = [
     modes: "Light and dark, dark by default",
     name: "theme-nexus",
     summary:
-      "A flight console. Blue-black sheet, amber accent, every heading uppercase with an amber halo behind the first two levels. Panels take a 0.125rem blueprint corner. The grid variant is the draw: a 1.75rem cell grid with every fifth line heavier, faded out behind the copy. Spotlight is an approach light off the top edge over a tube vignette. Light mode is complete and reads as the printed version of the same document.",
+      "A flight console. Blue-black sheet, amber accent, every heading uppercase with an amber halo behind the first two levels. Panels take a 0.125rem blueprint corner. The grid variant is the draw: a 1.75rem cell grid with every fifth line heavier, faded out behind the copy. Spotlight is an approach light off the top edge over a tube vignette. Light mode is complete and reads as the printed version of the same document. The deck header and footer are console strips in wide capitals over a tick readout of the progress.",
     swatches: readThemeSwatches("registry/themes/nexus/theme.css"),
     title: "Nexus",
     when: "An engineering or systems talk that wants instrument-panel authority.",
@@ -70,7 +70,7 @@ const themes = [
     modes: "Light and dark, dark by default",
     name: "theme-phosphor",
     summary:
-      "A green CRT. One monospace family sets every word on the slide, headings included, uppercase with a phosphor bloom. Scanlines are the first background layer of every variant rather than an overlay, so only background none escapes them. The grid variant draws a character cell; spotlight is the tube, bloom at the centre and falloff into the corners. Every corner is square. Light mode turns the tube off for handouts.",
+      "A green CRT. One monospace family sets every word on the slide, headings included, uppercase with a phosphor bloom. Scanlines are the first background layer of every variant rather than an overlay, so only background none escapes them. The grid variant draws a character cell; spotlight is the tube, bloom at the centre and falloff into the corners. Every corner is square. Light mode turns the tube off for handouts. The deck header is a command line and the footer a reverse-video status bar with the progress in character cells.",
     swatches: readThemeSwatches("registry/themes/phosphor/theme.css"),
     title: "Phosphor",
     when: "A developer talk or a build report that should look like it is running rather than presented.",
