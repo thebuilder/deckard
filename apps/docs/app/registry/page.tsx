@@ -35,6 +35,46 @@ const themes = [
     title: "Broadsheet",
     when: "A talk that should read as a written argument rather than a product demo. Also the worked example of a second theme on the same token contract.",
   },
+  {
+    href: "https://github.com/thebuilder/next-slideshow-template/blob/main/registry/themes/ledger/theme.css",
+    modes: "Light and dark",
+    name: "theme-ledger",
+    summary:
+      "A bound report. Warm paper turning warm ink after dark, oxblood accent turning rust. Three families doing three jobs: serif headings, sans body, mono eyebrows and folio numbers. Zero radius and no shadow anywhere, so rules carry the structure and the surface border sits three steps darker than the border to pay for it. The grid variant is ledger paper with an accent margin rule down the left; default and spotlight close on a heavy folio rule.",
+    swatches: readThemeSwatches("registry/themes/ledger/theme.css"),
+    title: "Ledger",
+    when: "The deck is a written argument with numbers in it and you want the slides to read as pages.",
+  },
+  {
+    href: "https://github.com/thebuilder/next-slideshow-template/blob/main/registry/themes/meridian/theme.css",
+    modes: "Light and dark",
+    name: "theme-meridian",
+    summary:
+      "The quietest theme here. Near-white blue-gray turning cool near-black, one mid blue accent used once per slide, one system sans for everything. Flat cards with a hairline border and 0.625rem corners, no shadow in either mode. Headings carry -0.03em of tracking, which is the whole identity. Backgrounds run at half the alpha of every other theme: one head wash, a drafting grid that fades out behind the copy, one wide radial.",
+    swatches: readThemeSwatches("registry/themes/meridian/theme.css"),
+    title: "Meridian",
+    when: "A product or planning review where the content should be the loudest thing on the slide.",
+  },
+  {
+    href: "https://github.com/thebuilder/next-slideshow-template/blob/main/registry/themes/nexus/theme.css",
+    modes: "Light and dark, dark by default",
+    name: "theme-nexus",
+    summary:
+      "A flight console. Blue-black sheet, amber accent, every heading uppercase with an amber halo behind the first two levels. Panels take a 0.125rem blueprint corner. The grid variant is the draw: a 1.75rem cell grid with every fifth line heavier, faded out behind the copy. Spotlight is an approach light off the top edge over a tube vignette. Light mode is complete and reads as the printed version of the same document.",
+    swatches: readThemeSwatches("registry/themes/nexus/theme.css"),
+    title: "Nexus",
+    when: "An engineering or systems talk that wants instrument-panel authority.",
+  },
+  {
+    href: "https://github.com/thebuilder/next-slideshow-template/blob/main/registry/themes/phosphor/theme.css",
+    modes: "Light and dark, dark by default",
+    name: "theme-phosphor",
+    summary:
+      "A green CRT. One monospace family sets every word on the slide, headings included, uppercase with a phosphor bloom. Scanlines are the first background layer of every variant rather than an overlay, so only background none escapes them. The grid variant draws a character cell; spotlight is the tube, bloom at the centre and falloff into the corners. Every corner is square. Light mode turns the tube off for handouts.",
+    swatches: readThemeSwatches("registry/themes/phosphor/theme.css"),
+    title: "Phosphor",
+    when: "A developer talk or a build report that should look like it is running rather than presented.",
+  },
 ]
 
 const blocks = [
@@ -65,6 +105,13 @@ const blocks = [
     summary:
       "Photo and video slides sized for the 1920x1080 canvas. One bleeds to every edge with an optional scrim under the copy, the other splits the canvas 1.2fr to 0.8fr with a caption panel. Both forward blurDataURL from static imports and pad against --slide-chrome-top and --slide-chrome-bottom.",
     when: "Any slide with an image or a video. Dropping a bare img on a slide will not fit the canvas and will sit under the header.",
+  },
+  {
+    exports: "StatGrid",
+    name: "block-metrics",
+    summary:
+      "Exactly three columns, typed as a tuple, marked up as a description list: a figure at --slide-title-size in the theme heading font over a caption at --slide-support-size, ruled off at the top in --slide-surface-border. The figure carries data-stat-value, which is how nexus and ledger reach it with their heading treatment.",
+    when: "The one slide in the deck that is numbers. Write the comparison into the caption, because a figure with nothing to measure against is decoration.",
   },
 ]
 
@@ -141,7 +188,7 @@ export default function RegistryPage() {
 
       <h2 className="pt-4 text-2xl">preset-deckard</h2>
       <p>
-        One add for a new deck: the Deckard theme and all four block families.
+        One add for a new deck: the Deckard theme and all five block families.
         It also writes the one stylesheet line you cannot guess, the{" "}
         <code>@import</code> of <code>@deckard/core/styles.css</code>. That
         sheet carries the slide token contract and registers the package&apos;s

@@ -50,9 +50,10 @@ function describe(overflow: Overflow) {
 async function checkSlide(
   page: Page,
   baseUrl: string,
-  id: string
+  id: string,
+  colorMode: ColorMode
 ): Promise<Overflow | null> {
-  await openSlide(page, baseUrl, id)
+  await openSlide(page, baseUrl, id, colorMode)
 
   const overflow = await measure(page)
 
@@ -79,7 +80,7 @@ export function runCheckOverflow(args: ParsedArgs): Promise<void> {
 
     for (const id of ids) {
       // biome-ignore lint/performance/noAwaitInLoops: slides are measured one at a time on a single page
-      const overflow = await checkSlide(page, baseUrl, id)
+      const overflow = await checkSlide(page, baseUrl, id, colorMode)
 
       if (overflow) {
         overflowing.push(overflow)

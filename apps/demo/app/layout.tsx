@@ -1,3 +1,4 @@
+import { isPdfExport, pdfExportColorMode } from "@deckard/core"
 import { ColorModeProvider } from "@deckard/core/components"
 import { cn } from "@deckard/core/utils"
 import type { Metadata } from "next"
@@ -26,22 +27,19 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  const isPdfExport = process.env.NEXT_PUBLIC_PDF_EXPORT === "1"
-  const isPdfDark = process.env.NEXT_PUBLIC_PDF_THEME === "dark"
+  const pdfColorMode = pdfExportColorMode()
 
   return (
     <html
-      className={cn(
-        fontSans.variable,
-        fontMono.variable,
-        isPdfExport && isPdfDark && "dark"
-      )}
-      data-pdf-export={isPdfExport ? "true" : undefined}
+      className={cn(fontSans.variable, fontMono.variable, pdfColorMode)}
+      data-pdf-export={isPdfExport() ? "true" : undefined}
       lang="en"
       suppressHydrationWarning
     >
       <body>
-        <ColorModeProvider theme={deck.theme}>{children}</ColorModeProvider>
+        <ColorModeProvider forcedColorMode={pdfColorMode} theme={deck.theme}>
+          {children}
+        </ColorModeProvider>
       </body>
     </html>
   )

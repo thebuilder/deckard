@@ -1,5 +1,6 @@
 export { resolveCanvas } from "./deck/canvas"
 export { defineDeck } from "./deck/define-deck"
+export { isPdfExport, pdfExportColorMode } from "./deck/pdf-export"
 export { getSlideById, resolveSlides } from "./deck/resolve-slides"
 export { toSlideSummaries, toSlideSummary } from "./deck/slide-summary"
 export {

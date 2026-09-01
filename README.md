@@ -58,7 +58,7 @@ every later `deckard` command reads that field rather than guessing.
 ```
 my-talk/
   app/                   layout, globals.css, and the slide routes
-    slides/blocks/       the four block families, yours to edit
+    slides/blocks/       the five block families, yours to edit
   deck/
     deck.ts              defineDeck config
     slides.tsx           the slide array
@@ -70,10 +70,10 @@ my-talk/
   package.json
 ```
 
-`init` takes `--theme broadsheet` for the editorial look, `--empty` for two
-slides instead of the sample deck, `--package-manager npm|pnpm|yarn|bun` to
-override the one it detected, and `--no-install` or `--no-git` to skip those
-steps. It asks no questions.
+`init` takes `--theme <name>` to pick one of deckard, broadsheet, ledger,
+meridian, nexus, or phosphor, `--empty` for two slides instead of the sample
+deck, `--package-manager npm|pnpm|yarn|bun` to override the one it detected,
+and `--no-install` or `--no-git` to skip those steps. It asks no questions.
 
 A presentation built on Deckard is a plain Next.js app that you own. You do not
 clone this repository to build a deck, and you do not write your slides in
@@ -197,8 +197,8 @@ Themes and slide blocks are deliberately not in the package. They install into
 your app as source files through shadcn, and you edit them from then on.
 
 ```bash
-deckard add theme broadsheet
-deckard add block media
+deckard add theme phosphor
+deckard add block metrics
 
 # or straight through shadcn
 pnpm dlx shadcn@latest add @deckard/preset-deckard
@@ -658,6 +658,11 @@ export const theme = {
 modes. A theme that lists one mode pins the canvas to it and hides the
 light/dark toggle. There is no runtime switching between named themes.
 
+`defaultColorMode` decides what a browser opens on, not what the checks capture.
+`--light` and the light PDF export force the mode they name, so a deck that
+defaults to dark still shoots light when asked, and a capture that came out in
+the other mode fails naming the slide instead of being written.
+
 Inside the canvas, style with semantic tokens (`bg-card`, `text-muted-foreground`)
 or slide tokens (`--slide-title-size`, `--slide-surface`). Never a hardcoded
 color. `deck/theme/THEME.md` lists the tokens and what they control.
@@ -817,18 +822,20 @@ site lists every item at `/registry` with its install command. There is no
 public host for the registry yet, so a consuming app points at the docs site
 running locally on port 3001.
 
-There are seven items. `theme-deckard` and `theme-broadsheet` each install
-three files to `deck/theme/`, so adding one replaces the other.
-`block-typography`, `block-slide-layouts`, `block-collections`, and
-`block-media` install to `app/slides/blocks/`. `preset-deckard` pulls in the
-default theme and every block, and writes the one line the app stylesheet
-needs, `@import "@deckard/core/styles.css"`. That sheet registers the package's
-own Tailwind source, so there is nothing left to wire in `next.config.mjs`.
+There are twelve items. The six themes, `theme-deckard`, `theme-broadsheet`,
+`theme-ledger`, `theme-meridian`, `theme-nexus`, and `theme-phosphor`, each
+install three files to `deck/theme/`, so adding one replaces whichever was
+there. `block-typography`, `block-slide-layouts`, `block-collections`,
+`block-media`, and `block-metrics` install to `app/slides/blocks/`.
+`preset-deckard` pulls in the default theme and every block, and writes the one
+line the app stylesheet needs, `@import "@deckard/core/styles.css"`. That sheet
+registers the package's own Tailwind source, so there is nothing left to wire in
+`next.config.mjs`.
 
 Theme sources live in two places. The deckard theme is published straight out
 of `apps/playground/deck/theme`, where the reference deck uses it, so the
-registry ships the file the playground renders. Broadsheet has no such home and
-lives in `registry/themes/broadsheet`.
+registry ships the file the playground renders. The other five have no such home
+and live in `registry/themes/<name>`.
 
 `pnpm smoke:registry` proves the whole path. It builds the registry, serves it
 on a spare port, packs `@deckard/core`, and installs both into a scratch app
@@ -843,8 +850,8 @@ in `theme-broadsheet` and typechecks again. It takes about a minute.
 `deckard init` cannot reach the registry, because a new app has no shadcn
 config and the registry has no host. So the CLI ships the same files inside
 `packages/cli/template`, and `packages/cli/scripts/sync-template.ts` copies them
-there from the canonical sources: the four blocks and the deckard theme from
-`apps/playground`, broadsheet from `registry/themes`, and the pinned versions of
+there from the canonical sources: the five blocks and the deckard theme from
+`apps/playground`, the other five themes from `registry/themes`, and the pinned versions of
 next, react, and tailwind out of the playground's `package.json`. The sync runs
 on every CLI build, and `pnpm test` runs it again with `--check`, which fails
 naming any file that drifted. Edit the playground's blocks, not the copies.

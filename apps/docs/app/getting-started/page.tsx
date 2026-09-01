@@ -18,7 +18,7 @@ const appTree = `my-talk/
     presenter/page.tsx
     sitemap.ts
     slides/[id]/page.tsx
-    slides/blocks/       the four block families, yours to edit
+    slides/blocks/       the five block families, yours to edit
   deck/
     deck.ts
     slides.tsx
@@ -60,8 +60,8 @@ pnpm deck:check-overflow
 pnpm deck:screenshots
 pnpm deck:contact-sheet`
 
-const addCommands = `deckard add theme broadsheet
-deckard add block media`
+const addCommands = `deckard add theme phosphor
+deckard add block metrics`
 
 const slideArray = `import type { SlideDefinition } from "@deckard/core"
 
@@ -137,8 +137,8 @@ export default function GettingStartedPage() {
       </p>
       <ul className="list-disc space-y-1 pl-6">
         <li>
-          <code>--theme broadsheet</code> installs the editorial theme instead
-          of the default one.
+          <code>--theme &lt;name&gt;</code> picks the look: deckard, broadsheet,
+          ledger, meridian, nexus, or phosphor. The default is deckard.
         </li>
         <li>
           <code>--empty</code> writes two slides instead of the sample deck.

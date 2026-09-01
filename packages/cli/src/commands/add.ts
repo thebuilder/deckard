@@ -99,7 +99,7 @@ async function assertReachable(url: string): Promise<void> {
 }
 
 function exampleFor(kind: Kind): string {
-  return kind === "theme" ? "deckard or broadsheet" : "typography or media"
+  return kind === "theme" ? "deckard or phosphor" : "typography or metrics"
 }
 
 export async function runAdd(args: ParsedArgs): Promise<void> {

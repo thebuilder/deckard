@@ -42,7 +42,8 @@ const specs: Record<string, FlagSpec> = {
 const help = `deckard ${version}
 
   deckard init <dir>          create a deck: a Next.js app with slides, a theme, and the checks
-    --theme deckard|broadsheet   which theme to install (default deckard)
+    --theme <name>               deckard, broadsheet, ledger, meridian, nexus,
+                                 or phosphor (default deckard)
     --empty                      two slides instead of the sample deck
     --package-manager <name>     npm, pnpm, yarn, or bun (default: the one that ran init)
     --no-install                 write the files and stop

@@ -1,0 +1,233 @@
+/*
+ * Nexus theme.
+ * Every rule is scoped to .nexus-theme, which lives on the slide canvas.
+ * Nothing here reaches the utility bar, the command center, or the presenter console.
+ */
+
+.nexus-theme {
+  --background: oklch(0.975 0.004 258);
+  --foreground: oklch(0.205 0.025 258);
+  --card: oklch(0.945 0.008 258);
+  --card-foreground: oklch(0.205 0.025 258);
+  --popover: oklch(0.945 0.008 258);
+  --popover-foreground: oklch(0.205 0.025 258);
+  --primary: oklch(0.535 0.155 48);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.9 0.012 258);
+  --secondary-foreground: oklch(0.205 0.025 258);
+  --muted: oklch(0.945 0.008 258);
+  --muted-foreground: oklch(0.465 0.02 258);
+  --accent: oklch(0.9 0.012 258);
+  --accent-foreground: oklch(0.36 0.12 48);
+  --destructive: oklch(0.53 0.2 27);
+  --border: oklch(0.835 0.012 258);
+  --input: oklch(0.835 0.012 258);
+  --ring: oklch(0.535 0.155 48);
+  --radius: 0.125rem;
+
+  --slide-font-heading:
+    ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --slide-font-body:
+    ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --slide-font-mono: var(--font-mono);
+
+  --slide-padding-inline: 2.25rem;
+  --slide-padding-block: 2.75rem;
+  --slide-content-gap: 1.75rem;
+
+  --slide-title-size: 4.75rem;
+  --slide-heading-size: 3.125rem;
+  --slide-subheading-size: 1.875rem;
+  --slide-lead-size: 1.4375rem;
+  --slide-body-size: 1.6875rem;
+  --slide-support-size: 1rem;
+  --slide-label-size: 0.875rem;
+  --slide-label-tracking: 0.3em;
+
+  --slide-radius: 0.125rem;
+  --slide-radius-lg: 0.125rem;
+  --slide-surface: oklch(0.945 0.008 258 / 82%);
+  --slide-surface-muted: oklch(0.9 0.012 258 / 58%);
+  --slide-surface-border: oklch(0.835 0.012 258);
+  --slide-surface-shadow: none;
+
+  --slide-wash: oklch(0.6 0.12 48 / 9%);
+  --slide-veil: oklch(0.45 0.03 258 / 7%);
+  --slide-glow: oklch(0.535 0.155 48 / 7%);
+  --slide-grid-color: oklch(0.45 0.03 258 / 9%);
+  --slide-grid-size: 1.75rem;
+  --slide-spotlight: oklch(0.6 0.1 48 / 11%);
+  --slide-grid-major: oklch(0.45 0.05 258 / 16%);
+  --slide-halo: none;
+  color-scheme: light;
+}
+
+.nexus-theme:where(.dark, .dark *):where(:not([data-slide-color-mode="light"])),
+.nexus-theme:where([data-slide-color-mode="dark"]) {
+  --background: oklch(0.155 0.022 258);
+  --foreground: oklch(0.96 0.008 258);
+  --card: oklch(0.205 0.026 258);
+  --card-foreground: oklch(0.96 0.008 258);
+  --popover: oklch(0.205 0.026 258);
+  --popover-foreground: oklch(0.96 0.008 258);
+  --primary: oklch(0.79 0.155 68);
+  --primary-foreground: oklch(0.17 0.03 68);
+  --secondary: oklch(0.255 0.03 258);
+  --secondary-foreground: oklch(0.96 0.008 258);
+  --muted: oklch(0.255 0.03 258);
+  --muted-foreground: oklch(0.705 0.018 258);
+  --accent: oklch(0.255 0.03 258);
+  --accent-foreground: oklch(0.86 0.12 68);
+  --destructive: oklch(0.7 0.19 22);
+  --border: oklch(0.335 0.03 258);
+  --input: oklch(0.335 0.03 258);
+  --ring: oklch(0.79 0.155 68);
+
+  --slide-surface: oklch(0.205 0.026 258 / 82%);
+  --slide-surface-muted: oklch(0.255 0.03 258 / 58%);
+  --slide-surface-border: oklch(0.335 0.03 258);
+  --slide-surface-shadow: none;
+
+  --slide-wash: oklch(0.79 0.155 68 / 14%);
+  --slide-veil: oklch(0.08 0.02 258 / 42%);
+  --slide-glow: oklch(0.79 0.155 68 / 12%);
+  --slide-grid-color: oklch(0.75 0.05 258 / 9%);
+  --slide-spotlight: oklch(0.79 0.13 68 / 13%);
+  --slide-grid-major: oklch(0.79 0.09 68 / 15%);
+  --slide-halo: 0 0 0.5em oklch(0.79 0.155 68 / 32%);
+  color-scheme: dark;
+}
+
+.nexus-theme {
+  font-family: var(--slide-font-body);
+}
+
+/* Every heading in this deck is a callsign: set in capitals, spaced out, and
+ * lit from behind on the dark sheet. --slide-halo is the whole effect. */
+
+.nexus-theme :is(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--slide-font-heading);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+
+.nexus-theme :is(h1, h2) {
+  text-shadow: var(--slide-halo);
+}
+
+/* A metrics figure is display type without being a heading element, so the
+ * block marks it and the callsign treatment reaches it here. */
+
+.nexus-theme [data-stat-value] {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  text-shadow: var(--slide-halo);
+}
+
+.nexus-theme :is(code, kbd, pre, samp) {
+  font-family: var(--slide-font-mono);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* Background variants. The runtime only renders the hook element and the variant name. */
+
+.nexus-theme .slide-background {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.nexus-theme .slide-background::before,
+.nexus-theme .slide-background::after {
+  position: absolute;
+  pointer-events: none;
+  content: "";
+}
+
+/* Deep field: a wash off the top edge, a horizon band, one running light. */
+
+.nexus-theme .slide-background[data-slide-background="default"] {
+  background-image: radial-gradient(
+    ellipse at 50% -10%,
+    var(--slide-wash),
+    transparent 62%
+  );
+}
+
+.nexus-theme .slide-background[data-slide-background="default"]::before {
+  inset: auto 0 0;
+  height: calc(var(--canvas-height) * 0.32);
+  background-image: linear-gradient(to top, var(--slide-veil), transparent);
+}
+
+.nexus-theme .slide-background[data-slide-background="default"]::after {
+  right: 0;
+  bottom: 0;
+  width: 26rem;
+  height: 26rem;
+  background-color: var(--slide-glow);
+  border-radius: 9999px;
+  filter: blur(72px);
+}
+
+/* Blueprint: a fine cell grid with every fifth line drawn heavier. */
+
+.nexus-theme .slide-background[data-slide-background="grid"] {
+  background-image:
+    linear-gradient(to right, var(--slide-grid-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--slide-grid-color) 1px, transparent 1px),
+    linear-gradient(to right, var(--slide-grid-major) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--slide-grid-major) 1px, transparent 1px);
+  background-size:
+    var(--slide-grid-size) var(--slide-grid-size),
+    var(--slide-grid-size) var(--slide-grid-size),
+    calc(var(--slide-grid-size) * 5) calc(var(--slide-grid-size) * 5),
+    calc(var(--slide-grid-size) * 5) calc(var(--slide-grid-size) * 5);
+}
+
+.nexus-theme .slide-background[data-slide-background="grid"]::before {
+  inset: 0;
+  background-image: radial-gradient(
+    ellipse at 50% 42%,
+    transparent 44%,
+    var(--background) 100%
+  );
+}
+
+.nexus-theme .slide-background[data-slide-background="grid"]::after {
+  inset: 0 0 auto;
+  height: calc(var(--canvas-height) * 0.5);
+  background-image: linear-gradient(to bottom, var(--slide-wash), transparent);
+}
+
+/* Approach light: one wide beam off the top edge and a tube vignette under it. */
+
+.nexus-theme .slide-background[data-slide-background="spotlight"] {
+  background-image: radial-gradient(
+    ellipse at 50% -6%,
+    var(--slide-spotlight),
+    transparent 60%
+  );
+}
+
+.nexus-theme .slide-background[data-slide-background="spotlight"]::before {
+  inset: 0;
+  background-image: radial-gradient(
+    ellipse at 50% 46%,
+    transparent 44%,
+    var(--slide-veil)
+  );
+}
+
+.nexus-theme .slide-background[data-slide-background="spotlight"]::after {
+  right: 0;
+  bottom: 0;
+  width: 22rem;
+  height: 22rem;
+  background-color: var(--slide-glow);
+  border-radius: 9999px;
+  filter: blur(72px);
+}

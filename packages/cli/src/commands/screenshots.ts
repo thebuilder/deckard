@@ -26,9 +26,10 @@ async function captureSlide(
   page: Page,
   baseUrl: string,
   id: string,
-  number: number
+  number: number,
+  colorMode: ColorMode
 ): Promise<ScreenshotEntry> {
-  await openSlide(page, baseUrl, id)
+  await openSlide(page, baseUrl, id, colorMode)
 
   const file = `${id}.png`
 
@@ -54,7 +55,7 @@ export function runScreenshots(args: ParsedArgs): Promise<void> {
 
     for (const [index, id] of ids.slice(0, max).entries()) {
       // biome-ignore lint/performance/noAwaitInLoops: slides are captured one at a time on a single page
-      const entry = await captureSlide(page, baseUrl, id, index + 1)
+      const entry = await captureSlide(page, baseUrl, id, index + 1, colorMode)
 
       slides.push(entry)
       write(`Captured ${entry.file}`)
