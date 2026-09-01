@@ -5,19 +5,22 @@ import type { SlideTheme } from "@deckard/core"
 
 import { type ParsedArgs, stringFlag } from "../args.ts"
 import { loadDeck } from "../deck/deck-module.ts"
-import { applyLocalTheme, findThemeImport } from "../deck/deck-source.ts"
+import {
+  applyLocalTheme,
+  deckSourcePath,
+  findThemeImport,
+} from "../deck/deck-source.ts"
 import {
   builtInThemePath,
   builtInThemes,
   isBuiltInTheme,
   localThemeDirectory,
+  moveLocalThemeAdvice,
 } from "../deck/theme-source.ts"
 import { write } from "../output.ts"
 import { projectPath } from "../project.ts"
 
 const kinds = ["theme"] as const
-
-const deckSourcePath = "deck/deck.ts"
 
 function readDeckSource(): string {
   try {
@@ -63,7 +66,7 @@ function assertNoLocalTheme(): void {
   }
 
   throw new Error(
-    `${localThemeDirectory} already exists. A deck has one theme, so move or delete that directory before ejecting over it.`
+    `${localThemeDirectory} already exists, so there is nothing to eject over it. ${moveLocalThemeAdvice}`
   )
 }
 

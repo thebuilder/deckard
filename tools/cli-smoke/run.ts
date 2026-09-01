@@ -145,6 +145,21 @@ function assertEjected(directory: string) {
   )
 }
 
+function assertSwitchedBack(directory: string) {
+  const source = fs.readFileSync(path.join(directory, "deck/deck.ts"), "utf8")
+
+  assert(
+    source.includes('import { phosphor } from "@deckard/themes"') &&
+      !source.includes("@/deck/theme"),
+    "deckard add theme left deck.ts pointing at the ejected copy"
+  )
+
+  assert(
+    fs.existsSync(path.join(directory, "deck/theme/theme.css")),
+    "the ejected theme is gone, so validate has nothing stale to look past"
+  )
+}
+
 // The deck it generates has to prerender: every slide route is static HTML on
 // disk, which is what the framework promises and what the PDF export needs.
 function assertStaticSlides(directory: string, ids: string[]) {
@@ -298,6 +313,14 @@ try {
     assertEjected(pnpmApp)
     run(deckard, ["validate"], pnpmApp)
     run("pnpm", ["run", "typecheck"], pnpmApp)
+  })
+
+  // Switching back leaves the ejected directory on disk with nothing importing
+  // it. validate has to read the built-in the deck went back to, not the copy.
+  time("pnpm: switch back to a built-in over the ejected copy", () => {
+    run(deckard, ["add", "theme", "phosphor"], pnpmApp)
+    assertSwitchedBack(pnpmApp)
+    run(deckard, ["validate"], pnpmApp)
   })
 
   // The headline flow is npx on a machine that has never seen pnpm. It gets the

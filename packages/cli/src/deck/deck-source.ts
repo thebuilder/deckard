@@ -6,6 +6,7 @@ export interface ThemeImport {
   name: string | null
 }
 
+export const deckSourcePath = "deck/deck.ts"
 export const themesSpecifier = "@deckard/themes"
 export const localThemeSpecifier = "@/deck/theme"
 

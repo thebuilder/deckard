@@ -5,19 +5,22 @@ import path from "node:path"
 import process from "node:process"
 
 import { booleanFlag, type ParsedArgs, stringFlag } from "../args.ts"
-import { applyBuiltInTheme, findThemeImport } from "../deck/deck-source.ts"
+import {
+  applyBuiltInTheme,
+  deckSourcePath,
+  findThemeImport,
+} from "../deck/deck-source.ts"
 import {
   builtInThemes,
   hasLocalTheme,
   isBuiltInTheme,
   localThemeDirectory,
+  moveLocalThemeAdvice,
 } from "../deck/theme-source.ts"
 import { write } from "../output.ts"
 import { projectPath, projectRoot } from "../project.ts"
 
 const kinds = ["block", "theme"] as const
-
-const deckSourcePath = "deck/deck.ts"
 
 // shadcn does not publish its package.json through its export map, so the
 // manifest that names the binary is found by walking up from the entry it does
@@ -139,7 +142,7 @@ function switchTheme(name: string): void {
 
   if (hasLocalTheme()) {
     write(
-      `${localThemeDirectory} is still on disk and nothing imports it any more. Delete it, or run deckard eject theme instead to keep editing a copy.`
+      `${localThemeDirectory} is still on disk and nothing imports it any more. ${moveLocalThemeAdvice}`
     )
   }
 }
