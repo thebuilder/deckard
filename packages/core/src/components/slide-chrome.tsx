@@ -1,8 +1,9 @@
 import Link from "next/link"
 import type { CSSProperties } from "react"
 
-// Structure only. The look is the token contract in styles.css and whatever the
-// deck theme paints on these attributes, the way SlideBackground works.
+// Structure only. The row itself, the look, and the containment are the token
+// contract in styles.css, plus whatever the deck theme paints on these
+// attributes, the way SlideBackground works.
 
 export function SlideCanvasHeader({
   brand,
@@ -21,7 +22,7 @@ export function SlideCanvasHeader({
 
   return (
     <header
-      className="absolute inset-x-0 top-0 z-40 flex min-h-16 items-center"
+      className="absolute inset-x-0 top-0 z-40 min-h-16"
       data-slide-header=""
     >
       <Link data-slide-header-brand="" href={brandHref}>
@@ -44,7 +45,7 @@ export function SlideCanvasFooter({
 
   return (
     <footer
-      className="absolute inset-x-0 bottom-0 z-40 flex min-h-14 items-center"
+      className="absolute inset-x-0 bottom-0 z-40 min-h-14"
       data-slide-footer=""
     >
       <div

@@ -6,6 +6,7 @@ import { resolveTheme } from "../deck/theme"
 import type { SlideColorMode } from "../deck/types"
 import { SlideCanvas } from "./slide-canvas"
 
+import "../../styles.css"
 import "./__fixtures__/test-theme.css"
 
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true })
@@ -16,7 +17,7 @@ const themeClassName = "test-theme"
 let container: HTMLDivElement
 let root: Root
 
-function renderChromeCanvas(chromeInset?: { bottom: number; top: number }) {
+function renderChromeCanvas(chromeInset?: { bottom: string; top: string }) {
   act(() => {
     root.render(
       <SlideCanvas
@@ -95,10 +96,15 @@ describe("SlideCanvas", () => {
   })
 
   it("publishes the chrome inset a bleeding frame has to clear", () => {
-    const style = getComputedStyle(renderChromeCanvas({ bottom: 80, top: 96 }))
+    const style = getComputedStyle(
+      renderChromeCanvas({
+        bottom: "var(--slide-footer-space)",
+        top: "var(--slide-header-space)",
+      })
+    )
 
-    expect(style.paddingBottom).toBe("80px")
-    expect(style.paddingTop).toBe("96px")
+    expect(style.paddingBottom).toBe("96px")
+    expect(style.paddingTop).toBe("128px")
   })
 })
 

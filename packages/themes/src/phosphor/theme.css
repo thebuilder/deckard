@@ -70,6 +70,10 @@
   --slide-chrome-tracking: 0.16em;
   --slide-progress-track: transparent;
   --slide-progress-fill: currentcolor;
+
+  /* The status bar below holds itself a line thinner than the base footer, so
+   * the slide above it gets that line back. */
+  --slide-footer-space: 5rem;
   color-scheme: light;
 }
 

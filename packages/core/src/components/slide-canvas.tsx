@@ -10,14 +10,14 @@ interface SlideCanvasProps {
   background: SlideBackgroundMode
   canvas: DeckCanvasConfig
   children: ReactNode
-  chromeInset?: { bottom: number; top: number }
+  chromeInset?: { bottom: string; top: string }
   footer?: ReactNode
   frameClassName?: string
   header?: ReactNode
   theme: SlideTheme
 }
 
-const noChromeInset = { bottom: 0, top: 0 }
+const noChromeInset = { bottom: "0px", top: "0px" }
 
 export function SlideCanvas({
   background,
@@ -32,8 +32,8 @@ export function SlideCanvas({
   const canvasStyle = {
     "--canvas-height": `${canvas.height}px`,
     "--canvas-width": `${canvas.width}px`,
-    "--slide-chrome-bottom": `${chromeInset.bottom}px`,
-    "--slide-chrome-top": `${chromeInset.top}px`,
+    "--slide-chrome-bottom": chromeInset.bottom,
+    "--slide-chrome-top": chromeInset.top,
     height: canvas.height,
     width: canvas.width,
   } as CSSProperties

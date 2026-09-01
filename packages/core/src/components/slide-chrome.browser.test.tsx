@@ -6,6 +6,8 @@ import { resolveTheme } from "../deck/theme"
 import { SlideCanvas } from "./slide-canvas"
 import { SlideCanvasFooter, SlideCanvasHeader } from "./slide-chrome"
 
+import "../../styles.css"
+
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true })
 
 const canvas = resolveCanvas()
@@ -14,11 +16,13 @@ let container: HTMLDivElement
 let root: Root
 
 function renderChrome({
+  brand = "Deckard",
   date,
   number,
   title,
   total,
 }: {
+  brand?: string
   date?: string
   number: number
   title?: string
@@ -32,7 +36,7 @@ function renderChrome({
         footer={<SlideCanvasFooter number={number} total={total} />}
         header={
           <SlideCanvasHeader
-            brand="Deckard"
+            brand={brand}
             brandHref="/"
             date={date}
             title={title}
@@ -44,6 +48,10 @@ function renderChrome({
       </SlideCanvas>
     )
   })
+}
+
+function overflowsSideways(node: HTMLElement) {
+  return node.scrollWidth - node.clientWidth > 1
 }
 
 function element(selector: string) {
@@ -136,5 +144,38 @@ describe("canvas chrome", () => {
         )
       )
     ).toBe(1)
+  })
+})
+
+describe("canvas chrome containment", () => {
+  const absurd =
+    "A deck brand nobody would ever type into a config file and then keep, on and on, well past the width of the canvas it has to sit inside, ".repeat(
+      6
+    )
+
+  it("keeps an absurd brand, title, and date inside the canvas", () => {
+    renderChrome({
+      brand: absurd,
+      date: absurd,
+      number: 3,
+      title: absurd,
+      total: 12,
+    })
+
+    expect(overflowsSideways(element("[data-slide-header]"))).toBe(false)
+    expect(overflowsSideways(element("[data-slide-canvas]"))).toBe(false)
+  })
+
+  it("truncates the title before the brand gives up any of itself", () => {
+    renderChrome({
+      date: "March 2026",
+      number: 3,
+      title: absurd,
+      total: 12,
+    })
+
+    expect(overflowsSideways(element("[data-slide-header-title]"))).toBe(true)
+    expect(overflowsSideways(element("[data-slide-header-brand]"))).toBe(false)
+    expect(overflowsSideways(element("[data-slide-header-date]"))).toBe(false)
   })
 })

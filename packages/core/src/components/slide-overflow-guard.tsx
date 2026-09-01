@@ -4,20 +4,29 @@ import { useEffect, useRef, useState } from "react"
 
 const tolerance = 1
 
+// The frame is the slide, and the chrome is painted inside the same canvas, so a
+// header whose brand and title outrun the row clips just as silently.
+const regions = [
+  { label: "Slide content", selector: "[data-slide-frame]" },
+  { label: "The header", selector: "[data-slide-header]" },
+  { label: "The footer", selector: "[data-slide-footer]" },
+]
+
 interface Overflow {
+  label: string
   x: number
   y: number
 }
 
-function measure(frame: HTMLElement): Overflow | null {
-  const x = frame.scrollWidth - frame.clientWidth
-  const y = frame.scrollHeight - frame.clientHeight
+function measure(element: HTMLElement, label: string): Overflow | null {
+  const x = element.scrollWidth - element.clientWidth
+  const y = element.scrollHeight - element.clientHeight
 
   if (x <= tolerance && y <= tolerance) {
     return null
   }
 
-  return { x: Math.max(x, 0), y: Math.max(y, 0) }
+  return { label, x: Math.max(x, 0), y: Math.max(y, 0) }
 }
 
 function describe(overflow: Overflow) {
@@ -28,29 +37,30 @@ function describe(overflow: Overflow) {
       : "",
   ].filter(Boolean)
 
-  return `Slide content runs ${parts.join(" and ")} the canvas and is clipped.`
+  return `${overflow.label} runs ${parts.join(" and ")} the canvas and is clipped.`
 }
 
-function isSameOverflow(left: Overflow | null, right: Overflow | null) {
-  if (!(left && right)) {
-    return left === right
-  }
-
-  return left.x === right.x && left.y === right.y
+function isSameOverflow(left: Overflow[], right: Overflow[]) {
+  return (
+    left.length === right.length &&
+    left.every(
+      (entry, index) =>
+        entry.label === right[index].label &&
+        entry.x === right[index].x &&
+        entry.y === right[index].y
+    )
+  )
 }
 
 // Development-only feedback: the canvas clips silently, so authors get told the moment a slide asks for more room than it has.
 export function SlideOverflowGuard() {
   const anchorRef = useRef<HTMLDivElement>(null)
-  const [overflow, setOverflow] = useState<Overflow | null>(null)
+  const [overflows, setOverflows] = useState<Overflow[]>([])
 
   useEffect(() => {
-    const frame =
-      anchorRef.current?.parentElement?.querySelector<HTMLElement>(
-        "[data-slide-frame]"
-      )
+    const canvas = anchorRef.current?.parentElement
 
-    if (!frame) {
+    if (!canvas) {
       return
     }
 
@@ -59,9 +69,13 @@ export function SlideOverflowGuard() {
     const check = () => {
       cancelAnimationFrame(frameRequest)
       frameRequest = requestAnimationFrame(() => {
-        const next = measure(frame)
+        const next = regions.flatMap((region) => {
+          const element = canvas.querySelector<HTMLElement>(region.selector)
 
-        setOverflow((current) =>
+          return element ? (measure(element, region.label) ?? []) : []
+        })
+
+        setOverflows((current) =>
           isSameOverflow(current, next) ? current : next
         )
       })
@@ -70,8 +84,15 @@ export function SlideOverflowGuard() {
     const resizeObserver = new ResizeObserver(check)
     const mutationObserver = new MutationObserver(check)
 
-    resizeObserver.observe(frame)
-    mutationObserver.observe(frame, {
+    for (const region of regions) {
+      const element = canvas.querySelector<HTMLElement>(region.selector)
+
+      if (element) {
+        resizeObserver.observe(element)
+      }
+    }
+
+    mutationObserver.observe(canvas, {
       attributes: true,
       characterData: true,
       childList: true,
@@ -87,21 +108,28 @@ export function SlideOverflowGuard() {
   }, [])
 
   useEffect(() => {
-    if (overflow) {
+    for (const overflow of overflows) {
       console.warn(describe(overflow))
     }
-  }, [overflow])
+  }, [overflows])
 
   return (
     <div aria-hidden className="contents" ref={anchorRef}>
-      {overflow ? (
+      {overflows.length > 0 ? (
         <div
           className="pointer-events-none absolute inset-0 z-50 ring-2 ring-amber-500/60 ring-inset"
           data-slide-overflow=""
         >
-          <p className="absolute right-3 bottom-3 rounded-full bg-amber-500/90 px-3 py-1 font-medium text-[11px] text-amber-950">
-            {describe(overflow)}
-          </p>
+          <div className="absolute right-3 bottom-3 space-y-1 text-right">
+            {overflows.map((overflow) => (
+              <p
+                className="inline-block rounded-full bg-amber-500/90 px-3 py-1 font-medium text-[11px] text-amber-950"
+                key={overflow.label}
+              >
+                {describe(overflow)}
+              </p>
+            ))}
+          </div>
         </div>
       ) : null}
     </div>

@@ -136,6 +136,11 @@ before the slide title. The foot is the status bar, held in reverse video on
 `--primary`, with the counter in brackets and the separator swapped for a slash
 through `[data-slide-counter-separator]`.
 
+A status bar is one line of cells, not a band, so it holds itself a line thinner
+than the base footer and gives that line back to the slide:
+`--slide-footer-space` is `5rem` here rather than the `6rem` in the token
+contract.
+
 The progress bar sits along the bottom of that bar and is drawn in character
 cells, a repeating gradient in `currentcolor`, so it fills in steps rather than
 sliding.

@@ -502,6 +502,20 @@ is what a theme reads to paint a bar, a row of dots, or nothing.
 registry overrides them and styles the attributes above; each `THEME.md` has a
 `Deck chrome` section describing what that theme does.
 
+Two more decide how much of the canvas the chrome is allowed:
+`--slide-header-space` (`8rem`) and `--slide-footer-space` (`6rem`). The frame
+reserves them as padding, and a fullscreen slide publishes them as
+`--slide-chrome-top` and `--slide-chrome-bottom`, the inset a bleeding layout
+has to clear. A theme that redesigns the chrome to a different height sets them
+and the slide content moves with it: `phosphor` holds its status bar a line
+thinner than the base footer and takes `--slide-footer-space` down to `5rem`.
+
+The header row is one line inside a canvas that cannot grow. Every part of it
+clips itself rather than running off the edge, and the slide title carries by
+far the largest shrink factor, so it truncates before the brand loses any of
+itself. Both overflow checks measure the header and the footer alongside the
+frame, so a deck finds out when its chrome asks for more room than it has.
+
 ### Deck controls
 
 The command center, the presenter popout, the color mode toggle, and compact

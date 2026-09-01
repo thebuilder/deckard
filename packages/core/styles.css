@@ -72,6 +72,15 @@
     --slide-chrome-gap: 1rem;
     --slide-progress-track: transparent;
     --slide-progress-fill: var(--slide-chrome-border);
+
+    /*
+     * How much of the canvas the chrome is allowed. The frame reserves these as
+     * padding, and a bleeding frame publishes them as the inset its content has
+     * to clear, so a theme that redesigns the header or the footer to a
+     * different height moves the slide content with it by setting these two.
+     */
+    --slide-header-space: 8rem;
+    --slide-footer-space: 6rem;
   }
 
   /*
@@ -80,7 +89,9 @@
    * elements and the attributes below, and a theme decides what they look like.
    */
   [data-slide-canvas] :is([data-slide-header], [data-slide-footer]) {
+    display: flex;
     column-gap: var(--slide-chrome-gap);
+    align-items: center;
     padding-block: 1rem;
     padding-inline: var(--slide-padding-inline);
     font-family: var(--slide-font-body);
@@ -95,6 +106,24 @@
 
   [data-slide-canvas] [data-slide-footer] {
     border-block-start: 1px solid var(--slide-chrome-border);
+  }
+
+  /*
+   * The brand, the slide title, and the deck meta share one row on a canvas that
+   * cannot grow, so every part of it may shrink and clips itself rather than
+   * running off the edge. The title carries by far the largest shrink factor
+   * because it is the part a deck can afford to lose, so it is the one that
+   * truncates first.
+   */
+  [data-slide-canvas] [data-slide-header] > * {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  [data-slide-canvas] [data-slide-header-title] {
+    flex-shrink: 999;
   }
 
   [data-slide-canvas] [data-slide-header-brand] {
