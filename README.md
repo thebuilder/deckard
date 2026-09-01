@@ -41,56 +41,92 @@ slide as a bullet list.
 
 ## Using Deckard in your own app
 
-A presentation built on Deckard is a plain Next.js app that you own.
+```bash
+npx @deckard/cli init my-talk
+cd my-talk
+npm run dev
+```
+
+That writes the app below, installs it, makes the first commit, and typechecks
+it. The deck it lands with is five slides you delete.
+
+`init` uses the package manager that ran it. Through `npx` that is npm, through
+`pnpm dlx` it is pnpm, and the generated `package.json` records the one it used
+in its `packageManager` field. Nothing in the generated app assumes pnpm, and
+every later `deckard` command reads that field rather than guessing.
 
 ```
 my-talk/
   app/                   layout, globals.css, and the slide routes
-  components/
+    slides/blocks/       the four block families, yours to edit
   deck/
     deck.ts              defineDeck config
     slides.tsx           the slide array
     slides/*.slide.tsx   file-per-slide modules
-    theme/               installed from the registry, yours to edit
+    theme/               the theme you picked, yours to edit
   public/
+  components.json
   next.config.mjs
   package.json
 ```
 
-You do not clone this repository to build a deck, and you do not write your
-slides in `apps/playground`. This repository is where the framework is built.
-The full walkthrough lives on the docs site under Getting started, and the
-short version is below.
+`init` takes `--theme broadsheet` for the editorial look, `--empty` for two
+slides instead of the sample deck, `--package-manager npm|pnpm|yarn|bun` to
+override the one it detected, and `--no-install` or `--no-git` to skip those
+steps. It asks no questions.
 
-### The package is not on npm yet
+A presentation built on Deckard is a plain Next.js app that you own. You do not
+clone this repository to build a deck, and you do not write your slides in
+`apps/playground`. This repository is where the framework is built. The full
+walkthrough lives on the docs site under Getting started, and the short version
+is below.
 
-`@deckard/core` is designed for npm distribution and is not published there
-yet. Publishing it is the plan before the API is called stable. Two paths work
-today:
+### One command surface
 
-1. Pack a tarball here and install the file in your app.
-   `pnpm smoke:package` runs exactly that path into a scratch app on every
-   check, so it is the one with a test behind it.
-2. Build your deck inside this workspace as a second app, the way `apps/demo`
-   does, and move it out once the package publishes.
+`deckard` is the only binary. Every command except `init` runs against the deck
+in the current directory, which is how a generated app wires its own scripts.
+
+| Command | What it does |
+| --- | --- |
+| `deckard init <dir>` | write a deck, install it, commit it, typecheck it |
+| `deckard validate` | load the deck, check its slides and its theme |
+| `deckard doctor` | check node, the package, the stylesheet, the deck, and the routes |
+| `deckard check-overflow` | fail listing the slides the canvas clips |
+| `deckard screenshots` | one PNG per slide at canvas size, `--max <n>` to stop early |
+| `deckard contact-sheet` | every screenshot in one labelled grid |
+| `deckard export pdf` | one PDF page per slide |
+| `deckard add theme <name>` | install a registry theme into `deck/theme`, `--yes` to overwrite |
+| `deckard add block <name>` | install a registry block into `app/slides/blocks` |
+
+The four checks that need a browser build the app and serve it on a spare port.
+They take `--port <n>` and `--skip-build`, and every one but the PDF export
+takes `--light`.
+
+### The packages are not on npm yet
+
+`@deckard/core` and `@deckard/cli` are built for npm and are not published
+there. Publishing them is the plan before the API is called stable, so the
+`npx` line above does not work yet from a clean machine. Until it does, pack
+both here and point the init at the tarballs:
 
 ```bash
 # from the root of this repository
-pnpm --filter @deckard/core exec pnpm pack --pack-destination ~/code/my-talk
+pnpm cli:build
+pnpm --filter @deckard/core exec pnpm pack --pack-destination /tmp/deckard
+pnpm --filter @deckard/cli exec pnpm pack --pack-destination /tmp/deckard
+node packages/cli/bin/deckard.mjs init ~/code/my-talk \
+  --core-tarball /tmp/deckard/deckard-core-0.0.1.tgz \
+  --cli-tarball /tmp/deckard/deckard-cli-0.0.1.tgz
 ```
 
-```json
-{
-  "dependencies": {
-    "@deckard/core": "file:./deckard-core-0.0.1.tgz"
-  }
-}
-```
-
-Once it publishes that becomes `pnpm add @deckard/core` and nothing else
-changes. `@deckard/deck-scripts` carries the same caveat: it is workspace-only
-today, so a standalone app gets `deck-validate` and the other checks when both
-packages publish.
+That is the in-repo path, and it runs the working copy of the binary. What
+`pnpm smoke:cli` proves is the published one: it installs the CLI tarball into a
+scratch directory outside the workspace and runs `init` through that copy, once
+under pnpm and once under npm, so the template has to resolve from inside the
+installed package. The other route is to build your deck inside this workspace
+as a second app, the way `apps/demo` does, and move it out once the packages
+publish. Once they do, `npx @deckard/cli init` is the whole install and nothing
+in the generated app changes.
 
 ### One line of config
 
@@ -116,7 +152,10 @@ in the next render.
 The package holds nothing deck-specific. Colors, sizes, and backgrounds live in
 the deck theme of the app that owns them.
 
-### Adding Deckard to your own app
+### Adding Deckard to an app you already have
+
+`deckard init` writes everything below into a new directory. Do it by hand when
+the deck has to live inside an app that already exists.
 
 A presentation built on Deckard is a plain Next.js app: `app/`, `components/`,
 `deck/`, `public/`, `package.json`. One line connects it to the package.
@@ -158,11 +197,24 @@ Themes and slide blocks are deliberately not in the package. They install into
 your app as source files through shadcn, and you edit them from then on.
 
 ```bash
+deckard add theme broadsheet
+deckard add block media
+
+# or straight through shadcn
 pnpm dlx shadcn@latest add @deckard/preset-deckard
 ```
 
-The registry has no public host yet, so it is served from this repository's
-docs site on port 3001. See [Registry](#registry).
+`deckard add` reads the registry URL from `components.json`, or takes
+`--registry <url>` and hands that URL straight to shadcn. It checks the host
+answers first and says what to start when it does not. shadcn asks before it
+overwrites a theme, and `--yes` answers for it. The registry has no public host
+yet, so it is served from this repository's docs site on port 3001, which is
+what `deckard init` writes into `components.json`. See [Registry](#registry).
+
+shadcn is a dependency of `@deckard/cli`, pinned to the version this repository
+builds the registry with, and `deckard add` runs that installed binary. There is
+no `dlx` and no download, so the same version runs on every package manager and
+on every day.
 
 ### The routes come from the package
 
@@ -183,10 +235,11 @@ to develop and prove the framework.
 | `apps/playground` | the reference deck. It exercises every feature on purpose and the visual checks run against it, so it is a test surface, not a template |
 | `apps/demo` | a 19-slide conference talk shaped exactly like a consumer app, with its own theme and its own copies of the blocks |
 | `apps/docs` | the documentation site, which also serves the registry JSON at `/r/{name}.json` |
+| `packages/cli` | `@deckard/cli`, the `deckard` binary: init, the deck checks, add, doctor |
 | `registry` | theme sources the playground does not use, published through the registry |
-| `tools/deck-scripts` | `@deckard/deck-scripts`, the deck tooling every app runs |
 | `tools/package-smoke` | proves the package installs into a plain Next.js app |
 | `tools/registry-smoke` | proves the registry installs into a plain Next.js app |
+| `tools/cli-smoke` | proves `deckard init` produces a deck that builds |
 
 Slides added to the playground demonstrate the framework. They are nobody's
 presentation and they ship to nobody.
@@ -203,19 +256,27 @@ Every script runs from the root:
 ```bash
 pnpm build          # every app
 pnpm typecheck
-pnpm test           # 96 tests across core, the deck scripts, and both decks
+pnpm test           # 96 tests across core, the CLI, and both decks
 pnpm lint
 pnpm analyze
+pnpm cli:build           # build @deckard/core and @deckard/cli
 pnpm deck:validate       # deck, theme, and registry integrity
+pnpm deck:doctor         # the app-shape checks against the playground
 pnpm deck:check-overflow # fail on slides the canvas clips
 pnpm deck:screenshots    # one PNG per slide at canvas size
 pnpm deck:contact-sheet  # every screenshot in one grid image
-pnpm demo:validate  # the same checks against apps/demo, plus demo:check-overflow,
-                    # demo:screenshots, demo:contact-sheet, demo:export:pdf
+pnpm demo:validate  # the same checks against apps/demo, plus demo:doctor,
+                    # demo:check-overflow, demo:screenshots, demo:contact-sheet,
+                    # demo:export:pdf
 pnpm registry:build # write the shadcn registry to apps/docs/public/r
 pnpm smoke:package  # pack @deckard/core and build a scratch app against it
 pnpm smoke:registry # install the registry into a scratch app and build it
+pnpm smoke:cli      # deckard init from the packed CLI on pnpm and npm, then build it
 ```
+
+Every `deck:` and `demo:` script builds `@deckard/cli` first, through Turbo, so
+the binary the app scripts call is current. Those app scripts are the same ones
+`deckard init` writes, pointed at the workspace copy of the binary.
 
 `AGENTS.md` is the short version of the rules for a coding agent, and
 `.claude/skills/slide-authoring/SKILL.md` is the slide-authoring skill it loads
@@ -226,8 +287,8 @@ when it writes or edits slides. `docs/MIGRATION-NOTES.md` records what building
 
 `apps/demo` is the proof that a deck built on Deckard is a plain Next.js app. It
 consumes `@deckard/core` through the workspace, installs its blocks and its theme
-as files it owns, and runs the same deck scripts as the playground through
-`@deckard/deck-scripts`. It carries a 19-slide talk with a manual opening and
+as files it owns, and runs the same checks as the playground through the
+`deckard` binary. It carries a 19-slide talk with a manual opening and
 close, nine discovered slide modules, an async Server Component that reads the
 workspace at build time, a nested client widget, step reveals, a fullscreen media
 slide, and a code walkthrough. Read `docs/MIGRATION-NOTES.md` for what building
@@ -603,18 +664,17 @@ color. `deck/theme/THEME.md` lists the tokens and what they control.
 
 ## Checking a deck
 
-Four scripts in `tools/deck-scripts` cover the checks a deck needs. They share
-one harness: `lib/preview.ts` builds the app, starts `next start` on a spare
-port, and opens a page sized so the canvas renders at scale 1. The PDF export
-runs on the same harness.
+Four subcommands of `deckard` cover the checks a deck needs. They share one
+harness, `packages/cli/src/deck/preview.ts`, which builds the app, starts
+`next start` on a spare port, and opens a page sized so the canvas renders at
+scale 1. The PDF export runs on the same harness.
 
-The package installs into an app as `@deckard/deck-scripts` and exposes each
-script as a bin, so a deck's `package.json` reads `"deck:validate":
-"deck-validate"`. The harness takes the invoking package's directory as the
-deck, which is what makes one copy serve every app in this repo. Pass
-`--registry=<path>` to `deck-validate` to also check a shadcn `registry.json`;
-without it the run covers the deck and its theme only. The package is
-workspace-only until it publishes, so a standalone app cannot install it yet.
+`@deckard/cli` installs into an app as a dev dependency and puts one binary on
+the path, so a deck's `package.json` reads `"deck:validate": "deckard
+validate"`. Every command takes the current working directory as the deck,
+which is what makes one copy serve every app in this repo. Pass
+`--registry <path>` to `deckard validate` to also check a shadcn
+`registry.json`; without it the run covers the deck and its theme only.
 
 ```bash
 pnpm deck:validate
@@ -651,12 +711,24 @@ pnpm deck:contact-sheet
 `deck:screenshots` writes one PNG per slide at canvas size to
 `out/screenshots/<id>.png` in the deck's own app, plus a manifest.
 `deck:contact-sheet` composes them into `out/contact-sheet.png`, a labelled grid
-of the whole deck. Both take `--light`; the contact sheet takes `--columns=N`.
+of the whole deck. Both take `--light`, the screenshots take `--max <n>` to stop
+after the first few slides, and the contact sheet takes `--columns <n>`.
 
 A build is reused when it is newer than everything in `app/`, `deck/`,
-`components/`, `assets/`, `public/`, and `packages/core/src`. Pass
-`--skip-build` to reuse whatever is in `.next`, or `--port=N` to move off the
-default port.
+`components/`, `assets/`, `public/`, and the `src` of the `@deckard/core` the
+app resolves. Pass `--skip-build` to reuse whatever is in `.next`, or
+`--port <n>` to move off the default port.
+
+```bash
+pnpm deck:doctor
+```
+
+Checks the shape of the app rather than the content of the deck: the node
+version, that `@deckard/core` resolves, that `app/globals.css` imports
+`@deckard/core/styles.css`, that `deck/deck.ts` loads, and that the four route
+files still re-export their adapters. Each failure prints what to do about it.
+Reach for it when a deck that used to work stops, and for `validate` when the
+slides changed.
 
 ## PDF export
 
@@ -714,6 +786,28 @@ copies lives in `tools/package-smoke/fixture` and covers a plain slide, an async
 slide, a discovered module, a stepped slide, and a client widget. The scratch
 directory is deleted afterwards. Pass `--keep` to inspect it.
 
+`pnpm smoke:cli` proves the same thing for the generator, and it proves it from
+the tarball rather than from the checkout. It runs `pnpm cli:build`, so
+`@deckard/core` is built before the CLI compiles against its types, and packs
+both packages. Then it installs the CLI tarball into a scratch directory outside
+the workspace and runs `deckard init` through that installed copy, with
+`--core-tarball` and `--cli-tarball`, letting the init do its own install. The
+template files it writes can only have come from inside the installed package.
+
+It does that twice. The pnpm pass typechecks and builds the generated app,
+asserts that `/slides/intro`, `/slides/keyboard`, and `/slides/2` are
+prerendered HTML on disk, runs `deckard validate` and `deckard doctor` inside
+it, and captures one screenshot with `--max 1`. The npm pass is the `npx` flow
+on a machine without pnpm: install, typecheck, build, and the same prerender
+assertion, with no browser. Both passes check that the generated
+`packageManager` field names the manager that ran init and that no generated
+script names a package manager at all. The whole run takes about 70 seconds and
+prints a per-phase breakdown.
+
+There is one gap worth naming: the template's dependency versions and the two
+tarballs come from this repository, so the smoke proves the generated app works
+against the code in the working tree, not against whatever is on npm.
+
 ## Registry
 
 `registry.json` at the root publishes the themes and blocks through shadcn.
@@ -743,3 +837,14 @@ preset wrote the stylesheet import and nothing else, that the app builds with
 an empty `next.config.mjs`, and that both an edit to the installed `theme.css`
 and the runtime's own utility classes reach the built stylesheet. Then it swaps
 in `theme-broadsheet` and typechecks again. It takes about a minute.
+
+### The init template comes from the same sources
+
+`deckard init` cannot reach the registry, because a new app has no shadcn
+config and the registry has no host. So the CLI ships the same files inside
+`packages/cli/template`, and `packages/cli/scripts/sync-template.ts` copies them
+there from the canonical sources: the four blocks and the deckard theme from
+`apps/playground`, broadsheet from `registry/themes`, and the pinned versions of
+next, react, and tailwind out of the playground's `package.json`. The sync runs
+on every CLI build, and `pnpm test` runs it again with `--check`, which fails
+naming any file that drifted. Edit the playground's blocks, not the copies.

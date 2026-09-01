@@ -7,7 +7,7 @@
     "ultracite/biome/vitest"
   ],
   "files": {
-    "includes": ["!**/*.svg"]
+    "includes": ["!**/*.svg", "!packages/cli/template"]
   },
   "javascript": {
     "formatter": {
@@ -37,7 +37,10 @@
       }
     },
     {
-      "includes": ["apps/playground/deck/slides.tsx"],
+      "includes": [
+        "apps/playground/deck/slides.tsx",
+        "packages/cli/src/init/scaffold.ts"
+      ],
       "assist": {
         "actions": {
           "source": {

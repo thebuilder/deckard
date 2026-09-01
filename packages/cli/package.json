@@ -1,0 +1,62 @@
+{
+  "name": "@deckard/cli",
+  "version": "0.0.1",
+  "description": "The deckard command line: scaffold a deck, check it, screenshot it, export it.",
+  "keywords": [
+    "cli",
+    "deck",
+    "next",
+    "presentation",
+    "slides"
+  ],
+  "homepage": "https://github.com/thebuilder/next-slideshow-template#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thebuilder/next-slideshow-template.git"
+  },
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "deckard": "./bin/deckard.mjs"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "template"
+  ],
+  "scripts": {
+    "build": "node scripts/sync-template.ts && tsc --project tsconfig.build.json",
+    "test": "node scripts/sync-template.ts --check && vitest run --passWithNoTests",
+    "test:unit": "node scripts/sync-template.ts --check && vitest run --passWithNoTests",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "pdf-lib": "^1.17.1",
+    "playwright": "^1.62.1",
+    "shadcn": "^4.19.1",
+    "vite": "^8.2.2"
+  },
+  "devDependencies": {
+    "@deckard/core": "workspace:*",
+    "@types/node": "^26.4.0",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.11"
+  },
+  "peerDependencies": {
+    "@deckard/core": ">=0.0.1"
+  },
+  "peerDependenciesMeta": {
+    "@deckard/core": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=20.9"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -4,7 +4,9 @@
   "globalDependencies": [
     "biome.json",
     ".fallowrc.json",
-    "apps/playground/deck/theme/theme.css",
+    "apps/playground/app/slides/blocks/**",
+    "apps/playground/deck/theme/**",
+    "apps/playground/package.json",
     "registry/themes/**"
   ],
   "globalEnv": [
@@ -16,6 +18,10 @@
     "build": {
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+    },
+    "@deckard/cli#build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", "template/**"]
     },
     "dev": {
       "cache": false,

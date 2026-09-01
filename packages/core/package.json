@@ -95,6 +95,9 @@
     "react": ">=19",
     "react-dom": ">=19"
   },
+  "engines": {
+    "node": ">=20.9"
+  },
   "publishConfig": {
     "access": "public"
   }

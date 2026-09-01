@@ -5,12 +5,13 @@
   "type": "module",
   "scripts": {
     "build": "next build",
-    "deck:check-overflow": "deck-check-overflow",
-    "deck:contact-sheet": "deck-contact-sheet",
-    "deck:screenshots": "deck-screenshots",
-    "deck:validate": "deck-validate",
+    "deck:check-overflow": "deckard check-overflow",
+    "deck:contact-sheet": "deckard contact-sheet",
+    "deck:doctor": "deckard doctor",
+    "deck:screenshots": "deckard screenshots",
+    "deck:validate": "deckard validate",
     "dev": "next dev --turbopack --port 3002",
-    "export:pdf": "deck-export-pdf",
+    "export:pdf": "deckard export pdf",
     "start": "next start --port 3002",
     "test": "vitest run --passWithNoTests",
     "test:unit": "vitest run --passWithNoTests",
@@ -24,7 +25,7 @@
     "server-only": "^0.0.1"
   },
   "devDependencies": {
-    "@deckard/deck-scripts": "workspace:*",
+    "@deckard/cli": "workspace:*",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^26.4.0",
     "@types/react": "^19.2.18",

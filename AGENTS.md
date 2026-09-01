@@ -23,12 +23,19 @@ apply there, against their own `deck/` directory.
 - `apps/docs` is the documentation site.
 - `registry` holds theme sources the playground does not use. `registry.json` at
   the root publishes them and the blocks through shadcn.
-- `tools/deck-scripts` is `@deckard/deck-scripts`, the deck tooling every app
-  runs. It exposes `deck-validate`, `deck-check-overflow`, `deck-screenshots`,
-  `deck-contact-sheet`, and `deck-export-pdf` as bins, and treats the invoking
-  package's directory as the deck.
+- `packages/cli` is `@deckard/cli`, the one public binary: `deckard init`,
+  `validate`, `doctor`, `check-overflow`, `screenshots`, `contact-sheet`,
+  `export pdf`, and `add`. It compiles to `dist/` with `tsc` and treats the
+  current working directory as the deck. `packages/cli/template` is what `init`
+  writes, and `scripts/sync-template.ts` copies the blocks, both themes, the
+  pinned dependency versions, and the package manager pins into it from the
+  playground, `registry/`, and the root `package.json`. Edit the sources, never
+  the copies.
 - `tools/package-smoke` packs the package and builds a scratch app against it.
 - `tools/registry-smoke` installs the registry into a scratch app and builds it.
+- `tools/cli-smoke` installs the packed CLI outside the workspace and runs
+  `deckard init` through it, once under pnpm and once under npm, then builds,
+  validates, and screenshots what it generated.
 
 ## Scripts
 
@@ -42,16 +49,19 @@ All of these run from the root.
 | `pnpm test`                | vitest, node and browser projects                            |
 | `pnpm lint`                | ultracite fix, warnings are errors                           |
 | `pnpm analyze`             | fallow dead code, duplication, health                        |
+| `pnpm cli:build`           | builds `@deckard/core` and `@deckard/cli`                    |
 | `pnpm deck:validate`       | deck resolves, theme is coherent, registry paths exist       |
+| `pnpm deck:doctor`         | node, package resolution, stylesheet import, deck, routes    |
 | `pnpm deck:check-overflow` | fails listing slides whose content the canvas clips          |
 | `pnpm deck:screenshots`    | one PNG per slide at canvas size, `--light` for light mode   |
 | `pnpm deck:contact-sheet`  | every screenshot in one grid image for review                |
 | `pnpm export:pdf`          | one PDF page per slide at canvas size                        |
 | `pnpm demo`                | the demo talk on :3002                                       |
-| `pnpm demo:validate`       | the deck scripts against `apps/demo`, plus `demo:check-overflow`, `demo:screenshots`, `demo:contact-sheet`, `demo:export:pdf` |
+| `pnpm demo:validate`       | the same checks against `apps/demo`, plus `demo:doctor`, `demo:check-overflow`, `demo:screenshots`, `demo:contact-sheet`, `demo:export:pdf` |
 | `pnpm registry:build`      | compiles `registry.json` into `apps/docs/public/r`           |
 | `pnpm smoke:package`       | packs `@deckard/core` and builds a scratch app against it    |
 | `pnpm smoke:registry`      | installs the registry into a scratch app and builds it       |
+| `pnpm smoke:cli`           | `deckard init` from the packed CLI on pnpm and npm, then build, validate, shoot it |
 
 `deck:validate` takes about a second. Run it after any structural change: a new
 slug, a moved slide module, a theme edit, a registry path. Run
@@ -74,7 +84,9 @@ color, or a slide, it is deck content.
 A presentation built on Deckard is a plain Next.js app: `app/`, `components/`,
 `deck/`, `public/`, `package.json`, plus one `@import "@deckard/core/styles.css"`.
 No `transpilePackages`, no Tailwind `@source`. Nothing about the workspace
-layout leaks into the app someone generates from the framework.
+layout leaks into the app someone generates from the framework. `deckard init`
+is what generates it, so a change to that shape belongs in
+`packages/cli/template` and has to survive `pnpm smoke:cli`.
 
 ## Where things live
 
@@ -97,8 +109,8 @@ layout leaks into the app someone generates from the framework.
 - Color mode: `packages/core/src/components/color-mode-provider.tsx`. It is
   light and dark only. The deck theme is static config and never switches at
   runtime.
-- Deck tooling: `tools/deck-scripts/`, with the shared build, server, and canvas
-  harness in `lib/preview.ts`.
+- Deck tooling: `packages/cli/src/commands/`, with the shared build, server, and
+  canvas harness in `packages/cli/src/deck/preview.ts`.
 
 ## The package boundary
 

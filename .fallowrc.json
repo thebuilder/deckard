@@ -11,11 +11,13 @@
     "apps/playground/components/ui/**",
     "apps/playground/app/slides/blocks/**",
     "apps/demo/app/slides/blocks/**",
-    "registry/themes/**"
+    "registry/themes/**",
+    "packages/cli/src/index.ts"
   ],
   "ignorePatterns": [
     "tools/package-smoke/fixture/**",
-    "tools/registry-smoke/fixture/**"
+    "tools/registry-smoke/fixture/**",
+    "packages/cli/template/**"
   ],
   "ignoreExports": [
     {
