@@ -15,7 +15,7 @@ Two slides from now there is a slide that reads this repository at build time. S
 export default function ServerBoundarySlide() {
   return (
     <OpenContentSlide
-      description="Slide entry modules are Server Components. That is one rule with three consequences, and the third one bites once."
+      description="One rule, three consequences, and the third one bites once."
       eyebrow="The boundary"
       title="The slide runs on the server. The widget does not."
     >
@@ -23,8 +23,7 @@ export default function ServerBoundarySlide() {
         items={[
           <>
             A slide body can be <code>async</code>. Await the query, return the
-            markup, and the route sends HTML once the data has resolved. The
-            audience never watches a slide fill itself in.
+            markup, and the audience never watches a slide fill itself in.
           </>,
           <>
             Interactivity goes one level down. The slide stays a Server

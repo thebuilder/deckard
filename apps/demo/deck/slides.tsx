@@ -55,7 +55,7 @@ async function readDeckStats(): Promise<Stat[]> {
   return [
     {
       label: "Entry points",
-      note: "Everything @deckard/core exposes, counted from the installed package.json.",
+      note: "Everything @deckard/core exposes, from its package.json.",
       value: String(entryPoints.length),
     },
     {
@@ -81,7 +81,7 @@ async function DeckStatsSlide() {
 
   return (
     <OpenContentSlide
-      description="Every number below was read off disk while this page rendered. The slide is an async Server Component, so nothing here is a screenshot of a number that used to be true."
+      description="Read off disk while this page rendered, not typed in and left to rot."
       eyebrow="Counted at build time"
       title="This deck, measured while it rendered"
     >

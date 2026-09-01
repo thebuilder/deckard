@@ -70,49 +70,48 @@ inside running sentences. Georgia sets `deck:check-overflow` next to "builds,
 serves, and measures" at visibly different weights, and the sentence comes apart.
 The headings stay serif, so the editorial voice survives where it does the work.
 
-### The whole scale runs under broadsheet's
+### The scale sits one step under broadsheet's
 
-Broadsheet now sets its type and its margins to the numbers the source templates
-draw on a 1920x1080 canvas. This file does not follow it, so every size here is
-a step or more under the theme it came from.
+Broadsheet sets its type and its margins to the numbers the source templates
+draw on a 1920x1080 canvas. This deck follows it up to a point and then stops
+one step short, because broadsheet's title is sized for a headline of three or
+four words and every headline here is a full sentence.
 
 ```
-- --slide-padding-inline:  8rem       + 2.75rem
-- --slide-padding-block:   6.5rem     + 3rem
-- --slide-content-gap:     2.75rem    + 1.75rem
-- --slide-title-size:      7.5rem     + 4.5rem
-- --slide-heading-size:    4.75rem    + 3.25rem
-- --slide-subheading-size: 2.75rem    + 1.875rem
-- --slide-lead-size:       2.75rem    + 1.375rem
-- --slide-body-size:       2.0625rem  + 1.5rem
-- --slide-support-size:    1.75rem    + 1.0625rem
-- --slide-label-size:      1.5rem     + 0.8125rem
+- --slide-padding-inline:  8rem       + 7rem
+- --slide-padding-block:   6.5rem     + 5.75rem
+- --slide-content-gap:     2.75rem    + 2.5rem
+- --slide-item-gap:        1.625rem   + 1.5rem
+- --slide-title-size:      7.5rem     + 6.5rem
+- --slide-heading-size:    4.75rem    + 4.25rem
+- --slide-subheading-size: 2.75rem    + 2.5rem
+- --slide-lead-size:       2.75rem    + 2.5rem
+- --slide-body-size:       2.0625rem  + 1.9375rem
+- --slide-code-size:       1.875rem   + 1.75rem
+- --slide-support-size:    1.75rem    + 1.625rem
+- --slide-label-size:      1.5rem     + 1.4375rem
 - --slide-label-tracking:  0.22em     + 0.2em
-- --slide-chrome-size:     1.5rem     + 0.875rem
+- --slide-figure-size:     8.5rem     + 7.5rem
+- --slide-figure-unit-size: 3.5rem    + 3.25rem
+- --slide-chrome-size:     1.5rem     + 1.375rem
 ```
 
 Every number is set against the canvas at a 16px root, so `1rem` is 16 canvas
-pixels: a `1.5rem` body line is 24 of them and broadsheet's `2.0625rem` is 33.
-The frame is the whole canvas inside `--slide-padding-inline` and
-`--slide-padding-block`, left aligned, with no measure cap and no centred
-column, so those two margins are the only thing holding a slide off the edge. At
-`2.75rem` and `3rem` this deck runs a wider line and a smaller face than a
-broadsheet deck on the same canvas, which is what lets its denser slides fit.
+pixels: this deck's `1.9375rem` body line is 31 of them and broadsheet's
+`2.0625rem` is 33. The frame is the whole canvas inside
+`--slide-padding-inline` and `--slide-padding-block`, left aligned, with no
+measure cap and no centred column, so those two margins are the only thing
+holding a slide off the edge.
 
 `pnpm demo:check-overflow` is the check that matters when any of these move.
 Raising one of them is what pushes a slide past the frame, and the deck already
-sits close to it.
+sits close to it: four slides had to lose a clause when the scale went up.
 
 `--slide-label-tracking` came down because sans capitals are narrower than serif
 capitals, and broadsheet's `0.22em` reads as gappy on them.
 
-Four size tokens are not set here at all, so they fall through to the contract
-defaults in `@deckard/core/styles.css` rather than to broadsheet's values:
-`--slide-code-size` at `1.75rem`, `--slide-figure-size` at `7.5rem`,
-`--slide-figure-unit-size` at `3.5rem`, and `--slide-item-gap` at `1.625rem`.
-Broadsheet sets the first two a step higher, at `1.875rem` and `8.5rem`.
 `--slide-meter-size`, the height of the proportion bar under a stat figure, is
-the contract's `0.875rem` in both.
+the contract's `0.875rem` in both themes.
 
 ### Nested panels recede instead of rising
 
@@ -154,7 +153,7 @@ on warm stock a bloom behind the copy reads as a stain rather than as light.
 - --slide-grid-size: 2.75rem   + 3.5rem
 ```
 
-Rules spaced for a `2.0625rem` serif line sit too close under a `1.5rem` sans
+Rules spaced for a `2.0625rem` serif line sit too close under a `1.9375rem` sans
 line and start to look like a texture rather than a baseline.
 
 ### Inline code is a chip

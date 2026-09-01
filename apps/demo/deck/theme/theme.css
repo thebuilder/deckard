@@ -31,18 +31,23 @@
   --slide-font-body: var(--font-sans);
   --slide-font-mono: var(--font-mono);
 
-  --slide-padding-inline: 2.75rem;
-  --slide-padding-block: 3rem;
-  --slide-content-gap: 1.75rem;
+  --slide-padding-inline: 7rem;
+  --slide-padding-block: 5.75rem;
+  --slide-content-gap: 2.5rem;
+  --slide-item-gap: 1.5rem;
 
-  --slide-title-size: 4.5rem;
-  --slide-heading-size: 3.25rem;
-  --slide-subheading-size: 1.875rem;
-  --slide-lead-size: 1.375rem;
-  --slide-body-size: 1.5rem;
-  --slide-support-size: 1.0625rem;
-  --slide-label-size: 0.8125rem;
+  --slide-title-size: 6.5rem;
+  --slide-heading-size: 4.25rem;
+  --slide-subheading-size: 2.5rem;
+  --slide-lead-size: 2.5rem;
+  --slide-body-size: 1.9375rem;
+  --slide-code-size: 1.75rem;
+  --slide-support-size: 1.625rem;
+  --slide-label-size: 1.4375rem;
   --slide-label-tracking: 0.2em;
+
+  --slide-figure-size: 7.5rem;
+  --slide-figure-unit-size: 3.25rem;
 
   --slide-radius: 0.125rem;
   --slide-radius-lg: 0.125rem;
@@ -62,7 +67,7 @@
   --slide-chrome-foreground: var(--muted-foreground);
   --slide-chrome-emphasis: var(--foreground);
   --slide-chrome-border: var(--border);
-  --slide-chrome-size: 0.875rem;
+  --slide-chrome-size: 1.375rem;
   --slide-chrome-tracking: 0.14em;
   --slide-progress-track: transparent;
   --slide-progress-fill: var(--primary);
