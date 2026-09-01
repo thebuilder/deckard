@@ -105,15 +105,15 @@ describe("color mode switching", () => {
 })
 
 describe("toDeckPresentation", () => {
-  it("hands the shell the header brand, link, and date", () => {
+  it("hands the shell the header brand, link, and meta", () => {
     const presentation = toDeckPresentation(
       defineDeck({
         description: "Test deck",
         footer: { mode: "visible" },
         header: {
           brand: "Test brand",
-          date: "March 2026",
           href: "/start",
+          meta: "March 2026",
           mode: "auto",
         },
         slides: [{ body: null, title: "One" }],
@@ -123,10 +123,10 @@ describe("toDeckPresentation", () => {
 
     expect(presentation.title).toBe("Test brand")
     expect(presentation.titleHref).toBe("/start")
-    expect(presentation.date).toBe("March 2026")
+    expect(presentation.meta).toBe("March 2026")
   })
 
-  it("leaves the date out when the deck sets none", () => {
+  it("leaves the meta out when the deck sets none", () => {
     const presentation = toDeckPresentation(
       defineDeck({
         description: "Test deck",
@@ -137,6 +137,6 @@ describe("toDeckPresentation", () => {
       })
     )
 
-    expect(presentation.date).toBeUndefined()
+    expect(presentation.meta).toBeUndefined()
   })
 })

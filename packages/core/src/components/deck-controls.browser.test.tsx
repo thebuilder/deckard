@@ -3,7 +3,7 @@ import { createRoot, type Root } from "react-dom/client"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import type { SlideSummary } from "../deck/types"
 import { pushed } from "./__fixtures__/next-navigation"
-import { DeckControls } from "./deck-controls"
+import { DeckControls, resetDeckControlsMemory } from "./deck-controls"
 
 // Pointer proximity and focus land outside any act() scope, the way they do in a
 // browser, so the flag is only raised around the renders this test drives itself.
@@ -85,6 +85,29 @@ function button(label: string) {
   return node
 }
 
+function handle() {
+  return container.querySelector<HTMLButtonElement>(
+    '[data-deck-controls] button[aria-label$="deck controls"]'
+  )
+}
+
+// A headless browser reports one machine. These tests are about the other kinds,
+// so the two queries the cluster asks are answered for them.
+function stubMediaQueries(matching: Record<string, boolean>) {
+  const original = window.matchMedia
+
+  window.matchMedia = ((query: string) => ({
+    addEventListener: () => undefined,
+    matches: matching[query] ?? false,
+    media: query,
+    removeEventListener: () => undefined,
+  })) as unknown as typeof window.matchMedia
+
+  return () => {
+    window.matchMedia = original
+  }
+}
+
 function movePointerTo(x: number, y: number) {
   window.dispatchEvent(
     new PointerEvent("pointermove", { clientX: x, clientY: y })
@@ -92,6 +115,7 @@ function movePointerTo(x: number, y: number) {
 }
 
 beforeEach(() => {
+  resetDeckControlsMemory()
   pushed.length = 0
   container = document.createElement("div")
   container.style.position = "fixed"
@@ -169,6 +193,48 @@ describe("DeckControls", () => {
     )
 
     await vi.waitUntil(isRevealed)
+  })
+
+  it("gives a hybrid machine the handle and the proximity reveal", async () => {
+    const restore = stubMediaQueries({
+      "(any-pointer: coarse)": true,
+      "(any-pointer: fine)": true,
+    })
+
+    try {
+      mountControls()
+
+      expect(handle()).not.toBeNull()
+
+      const box = controls().getBoundingClientRect()
+
+      movePointerTo(box.left + box.width / 2, box.top + box.height / 2)
+      await vi.waitUntil(isRevealed)
+    } finally {
+      restore()
+    }
+  })
+
+  it("gives a touch-only machine the handle and nothing to hover with", async () => {
+    const restore = stubMediaQueries({ "(any-pointer: coarse)": true })
+
+    try {
+      mountControls()
+
+      expect(handle()).not.toBeNull()
+
+      const box = controls().getBoundingClientRect()
+
+      movePointerTo(box.left + box.width / 2, box.top + box.height / 2)
+      await new Promise((resolve) => setTimeout(resolve, 50))
+
+      expect(isRevealed()).toBe(false)
+
+      handle()?.click()
+      await vi.waitUntil(isRevealed)
+    } finally {
+      restore()
+    }
   })
 
   it("navigates from the revealed buttons", async () => {

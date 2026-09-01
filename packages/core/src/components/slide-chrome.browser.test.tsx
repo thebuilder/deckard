@@ -6,6 +6,8 @@ import { resolveTheme } from "../deck/theme"
 import { SlideCanvas } from "./slide-canvas"
 import { SlideCanvasFooter, SlideCanvasHeader } from "./slide-chrome"
 
+import "../../styles.css"
+
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true })
 
 const canvas = resolveCanvas()
@@ -14,12 +16,14 @@ let container: HTMLDivElement
 let root: Root
 
 function renderChrome({
-  date,
+  brand = "Deckard",
+  meta,
   number,
   title,
   total,
 }: {
-  date?: string
+  brand?: string
+  meta?: string
   number: number
   title?: string
   total: number
@@ -32,9 +36,9 @@ function renderChrome({
         footer={<SlideCanvasFooter number={number} total={total} />}
         header={
           <SlideCanvasHeader
-            brand="Deckard"
+            brand={brand}
             brandHref="/"
-            date={date}
+            meta={meta}
             title={title}
           />
         }
@@ -44,6 +48,10 @@ function renderChrome({
       </SlideCanvas>
     )
   })
+}
+
+function overflowsSideways(node: HTMLElement) {
+  return node.scrollWidth - node.clientWidth > 1
 }
 
 function element(selector: string) {
@@ -91,10 +99,10 @@ describe("canvas chrome", () => {
     )
   })
 
-  it("leaves out the date and the title a deck never set", () => {
+  it("leaves out the meta and the title a deck never set", () => {
     renderChrome({ number: 3, total: 12 })
 
-    expect(container.querySelector("[data-slide-header-date]")).toBeNull()
+    expect(container.querySelector("[data-slide-header-meta]")).toBeNull()
     expect(container.querySelector("[data-slide-header-title]")).toBeNull()
   })
 
@@ -104,10 +112,10 @@ describe("canvas chrome", () => {
     expect(container.querySelector("[data-slide-header-title]")).toBeNull()
   })
 
-  it("renders a date the deck did set", () => {
-    renderChrome({ date: "March 2026", number: 3, total: 12 })
+  it("renders the meta line the deck did set", () => {
+    renderChrome({ meta: "March 2026", number: 3, total: 12 })
 
-    expect(element("[data-slide-header-date]").textContent).toBe("March 2026")
+    expect(element("[data-slide-header-meta]").textContent).toBe("March 2026")
   })
 
   it("counts the slide out of the deck", () => {
@@ -136,5 +144,38 @@ describe("canvas chrome", () => {
         )
       )
     ).toBe(1)
+  })
+})
+
+describe("canvas chrome containment", () => {
+  const absurd =
+    "A deck brand nobody would ever type into a config file and then keep, on and on, well past the width of the canvas it has to sit inside, ".repeat(
+      6
+    )
+
+  it("keeps an absurd brand, title, and meta inside the canvas", () => {
+    renderChrome({
+      brand: absurd,
+      meta: absurd,
+      number: 3,
+      title: absurd,
+      total: 12,
+    })
+
+    expect(overflowsSideways(element("[data-slide-header]"))).toBe(false)
+    expect(overflowsSideways(element("[data-slide-canvas]"))).toBe(false)
+  })
+
+  it("truncates the title before the brand gives up any of itself", () => {
+    renderChrome({
+      meta: "March 2026",
+      number: 3,
+      title: absurd,
+      total: 12,
+    })
+
+    expect(overflowsSideways(element("[data-slide-header-title]"))).toBe(true)
+    expect(overflowsSideways(element("[data-slide-header-brand]"))).toBe(false)
+    expect(overflowsSideways(element("[data-slide-header-meta]"))).toBe(false)
   })
 })

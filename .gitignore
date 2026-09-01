@@ -26,6 +26,9 @@ apps/docs/public/r/
 # generated deckard init template
 packages/cli/template/
 
+# release:pack output
+/dist-tarballs/
+
 # production
 /build
 

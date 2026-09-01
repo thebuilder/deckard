@@ -62,14 +62,15 @@ panel full of bordered cards.
   orientation. No heading, no lead, no panel. Do not reach for it when the
   slide needs a sentence to make sense.
 
-The rule is enforced as well as documented. A block with its own surface carries
-`data-slide-surface`, and `ContentSlideCard`'s panel carries
-`data-slide-panel`; a panel that holds a surface drops its border, background,
-shadow, and padding. Write it the right way anyway. The attribute keeps a
-mistake from looking bad, it does not make the composition right.
+The rule is a convention with a warning behind it, not a stylesheet trick. A
+block with its own surface carries `data-slide-surface`, `ContentSlideCard`'s
+panel carries `data-slide-panel`, and the panel always paints its card. Put a
+surfaced block inside one and you get a frame inside a frame on the slide, plus
+a console warning in development naming `OpenContentSlide` and `FocusSlide`.
+Nothing hides the mistake for you.
 
 A new block that paints a border or a background needs `data-slide-surface` on
-its outer element, or a card wrapped around it will frame a frame.
+its outer element, so a card wrapped around it says so.
 
 ## Inline, or its own file
 

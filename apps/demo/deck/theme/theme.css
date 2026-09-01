@@ -242,7 +242,7 @@
   font-style: italic;
 }
 
-.demo-theme [data-slide-header-date] {
+.demo-theme [data-slide-header-meta] {
   letter-spacing: 0.06em;
 }
 

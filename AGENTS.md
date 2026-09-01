@@ -24,7 +24,11 @@ apply there, against their own `deck/` directory.
 - `packages/themes` is `@deckard/themes`, the six deck themes. Each one is a
   `theme.css`, an `index.ts` exporting one `SlideTheme`, and a `THEME.md`. It
   compiles to `dist/` with `tsc` and `scripts/copy-theme-assets.ts` carries the
-  stylesheets and the documents across.
+  stylesheets and the documents across. `pnpm dev` runs `scripts/dev.ts`, which
+  copies once, watches `src/*/theme.css` and `src/*/THEME.md`, and spawns
+  `tsc --watch` as its child. One node process owns both halves so one signal
+  ends both; a shell `a & b` leaves the asset watcher writing into a `dist`
+  nothing is compiling.
 - `registry.json` at the root publishes the blocks through shadcn. Themes are
   not in it.
 - `packages/cli` is `@deckard/cli`, the one public binary: `deckard init`,
@@ -132,17 +136,20 @@ is what generates it, so a change to that shape belongs in
 - The slide route is static. Nothing in it may read the request: `presenterPreview` and `step` are read on the client, so the whole deck prerenders.
 - Nothing heavy or async belongs in the components barrel. `CodeBlock` sits behind its own entry point because shiki loads WebAssembly, and a discovered slide module that reaches it through the barrel would throw.
 - Adding a dependency to the runtime means adding it to `packages/core/package.json`, not the app's. `pnpm smoke:package` catches the ones that only work because the workspace hoisted them.
+- Each of the three packages has a `prepack` that builds itself and nothing else: `tsc` for core, `tsc` plus the asset copy for themes, the template sync for the CLI. A package cannot build its dependencies, so ordering the three is `pnpm release:pack`'s job. That command cleans every `dist`, the CLI template, and the build info beside them, builds the three through turbo with `--force`, packs them into `dist-tarballs/`, checks each tarball carries what an installer needs, and runs the CLI smoke against those exact files. It is the release path, so it is the one CI runs.
 
 ## Change discipline
 
 - Favor small, composable components over large slide bodies.
 - One surface per slide. A slide is a framed panel with flat content inside it,
   or an open frame holding content that carries its own surface, never a
-  bordered panel full of bordered cards. A block that paints a border or a
-  background carries `data-slide-surface`, `ContentSlideCard`'s panel carries
-  `data-slide-panel`, and a panel holding a surface drops its own frame. Compose
-  through `OpenContentSlide` or `FocusSlide` anyway: the attribute keeps a
-  mistake from looking bad, it does not make the composition right.
+  bordered panel full of bordered cards. It is a convention, not CSS: the panel
+  in `ContentSlideCard` always paints its card, so a framed block inside it
+  frames a frame and looks like it. A block that paints a border or a background
+  carries `data-slide-surface`, the panel carries `data-slide-panel`, and the
+  panel warns in development when it finds one inside itself, naming
+  `OpenContentSlide` and `FocusSlide`. The markers are how the mistake gets
+  named, not how it gets fixed.
 - Update the README when you add a slide model field or change its behavior.
 - Run `pnpm typecheck && pnpm lint && pnpm test` after structural changes, plus
   `pnpm deck:validate`, and `pnpm smoke:package` after touching the package

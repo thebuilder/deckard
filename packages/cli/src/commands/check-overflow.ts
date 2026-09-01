@@ -11,25 +11,37 @@ import { type ColorMode, write } from "../output.ts"
 
 interface Overflow {
   id: string
+  region: string
   x: number
   y: number
 }
 
-// Same element and same arithmetic as SlideOverflowGuard, so CI fails on exactly what the dev warning draws.
+// Same elements and same arithmetic as SlideOverflowGuard, so CI fails on exactly what the dev warning draws.
 const tolerance = 1
 
 function measure(page: Page) {
   return page.evaluate(() => {
-    const frame = document.querySelector<HTMLElement>("[data-slide-frame]")
+    const regions = [
+      { label: "slide content", selector: "[data-slide-frame]" },
+      { label: "the header", selector: "[data-slide-header]" },
+      { label: "the footer", selector: "[data-slide-footer]" },
+    ]
 
-    if (!frame) {
-      return null
-    }
+    return regions.flatMap((region) => {
+      const element = document.querySelector<HTMLElement>(region.selector)
 
-    return {
-      x: frame.scrollWidth - frame.clientWidth,
-      y: frame.scrollHeight - frame.clientHeight,
-    }
+      if (!element) {
+        return []
+      }
+
+      return [
+        {
+          label: region.label,
+          x: element.scrollWidth - element.clientWidth,
+          y: element.scrollHeight - element.clientHeight,
+        },
+      ]
+    })
   })
 }
 
@@ -44,7 +56,7 @@ function describe(overflow: Overflow) {
     parts.push(`${Math.round(overflow.x)}px past its right edge`)
   }
 
-  return `/slides/${overflow.id}  ${parts.join(", ")}`
+  return `/slides/${overflow.id}  ${overflow.region} runs ${parts.join(", ")}`
 }
 
 async function checkSlide(
@@ -52,22 +64,25 @@ async function checkSlide(
   baseUrl: string,
   id: string,
   colorMode: ColorMode
-): Promise<Overflow | null> {
+): Promise<Overflow[]> {
   await openSlide(page, baseUrl, id, colorMode)
 
-  const overflow = await measure(page)
+  const measured = await measure(page)
 
-  if (!overflow) {
+  if (!measured.some((region) => region.label === "slide content")) {
     throw new Error(
       `Slide ${id} rendered no [data-slide-frame] element. Check that the route still renders SlideShell.`
     )
   }
 
-  if (overflow.x <= tolerance && overflow.y <= tolerance) {
-    return null
-  }
-
-  return { id, x: Math.max(overflow.x, 0), y: Math.max(overflow.y, 0) }
+  return measured
+    .filter((region) => region.x > tolerance || region.y > tolerance)
+    .map((region) => ({
+      id,
+      region: region.label,
+      x: Math.max(region.x, 0),
+      y: Math.max(region.y, 0),
+    }))
 }
 
 export function runCheckOverflow(args: ParsedArgs): Promise<void> {
@@ -80,24 +95,22 @@ export function runCheckOverflow(args: ParsedArgs): Promise<void> {
 
     for (const id of ids) {
       // biome-ignore lint/performance/noAwaitInLoops: slides are measured one at a time on a single page
-      const overflow = await checkSlide(page, baseUrl, id, colorMode)
-
-      if (overflow) {
-        overflowing.push(overflow)
-      }
+      overflowing.push(...(await checkSlide(page, baseUrl, id, colorMode)))
     }
 
     if (overflowing.length === 0) {
       write(
-        `${ids.length} slides fit the ${canvas.width}x${canvas.height} canvas in ${colorMode} mode.`
+        `${ids.length} slides fit the ${canvas.width}x${canvas.height} canvas in ${colorMode} mode, chrome included.`
       )
       return
     }
 
+    const slides = new Set(overflowing.map((overflow) => overflow.id))
+
     throw new Error(
       [
         ...overflowing.map(describe),
-        `${overflowing.length} of ${ids.length} slides overflow the canvas and are clipped. Trim the content, or wrap the part that has to scroll in SlideScrollArea.`,
+        `${slides.size} of ${ids.length} slides overflow the canvas and are clipped. Trim the content, or wrap the part that has to scroll in SlideScrollArea.`,
       ].join("\n")
     )
   }

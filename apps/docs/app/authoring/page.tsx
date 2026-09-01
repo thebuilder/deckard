@@ -116,12 +116,12 @@ export default function AuthoringPage() {
         own.
       </p>
       <p>
-        The rule is also mechanical. Anything with its own surface carries{" "}
-        <code>data-slide-surface</code>, and a panel carrying{" "}
-        <code>data-slide-panel</code> that turns out to hold one drops its
-        border, background, shadow, and padding. Composing the wrong way stops
-        looking wrong, but write it the right way anyway: the attribute is a
-        safety net, not the design.
+        It is a convention, not a stylesheet trick. Anything with its own
+        surface carries <code>data-slide-surface</code>, the panel carries{" "}
+        <code>data-slide-panel</code>, and the panel always paints its card. Put
+        one inside the other and the slide shows a frame inside a frame, and the
+        panel warns in development naming the two layouts that compose it right.
+        The markers name the mistake; they do not fix it.
       </p>
 
       <h2 className="pt-4 text-2xl">Check the change</h2>

@@ -2,6 +2,11 @@ import fs from "node:fs"
 import path from "node:path"
 
 import { projectPath, resolveFromProject } from "../project.ts"
+import {
+  deckSourcePath,
+  findThemeImport,
+  type ThemeImportKind,
+} from "./deck-source.ts"
 
 export const builtInThemes = [
   "broadsheet",
@@ -29,6 +34,24 @@ export function hasLocalTheme(): boolean {
   return fs.existsSync(projectPath(localThemeDirectory))
 }
 
+// A directory left on disk is not a decision. deck/deck.ts names the theme the
+// deck renders, so a stale deck/theme beside a built-in import is read by
+// nothing, this included.
+export const moveLocalThemeAdvice = `Move or delete ${localThemeDirectory} first: a deck has one theme, and nothing writes over that directory.`
+
+export function themeStylesheetKind(
+  deckSource: string | null,
+  localThemeExists: boolean
+): ThemeImportKind {
+  const imported = deckSource ? findThemeImport(deckSource) : null
+
+  if (imported) {
+    return imported.kind
+  }
+
+  return localThemeExists ? "local" : "builtin"
+}
+
 export const themesPackage = "@deckard/themes"
 
 // The presets ship inside the package the deck installed, so their source is
@@ -50,13 +73,17 @@ function readIfPresent(file: string): string | null {
 }
 
 // A deck reads its theme from one of two places, and every check that inspects
-// the stylesheet has to name the one it actually read.
+// the stylesheet has to name the one it actually read. Which one that is comes
+// from the import in deck/deck.ts, never from whatever is on disk.
 export function readThemeStylesheet(themeId: string): ThemeStylesheet {
   const local = path.join(localThemeDirectory, "theme.css")
-  const localCss = readIfPresent(projectPath(local))
+  const kind = themeStylesheetKind(
+    readIfPresent(projectPath(deckSourcePath)),
+    hasLocalTheme()
+  )
 
-  if (localCss !== null) {
-    return { css: localCss, source: local }
+  if (kind === "local") {
+    return { css: readIfPresent(projectPath(local)), source: local }
   }
 
   if (!isBuiltInTheme(themeId)) {

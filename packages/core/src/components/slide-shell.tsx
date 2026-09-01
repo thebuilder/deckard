@@ -64,16 +64,17 @@ function resolveChrome({
 }
 
 // Canvas coordinates, not browser viewport coordinates. Every value below is a slice of the 1080px-tall canvas.
+// How much the chrome takes is the theme's call, through --slide-header-space and --slide-footer-space.
 const canvasFrames = {
   default: {
     base: "mx-auto max-w-6xl px-[var(--slide-padding-inline)]",
     footer: {
       off: "pb-[var(--slide-padding-block)]",
-      on: "pb-24",
+      on: "pb-[var(--slide-footer-space)]",
     },
     header: {
       off: "pt-[var(--slide-padding-block)]",
-      on: "pt-32",
+      on: "pt-[var(--slide-header-space)]",
     },
   },
   fullscreen: {
@@ -83,7 +84,7 @@ const canvasFrames = {
   },
 }
 
-const fullscreenChromeInsets = { bottom: 80, top: 96 }
+const noChromeSpace = "0px"
 
 function frameClassName({ isFullscreen, showFooter, showHeader }: ChromeState) {
   const frame = canvasFrames[isFullscreen ? "fullscreen" : "default"]
@@ -98,12 +99,12 @@ function frameClassName({ isFullscreen, showFooter, showHeader }: ChromeState) {
 // The fullscreen frame reserves nothing, so slide content that has to clear the chrome reads these instead.
 function chromeInset({ isFullscreen, showFooter, showHeader }: ChromeState) {
   if (!isFullscreen) {
-    return { bottom: 0, top: 0 }
+    return { bottom: noChromeSpace, top: noChromeSpace }
   }
 
   return {
-    bottom: showFooter ? fullscreenChromeInsets.bottom : 0,
-    top: showHeader ? fullscreenChromeInsets.top : 0,
+    bottom: showFooter ? "var(--slide-footer-space)" : noChromeSpace,
+    top: showHeader ? "var(--slide-header-space)" : noChromeSpace,
   }
 }
 
@@ -168,7 +169,7 @@ export function SlideShell({
               <SlideCanvasHeader
                 brand={deck.title}
                 brandHref={deck.titleHref}
-                date={deck.date}
+                meta={deck.meta}
                 title={slide.authoredTitle}
               />
             ) : null

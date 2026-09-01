@@ -124,8 +124,8 @@ other token here.
 The runtime renders the header and the footer and names their parts, the way it
 does with backgrounds. The header holds `[data-slide-header-brand]`, the deck
 name as a link; `[data-slide-header-title]`, the current slide, rendered only
-when the slide has a title of its own; and `[data-slide-header-date]`, rendered
-only when `deck.ts` sets one. The footer holds `[data-slide-counter]`, split
+when the slide has a title of its own; and `[data-slide-header-meta]`, one line
+of standing detail, rendered only when `deck.ts` sets `header.meta`. The footer holds `[data-slide-counter]`, split
 into `[data-slide-counter-current]`, `[data-slide-counter-separator]`, and
 `[data-slide-counter-total]`, and `[data-slide-progress]`, which carries the
 position in the deck as a fraction on `--slide-progress`.
@@ -135,6 +135,11 @@ under it, `>` before the deck name in the halo the headings carry, and `::`
 before the slide title. The foot is the status bar, held in reverse video on
 `--primary`, with the counter in brackets and the separator swapped for a slash
 through `[data-slide-counter-separator]`.
+
+A status bar is one line of cells, not a band, so it holds itself a line thinner
+than the base footer and gives that line back to the slide:
+`--slide-footer-space` is `5rem` here rather than the `6rem` in the token
+contract.
 
 The progress bar sits along the bottom of that bar and is drawn in character
 cells, a repeating gradient in `currentcolor`, so it fills in steps rather than

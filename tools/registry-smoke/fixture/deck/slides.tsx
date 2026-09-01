@@ -7,7 +7,6 @@ import {
 } from "@/app/slides/blocks/media"
 import {
   BreakerSlide,
-  ContentSlideCard,
   HeroSlide,
   OpenContentSlide,
 } from "@/app/slides/blocks/templates"
@@ -37,8 +36,8 @@ export const slides: SlideDefinition[] = [
   },
   {
     body: (
-      <ContentSlideCard
-        description="A bordered surface holds the body."
+      <OpenContentSlide
+        description="The list brings its own frame, so the layout brings none."
         eyebrow="Collections"
       >
         <BulletList
@@ -48,7 +47,7 @@ export const slides: SlideDefinition[] = [
             "The only build wiring is the stylesheet import the preset wrote.",
           ]}
         />
-      </ContentSlideCard>
+      </OpenContentSlide>
     ),
     title: "Bullets",
   },

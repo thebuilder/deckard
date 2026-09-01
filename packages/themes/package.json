@@ -30,7 +30,8 @@
   ],
   "scripts": {
     "build": "tsc --project tsconfig.build.json && node scripts/copy-theme-assets.ts",
-    "dev": "node scripts/copy-theme-assets.ts && tsc --project tsconfig.build.json --watch --preserveWatchOutput",
+    "dev": "node scripts/dev.ts",
+    "prepack": "tsc --project tsconfig.build.json && node scripts/copy-theme-assets.ts",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

@@ -260,7 +260,7 @@
   content: "//";
 }
 
-.nexus-theme [data-slide-header-date] {
+.nexus-theme [data-slide-header-meta] {
   font-family: var(--slide-font-mono);
   letter-spacing: 0.12em;
 }

@@ -477,7 +477,7 @@ renders the structure and the theme decides the look:
 <header data-slide-header>
   <a data-slide-header-brand href="/">Deckard</a>
   <span data-slide-header-title>Themed chrome</span>
-  <time data-slide-header-date>March 2026</time>
+  <span data-slide-header-meta>March 2026</span>
 </header>
 
 <footer data-slide-footer>
@@ -490,10 +490,12 @@ renders the structure and the theme decides the look:
 </footer>
 ```
 
-The title renders only for a slide that has one, and the date only when
-`deck/deck.ts` sets `header.date`. It is printed as written, so a deck picks its
-own format. `--slide-progress` is the position in the deck as a fraction, which
-is what a theme reads to paint a bar, a row of dots, or nothing.
+The title renders only for a slide that has one, and the meta line only when
+`deck/deck.ts` sets `header.meta`. It is one line of standing detail, printed as
+written, so a deck picks both what it is and how it reads: "March 2026",
+"Rev. C", "Internal". `--slide-progress` is the position in the deck as a
+fraction, which is what a theme reads to paint a bar, a row of dots, or
+nothing.
 
 `@deckard/core/styles.css` carries a neutral default on eight tokens:
 `--slide-chrome-foreground`, `--slide-chrome-emphasis`, `--slide-chrome-border`,
@@ -502,14 +504,30 @@ is what a theme reads to paint a bar, a row of dots, or nothing.
 registry overrides them and styles the attributes above; each `THEME.md` has a
 `Deck chrome` section describing what that theme does.
 
+Two more decide how much of the canvas the chrome is allowed:
+`--slide-header-space` (`8rem`) and `--slide-footer-space` (`6rem`). The frame
+reserves them as padding, and a fullscreen slide publishes them as
+`--slide-chrome-top` and `--slide-chrome-bottom`, the inset a bleeding layout
+has to clear. A theme that redesigns the chrome to a different height sets them
+and the slide content moves with it: `phosphor` holds its status bar a line
+thinner than the base footer and takes `--slide-footer-space` down to `5rem`.
+
+The header row is one line inside a canvas that cannot grow. Every part of it
+clips itself rather than running off the edge, and the slide title carries by
+far the largest shrink factor, so it truncates before the brand loses any of
+itself. Both overflow checks measure the header and the footer alongside the
+frame, so a deck finds out when its chrome asks for more room than it has.
+
 ### Deck controls
 
 The command center, the presenter popout, the color mode toggle, and compact
 previous and next buttons sit in one cluster in the bottom right corner, outside
 the canvas. The cluster is hidden at rest and reveals when the pointer comes
 within 160px of the corner, when anything inside it takes focus, or while the
-command dialog is open. On a touch device, where there is no hover, a handle
-sits in the corner and expands the cluster on tap.
+command dialog is open. A machine with a finger available, `(any-pointer:
+coarse)`, also gets a handle in the corner that expands the cluster on tap, and
+proximity stays on wherever `(hover: hover)` holds. A hybrid laptop with a
+trackpad and a touchscreen gets both affordances rather than one of them.
 
 Hidden means transparent, not absent: the buttons stay in the accessibility
 tree, tabbing into them reveals the cluster, and `Cmd/Ctrl+K` opens the command
@@ -787,10 +805,11 @@ control.
 
 A slide carries one surface. A framed panel holds flat content, an open frame
 holds content that brings its own border or background, and the two never nest.
-Blocks with a surface of their own carry `data-slide-surface`, the panel in
-`ContentSlideCard` carries `data-slide-panel`, and the stylesheet drops the
-panel's frame when it holds a surface. Compose through `OpenContentSlide` or
-`FocusSlide` anyway.
+Blocks with a surface of their own carry `data-slide-surface` and the panel in
+`ContentSlideCard` carries `data-slide-panel`, but nothing rewrites the slide:
+the panel always paints its card, so a framed block inside it frames a frame.
+The panel says so in development, naming `OpenContentSlide` and `FocusSlide`.
+Compose through one of those.
 
 ## Checking a deck
 
