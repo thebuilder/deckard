@@ -3,12 +3,13 @@ import fs from "node:fs"
 import path from "node:path"
 import process from "node:process"
 
-import type { Browser, Page } from "playwright"
+import type { Browser, BrowserContext, Page } from "playwright"
 import { chromium } from "playwright"
 import type { ColorMode } from "../output.ts"
 import { write } from "../output.ts"
 import { deckPackageManager, execCommand } from "../package-manager.ts"
 import { projectRoot, resolveFromProject } from "../project.ts"
+import { assertColorMode, colorModeStorageKey } from "./color-mode.ts"
 
 // Resolved rather than assumed: in this workspace it is packages/core, and in a
 // published deck it is whatever node_modules the app installed. A deck that
@@ -316,10 +317,31 @@ export async function launchBrowser(): Promise<Browser> {
 export async function openSlide(
   page: Page,
   baseUrl: string,
-  id: string
+  id: string,
+  colorMode: ColorMode
 ): Promise<void> {
   await page.goto(`${baseUrl}/slides/${id}`, { waitUntil: "networkidle" })
   await page.waitForTimeout(80)
+
+  assertColorMode(
+    await page.evaluate(() => [...document.documentElement.classList]),
+    colorMode,
+    id
+  )
+}
+
+// The context color scheme only answers a theme that asks the operating system.
+// The stored choice is what a theme with a default of its own reads first.
+async function seedColorMode(
+  context: BrowserContext,
+  colorMode: ColorMode
+): Promise<void> {
+  await context.addInitScript(
+    ({ key, mode }) => {
+      window.localStorage.setItem(key, mode)
+    },
+    { key: colorModeStorageKey, mode: colorMode }
+  )
 }
 
 // Build, serve, and open one page sized so the canvas renders at scale 1, which is what every capture below needs.
@@ -346,9 +368,12 @@ export async function withCanvasSession<T>(
         colorScheme: options.colorMode,
         viewport: { height: 1080, width: 1920 },
       })
+
+      await seedColorMode(context, options.colorMode)
+
       const page = await context.newPage()
 
-      await openSlide(page, baseUrl, ids[0])
+      await openSlide(page, baseUrl, ids[0], options.colorMode)
 
       const canvas = await readCanvasGeometry(page)
       const gutter = canvas.margin * 2

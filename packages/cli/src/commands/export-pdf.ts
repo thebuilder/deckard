@@ -38,7 +38,7 @@ export function runExportPdf(args: ParsedArgs): Promise<void> {
 
     for (const id of ids) {
       // biome-ignore lint/performance/noAwaitInLoops: slides are captured one at a time on a single page
-      await openSlide(page, baseUrl, id)
+      await openSlide(page, baseUrl, id, colorMode)
 
       const imageBuffer = await page.locator("[data-slide-canvas]").screenshot({
         animations: "disabled",
