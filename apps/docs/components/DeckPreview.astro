@@ -37,6 +37,7 @@ const {
 
 const layout = slide.layout ?? "panel"
 const figures = slide.figures ?? []
+const bullets = slide.bullets ?? []
 const showTitle = Boolean(slide.title) && slide.title !== slide.brand
 const progress = slide.total > 0 ? slide.number / slide.total : 0
 const label = `A ${theme} slide in ${mode} mode, headed "${slide.heading}"`
@@ -74,53 +75,94 @@ const label = `A ${theme} slide in ${mode} mode, headed "${slide.heading}"`
     </header>
 
     <main class="deck-preview-frame" data-slide-frame>
-      <div class="deck-preview-body">
-        <div class="deck-preview-intro">
-          <p class="deck-preview-eyebrow">{slide.eyebrow}</p>
-          <div class="deck-preview-headings">
-            <h2 class="deck-preview-heading">{slide.heading}</h2>
-            {slide.lead && <p class="deck-preview-lead">{slide.lead}</p>}
+      {
+        layout === "hero" && (
+          <div class="deck-preview-hero">
+            <p class="deck-preview-eyebrow">{slide.eyebrow}</p>
+            <h2 class="deck-preview-hero-title">{slide.heading}</h2>
+            {slide.lead && <p class="deck-preview-hero-lead">{slide.lead}</p>}
           </div>
-        </div>
+        )
+      }
 
-        {
-          layout === "figures" && figures.length > 0 && (
-            <div>
-              <dl class="deck-preview-stats" data-slide-surface>
-                {figures.map((figure) => (
-                  <div class="deck-preview-stat">
-                    <dt>{figure.caption}</dt>
-                    <dd data-stat-value>
-                      {figure.value}
-                      {figure.unit && <span>{figure.unit}</span>}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
+      {
+        layout === "breaker" && (
+          <section class="deck-preview-breaker">
+            <div class="deck-preview-breaker-body">
+              <p class="deck-preview-eyebrow">{slide.eyebrow}</p>
+              <h2 class="deck-preview-breaker-title">{slide.heading}</h2>
+              {slide.lead && <p class="deck-preview-lead">{slide.lead}</p>}
             </div>
-          )
-        }
+          </section>
+        )
+      }
 
-        {
-          layout === "panel" && figures.length > 0 && (
-            <div class="deck-preview-panel" data-slide-panel>
-              <dl class="deck-preview-stats deck-preview-stats-flat">
-                {figures.map((figure) => (
-                  <div class="deck-preview-stat">
-                    <dt>{figure.caption}</dt>
-                    <dd data-stat-value>
-                      {figure.value}
-                      {figure.unit && <span>{figure.unit}</span>}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
+      {
+        (layout === "panel" ||
+          layout === "figures" ||
+          layout === "bullets") && (
+          <div class="deck-preview-body">
+            <div class="deck-preview-intro">
+              <p class="deck-preview-eyebrow">{slide.eyebrow}</p>
+              <div class="deck-preview-headings">
+                <h2 class="deck-preview-heading">{slide.heading}</h2>
+                {slide.lead && <p class="deck-preview-lead">{slide.lead}</p>}
+              </div>
             </div>
-          )
-        }
 
-        {slide.footnote && <p class="deck-preview-footnote">{slide.footnote}</p>}
-      </div>
+            {layout === "figures" && (
+              <div>
+                <dl class="deck-preview-stats" data-slide-surface>
+                  {figures.map((figure) => (
+                    <div class="deck-preview-stat">
+                      <dt>{figure.caption}</dt>
+                      <dd data-stat-value>
+                        {figure.value}
+                        {figure.unit && <span>{figure.unit}</span>}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            )}
+
+            {layout === "bullets" && (
+              <div>
+                <div class="deck-preview-bullets" data-slide-surface>
+                  {bullets.map((bullet, index) => (
+                    <div>
+                      <p class="deck-preview-bullet-index">
+                        {String(index + 1).padStart(2, "0")}
+                      </p>
+                      <p class="deck-preview-bullet-text">{bullet}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {layout === "panel" && (
+              <div class="deck-preview-panel" data-slide-panel>
+                <dl class="deck-preview-stats deck-preview-stats-flat">
+                  {figures.map((figure) => (
+                    <div class="deck-preview-stat">
+                      <dt>{figure.caption}</dt>
+                      <dd data-stat-value>
+                        {figure.value}
+                        {figure.unit && <span>{figure.unit}</span>}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            )}
+
+            {slide.footnote && (
+              <p class="deck-preview-footnote">{slide.footnote}</p>
+            )}
+          </div>
+        )
+      }
     </main>
 
     <footer class="deck-preview-chrome-bottom" data-slide-footer>

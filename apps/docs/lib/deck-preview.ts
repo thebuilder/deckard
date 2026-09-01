@@ -10,7 +10,7 @@ export const themeNames = [
 export type ThemeName = (typeof themeNames)[number]
 export type ColorMode = "light" | "dark"
 export type BackgroundVariant = "default" | "grid" | "spotlight" | "none"
-export type PreviewLayout = "panel" | "figures"
+export type PreviewLayout = "breaker" | "bullets" | "figures" | "hero" | "panel"
 
 export interface PreviewFigure {
   caption: string
@@ -20,6 +20,7 @@ export interface PreviewFigure {
 
 export interface PreviewSlide {
   brand: string
+  bullets?: string[]
   eyebrow: string
   figures?: PreviewFigure[]
   footnote?: string
