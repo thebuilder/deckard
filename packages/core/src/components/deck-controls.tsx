@@ -28,10 +28,12 @@ const revealDistance = 160
 // A hybrid laptop has a trackpad and a touchscreen, and (pointer: coarse) names
 // only the primary one. any-pointer asks per capability: a coarse pointer
 // anywhere earns the handle, a fine pointer anywhere earns the proximity
-// reveal, so a hybrid gets both. Fine rather than hover, because some desktop
-// engines report hover: none while still delivering pointermove.
+// reveal, so a hybrid gets both. Either that or hover earns the reveal, because
+// a headless engine can report one of them missing while still delivering
+// pointermove.
 const touchQuery = "(any-pointer: coarse)"
 const finePointerQuery = "(any-pointer: fine)"
+const hoverQuery = "(hover: hover)"
 
 // Module scope on purpose: the cluster remounts on every slide navigation.
 // Without the last pointer position a reveal earned by proximity would drop
@@ -189,7 +191,8 @@ export function DeckControls({
   const anchor = useRef<HTMLElement | null>(null)
   const hasTouch = useMediaQuery(touchQuery, false)
   const hasFinePointer = useMediaQuery(finePointerQuery, true)
-  const isNear = usePointerProximity(anchor, hasFinePointer)
+  const canHover = useMediaQuery(hoverQuery, true)
+  const isNear = usePointerProximity(anchor, hasFinePointer || canHover)
   const isFocused = useFocusWithin(anchor)
   const [isCommandOpen, setIsCommandOpen] = useState(false)
   const [isPinned, setIsPinned] = useState(false)
