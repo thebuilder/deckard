@@ -11,15 +11,19 @@ const toolDirectory = path.dirname(fileURLToPath(import.meta.url))
 const repoRoot = path.resolve(toolDirectory, "../..")
 const fixtureSource = path.join(toolDirectory, "fixture")
 const keepScratch = process.argv.includes("--keep")
-const ownershipToken = "--slide-registry-smoke"
+const ownershipMark = "mt-[13px]"
+const ownershipRule = "13px"
 
-const themeFiles = ["theme.css", "index.ts", "THEME.md"]
 const blockFiles = [
   "typography.tsx",
   "templates.tsx",
   "collections.tsx",
   "media.tsx",
 ]
+
+// The fixture deck imports this one from @deckard/core/themes. Nothing installs
+// it, so finding its class in the build proves the import is the whole path.
+const themeSelector = ".broadsheet-theme"
 
 // Classes only the @deckard/core runtime writes. Tailwind reaches them through
 // the @source the package stylesheet registers against its own compiled output,
@@ -121,10 +125,8 @@ function readFile(appDirectory: string, relative: string) {
 }
 
 function assertConsumerOwned(appDirectory: string) {
-  for (const name of [
-    ...themeFiles.map((file) => path.join("deck/theme", file)),
-    ...blockFiles.map((file) => path.join("app/slides/blocks", file)),
-  ]) {
+  for (const block of blockFiles) {
+    const name = path.join("app/slides/blocks", block)
     const file = path.join(appDirectory, name)
     const stats = fs.lstatSync(file)
 
@@ -133,10 +135,14 @@ function assertConsumerOwned(appDirectory: string) {
     fs.accessSync(file, fs.constants.W_OK)
   }
 
-  const themeCss = path.join(appDirectory, "deck/theme/theme.css")
+  assert(
+    !fs.existsSync(path.join(appDirectory, "deck/theme")),
+    "the registry installed a deck/theme, which is no longer its job"
+  )
+
   fs.appendFileSync(
-    themeCss,
-    `\n.deckard-theme {\n  ${ownershipToken}: 1;\n}\n`
+    path.join(appDirectory, "app/slides/blocks/typography.tsx"),
+    `\nexport const ownershipToken = "${ownershipMark}"\n`
   )
 }
 
@@ -182,8 +188,13 @@ function assertBuiltStylesheet(appDirectory: string) {
   const css = bundles.map((file) => fs.readFileSync(file, "utf8")).join("\n")
 
   assert(
-    css.includes(ownershipToken),
-    "the edit to deck/theme/theme.css never reached the built stylesheet"
+    css.includes(ownershipRule),
+    "the edit to the installed block never reached the built stylesheet"
+  )
+
+  assert(
+    css.includes(themeSelector),
+    `the built stylesheet has no ${themeSelector}, so the built-in theme the deck imports never reached it`
   )
 
   const missing = runtimeUtilities.filter((utility) => !css.includes(utility))
@@ -191,20 +202,6 @@ function assertBuiltStylesheet(appDirectory: string) {
   assert(
     missing.length === 0,
     `the built stylesheet is missing @deckard/core runtime utilities: ${missing.join(", ")}`
-  )
-}
-
-function assertBroadsheetReplacedTheTheme(appDirectory: string) {
-  const index = readFile(appDirectory, "deck/theme/index.ts")
-  const css = readFile(appDirectory, "deck/theme/theme.css")
-
-  assert(
-    index.includes('className: "broadsheet-theme"'),
-    "theme-broadsheet did not replace deck/theme/index.ts"
-  )
-  assert(
-    css.includes(".broadsheet-theme") && !css.includes(ownershipToken),
-    "theme-broadsheet did not replace deck/theme/theme.css"
   )
 }
 
@@ -227,7 +224,7 @@ try {
   )
   await run(
     "pnpm",
-    ["dlx", "shadcn@latest", "add", "@deckard/preset-deckard", "-y"],
+    ["dlx", "shadcn@latest", "add", "@deckard/preset-blocks", "-y"],
     smokeApp
   )
 
@@ -238,14 +235,6 @@ try {
   await run("pnpm", ["run", "typecheck"], smokeApp)
   await run("pnpm", ["run", "build"], smokeApp)
   assertBuiltStylesheet(smokeApp)
-
-  await run(
-    "pnpm",
-    ["dlx", "shadcn@latest", "add", "@deckard/theme-broadsheet", "-y", "-o"],
-    smokeApp
-  )
-  assertBroadsheetReplacedTheTheme(smokeApp)
-  await run("pnpm", ["run", "typecheck"], smokeApp)
 
   process.stdout.write(
     "\nthe Deckard registry installs and builds in a clean Next.js app\n"

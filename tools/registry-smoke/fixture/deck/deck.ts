@@ -1,7 +1,7 @@
 import { defineDeck } from "@deckard/core"
+import { broadsheet } from "@deckard/core/themes"
 
 import { slides } from "@/deck/slides"
-import { theme } from "@/deck/theme"
 
 export const deck = defineDeck({
   canvas: { fit: "contain", height: 1080, mode: "fixed", width: 1920 },
@@ -9,6 +9,6 @@ export const deck = defineDeck({
   footer: { mode: "visible" },
   header: { brand: "Registry smoke", href: "/", mode: "auto" },
   slides,
-  theme,
+  theme: broadsheet,
   title: "Registry smoke",
 })

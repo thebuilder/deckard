@@ -19,12 +19,6 @@ const blocks = [
   "templates.tsx",
   "typography.tsx",
 ]
-const themeFiles = ["THEME.md", "index.ts", "theme.css"]
-
-// deckard is the reference deck's own theme; the rest live in the registry.
-// deckard init copies one of these directories into the new deck's deck/theme.
-const registryThemes = ["broadsheet", "ledger", "meridian", "nexus", "phosphor"]
-
 // The pins a generated deck writes into "packageManager" when the manager that
 // invoked it does not announce its own version. pnpm's comes from this
 // repository so the two never drift; the other three are the current stable
@@ -120,16 +114,6 @@ function collect(): CopiedFile[] {
       contents: read("apps/playground/app/slides/blocks", file),
       target: path.join("app/slides/blocks", file),
     })),
-    ...themeFiles.map((file) => ({
-      contents: read("apps/playground/deck/theme", file),
-      target: path.join("deck/theme/deckard", file),
-    })),
-    ...registryThemes.flatMap((theme) =>
-      themeFiles.map((file) => ({
-        contents: read("registry/themes", theme, file),
-        target: path.join("deck/theme", theme, file),
-      }))
-    ),
     { contents: versionsFile(), target: "versions.json" },
   ]
 }

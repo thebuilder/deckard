@@ -1,8 +1,8 @@
-import type { SlideTheme } from "@deckard/core"
+import type { SlideTheme } from "../../deck/types"
 
 import "./theme.css"
 
-export const theme = {
+export const meridian = {
   className: "meridian-theme",
   colorModes: ["light", "dark"],
   defaultColorMode: "system",

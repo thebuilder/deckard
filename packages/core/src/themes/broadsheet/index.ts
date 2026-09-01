@@ -1,8 +1,8 @@
-import type { SlideTheme } from "@deckard/core"
+import type { SlideTheme } from "../../deck/types"
 
 import "./theme.css"
 
-export const theme = {
+export const broadsheet = {
   className: "broadsheet-theme",
   colorModes: ["light", "dark"],
   defaultColorMode: "system",

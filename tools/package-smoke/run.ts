@@ -15,6 +15,18 @@ const keepScratch = process.argv.includes("--keep")
 // @source the package stylesheet registers against its own compiled output.
 const runtimeUtilities = ["min-h-16", "backdrop-blur-sm", "data-slide-chrome"]
 
+// The fixture deck imports one built-in theme and nothing else. Its stylesheet
+// has to reach the build with no wiring, and the other five have to stay out of
+// it, because the barrel re-exports all six from one module.
+const importedTheme = ".phosphor-theme"
+const unimportedThemes = [
+  ".broadsheet-theme",
+  ".deckard-theme",
+  ".ledger-theme",
+  ".meridian-theme",
+  ".nexus-theme",
+]
+
 function run(command: string, args: string[], cwd: string) {
   const result = spawnSync(command, args, {
     cwd,
@@ -49,20 +61,39 @@ function assertPlainConsumer() {
   }
 }
 
-function assertRuntimeStyles(directory: string) {
+function builtCss(directory: string) {
   const staticDirectory = path.join(directory, ".next/static")
-  const css = fs
+
+  return fs
     .readdirSync(staticDirectory, { recursive: true })
     .map((entry) => path.join(staticDirectory, String(entry)))
     .filter((entry) => entry.endsWith(".css"))
     .map((entry) => fs.readFileSync(entry, "utf8"))
     .join("\n")
+}
 
+function assertRuntimeStyles(css: string) {
   const missing = runtimeUtilities.filter((utility) => !css.includes(utility))
 
   if (missing.length > 0) {
     throw new Error(
       `The built CSS is missing runtime utilities: ${missing.join(", ")}`
+    )
+  }
+}
+
+function assertBuiltInTheme(css: string) {
+  if (!css.includes(importedTheme)) {
+    throw new Error(
+      `The built CSS is missing ${importedTheme}, so importing a theme from @deckard/core/themes did not carry its stylesheet`
+    )
+  }
+
+  const leaked = unimportedThemes.filter((selector) => css.includes(selector))
+
+  if (leaked.length > 0) {
+    throw new Error(
+      `The built CSS carries themes the deck never imported: ${leaked.join(", ")}`
     )
   }
 }
@@ -116,10 +147,14 @@ try {
   )
   run("pnpm", ["run", "typecheck"], appDirectory)
   run("pnpm", ["run", "build"], appDirectory)
-  assertRuntimeStyles(appDirectory)
+
+  const css = builtCss(appDirectory)
+
+  assertRuntimeStyles(css)
+  assertBuiltInTheme(css)
 
   process.stdout.write(
-    "\n@deckard/core builds and styles a standalone Next.js app\n"
+    "\n@deckard/core builds and styles a standalone Next.js app, theme included\n"
   )
 } finally {
   if (keepScratch) {

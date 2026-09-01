@@ -9,7 +9,8 @@ import {
   type ParsedArgs,
   stringFlag,
 } from "../args.ts"
-import { scaffold, type ThemeName } from "../init/scaffold.ts"
+import { type BuiltInTheme, builtInThemes } from "../deck/theme-source.ts"
+import { scaffold } from "../init/scaffold.ts"
 import { write } from "../output.ts"
 import {
   type DetectedManager,
@@ -19,15 +20,6 @@ import {
   packageManagers,
   runScript,
 } from "../package-manager.ts"
-
-const themes = [
-  "broadsheet",
-  "deckard",
-  "ledger",
-  "meridian",
-  "nexus",
-  "phosphor",
-] as const
 
 const defaultRegistryUrl = "http://localhost:3001/r/{name}.json"
 const namePattern = /[^a-z0-9-]+/g
@@ -168,7 +160,12 @@ export function runInit(args: ParsedArgs, cliVersion: string): void {
 
   const detected = chooseManager(args, target)
   const manager = detected.name
-  const theme: ThemeName = choiceFlag(args, "theme", themes, "deckard")
+  const theme: BuiltInTheme = choiceFlag(
+    args,
+    "theme",
+    builtInThemes,
+    "deckard"
+  )
   const sample = !booleanFlag(args, "empty")
   const name = toPackageName(target)
   const title = toTitle(name)
@@ -215,7 +212,9 @@ export function runInit(args: ParsedArgs, cliVersion: string): void {
   }
 
   write("")
-  write("Slides are deck/slides.tsx. The theme is deck/theme, and it is yours.")
+  write(
+    "Slides are deck/slides.tsx. The theme is imported from @deckard/core/themes; run deckard eject theme to own a copy of it."
+  )
 
   if (!healthy) {
     throw new Error(

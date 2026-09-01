@@ -47,10 +47,12 @@ export default function OverviewPage() {
         checks it, screenshots it, and exports it.
       </p>
       <p>
-        The theme and the slide blocks are deliberately not in the package. They
-        are source files in your app from the first commit, so a measure that
-        reads badly at your font is a line you edit rather than a prop you wait
-        for.
+        The slide blocks are deliberately not in the package. They are source
+        files in your app from the first commit, so a measure that reads badly
+        at your font is a line you edit rather than a prop you wait for. The six
+        themes do ship in the package, as imports;{" "}
+        <code>deckard eject theme</code> turns the one you use into source files
+        too.
       </p>
       <p>
         Neither package is on npm yet, so that <code>npx</code> line does not

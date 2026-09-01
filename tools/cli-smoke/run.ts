@@ -119,6 +119,32 @@ function installCli(manager: string, directory: string, tarball: string) {
   return binary
 }
 
+// Ejecting turns the imported preset into three files the deck owns, and the
+// deck has to keep typechecking against the copy.
+function assertEjected(directory: string) {
+  for (const file of ["theme.css", "index.ts", "THEME.md"]) {
+    const target = path.join(directory, "deck/theme", file)
+
+    assert(fs.existsSync(target), `deckard eject theme did not write ${file}`)
+    assert(fs.statSync(target).size > 0, `deck/theme/${file} ejected empty`)
+  }
+
+  const source = fs.readFileSync(path.join(directory, "deck/deck.ts"), "utf8")
+
+  assert(
+    source.includes('import { theme } from "@/deck/theme"') &&
+      !source.includes("@deckard/core/themes"),
+    "deckard eject theme left deck.ts pointing at the built-in"
+  )
+
+  assert(
+    fs
+      .readFileSync(path.join(directory, "deck/theme/index.ts"), "utf8")
+      .includes('id: "deckard"'),
+    "the ejected deck/theme/index.ts does not carry the theme it was ejected from"
+  )
+}
+
 // The deck it generates has to prerender: every slide route is static HTML on
 // disk, which is what the framework promises and what the PDF export needs.
 function assertStaticSlides(directory: string, ids: string[]) {
@@ -157,7 +183,6 @@ function assertScaffold(manager: string, directory: string) {
     "app/globals.css",
     "app/slides/[id]/page.tsx",
     "deck/deck.ts",
-    "deck/theme/theme.css",
     "deck/slides/10-keyboard.slide.tsx",
   ]) {
     assert(
@@ -165,6 +190,18 @@ function assertScaffold(manager: string, directory: string) {
       `the packed CLI did not write ${file}, so its template did not resolve`
     )
   }
+
+  assert(
+    !fs.existsSync(path.join(directory, "deck/theme")),
+    "init copied theme files, which the built-in themes replaced"
+  )
+
+  assert(
+    fs
+      .readFileSync(path.join(directory, "deck/deck.ts"), "utf8")
+      .includes('import { deckard } from "@deckard/core/themes"'),
+    "the generated deck.ts does not import its theme from @deckard/core/themes"
+  )
 
   const generated = JSON.parse(
     fs.readFileSync(path.join(directory, "package.json"), "utf8")
@@ -237,6 +274,13 @@ try {
     )
   })
   assertScreenshot(pnpmApp)
+
+  time("pnpm: eject the theme, then validate and typecheck the copy", () => {
+    run(deckard, ["eject", "theme"], pnpmApp)
+    assertEjected(pnpmApp)
+    run(deckard, ["validate"], pnpmApp)
+    run("pnpm", ["run", "typecheck"], pnpmApp)
+  })
 
   // The headline flow is npx on a machine that has never seen pnpm. It gets the
   // shorter pass: install, typecheck, build, and no browser.

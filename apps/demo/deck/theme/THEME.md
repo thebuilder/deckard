@@ -10,7 +10,7 @@ deck controls in the corner, the command center, the presenter console, or any
 dialog. Those keep the app tokens in `app/globals.css` so they stay readable
 whatever the deck looks like.
 
-It started as `theme-broadsheet` from the registry, installed unchanged into
+It started as the built-in `broadsheet` theme, ejected unchanged into
 `deck/theme/`. Everything below is what this deck changed after that, and why.
 Read this before editing a token, because several of these values are load
 bearing for slides that already exist.

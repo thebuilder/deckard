@@ -8,6 +8,13 @@ export const metadata: Metadata = {
   title: "Registry",
 }
 
+const themeImport = `import { defineDeck } from "@deckard/core"
+import { phosphor } from "@deckard/core/themes"
+
+import { slides } from "@/deck/slides"
+
+export const deck = defineDeck({ slides, theme: phosphor, title: "My talk" })`
+
 const registryConfig = `{
   "registries": {
     "@deckard": "http://localhost:3001/r/{name}.json"
@@ -16,62 +23,64 @@ const registryConfig = `{
 
 const themes = [
   {
-    href: "https://github.com/thebuilder/next-slideshow-template/blob/main/apps/playground/deck/theme/theme.css",
+    href: "https://github.com/thebuilder/next-slideshow-template/blob/main/packages/core/src/themes/deckard/theme.css",
     modes: "Light and dark",
-    name: "theme-deckard",
+    name: "deckard",
     summary:
       "The default. Off-white paper in light mode, a blue-black sheet in dark, one teal accent on eyebrows, buttons, and focus rings. Cards are near-opaque with a hairline border, a soft shadow, and 1rem corners. Backgrounds are a top wash, a 44px grid, or a wide spotlight, each with a blurred corner glow. The deck header and footer drop their rules and let the type carry the line, with the progress bar on the canvas edge in the accent.",
-    swatches: readThemeSwatches("apps/playground/deck/theme/theme.css"),
+    swatches: readThemeSwatches("packages/core/src/themes/deckard/theme.css"),
     title: "Deckard",
     when: "You want a deck that reads as a modern product presentation and you do not want to design a theme.",
   },
   {
-    href: "https://github.com/thebuilder/next-slideshow-template/blob/main/registry/themes/broadsheet/theme.css",
+    href: "https://github.com/thebuilder/next-slideshow-template/blob/main/packages/core/src/themes/broadsheet/theme.css",
     modes: "Light and dark",
-    name: "theme-broadsheet",
+    name: "broadsheet",
     summary:
       "Editorial print. Warm newsprint in light mode, warm ink in dark, oxblood accent turning terracotta after dark. Serif throughout, from a system stack that loads no web font. Corners are 0.125rem and there is no shadow anywhere, so a card is a panel with a rule around it. The grid variant paints horizontal rules like ruled paper; spotlight paints two column rules at the thirds. The deck header is a running head and the footer centers the folio under a rule.",
-    swatches: readThemeSwatches("registry/themes/broadsheet/theme.css"),
+    swatches: readThemeSwatches(
+      "packages/core/src/themes/broadsheet/theme.css"
+    ),
     title: "Broadsheet",
     when: "A talk that should read as a written argument rather than a product demo. Also the worked example of a second theme on the same token contract.",
   },
   {
-    href: "https://github.com/thebuilder/next-slideshow-template/blob/main/registry/themes/ledger/theme.css",
+    href: "https://github.com/thebuilder/next-slideshow-template/blob/main/packages/core/src/themes/ledger/theme.css",
     modes: "Light and dark",
-    name: "theme-ledger",
+    name: "ledger",
     summary:
       "A bound report. Warm paper turning warm ink after dark, oxblood accent turning rust. Three families doing three jobs: serif headings, sans body, mono eyebrows and folio numbers. Zero radius and no shadow anywhere, so rules carry the structure and the surface border sits three steps darker than the border to pay for it. The grid variant is ledger paper with an accent margin rule down the left; default and spotlight close on a heavy folio rule. The deck header is a folio line and the footer centers mono page numbers, with no progress bar.",
-    swatches: readThemeSwatches("registry/themes/ledger/theme.css"),
+    swatches: readThemeSwatches("packages/core/src/themes/ledger/theme.css"),
     title: "Ledger",
     when: "The deck is a written argument with numbers in it and you want the slides to read as pages.",
   },
   {
-    href: "https://github.com/thebuilder/next-slideshow-template/blob/main/registry/themes/meridian/theme.css",
+    href: "https://github.com/thebuilder/next-slideshow-template/blob/main/packages/core/src/themes/meridian/theme.css",
     modes: "Light and dark",
-    name: "theme-meridian",
+    name: "meridian",
     summary:
       "The quietest theme here. Near-white blue-gray turning cool near-black, one mid blue accent used once per slide, one system sans for everything. Flat cards with a hairline border and 0.625rem corners, no shadow in either mode. Headings carry -0.03em of tracking, which is the whole identity. Backgrounds run at half the alpha of every other theme: one head wash, a drafting grid that fades out behind the copy, one wide radial. The deck header and footer are nearly silent: no rules, no capitals, and a 1px progress hairline.",
-    swatches: readThemeSwatches("registry/themes/meridian/theme.css"),
+    swatches: readThemeSwatches("packages/core/src/themes/meridian/theme.css"),
     title: "Meridian",
     when: "A product or planning review where the content should be the loudest thing on the slide.",
   },
   {
-    href: "https://github.com/thebuilder/next-slideshow-template/blob/main/registry/themes/nexus/theme.css",
+    href: "https://github.com/thebuilder/next-slideshow-template/blob/main/packages/core/src/themes/nexus/theme.css",
     modes: "Light and dark, dark by default",
-    name: "theme-nexus",
+    name: "nexus",
     summary:
       "A flight console. Blue-black sheet, amber accent, every heading uppercase with an amber halo behind the first two levels. Panels take a 0.125rem blueprint corner. The grid variant is the draw: a 1.75rem cell grid with every fifth line heavier, faded out behind the copy. Spotlight is an approach light off the top edge over a tube vignette. Light mode is complete and reads as the printed version of the same document. The deck header and footer are console strips in wide capitals over a tick readout of the progress.",
-    swatches: readThemeSwatches("registry/themes/nexus/theme.css"),
+    swatches: readThemeSwatches("packages/core/src/themes/nexus/theme.css"),
     title: "Nexus",
     when: "An engineering or systems talk that wants instrument-panel authority.",
   },
   {
-    href: "https://github.com/thebuilder/next-slideshow-template/blob/main/registry/themes/phosphor/theme.css",
+    href: "https://github.com/thebuilder/next-slideshow-template/blob/main/packages/core/src/themes/phosphor/theme.css",
     modes: "Light and dark, dark by default",
-    name: "theme-phosphor",
+    name: "phosphor",
     summary:
       "A green CRT. One monospace family sets every word on the slide, headings included, uppercase with a phosphor bloom. Scanlines are the first background layer of every variant rather than an overlay, so only background none escapes them. The grid variant draws a character cell; spotlight is the tube, bloom at the centre and falloff into the corners. Every corner is square. Light mode turns the tube off for handouts. The deck header is a command line and the footer a reverse-video status bar with the progress in character cells.",
-    swatches: readThemeSwatches("registry/themes/phosphor/theme.css"),
+    swatches: readThemeSwatches("packages/core/src/themes/phosphor/theme.css"),
     title: "Phosphor",
     when: "A developer talk or a build report that should look like it is running rather than presented.",
   },
@@ -147,12 +156,12 @@ export default function RegistryPage() {
     <>
       <h1 className="text-3xl">Registry</h1>
       <p>
-        The deck theme and the slide blocks are not part of{" "}
-        <code>@deckard/core</code>. They install into your presentation app
-        through <code>shadcn add</code> and land as source files you own. There
-        is no runtime behind them and nothing to import from a package, so once
-        a theme is in <code>deck/theme/</code> it is yours to edit and the
-        registry never touches it again.
+        The slide blocks are not part of <code>@deckard/core</code>. They
+        install into your presentation app through <code>shadcn add</code> and
+        land as source files you own. There is no runtime behind them and
+        nothing to import from a package, so once a block is in{" "}
+        <code>app/slides/blocks/</code> it is yours to edit and the registry
+        never touches it again.
       </p>
       <p>
         That is the arrangement working, not a gap. A block sized for one
@@ -160,6 +169,15 @@ export default function RegistryPage() {
         <code>HeroSlide</code> from <code>max-w-[14ch]</code> to{" "}
         <code>20ch</code> because a serif headline broke into four ragged lines.
         Editing the file is the supported fix.
+      </p>
+      <p>
+        Themes are the other half and they are not in the registry. All six ship
+        inside <code>@deckard/core</code> as named exports of{" "}
+        <code>@deckard/core/themes</code>, so a deck picks one with an import
+        and gets its stylesheet with no wiring. Only the theme you import is
+        bundled. When you want to change how one looks,{" "}
+        <code>deckard eject theme</code> copies it into <code>deck/theme/</code>{" "}
+        and repoints the deck at the copy.
       </p>
 
       <h2 className="pt-4 text-2xl">Point your app at the registry</h2>
@@ -176,25 +194,24 @@ export default function RegistryPage() {
         <code>{registryConfig}</code>
       </pre>
       <p>
-        Then <code>pnpm dlx shadcn@latest add @deckard/preset-deckard</code>. If
+        Then <code>pnpm dlx shadcn@latest add @deckard/preset-blocks</code>. If
         you would rather not edit components.json, pass the URL instead:{" "}
         <code>
-          pnpm dlx shadcn@latest add http://localhost:3001/r/preset-deckard.json
+          pnpm dlx shadcn@latest add http://localhost:3001/r/preset-blocks.json
         </code>
         . The namespaced form is the one to use, because items reference each
         other by <code>@deckard/&#123;name&#125;</code> and that only resolves
         when the namespace is configured.
       </p>
 
-      <h2 className="pt-4 text-2xl">preset-deckard</h2>
+      <h2 className="pt-4 text-2xl">preset-blocks</h2>
       <p>
-        One add for a new deck: the Deckard theme and all five block families.
-        It also writes the one stylesheet line you cannot guess, the{" "}
-        <code>@import</code> of <code>@deckard/core/styles.css</code>. That
-        sheet carries the slide token contract and registers the package&apos;s
-        own Tailwind source, so the runtime classes survive tree shaking without
-        a <code>@source</code> line in your app. Start here in a new app and
-        swap the theme later if you want a different look.
+        One add for a new deck: all five block families. It also writes the one
+        stylesheet line you cannot guess, the <code>@import</code> of{" "}
+        <code>@deckard/core/styles.css</code>. That sheet carries the slide
+        token contract and registers the package&apos;s own Tailwind source, so
+        the runtime classes survive tree shaking without a <code>@source</code>{" "}
+        line in your app. Start here in a new app, then import a theme.
       </p>
       <p>
         That import is the whole build wiring. <code>@deckard/core</code> ships
@@ -206,10 +223,14 @@ export default function RegistryPage() {
 
       <h2 className="pt-4 text-2xl">Themes</h2>
       <p>
-        A deck has exactly one theme, and every theme installs to the same three
-        paths. Adding a second theme replaces the first, so commit before you
-        try one on.
+        A deck has exactly one theme. Import it in <code>deck/deck.ts</code> and
+        pass it to <code>defineDeck</code>; trying another one is a one-line
+        edit, and <code>deckard add theme &lt;name&gt;</code> makes that edit
+        for you. Nothing is written into your app until you eject.
       </p>
+      <pre className="overflow-x-auto rounded bg-black/5 p-4 text-sm">
+        <code>{themeImport}</code>
+      </pre>
 
       {themes.map((theme) => (
         <section
@@ -227,13 +248,13 @@ export default function RegistryPage() {
             {theme.when}
           </p>
           <p className="text-sm">
-            {theme.modes}. Installs <code>deck/theme/theme.css</code>,{" "}
-            <code>deck/theme/index.ts</code>, and{" "}
-            <code>deck/theme/THEME.md</code>, which documents every token.{" "}
-            <Link href={theme.href}>Read the stylesheet</Link>.
+            {theme.modes}. <code>deckard eject theme</code> copies it into{" "}
+            <code>deck/theme/</code> as <code>theme.css</code>,{" "}
+            <code>index.ts</code>, and <code>THEME.md</code>, which documents
+            every token. <Link href={theme.href}>Read the stylesheet</Link>.
           </p>
           <pre className="overflow-x-auto rounded bg-black/5 p-4 text-sm">
-            <code>pnpm dlx shadcn@latest add @deckard/{theme.name}</code>
+            <code>deckard add theme {theme.name}</code>
           </pre>
         </section>
       ))}

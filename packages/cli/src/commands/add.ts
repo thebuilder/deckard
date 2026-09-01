@@ -5,12 +5,19 @@ import path from "node:path"
 import process from "node:process"
 
 import { booleanFlag, type ParsedArgs, stringFlag } from "../args.ts"
+import { applyBuiltInTheme, findThemeImport } from "../deck/deck-source.ts"
+import {
+  builtInThemes,
+  hasLocalTheme,
+  isBuiltInTheme,
+  localThemeDirectory,
+} from "../deck/theme-source.ts"
 import { write } from "../output.ts"
 import { projectPath, projectRoot } from "../project.ts"
 
 const kinds = ["block", "theme"] as const
 
-type Kind = (typeof kinds)[number]
+const deckSourcePath = "deck/deck.ts"
 
 // shadcn does not publish its package.json through its export map, so the
 // manifest that names the binary is found by walking up from the entry it does
@@ -98,8 +105,43 @@ async function assertReachable(url: string): Promise<void> {
   )
 }
 
-function exampleFor(kind: Kind): string {
-  return kind === "theme" ? "deckard or phosphor" : "typography or metrics"
+// A theme is no longer an install. It is a named export of @deckard/core/themes,
+// so switching one is an edit to the import in deck/deck.ts.
+function switchTheme(name: string): void {
+  if (!isBuiltInTheme(name)) {
+    throw new Error(
+      `"${name}" is not a Deckard theme. The built-ins are ${builtInThemes.join(", ")}.`
+    )
+  }
+
+  const file = projectPath(deckSourcePath)
+  let source: string
+
+  try {
+    source = fs.readFileSync(file, "utf8")
+  } catch (error) {
+    throw new Error(
+      `No ${deckSourcePath} here. Run this from the deck root, next to package.json.`,
+      { cause: error }
+    )
+  }
+
+  const current = findThemeImport(source)
+
+  if (current?.kind === "builtin" && current.name === name) {
+    write(`${deckSourcePath} already uses the ${name} theme.`)
+    return
+  }
+
+  fs.writeFileSync(file, applyBuiltInTheme(source, name))
+
+  write(`${deckSourcePath} now uses the ${name} theme.`)
+
+  if (hasLocalTheme()) {
+    write(
+      `${localThemeDirectory} is still on disk and nothing imports it any more. Delete it, or run deckard eject theme instead to keep editing a copy.`
+    )
+  }
 }
 
 export async function runAdd(args: ParsedArgs): Promise<void> {
@@ -113,8 +155,13 @@ export async function runAdd(args: ParsedArgs): Promise<void> {
 
   if (!name) {
     throw new Error(
-      `deckard add ${kind} needs a name, such as ${exampleFor(kind as Kind)}.`
+      `deckard add ${kind} needs a name, such as ${kind === "theme" ? "deckard or phosphor" : "typography or metrics"}.`
     )
+  }
+
+  if (kind === "theme") {
+    switchTheme(name)
+    return
   }
 
   const item = `${kind}-${name}`

@@ -11,16 +11,9 @@ import {
   type Section,
 } from "../deck/deck-checks.ts"
 import { loadDeck } from "../deck/deck-module.ts"
+import { readThemeStylesheet } from "../deck/theme-source.ts"
 import { write } from "../output.ts"
 import { projectPath, projectRoot } from "../project.ts"
-
-const themeCssPath = projectPath("deck", "theme", "theme.css")
-
-function readThemeCss() {
-  return fs.existsSync(themeCssPath)
-    ? fs.readFileSync(themeCssPath, "utf8")
-    : null
-}
 
 function hasSlideModule(sourcePath: string) {
   return fs.existsSync(projectPath("deck", sourcePath))
@@ -53,7 +46,7 @@ async function deckSections(): Promise<Section[]> {
 
     return [
       checkSlides(deck, hasSlideModule),
-      checkTheme(deck.theme, readThemeCss()),
+      checkTheme(deck.theme, readThemeStylesheet(deck.theme.id)),
     ]
   } catch (error) {
     return [

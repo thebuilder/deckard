@@ -1,6 +1,6 @@
 import { defineDeck } from "@deckard/core"
+import { __DECK_THEME__ } from "@deckard/core/themes"
 import { slides } from "@/deck/slides"
-import { theme } from "@/deck/theme"
 
 export const deck = defineDeck({
   canvas: {
@@ -19,6 +19,6 @@ export const deck = defineDeck({
     mode: "auto",
   },
   slides,
-  theme,
+  theme: __DECK_THEME__,
   title: "__DECK_TITLE__",
 })

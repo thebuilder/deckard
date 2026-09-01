@@ -21,16 +21,16 @@ apply there, against their own `deck/` directory.
   that the framework works outside the playground. `docs/MIGRATION-NOTES.md`
   records what that migration surfaced.
 - `apps/docs` is the documentation site.
-- `registry` holds theme sources the playground does not use. `registry.json` at
-  the root publishes them and the blocks through shadcn.
+- `registry.json` at the root publishes the blocks through shadcn. Themes are
+  not in it: all six live in `packages/core/src/themes` and ship inside the
+  package.
 - `packages/cli` is `@deckard/cli`, the one public binary: `deckard init`,
   `validate`, `doctor`, `check-overflow`, `screenshots`, `contact-sheet`,
-  `export pdf`, and `add`. It compiles to `dist/` with `tsc` and treats the
-  current working directory as the deck. `packages/cli/template` is what `init`
-  writes, and `scripts/sync-template.ts` copies the blocks, both themes, the
-  pinned dependency versions, and the package manager pins into it from the
-  playground, `registry/`, and the root `package.json`. Edit the sources, never
-  the copies.
+  `export pdf`, `add`, and `eject`. It compiles to `dist/` with `tsc` and treats
+  the current working directory as the deck. `packages/cli/template` is what
+  `init` writes, and `scripts/sync-template.ts` copies the blocks, the pinned
+  dependency versions, and the package manager pins into it from the playground
+  and the root `package.json`. Edit the sources, never the copies.
 - `tools/package-smoke` packs the package and builds a scratch app against it.
 - `tools/registry-smoke` installs the registry into a scratch app and builds it.
 - `tools/cli-smoke` installs the packed CLI outside the workspace and runs
@@ -74,15 +74,16 @@ Read `.claude/skills/slide-authoring/SKILL.md` first. It covers the blocks, when
 a slide earns its own file, the Server Component boundary, canvas sizing, tokens,
 metadata, and discovery ordering.
 
-Read `apps/playground/deck/theme/THEME.md` before changing a color or a size
-token.
+Read `packages/core/src/themes/deckard/THEME.md` before changing a color or a
+size token in the default theme. Each of the six themes carries its own.
 
 Keep deck-specific content out of `packages/core`. Colors, sizes, backgrounds,
 and copy belong to the deck that owns them. If a component names the deck, a
 color, or a slide, it is deck content.
 
 A presentation built on Deckard is a plain Next.js app: `app/`, `components/`,
-`deck/`, `public/`, `package.json`, plus one `@import "@deckard/core/styles.css"`.
+`deck/`, `public/`, `package.json`, plus one `@import "@deckard/core/styles.css"`
+and one theme imported from `@deckard/core/themes`.
 No `transpilePackages`, no Tailwind `@source`. Nothing about the workspace
 layout leaks into the app someone generates from the framework. `deckard init`
 is what generates it, so a change to that shape belongs in
@@ -104,8 +105,10 @@ is what generates it, so a change to that shape belongs in
 - The fixed canvas: `slide-viewport.tsx` fits and centers it,
   `slide-canvas.tsx` is the 1920x1080 coordinate space, and the size comes from
   `deck.ts` through `packages/core/src/deck/canvas.ts`.
-- The deck theme: `apps/playground/deck/theme/`. `SlideCanvas` puts the theme
-  class on the canvas, so the theme reaches the slide and nothing else.
+- The themes: `packages/core/src/themes/<name>/`, each a `theme.css`, an
+  `index.ts` exporting one `SlideTheme`, and a `THEME.md`. `SlideCanvas` puts
+  the theme class on the canvas, so the theme reaches the slide and nothing
+  else. `apps/demo/deck/theme` is an ejected fork and stays local.
 - Color mode: `packages/core/src/components/color-mode-provider.tsx`. It is
   light and dark only. The deck theme is static config and never switches at
   runtime.
@@ -114,7 +117,8 @@ is what generates it, so a change to that shape belongs in
 
 ## The package boundary
 
-- Apps import the runtime through the package exports only: `@deckard/core`, `/components`, `/code-block`, `/discovery`, `/next`, `/slide-from-module`, `/ui`, `/utils`, `/styles.css`. Never a deep path into `packages/core/src`.
+- Apps import the runtime through the package exports only: `@deckard/core`, `/components`, `/code-block`, `/discovery`, `/next`, `/slide-from-module`, `/themes`, `/ui`, `/utils`, `/styles.css`. Never a deep path into `packages/core/src`.
+- The runtime depends on the token contract, never on a preset. Nothing in `src/components`, `src/deck`, or `src/next` may import from `src/themes`: a theme is data the deck chooses, and `src/themes/boundary.test.ts` fails the build when the runtime reaches for one. A theme's stylesheet is copied into `dist` next to its compiled module by `scripts/copy-theme-assets.ts`, so importing the module carries its CSS.
 - New runtime code goes in `packages/core` and gets an export. New deck content goes in `apps/playground`. If a component names the deck, a color, or a slide, it is deck content.
 - A new export means adding it to the matching index file, and a new subpath means adding it to the `exports` map in `packages/core/package.json`, where every entry points at `dist`. `packages/core/src/index.ts`, `src/components/index.ts`, and `src/ui/index.ts` are the only barrels, and biome allows barrels only there.
 - Route files belong to `@deckard/core/next`. An app's `app/slides/[id]/page.tsx`, `app/presenter/page.tsx`, `app/sitemap.ts`, and `app/page.tsx` are re-exports of `createSlideRoute`, `createPresenterPage`, `createDeckSitemap`, and `createFirstSlideRedirect`.

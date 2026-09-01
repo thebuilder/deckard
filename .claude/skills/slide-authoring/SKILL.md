@@ -9,16 +9,19 @@ A slide is an object with a `body` in `apps/playground/deck/slides.tsx`, or a
 module in `apps/playground/deck/slides/*.slide.tsx` that discovery spreads into
 that array. Everything else is metadata.
 
-`apps/demo` has the same shape, and its blocks and theme are its own copies. Work
-in whichever deck the change belongs to, and read that deck's
-`deck/theme/THEME.md`, not the other one's.
+`apps/demo` has the same shape, and its blocks and its ejected theme are its own
+copies. Work in whichever deck the change belongs to, and read that deck's
+theme, not the other one's.
 
 Those two decks are this repository's decks. A presentation someone builds on
 Deckard is their own Next.js app with the same `deck/` layout, and every rule
 below applies there unchanged. Paths in this skill are written for this repo, so
 drop the `apps/<name>/` prefix when the deck is a standalone app.
 
-Read `apps/playground/deck/theme/THEME.md` before you touch a color or a size.
+Read the `THEME.md` of the theme the deck renders before you touch a color or a
+size. The playground imports `deckard` from `@deckard/core/themes`, so that is
+`packages/core/src/themes/deckard/THEME.md`; the demo ejected its own, so that
+is `apps/demo/deck/theme/THEME.md`.
 
 ## Start from a block
 
@@ -93,7 +96,7 @@ scrolling never steps the deck.
 Inside the canvas, style with semantic tokens (`bg-card`, `text-muted-foreground`,
 `border-border`) or slide tokens (`--slide-title-size`, `--slide-surface`,
 `--slide-radius`). Never a hardcoded color. Changing how a background variant
-looks is a `deck/theme/theme.css` edit, not a component edit.
+looks is a `theme.css` edit, not a component edit.
 
 Outside the canvas, in the deck controls, command center, presenter console, and
 dialogs, keep the app tokens from `app/globals.css`.
@@ -101,7 +104,7 @@ dialogs, keep the app tokens from `app/globals.css`.
 The deck header and footer are inside the canvas and belong to the theme. Core
 renders `[data-slide-header]` and `[data-slide-footer]` with named parts for the
 brand, the slide title, the date, the counter, and `[data-slide-progress]`;
-`deck/theme/theme.css` decides what they look like.
+the theme's `theme.css` decides what they look like.
 
 ## Metadata
 

@@ -11,13 +11,9 @@ export interface Section {
 export interface RegistryItem {
   files?: { path?: string; target?: string }[]
   name?: string
-  type?: string
 }
 
 export type ReadFile = (relativePath: string) => string | null
-
-const classNamePattern = /className:\s*"([^"]+)"/
-const themeCssPath = "deck/theme/theme.css"
 
 export function checkSlides(
   deck: Deck,
@@ -67,7 +63,8 @@ function checkSlide(
 
 function checkColorModes(
   theme: SlideTheme,
-  report: ReturnType<typeof inspectThemeCss>
+  report: ReturnType<typeof inspectThemeCss>,
+  themeCssPath: string
 ) {
   const problems: string[] = []
   const supportsDark = theme.colorModes.includes("dark")
@@ -93,7 +90,17 @@ function checkColorModes(
   return problems
 }
 
-export function checkTheme(theme: SlideTheme, css: string | null): Section {
+export interface ThemeStylesheet {
+  css: string | null
+  source: string
+}
+
+export function checkTheme(
+  theme: SlideTheme,
+  stylesheet: ThemeStylesheet
+): Section {
+  const { css, source: themeCssPath } = stylesheet
+
   const summary = [
     `${theme.id}${theme.className ? ` (.${theme.className})` : " (app tokens, no class)"}: ${theme.colorModes.join(" and ")}, default ${theme.defaultColorMode}`,
   ]
@@ -125,68 +132,14 @@ export function checkTheme(theme: SlideTheme, css: string | null): Section {
   }
 
   summary.push(
-    `${report.lightTokens.length} tokens in the light block, ${report.darkTokens.length} dark overrides`
+    `${report.lightTokens.length} tokens in the light block, ${report.darkTokens.length} dark overrides, from ${themeCssPath}`
   )
 
-  return { name: "theme", problems: checkColorModes(theme, report), summary }
-}
-
-interface ThemeSource {
-  className: string | undefined
-  css: string
-  cssPath: string
-  entryPath: string
-}
-
-function readThemeSource(
-  item: RegistryItem,
-  readFile: ReadFile
-): ThemeSource | null {
-  const files = item.files ?? []
-  const entryPath = files.find((file) => file.path?.endsWith("index.ts"))?.path
-  const cssPath = files.find((file) => file.path?.endsWith("theme.css"))?.path
-
-  if (!(entryPath && cssPath)) {
-    return null
-  }
-
-  const entry = readFile(entryPath)
-  const css = readFile(cssPath)
-
-  if (!(entry && css)) {
-    return null
-  }
-
   return {
-    className: classNamePattern.exec(entry)?.[1],
-    css,
-    cssPath,
-    entryPath,
+    name: "theme",
+    problems: checkColorModes(theme, report, themeCssPath),
+    summary,
   }
-}
-
-function checkRegistryThemeItem(item: RegistryItem, readFile: ReadFile) {
-  const source = readThemeSource(item, readFile)
-
-  if (!source) {
-    return []
-  }
-
-  const { className, css, cssPath, entryPath } = source
-
-  if (!className) {
-    return [
-      `Registry item "${item.name}" ships ${entryPath} without a className. A theme scopes itself to the canvas with one.`,
-    ]
-  }
-
-  if (inspectThemeCss(css, className).hasSelector) {
-    return []
-  }
-
-  return [
-    `Registry item "${item.name}" sets className "${className}" in ${entryPath}, but ${cssPath} has no rule for .${className}.`,
-  ]
 }
 
 export function checkRegistry(
@@ -205,10 +158,6 @@ export function checkRegistry(
           `registry.json item "${item.name}" points at "${file.path}", which is not a file in the repository. shadcn build reads that path.`
         )
       }
-    }
-
-    if (item.type === "registry:theme") {
-      problems.push(...checkRegistryThemeItem(item, readFile))
     }
   }
 

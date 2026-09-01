@@ -1,20 +1,12 @@
 import fs from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
-
+import type { BuiltInTheme } from "../deck/theme-source.ts"
 import type { DetectedManager } from "../package-manager.ts"
 
 // Relative to this module, so the template resolves the same way from a source
 // checkout and from the installed package a tarball unpacks into.
 const templateRoot = fileURLToPath(new URL("../../template/", import.meta.url))
-
-export type ThemeName =
-  | "broadsheet"
-  | "deckard"
-  | "ledger"
-  | "meridian"
-  | "nexus"
-  | "phosphor"
 
 export interface ScaffoldOptions {
   cliDependency: string
@@ -25,7 +17,7 @@ export interface ScaffoldOptions {
   registryUrl: string
   sample: boolean
   target: string
-  theme: ThemeName
+  theme: BuiltInTheme
   title: string
 }
 
@@ -57,6 +49,7 @@ function fill(source: string, options: ScaffoldOptions): string {
   return source
     .replaceAll("__DECK_TITLE__", options.title)
     .replaceAll("__DECK_DESCRIPTION__", options.description)
+    .replaceAll("__DECK_THEME__", options.theme)
 }
 
 function write(target: string, contents: string): void {
@@ -164,10 +157,6 @@ export function scaffold(options: ScaffoldOptions): void {
   copyTree(templatePath("app"), path.join(target, "app"))
   copyTree(templatePath("lib"), path.join(target, "lib"))
   copyTree(templatePath("public"), path.join(target, "public"))
-  copyTree(
-    templatePath("deck/theme", options.theme),
-    path.join(target, "deck/theme")
-  )
 
   for (const file of ["next.config.ts", "postcss.config.ts", "tsconfig.json"]) {
     write(path.join(target, file), readTemplate(file))
