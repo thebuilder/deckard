@@ -24,16 +24,10 @@
     --slide-subheading-size: 1.75rem;
     --slide-lead-size: 1.25rem;
     --slide-body-size: 1.5rem;
-    --slide-code-size: 1.25rem;
+    --slide-code-size: 1.125rem;
     --slide-support-size: 0.875rem;
     --slide-label-size: 0.875rem;
     --slide-label-tracking: 0.25em;
-
-    /* A focus slide rebinds the three sizes below onto the roles above. They are
-     * separate names because a custom property cannot scale itself. */
-    --slide-focus-title-size: 6rem;
-    --slide-focus-body-size: 2rem;
-    --slide-focus-code-size: 1.625rem;
 
     --slide-radius: 0.75rem;
     --slide-radius-lg: 1.25rem;

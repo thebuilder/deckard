@@ -60,8 +60,9 @@ export function OpenContentSlide({
 }
 
 /*
- * The content is the slide. No heading, no lead, no panel: one block fills the
- * frame at the focus sizes, with an optional kicker under it for orientation.
+ * The content is the slide. No heading, no lead, no panel: one block gets the
+ * whole frame to show more of itself at the normal type scale, with an
+ * optional kicker under it for orientation.
  */
 export function FocusSlide({
   children,
@@ -72,7 +73,7 @@ export function FocusSlide({
 }) {
   return (
     <section className="flex h-full w-full flex-col items-center justify-center py-8">
-      <div className="grid w-full grid-cols-[minmax(0,1fr)] items-center [--slide-body-size:var(--slide-focus-body-size)] [--slide-code-size:var(--slide-focus-code-size)] [--slide-title-size:var(--slide-focus-title-size)] [&_:is(img,video)]:mx-auto [&_:is(img,video)]:h-auto [&_:is(img,video)]:max-h-[calc(var(--canvas-height)*0.66)] [&_:is(img,video)]:w-auto [&_:is(img,video)]:object-contain">
+      <div className="grid min-h-0 w-full flex-1 grid-cols-[minmax(0,1fr)] items-center [&_:is(img,video)]:mx-auto [&_:is(img,video)]:h-auto [&_:is(img,video)]:max-h-full [&_:is(img,video)]:w-auto [&_:is(img,video)]:object-contain">
         {children}
       </div>
       {kicker ? (

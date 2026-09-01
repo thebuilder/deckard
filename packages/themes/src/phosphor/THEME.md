@@ -54,7 +54,7 @@ rather than refining it, since the letterforms are the theme.
 | `--slide-support-size`    | captions, grid copy, metadata rows       |
 | `--slide-label-size`      | eyebrows and other uppercase labels      |
 
-`--slide-code-size` is `1.375rem` here against a `1.25rem` default. This is the
+`--slide-code-size` is `1.25rem` here against a `1.125rem` default. This is the
 one theme where code is not a supporting element: the slide is already set in
 the same family, so a code block that sits below the body size reads as a
 footnote instead of as the thing being shown.

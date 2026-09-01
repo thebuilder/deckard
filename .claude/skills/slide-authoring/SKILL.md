@@ -56,11 +56,11 @@ panel full of bordered cards.
 - `OpenContentSlide` when the body brings its own frame: `FeatureGrid`,
   `BulletList`, `StatGrid`, `CodeBlock`, a chart, a table.
 - `FocusSlide` when the body is the whole point and the heading was scaffolding:
-  a code sample, a list of keys, one image, three figures. It fills the frame,
-  centers, scales the content up by rebinding `--slide-focus-title-size`,
-  `--slide-focus-body-size`, and `--slide-focus-code-size` onto their roles, and
-  takes one optional `kicker` string for orientation. No heading, no lead, no
-  panel. Do not reach for it when the slide needs a sentence to make sense.
+  a code sample, a list of keys, one image, three figures. It hands the block
+  the whole frame at the normal type scale, so a code sample shows more lines
+  rather than bigger ones, and takes one optional `kicker` string for
+  orientation. No heading, no lead, no panel. Do not reach for it when the
+  slide needs a sentence to make sense.
 
 The rule is enforced as well as documented. A block with its own surface carries
 `data-slide-surface`, and `ContentSlideCard`'s panel carries
