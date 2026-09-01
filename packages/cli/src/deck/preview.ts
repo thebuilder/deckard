@@ -11,13 +11,29 @@ import { deckPackageManager, execCommand } from "../package-manager.ts"
 import { projectRoot, resolveFromProject } from "../project.ts"
 import { assertColorMode, colorModeStorageKey } from "./color-mode.ts"
 
-// Resolved rather than assumed: in this workspace it is packages/core, and in a
-// published deck it is whatever node_modules the app installed. A deck that
-// cannot resolve it fails at the build below, with a better message than here.
+// Resolved rather than assumed: in this workspace these are packages/core and
+// packages/themes, and in a published deck they are whatever node_modules the
+// app installed. A deck that cannot resolve core fails at the build below, with
+// a better message than here, and a deck with no installed theme package
+// resolves to nothing and contributes no inputs.
 const corePackage = resolveFromProject("@deckard/core/package.json")
-const coreSourceInputs = corePackage
-  ? [path.join(path.dirname(corePackage), "src")]
-  : []
+const themesPackage = resolveFromProject("@deckard/themes/package.json")
+
+// The stylesheets are the reason the theme package is here: a retuned token
+// changes every slide and nothing under app/ or deck/ moves with it.
+function packageInputs(packagePath: string | null) {
+  if (!packagePath) {
+    return []
+  }
+
+  const directory = path.dirname(packagePath)
+
+  return [
+    packagePath,
+    path.join(directory, "src"),
+    path.join(directory, "dist"),
+  ]
+}
 
 export interface BuildProfile {
   env: Record<string, string>
@@ -75,8 +91,8 @@ const buildInputs = [
   path.join(projectRoot, "postcss.config.mjs"),
   path.join(projectRoot, "postcss.config.ts"),
   path.join(projectRoot, "tsconfig.json"),
-  ...coreSourceInputs,
-  ...(corePackage ? [corePackage] : []),
+  ...packageInputs(corePackage),
+  ...packageInputs(themesPackage),
 ]
 
 function newestModification(target: string): number {
