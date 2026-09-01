@@ -93,6 +93,24 @@ export default function AuthoringPage() {
         the position in the deck on <code>--slide-progress</code>. The theme
         decides what they look like.
       </p>
+      <p>
+        So do the blocks. Every part a theme might want to reach carries a data
+        attribute, from <code>data-slide-eyebrow</code> and{" "}
+        <code>data-slide-list-marker</code> to <code>data-stat-meter</code>, and
+        the theme styles those attributes including decorative{" "}
+        <code>::before</code> content. That is how phosphor writes{" "}
+        <code>[x]</code> where the list number goes and ledger hangs a rule
+        there instead, with no edit to the block. The full list is the block
+        part contract at the bottom of <code>@deckard/core/styles.css</code>,
+        and it is the other half of the theme contract alongside the tokens.
+        Keep those attributes where they are and a block is free to change
+        everything else about its markup.
+      </p>
+      <p>
+        A theme styles parts. It does not add content. A boot log, a status
+        table, a cursor line with words in it are all slide content, so they
+        belong in a block the deck composes.
+      </p>
 
       <h2 className="pt-4 text-2xl">Composition over flags</h2>
       <p>

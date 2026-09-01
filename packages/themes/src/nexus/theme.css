@@ -104,7 +104,7 @@
   --slide-grid-color: oklch(0.75 0.05 258 / 9%);
   --slide-rule: oklch(0.79 0.155 68 / 45%);
   --slide-grid-major: oklch(0.79 0.09 68 / 15%);
-  --slide-halo: 0 0 0.5em oklch(0.79 0.155 68 / 32%);
+  --slide-halo: 0 0 34px oklch(0.79 0.155 68 / 32%);
   color-scheme: dark;
 }
 
@@ -199,6 +199,79 @@
 
 .nexus-theme .slide-background[data-slide-background="spotlight"] {
   background-image: var(--slide-hatch);
+}
+
+/* Block parts. The section number is the loudest thing in the source design,
+ * set far past any heading and lit from behind. */
+
+.nexus-theme [data-slide-breaker-index] {
+  font-family: var(--slide-font-heading);
+  font-size: calc(var(--slide-title-size) * 2.5);
+  font-weight: 900;
+  line-height: 0.8;
+  letter-spacing: -0.02em;
+  text-shadow: var(--slide-halo);
+}
+
+.nexus-theme [data-slide-hero-meta] {
+  font-family: var(--slide-font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+}
+
+.nexus-theme :is([data-slide-list-marker], [data-stat-unit]) {
+  font-family: var(--slide-font-mono);
+}
+
+.nexus-theme [data-stat-meter] {
+  border-color: color-mix(in oklab, var(--primary) 55%, transparent);
+}
+
+/* The statement slide: the whole console lit in the accent, halo off, because
+ * a glow on a field of the same hue is invisible.
+ * The field colour is read on the canvas and the ink is remapped one level
+ * down: a custom property resolves against the element that uses it, so
+ * remapping --primary here would flood the slide with its own ink. */
+
+.nexus-theme[data-slide-background="accent"] {
+  --background: var(--primary);
+  --foreground: var(--primary-foreground);
+  --slide-halo: none;
+  --slide-scanline: none;
+  --slide-hatch: none;
+}
+
+.nexus-theme[data-slide-background="accent"]
+  :is([data-slide-frame], [data-slide-header], [data-slide-footer]) {
+  --primary: var(--primary-foreground);
+  --muted-foreground: color-mix(
+    in oklab,
+    var(--primary-foreground) 74%,
+    transparent
+  );
+  --slide-surface: transparent;
+  --slide-surface-muted: color-mix(
+    in oklab,
+    var(--primary-foreground) 12%,
+    transparent
+  );
+  --slide-surface-border: color-mix(
+    in oklab,
+    var(--primary-foreground) 38%,
+    transparent
+  );
+  --slide-chrome-foreground: color-mix(
+    in oklab,
+    var(--primary-foreground) 72%,
+    transparent
+  );
+  --slide-chrome-emphasis: var(--primary-foreground);
+  --slide-chrome-border: color-mix(
+    in oklab,
+    var(--primary-foreground) 32%,
+    transparent
+  );
+  --slide-progress-fill: var(--primary-foreground);
 }
 
 /* Deck chrome. Console strips: everything set in capitals, spaced out, and

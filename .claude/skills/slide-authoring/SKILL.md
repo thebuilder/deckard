@@ -30,8 +30,8 @@ new markup only when none of these fits.
 
 | Block                                     | Use it for                                        |
 | ----------------------------------------- | ------------------------------------------------- |
-| `HeroSlide` (templates.tsx)               | the opener, one big headline                      |
-| `BreakerSlide` (templates.tsx)            | a section divider, left aligned                   |
+| `HeroSlide` (templates.tsx)               | the opener, one headline and a credit row         |
+| `BreakerSlide` (templates.tsx)            | a section divider, with an optional index         |
 | `ContentSlideCard` (templates.tsx)        | intro copy above a bordered panel                 |
 | `OpenContentSlide` (templates.tsx)        | the same intro with no panel                      |
 | `FocusSlide` (templates.tsx)              | one block and no heading at all                   |
@@ -71,6 +71,19 @@ Nothing hides the mistake for you.
 
 A new block that paints a border or a background needs `data-slide-surface` on
 its outer element, so a card wrapped around it says so.
+
+## Name the parts a theme reaches
+
+Tokens are half the theme contract. Data attributes are the other half. Every
+part of a block a theme might want to restyle carries one, from
+`data-slide-eyebrow` and `data-slide-list-marker` to `data-stat-meter`, and the
+theme styles those attributes including decorative `::before` content. Phosphor
+writes `[x]` where the list number goes and ledger hangs a rule there instead,
+and neither touches the block. The full list is the block part contract at the
+bottom of `@deckard/core/styles.css`. A new block adds its parts to that list.
+
+A theme styles parts; it never adds content. A boot log, a status table, a
+cursor line with words in it are slide content, so they go in a block.
 
 ## Inline, or its own file
 
@@ -150,6 +163,11 @@ while hidden, so a stepped slide takes its full height from the first step.
 
 `layout: "fullscreen"`, `header`, `footer`, and `background` change the frame for
 one slide. Use them instead of route-level special cases.
+
+`background` takes `"default"`, `"grid"`, `"spotlight"`, `"accent"`, or
+`"none"`. `"accent"` is the inverted statement slide: the canvas floods with the
+theme accent and the ink flips, chrome included. Use it once or twice in a deck,
+for the one sentence that has to land, and never on two slides in a row.
 
 `order` sorts a discovered module inside the discovered group. It cannot move the
 group: the spread position in `deck/slides.tsx` is authoritative, and

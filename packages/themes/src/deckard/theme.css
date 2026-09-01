@@ -156,6 +156,61 @@
   background-image: var(--slide-hatch);
 }
 
+/* Block parts. The house theme leaves the blocks alone apart from the section
+ * numeral, which the source layouts set larger than a heading. */
+
+.deckard-theme [data-slide-breaker-index] {
+  font-size: calc(var(--slide-title-size) * 1.4);
+  color: var(--muted-foreground);
+  letter-spacing: -0.03em;
+}
+
+/* The statement slide: the accent flooded to every edge and the type inverted.
+ * The field colour is read on the canvas and the ink is remapped one level
+ * down: a custom property resolves against the element that uses it, so
+ * remapping --primary here would flood the slide with its own ink. */
+
+.deckard-theme[data-slide-background="accent"] {
+  --background: var(--primary);
+  --foreground: var(--primary-foreground);
+  --slide-halo: none;
+  --slide-scanline: none;
+  --slide-hatch: none;
+}
+
+.deckard-theme[data-slide-background="accent"]
+  :is([data-slide-frame], [data-slide-header], [data-slide-footer]) {
+  --primary: var(--primary-foreground);
+  --muted-foreground: color-mix(
+    in oklab,
+    var(--primary-foreground) 74%,
+    transparent
+  );
+  --slide-surface: transparent;
+  --slide-surface-muted: color-mix(
+    in oklab,
+    var(--primary-foreground) 12%,
+    transparent
+  );
+  --slide-surface-border: color-mix(
+    in oklab,
+    var(--primary-foreground) 38%,
+    transparent
+  );
+  --slide-chrome-foreground: color-mix(
+    in oklab,
+    var(--primary-foreground) 72%,
+    transparent
+  );
+  --slide-chrome-emphasis: var(--primary-foreground);
+  --slide-chrome-border: color-mix(
+    in oklab,
+    var(--primary-foreground) 32%,
+    transparent
+  );
+  --slide-progress-fill: var(--primary-foreground);
+}
+
 /* Deck chrome. The runtime renders the header and the footer inside the canvas
  * and names the parts; this decides what they look like. */
 

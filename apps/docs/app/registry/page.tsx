@@ -97,7 +97,7 @@ const blocks = [
       "HeroSlide, BreakerSlide, ContentSlideCard, OpenContentSlide, FocusSlide",
     name: "block-slide-layouts",
     summary:
-      "Five whole-slide frames. A centered opener at half again the title size, a left-aligned section divider at the plain one, an intro above a bordered surface panel, the same intro with no panel, and a focus layout where one block fills the frame with no heading around it. All five fall back to useSlideTitle() when you do not pass a title, so a slide names itself once.",
+      "Five whole-slide frames, all left aligned like the frame itself. An opener that runs the height of the canvas with an optional credit row, a section divider with an optional index the theme sets oversized, an intro above a bordered surface panel, the same intro with no panel, and a focus layout where one block fills the frame with no heading around it. All five fall back to useSlideTitle() when you do not pass a title, so a slide names itself once.",
     when: "Almost every slide. Card for body copy that has no surface of its own, open when the body brings its own frame, focus when the body is the whole slide.",
   },
   {

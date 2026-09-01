@@ -182,6 +182,69 @@
     );
 }
 
+/* Block parts. A chapter numeral in the text face, and list markers in the
+ * masthead voice rather than as figures. */
+
+.broadsheet-theme [data-slide-breaker-index] {
+  font-family: var(--slide-font-heading);
+  font-size: calc(var(--slide-title-size) * 1.5);
+  line-height: 0.8;
+  letter-spacing: -0.02em;
+}
+
+.broadsheet-theme :is([data-slide-list-marker], [data-slide-hero-meta]) {
+  font-variant-caps: small-caps;
+  font-variant-numeric: oldstyle-nums;
+  text-transform: none;
+}
+
+/* The section plate: ink and stock swapped, which is what a paper does with a
+ * standfirst it wants read first.
+ * The field colour is read on the canvas and the ink is remapped one level
+ * down: a custom property resolves against the element that uses it, so
+ * remapping --primary here would flood the slide with its own ink. */
+
+.broadsheet-theme[data-slide-background="accent"] {
+  --background: var(--primary);
+  --foreground: var(--primary-foreground);
+  --slide-halo: none;
+  --slide-scanline: none;
+  --slide-hatch: none;
+}
+
+.broadsheet-theme[data-slide-background="accent"]
+  :is([data-slide-frame], [data-slide-header], [data-slide-footer]) {
+  --primary: var(--primary-foreground);
+  --muted-foreground: color-mix(
+    in oklab,
+    var(--primary-foreground) 74%,
+    transparent
+  );
+  --slide-surface: transparent;
+  --slide-surface-muted: color-mix(
+    in oklab,
+    var(--primary-foreground) 12%,
+    transparent
+  );
+  --slide-surface-border: color-mix(
+    in oklab,
+    var(--primary-foreground) 38%,
+    transparent
+  );
+  --slide-chrome-foreground: color-mix(
+    in oklab,
+    var(--primary-foreground) 72%,
+    transparent
+  );
+  --slide-chrome-emphasis: var(--primary-foreground);
+  --slide-chrome-border: color-mix(
+    in oklab,
+    var(--primary-foreground) 32%,
+    transparent
+  );
+  --slide-progress-fill: var(--primary-foreground);
+}
+
 /* Deck chrome. A running head across the top of the page and a centred folio at
  * the foot, both set in the text face. No progress bar: a page has no scrollbar. */
 

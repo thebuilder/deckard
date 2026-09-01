@@ -116,7 +116,7 @@
     oklch(0 0 0 / 26%) 0 2px,
     transparent 2px 5px
   );
-  --slide-halo: 0 0 0.45em oklch(0.855 0.185 148 / 38%);
+  --slide-halo: 0 0 20px oklch(0.855 0.185 148 / 38%);
   color-scheme: dark;
 }
 
@@ -178,6 +178,136 @@
 
 .phosphor-theme .slide-background[data-slide-background="spotlight"] {
   background-image: var(--slide-scanline), var(--slide-hatch);
+}
+
+/* Block parts. The source design writes its eyebrows as source comments, marks
+ * a checklist with [x], puts a status light on each module, and ends a prompt
+ * line with a block cursor. All four are decoration on a part the block already
+ * names, so they live here rather than in the markup. */
+
+.phosphor-theme [data-slide-eyebrow]::before {
+  margin-inline-end: 0.5ch;
+  content: "//";
+}
+
+/* The number goes to zero rather than display:none so the rail keeps its width
+ * and the copy stays on the same column as every other list in the deck. */
+
+.phosphor-theme [data-slide-list-marker] {
+  font-size: 0;
+}
+
+.phosphor-theme [data-slide-list-marker]::before {
+  font-size: var(--slide-support-size);
+  letter-spacing: 0;
+  content: "[x]";
+}
+
+.phosphor-theme [data-slide-card-title] {
+  display: flex;
+  gap: 0.5em;
+  align-items: baseline;
+}
+
+.phosphor-theme [data-slide-card-title]::before {
+  flex: none;
+  width: 0.34em;
+  height: 0.34em;
+  content: "";
+  background-color: var(--primary);
+  box-shadow: var(--slide-halo);
+}
+
+/* The block cursor at the end of the opener's credit line. */
+
+.phosphor-theme [data-slide-hero-meta]::after {
+  align-self: center;
+  width: 0.6em;
+  height: 1.1em;
+  content: "";
+  background-color: var(--primary);
+  animation: phosphor-blink 1.1s step-end infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phosphor-theme [data-slide-hero-meta]::after {
+    animation: none;
+  }
+}
+
+@keyframes phosphor-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* A metrics figure is display type without being a heading element, so the
+ * bloom the headings carry reaches it here. */
+
+.phosphor-theme [data-stat-value] {
+  text-shadow: var(--slide-halo);
+}
+
+.phosphor-theme [data-stat-meter] {
+  border-color: var(--primary);
+}
+
+.phosphor-theme [data-slide-breaker-index] {
+  font-size: calc(var(--slide-title-size) * 1.6);
+  text-shadow: var(--slide-halo);
+}
+
+/* The statement slide, flooded with phosphor and read in reverse video. The
+ * tube is off: scanlines over a lit field read as a fault rather than a CRT.
+ * The field colour is read on the canvas and the ink is remapped one level
+ * down: a custom property resolves against the element that uses it, so
+ * remapping --primary here would flood the slide with its own ink. */
+
+.phosphor-theme[data-slide-background="accent"] {
+  --background: var(--primary);
+  --foreground: var(--primary-foreground);
+  --slide-halo: none;
+  --slide-scanline: none;
+  --slide-hatch: none;
+}
+
+.phosphor-theme[data-slide-background="accent"]
+  :is([data-slide-frame], [data-slide-header], [data-slide-footer]) {
+  --primary: var(--primary-foreground);
+  --muted-foreground: color-mix(
+    in oklab,
+    var(--primary-foreground) 74%,
+    transparent
+  );
+  --slide-surface: transparent;
+  --slide-surface-muted: color-mix(
+    in oklab,
+    var(--primary-foreground) 12%,
+    transparent
+  );
+  --slide-surface-border: color-mix(
+    in oklab,
+    var(--primary-foreground) 38%,
+    transparent
+  );
+  --slide-chrome-foreground: color-mix(
+    in oklab,
+    var(--primary-foreground) 72%,
+    transparent
+  );
+  --slide-chrome-emphasis: var(--primary-foreground);
+  --slide-chrome-border: color-mix(
+    in oklab,
+    var(--primary-foreground) 32%,
+    transparent
+  );
+  --slide-progress-fill: var(--primary-foreground);
 }
 
 /* Deck chrome. The header is a command line and the footer is the status bar
@@ -242,4 +372,12 @@
 .phosphor-theme [data-slide-progress] {
   inset-block: auto 0;
   height: 3px;
+}
+
+/* Reverse video again on the statement slide: the bar takes the ink and the
+ * type takes the field, so the status line still reads as one. */
+
+.phosphor-theme[data-slide-background="accent"] [data-slide-footer] {
+  color: var(--background);
+  background-color: var(--foreground);
 }

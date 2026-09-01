@@ -154,6 +154,80 @@
   background-image: var(--slide-hatch);
 }
 
+/* Block parts. Quiet throughout: a numeral no louder than a heading, and a dot
+ * where the source design puts one. */
+
+.meridian-theme [data-slide-breaker-index] {
+  font-size: var(--slide-title-size);
+  color: var(--muted-foreground);
+  letter-spacing: -0.03em;
+}
+
+.meridian-theme [data-slide-list-marker] {
+  font-size: 0;
+}
+
+.meridian-theme [data-slide-list-marker]::before {
+  display: block;
+  width: 0.75rem;
+  height: 0.75rem;
+  margin-block-start: 0.7em;
+  content: "";
+  background-color: var(--primary);
+  border-radius: 999px;
+}
+
+.meridian-theme [data-stat-meter] {
+  border-radius: 999px;
+}
+
+/* The statement slide: one flat field of the accent with the type in the page
+ * colour. No border, no card, nothing else on it.
+ * The field colour is read on the canvas and the ink is remapped one level
+ * down: a custom property resolves against the element that uses it, so
+ * remapping --primary here would flood the slide with its own ink. */
+
+.meridian-theme[data-slide-background="accent"] {
+  --background: var(--primary);
+  --foreground: var(--primary-foreground);
+  --slide-halo: none;
+  --slide-scanline: none;
+  --slide-hatch: none;
+}
+
+.meridian-theme[data-slide-background="accent"]
+  :is([data-slide-frame], [data-slide-header], [data-slide-footer]) {
+  --primary: var(--primary-foreground);
+  --muted-foreground: color-mix(
+    in oklab,
+    var(--primary-foreground) 74%,
+    transparent
+  );
+  --slide-surface: transparent;
+  --slide-surface-muted: color-mix(
+    in oklab,
+    var(--primary-foreground) 12%,
+    transparent
+  );
+  --slide-surface-border: color-mix(
+    in oklab,
+    var(--primary-foreground) 38%,
+    transparent
+  );
+  --slide-chrome-foreground: color-mix(
+    in oklab,
+    var(--primary-foreground) 72%,
+    transparent
+  );
+  --slide-chrome-emphasis: var(--primary-foreground);
+  --slide-chrome-border: color-mix(
+    in oklab,
+    var(--primary-foreground) 32%,
+    transparent
+  );
+  --slide-progress-fill: var(--primary-foreground);
+}
+
 /* Deck chrome. Quiet to the point of nearly not being there: no rules, no
  * uppercase, one weight below the body, and a hairline for the progress. */
 

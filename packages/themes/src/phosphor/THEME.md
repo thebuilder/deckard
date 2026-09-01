@@ -25,8 +25,10 @@ display headings through `--slide-halo`.
 The scanlines are the part worth understanding before you edit anything. They
 are not decoration layered on top of a background; they are the first layer of
 every variant's `background-image`, so `default`, `grid`, and `spotlight` all
-carry them and only `none` does not. If you want a slide without them, set that
-slide's background to `none`.
+carry them. `none` paints nothing at all, and `accent` sets `--slide-scanline`
+to `none` because scanlines over a lit field read as a fault rather than as a
+tube. If you want any other slide without them, set that slide's background to
+`none`.
 
 Every corner is square. `--slide-radius`, `--slide-radius-lg`, and `--radius`
 are all `0rem`, and `--slide-surface-shadow` is `none`. A terminal has no
@@ -43,27 +45,42 @@ load it in `app/layout.tsx` and put it at the front of all three font tokens
 together. It is the one font swap in this registry that changes the theme
 rather than refining it, since the letterforms are the theme.
 
-| Token                     | Used by                                  |
-| ------------------------- | ---------------------------------------- |
-| `--slide-title-size`      | hero and breaker headlines               |
-| `--slide-heading-size`    | the `h1` on a content slide              |
-| `--slide-subheading-size` | an `h2` inside a slide body              |
-| `--slide-lead-size`       | the sentence under a headline            |
-| `--slide-body-size`       | bullet copy, the main text of a slide    |
-| `--slide-code-size`       | the type inside a `CodeBlock`            |
-| `--slide-support-size`    | captions, grid copy, metadata rows       |
-| `--slide-label-size`      | eyebrows and other uppercase labels      |
+Every size below is set against the 1920x1080 canvas at a 16px root, so `1rem`
+is 16 canvas pixels and the numbers read the way they do on a projector rather
+than the way they do in a browser window.
 
-`--slide-code-size` is `1.25rem` here against a `1.125rem` default. This is the
-one theme where code is not a supporting element: the slide is already set in
-the same family, so a code block that sits below the body size reads as a
-footnote instead of as the thing being shown.
+| Token                     | Value      | Used by                               |
+| ------------------------- | ---------- | ------------------------------------- |
+| `--slide-title-size`      | `5.5rem`   | hero and breaker headlines            |
+| `--slide-heading-size`    | `3.75rem`  | the `h1` on a content slide           |
+| `--slide-subheading-size` | `2.375rem` | an `h2` inside a slide body           |
+| `--slide-lead-size`       | `2.375rem` | the sentence under a headline         |
+| `--slide-body-size`       | `1.875rem` | bullet copy, the main text of a slide |
+| `--slide-code-size`       | `1.875rem` | the type inside a `CodeBlock`         |
+| `--slide-support-size`    | `1.625rem` | captions, grid copy, metadata rows    |
+| `--slide-label-size`      | `1.5rem`   | eyebrows and other uppercase labels   |
 
-This is the smallest scale in the registry, and it has to be. Monospace runs
-roughly 20% wider than a proportional sans at the same point size, so a title at
-the default theme's `4.5rem` would take four lines where the sans takes two.
-`--slide-title-size` is `3.75rem` for that reason alone. Raising it is the
-fastest way to break a hero slide in this theme.
+`--slide-code-size` sits at `--slide-body-size` rather than at
+`--slide-support-size`, where the contract puts it. This is the one theme where
+code is not a supporting element: the slide is already set in the same family,
+so a code block below the body size reads as a footnote instead of as the thing
+being shown.
+
+The scale is a step under nexus, and the reason is the family. Monospace runs
+roughly 20% wider than a proportional sans at the same point size, so the same
+headline reaches the same margin from a smaller size. `--slide-title-size` is
+`5.5rem`, 88 canvas pixels, where nexus sits at `7rem`, and both fill the same
+canvas.
+
+Four sizes sit outside that ladder. `--slide-figure-size` is `7rem` and
+`--slide-figure-unit-size` is `3rem`: the figure a metrics block renders is
+display type without being a heading, so it sizes itself rather than borrowing
+the title size, and the unit suffix takes its own size so it hangs off the
+figure instead of matching it. `--slide-meter-size` is the height of the
+proportion bar under that figure and comes from the contract at `0.875rem`.
+`--slide-chrome-size` is `1.5rem` here; the contract now writes that token as
+`var(--slide-label-size)`, so header and footer type reads at the size of an
+eyebrow unless a theme says otherwise.
 
 Headings are uppercase at weight 700 with `-0.015em` of tracking. Monospace
 capitals sit wide by construction, and pulling them in is what keeps a headline
@@ -76,48 +93,113 @@ that sells the whole thing.
 
 ## Spacing
 
-`--slide-padding-inline` is `2rem` and `--slide-padding-block` is `2.5rem`, the
-tightest in the registry. A terminal fills its window.
+The frame is not a centred column. It is the whole canvas inside
+`--slide-padding-inline` and `--slide-padding-block`, left aligned, with no cap
+on the measure, so a slide starts at the left margin and runs to the right one.
+A slide that wants its content centred centres it inside that frame.
 
-`--slide-content-gap` is the vertical rhythm between the intro block and the
-body of a slide.
+`--slide-padding-inline` is `6rem` and `--slide-padding-block` is `5.25rem`, 96
+and 84 canvas pixels, a step tighter than the `7rem` and `6rem` in the contract.
+A terminal fills its window.
+
+`--slide-content-gap` is `2.75rem`, the vertical rhythm between the intro block
+and the body of a slide. `--slide-item-gap` is `1.5rem`, the gap between the
+cards of a grid, the rows a panel stacks, and the breathing room a layout
+keeps above and below itself.
 
 ## Background variants
 
 `SlideBackground` renders one empty `div` with `data-slide-background` and no
-styling of its own. This file decides what each variant paints, using the canvas
-variables `--canvas-width` and `--canvas-height` for anything sized against the
-slide.
+styling of its own. This file decides what each variant paints.
 
-- `default` is scanlines over a soft bloom behind the copy, with a low glow along
-  the floor.
+The sheet under the scanlines is flat in all of them. There is no radial wash
+and no blurred corner glow left anywhere in the registry, and `--slide-wash`,
+`--slide-veil`, `--slide-glow`, and `--slide-spotlight` went out of the contract
+with them. None of the source templates has a bloom, and on a pale sheet one
+reads as a stain.
+
+- `default` is the scanlines over that flat sheet, and nothing else.
 - `grid` is the character cell: vertical rules every `--slide-cell` and
   horizontal rules every `--slide-grid-size`, which together draw the shape of
-  the text buffer behind the picture. Scanlines ride on top and the whole thing
-  fades to the background outside a center ellipse.
-- `spotlight` is the tube. Bloom at the center, falloff into every corner,
-  scanlines throughout.
+  the text buffer behind the picture, with the scanlines riding on top.
+- `spotlight` is the test card, `--slide-hatch` over the sheet and scanned like
+  the rest. The hatch is the diagonal fill the source design puts in an empty
+  capture.
+- `accent` is the inverted statement slide: the canvas floods with the theme
+  accent and the ink flips. The tube is off for it, since scanlines over a lit
+  field read as a fault rather than as a CRT.
 - `none` renders nothing at all, scanlines included. `SlideBackground` returns
   `null`.
 
-The colors come from `--slide-wash`, `--slide-veil`, `--slide-glow`,
-`--slide-grid-color`, `--slide-grid-size`, and `--slide-spotlight`, plus three
-tokens this theme adds.
+`accent` is painted by two unlayered rules near the bottom of this file. A base
+layer fallback ships in `@deckard/core/styles.css`, but a theme's unlayered CSS
+always wins over the base layer, which is why every theme in the registry
+restates the pair. The first rule reads the field colour on the canvas, moving
+`--primary` into `--background` and `--primary-foreground` into `--foreground`.
+The second remaps the ink one level down, on `[data-slide-frame]`,
+`[data-slide-header]`, and `[data-slide-footer]`, because a custom property
+resolves against the element that uses it: remapping `--primary` on the same
+element that reads `var(--primary)` for the field would flood the slide with its
+own ink. The status bar then flips once more, taking the ink for its bar and the
+field for its type, so the footer still reads as one strip.
+
+The colours come from `--slide-scanline`, `--slide-hatch`, `--slide-grid-color`,
+`--slide-grid-size`, and `--slide-cell`.
+
+## Block parts
+
+The contract has two halves. Tokens are values: a size, a colour, a gradient.
+Data attributes are parts. A block names the piece of itself a theme may reach,
+and the theme styles that attribute, decorative `::before` and `::after` content
+included. The full list lives in the "Block part contract" comment at the bottom
+of `@deckard/core/styles.css`. A block is free to rewrite its markup and its
+class names as long as those attributes stay where they are.
+
+Anything that is new content rather than a treatment of existing content belongs
+in a block the deck composes, not here. A boot log, a status table, a cursor line
+with words in it are all slide copy, and copy in a stylesheet cannot be edited,
+translated, or read by a screen reader.
+
+What this theme does with the parts it reaches:
+
+- `[data-slide-eyebrow]` gets `//` in front of it, because the source design
+  writes its eyebrows as source comments.
+- `[data-slide-list-marker]` drops to `font-size: 0` and a `::before` writes
+  `[x]` back at `--slide-support-size`. The number goes to zero rather than
+  `display: none` so the rail keeps its width and the copy stays on the same
+  column as every other list in the deck.
+- `[data-slide-card-title]` carries a status light before the words, a square
+  `0.34em` on a side filled with `--primary` and lit with the halo.
+- `[data-slide-hero-meta]` ends in a block cursor, a filled `::after` blinking
+  on a 1.1s step. A `prefers-reduced-motion: reduce` rule drops the animation
+  and leaves the cursor lit.
+- `[data-stat-value]` takes the same `text-shadow` as `h1` and `h2`, since a
+  metrics figure is display type without being a heading element.
+- `[data-stat-meter]` takes its border in `--primary`.
+- `[data-slide-breaker-index]` is set at 1.6 times `--slide-title-size`, with
+  the halo on it.
 
 ## Theme-private tokens
 
-`--slide-scanline` is the repeating gradient, two dark pixels every five. It is
-`none` in light mode, which is why every variant renders flat on paper without a
-second rule. Set it to `none` in dark to keep the palette and drop the tube.
+`--slide-scanline`, `--slide-halo`, `--slide-rule`, and `--slide-hatch` are in
+the token contract in `@deckard/core/styles.css` now rather than private here,
+so a theme that wants a scanned sheet or a hatched plate sets a value instead of
+inventing a name. `--slide-scanline` is the repeating gradient, two dark pixels
+every five, and it is `none` in light mode, which is why every variant renders
+flat on paper without a second rule. Set it to `none` in dark to keep the
+palette and drop the tube. `--slide-hatch` is the 135 degree fill behind a
+reserved plate, drawn in `--slide-grid-color` so it stays quiet under body copy.
+`--slide-rule` is the hairline colour, the border green here. `--slide-halo` is
+the bloom on `h1`, `h2`, and the parts listed above, `none` in light mode.
 
-`--slide-cell` is the column width of the `grid` variant, the width of one
-character cell. Pair it with `--slide-grid-size` for the row height. The shipped
-ratio is `1.25rem` to `2.25rem`, which is close to a real terminal's cell.
+One token is private to this theme. `--slide-cell` is the column width of the
+`grid` variant, the width of one character cell. Pair it with
+`--slide-grid-size` for the row height. The shipped ratio is `1.25rem` to
+`2.25rem`, which is close to a real terminal's cell.
 
-`--slide-halo` is the bloom on `h1` and `h2`, `none` in light mode.
-
-All three are defined in the light block and overridden in dark, like every
-other token here.
+Each is declared in the light block, and the ones that change with the mode are
+redeclared in dark. `--slide-hatch` is not one of them: it draws itself in
+`--slide-grid-color`, which is, so the fill follows the mode on its own.
 
 ## Deck chrome
 
@@ -138,7 +220,7 @@ through `[data-slide-counter-separator]`.
 
 A status bar is one line of cells, not a band, so it holds itself a line thinner
 than the base footer and gives that line back to the slide:
-`--slide-footer-space` is `5rem` here rather than the `6rem` in the token
+`--slide-footer-space` is `5.5rem` here rather than the `6rem` in the token
 contract.
 
 The progress bar sits along the bottom of that bar, a solid 3px fill in
@@ -149,10 +231,10 @@ wherever the deck happens to be.
 
 Every token in `theme.css` is meant to be edited. The source design ships amber
 and cyan phosphors alongside the green: those move `--foreground`,
-`--muted-foreground`, `--border`, `--primary`, and the three background tints
-onto a new hue while leaving lightness alone. Changing the hue number on those
-and leaving every lightness value untouched is the safe way to do it, and the
-contrast numbers come out the same.
+`--muted-foreground`, `--border`, `--primary`, `--slide-grid-color`,
+`--slide-rule`, and `--slide-halo` onto a new hue while leaving lightness alone.
+Changing the hue number on those and leaving every lightness value untouched is
+the safe way to do it, and the contrast numbers come out the same.
 
 Two rules bound the edits. Keep both color blocks in sync, so every token
 defined for light is also defined for dark. And keep contrast: body copy against
@@ -181,9 +263,10 @@ not over the media, so a full-color image on a green terminal reads as a
 different deck. Use `background: "none"` on media slides, or keep the images
 duotone.
 
-Raising the type scale. Monospace is wide. Every size token here was set against
-the 1920x1080 canvas with that in mind, and `pnpm deck:check-overflow` is the
-check that catches it.
+Raising the type scale further. Monospace is wide, and every size token here is
+already set to fill the 1920x1080 canvas with that in mind, so the next step up
+takes a title to a fourth line rather than to a bigger one.
+`pnpm deck:check-overflow` is the check that catches it.
 
 Hardcoding a color inside the canvas. `text-white`, `bg-slate-900`, and
 `rgba(15,23,42,0.2)` all survive a theme swap and then look wrong. Reach for a

@@ -769,12 +769,21 @@ preview.
 - `"default"`
 - `"spotlight"`
 - `"grid"`
+- `"accent"`
 - `"none"`
 
-`SlideBackground` renders one empty element carrying `data-slide-background`.
-What each variant paints lives in the theme, so change the look in its
-`theme.css` and read its `THEME.md` first. Run `deckard eject theme` when the
-theme is still an import.
+`SlideBackground` renders one empty element carrying `data-slide-background`,
+and the canvas carries the variant name too. What each variant paints lives in
+the theme, so change the look in its `theme.css` and read its `THEME.md` first.
+Run `deckard eject theme` when the theme is still an import.
+
+`"accent"` is the inverted statement slide the design templates all carry: the
+canvas floods with the theme accent and the ink flips, chrome included. Use it
+once or twice in a deck, for the one sentence that has to land, and never on
+two slides in a row.
+
+No variant paints a radial wash or a corner glow. The four textures a theme has
+are flat colour, a rule, a grid, and the diagonal hatch on `--slide-hatch`.
 
 ## Theme
 
@@ -812,6 +821,25 @@ Inside the canvas, style with semantic tokens (`bg-card`, `text-muted-foreground
 or slide tokens (`--slide-title-size`, `--slide-code-size`, `--slide-surface`).
 Never a hardcoded color. The theme's `THEME.md` lists the tokens and what they
 control.
+
+Every size token is set against the 1920x1080 canvas at a 16px root, so 1rem is
+16 canvas pixels and the scale reads the way it does on a projector rather than
+the way it does in a browser window. The default frame is that canvas inside
+`--slide-padding-inline` and `--slide-padding-block`, left aligned and uncapped,
+so a slide starts at the left margin and runs to the right one. Content that
+wants to be centred centres itself in its block.
+
+The contract has a second half. Tokens are values; data attributes are parts. A
+block names the piece of itself a theme might want to reach, and the theme
+styles that attribute, decorative `::before` and `::after` content included,
+which is how phosphor writes `[x]` in front of a list marker and ledger swaps
+one for a hanging rule. The full list is the "Block part contract" comment at
+the bottom of `@deckard/core/styles.css`, and a block may rewrite its markup and
+its class names freely as long as those attributes stay where they are.
+
+Anything that is new content rather than a treatment of existing content, a boot
+log, a status table, a cursor line with words in it, is slide content. It goes
+in a block the deck composes, not in a theme.
 
 A slide carries one surface. A framed panel holds flat content, an open frame
 holds content that brings its own border or background, and the two never nest.

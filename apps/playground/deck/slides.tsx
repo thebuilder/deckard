@@ -125,40 +125,39 @@ export const slides: SlideDefinition[] = [
     body: (
       <OpenContentSlide
         eyebrow="Capabilities"
-        title="A production-ready presentation baseline"
-        description="Deckard focuses on practical presentation features you can reuse in demos, talks, and product walkthroughs."
+        title="What you get out of the box"
+        description="Practical features for demos, talks, and walkthroughs."
       >
         <FeatureGrid
           items={[
             {
-              title: "Step-based reveals",
+              title: "Step reveals",
               description:
-                "Progressively reveal dense content with `stepCount` and `SlideStep`, while preserving keyboard and click progression.",
+                "Reveal dense content in phases with stepCount and SlideStep.",
             },
             {
               title: "Fast navigation",
-              description:
-                "Arrow keys + command center (`Cmd/Ctrl + K`) make it easy to jump and control flow live.",
+              description: "Arrow keys, and a command center on Cmd/Ctrl + K.",
             },
             {
               title: "Theme support",
               description:
-                "Built-in light/dark switching works with shadcn tokens so slides match your app styling.",
+                "Light and dark switch on shadcn tokens, so slides match the app.",
             },
             {
-              title: "Config-driven metadata",
+              title: "One config",
               description:
-                "One shared config powers document metadata and header branding, reducing duplicated strings.",
+                "Document metadata and header branding from the same object.",
             },
             {
               title: "Layout control",
               description:
-                "Use default or fullscreen layout per slide without custom wrappers or route-level hacks.",
+                "Default or fullscreen per slide, with no route level hacks.",
             },
             {
-              title: "Background variants",
+              title: "Backgrounds",
               description:
-                "Switch between default, spotlight, grid, or no background for different storytelling moments.",
+                "Five variants, from flat to the inverted accent statement.",
             },
           ]}
         />
@@ -238,6 +237,7 @@ export const slides: SlideDefinition[] = [
     body: (
       <BreakerSlide
         eyebrow="Layout + background"
+        index="02"
         title="Each slide can pick its own frame"
         description="Use per-slide `layout`, `header`, and `background` settings to switch from standard narrative mode to fullscreen visual mode."
       />
@@ -351,5 +351,6 @@ Say what is missing on purpose: no heading, no lead, no panel. The slide is the 
         meta={["npx shadcn add deckard", "deckard.dev"]}
       />
     ),
+    background: "accent",
   },
 ]
