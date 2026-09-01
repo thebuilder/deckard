@@ -1,9 +1,6 @@
 import { SlideStep } from "@deckard/core/components"
 import { FeatureGrid } from "@/app/slides/blocks/collections"
-import {
-  ContentSlideCard,
-  HeroSlide,
-} from "@/app/slides/blocks/templates"
+import { HeroSlide, OpenContentSlide } from "@/app/slides/blocks/templates"
 import "server-only"
 
 import type { SlideDefinition } from "@deckard/core"
@@ -29,7 +26,7 @@ export const slides: SlideDefinition[] = [
   {
     title: "Where things are",
     body: (
-      <ContentSlideCard
+      <OpenContentSlide
         description="Three directories. Everything else is a normal Next.js app."
         eyebrow="The shape of this app"
       >
@@ -52,7 +49,7 @@ export const slides: SlideDefinition[] = [
             },
           ]}
         />
-      </ContentSlideCard>
+      </OpenContentSlide>
     ),
   },
   {
@@ -60,29 +57,38 @@ export const slides: SlideDefinition[] = [
     notes: "Stop after each step. Let the room catch up before the next one.",
     stepCount: 3,
     body: (
-      <ContentSlideCard
+      <OpenContentSlide
         description="stepCount={3} and one SlideStep per step. Arrow keys walk through them, and the presenter view shows what comes next."
         eyebrow="Stepped slides"
       >
         <div className="grid gap-3">
           <SlideStep step={0}>
-            <p className="rounded-[var(--slide-radius)] border border-[var(--slide-surface-border)] bg-[var(--slide-surface-muted)] p-4 text-[length:var(--slide-support-size)] text-muted-foreground">
+            <p
+              className="rounded-[var(--slide-radius)] border border-[var(--slide-surface-border)] bg-[var(--slide-surface-muted)] p-5 text-[length:var(--slide-body-size)] text-muted-foreground"
+              data-slide-surface=""
+            >
               A step is a wrapper. The content inside it is ordinary JSX.
             </p>
           </SlideStep>
           <SlideStep step={1}>
-            <p className="rounded-[var(--slide-radius)] border border-[var(--slide-surface-border)] bg-[var(--slide-surface-muted)] p-4 text-[length:var(--slide-support-size)] text-muted-foreground">
+            <p
+              className="rounded-[var(--slide-radius)] border border-[var(--slide-surface-border)] bg-[var(--slide-surface-muted)] p-5 text-[length:var(--slide-body-size)] text-muted-foreground"
+              data-slide-surface=""
+            >
               Steps live in the URL, so a reload lands on the same reveal.
             </p>
           </SlideStep>
           <SlideStep step={2}>
-            <p className="rounded-[var(--slide-radius)] border border-primary/40 bg-primary/8 p-4 text-[length:var(--slide-support-size)] text-muted-foreground">
+            <p
+              className="rounded-[var(--slide-radius)] border border-primary/40 bg-primary/8 p-5 text-[length:var(--slide-body-size)] text-muted-foreground"
+              data-slide-surface=""
+            >
               Use them for an argument that builds. Do not use them to hide a
               list you could have cut.
             </p>
           </SlideStep>
         </div>
-      </ContentSlideCard>
+      </OpenContentSlide>
     ),
   },
   ...discoveredSlides,

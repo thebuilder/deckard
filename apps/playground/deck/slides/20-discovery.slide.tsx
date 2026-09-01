@@ -1,6 +1,6 @@
 import type { SlideMeta } from "@deckard/core"
 import { FeatureGrid } from "@/app/slides/blocks/collections"
-import { ContentSlideCard } from "@/app/slides/blocks/templates"
+import { OpenContentSlide } from "@/app/slides/blocks/templates"
 
 export const meta: SlideMeta = {
   order: 1,
@@ -16,7 +16,7 @@ Keep the manual point in the room. deck/slides.tsx is still a plain array, and a
 
 export default function DiscoverySlide() {
   return (
-    <ContentSlideCard
+    <OpenContentSlide
       description="This slide is deck/slides/20-discovery.slide.tsx. The deck array never names it."
       eyebrow="Discovery"
       title="Slides can live in their own files"
@@ -40,6 +40,6 @@ export default function DiscoverySlide() {
           },
         ]}
       />
-    </ContentSlideCard>
+    </OpenContentSlide>
   )
 }

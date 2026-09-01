@@ -550,6 +550,21 @@ Presenter notes example:
 }
 ```
 
+Example focus slide, where the block is the whole slide and there is no heading
+around it:
+
+```tsx
+{
+  slug: "authoring",
+  title: "Authoring",
+  body: (
+    <FocusSlide kicker="deck/slides.tsx">
+      <CodeBlock code={sample} language="typescript" />
+    </FocusSlide>
+  ),
+}
+```
+
 Example image slide:
 
 ```tsx
@@ -596,9 +611,9 @@ before it renders:
 async function ReleaseSlide() {
   const releases = await loadReleases()
 
-  return <ContentSlideCard eyebrow="Releases" title="Shipped this quarter">
+  return <OpenContentSlide eyebrow="Releases" title="Shipped this quarter">
     <FeatureGrid items={releases} />
-  </ContentSlideCard>
+  </OpenContentSlide>
 }
 ```
 
@@ -766,8 +781,16 @@ defaults to dark still shoots light when asked, and a capture that came out in
 the other mode fails naming the slide instead of being written.
 
 Inside the canvas, style with semantic tokens (`bg-card`, `text-muted-foreground`)
-or slide tokens (`--slide-title-size`, `--slide-surface`). Never a hardcoded
-color. The theme's `THEME.md` lists the tokens and what they control.
+or slide tokens (`--slide-title-size`, `--slide-code-size`, `--slide-surface`).
+Never a hardcoded color. The theme's `THEME.md` lists the tokens and what they
+control.
+
+A slide carries one surface. A framed panel holds flat content, an open frame
+holds content that brings its own border or background, and the two never nest.
+Blocks with a surface of their own carry `data-slide-surface`, the panel in
+`ContentSlideCard` carries `data-slide-panel`, and the stylesheet drops the
+panel's frame when it holds a surface. Compose through `OpenContentSlide` or
+`FocusSlide` anyway.
 
 ## Checking a deck
 

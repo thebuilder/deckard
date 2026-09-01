@@ -34,14 +34,42 @@ new markup only when none of these fits.
 | `BreakerSlide` (templates.tsx)            | a section divider, left aligned                   |
 | `ContentSlideCard` (templates.tsx)        | intro copy above a bordered panel                 |
 | `OpenContentSlide` (templates.tsx)        | the same intro with no panel                      |
+| `FocusSlide` (templates.tsx)              | one block and no heading at all                   |
 | `BulletList` (collections.tsx)            | four to six numbered points                       |
 | `FeatureGrid` (collections.tsx)           | three parallel cards                              |
+| `StatGrid` (metrics.tsx)                  | exactly three figures with their comparisons      |
 | `ImageShowcaseSlide` (media.tsx)          | an image beside a caption panel                   |
 | `FullscreenMediaSlide` (media.tsx)        | an image or video bleeding to every canvas edge   |
 | `Eyebrow`, `SlideHeading` (typography.tsx)| your own layout, with the deck's type rhythm      |
 
-Prefer an explicit variant component over a boolean prop. `ContentSlideCard` and
-`OpenContentSlide` are two components on purpose.
+Prefer an explicit variant component over a boolean prop. `ContentSlideCard`,
+`OpenContentSlide`, and `FocusSlide` are three components on purpose.
+
+## Card, open, or focus
+
+One surface per slide. A slide is either a framed panel with flat content in it,
+or an open frame holding content that carries its own surface. Never a bordered
+panel full of bordered cards.
+
+- `ContentSlideCard` when the body has no surface of its own: a paragraph, a
+  short definition list, your own flat markup.
+- `OpenContentSlide` when the body brings its own frame: `FeatureGrid`,
+  `BulletList`, `StatGrid`, `CodeBlock`, a chart, a table.
+- `FocusSlide` when the body is the whole point and the heading was scaffolding:
+  a code sample, a list of keys, one image, three figures. It hands the block
+  the whole frame at the normal type scale, so a code sample shows more lines
+  rather than bigger ones, and takes one optional `kicker` string for
+  orientation. No heading, no lead, no panel. Do not reach for it when the
+  slide needs a sentence to make sense.
+
+The rule is enforced as well as documented. A block with its own surface carries
+`data-slide-surface`, and `ContentSlideCard`'s panel carries
+`data-slide-panel`; a panel that holds a surface drops its border, background,
+shadow, and padding. Write it the right way anyway. The attribute keeps a
+mistake from looking bad, it does not make the composition right.
+
+A new block that paints a border or a background needs `data-slide-surface` on
+its outer element, or a card wrapped around it will frame a frame.
 
 ## Inline, or its own file
 
@@ -94,9 +122,10 @@ part that has to scroll in `SlideScrollArea` from `@deckard/core/components`, so
 scrolling never steps the deck.
 
 Inside the canvas, style with semantic tokens (`bg-card`, `text-muted-foreground`,
-`border-border`) or slide tokens (`--slide-title-size`, `--slide-surface`,
-`--slide-radius`). Never a hardcoded color. Changing how a background variant
-looks is a `theme.css` edit, not a component edit.
+`border-border`) or slide tokens (`--slide-title-size`, `--slide-code-size`,
+`--slide-surface`, `--slide-radius`). Never a hardcoded color, and never a raw
+font size where a token exists. Changing how a background variant looks is a
+`theme.css` edit, not a component edit.
 
 Outside the canvas, in the deck controls, command center, presenter console, and
 dialogs, keep the app tokens from `app/globals.css`.

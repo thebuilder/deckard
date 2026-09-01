@@ -94,17 +94,17 @@ const deckSource = `import type { SlideDefinition } from "@deckard/core"
 import { discoverSlides } from "@deckard/core/discovery"
 import "server-only"
 
-// Eager: every module is in the bundle either way. The glob only saves the imports.
+// Eager: the glob saves the imports, not the bundle.
 const discoveredSlides = discoverSlides(
   import.meta.glob("./slides/**/*.slide.tsx", { eager: true }),
   { sort: "order" }
 )
 
 async function readDeckStats(): Promise<Stat[]> {
-  const manifest = await readFile("node_modules/@deckard/core/package.json", "utf8")
-  const entryPoints = Object.keys(JSON.parse(manifest).exports)
+  const manifest = await readFile(corePackageJson, "utf8")
+  const entries = Object.keys(JSON.parse(manifest).exports)
 
-  return [{ label: "Entry points", value: String(entryPoints.length), note: "..." }]
+  return [{ label: "Entry points", value: String(entries.length) }]
 }
 
 async function DeckStatsSlide() {
@@ -116,7 +116,12 @@ export const slides: SlideDefinition[] = [
     slug: "cover",
     title: "Deckard: React presentations without the ceremony",
     notes: "Thirty seconds on why anyone should care, then the thesis.",
-    body: <HeroSlide eyebrow="Deckard" title="React presentations without the ceremony" />
+    body: (
+      <HeroSlide
+        eyebrow="Deckard"
+        title="React presentations without the ceremony"
+      />
+    )
   },
   {
     slug: "thesis",

@@ -106,7 +106,8 @@ is what generates it, so a change to that shape belongs in
   id is its `slug` or its 1-based position, matched exactly, so a slugged slide
   has no numeric URL. Numeric slugs are rejected.
 - Authoring blocks: `apps/playground/app/slides/blocks/`, split into
-  `templates.tsx`, `typography.tsx`, `collections.tsx`, `media.tsx`.
+  `templates.tsx`, `typography.tsx`, `collections.tsx`, `media.tsx`, and
+  `metrics.tsx`.
 - Chrome and shell behavior: `packages/core/src/components/slide-shell.tsx`.
 - The fixed canvas: `slide-viewport.tsx` fits and centers it,
   `slide-canvas.tsx` is the 1920x1080 coordinate space, and the size comes from
@@ -135,6 +136,13 @@ is what generates it, so a change to that shape belongs in
 ## Change discipline
 
 - Favor small, composable components over large slide bodies.
+- One surface per slide. A slide is a framed panel with flat content inside it,
+  or an open frame holding content that carries its own surface, never a
+  bordered panel full of bordered cards. A block that paints a border or a
+  background carries `data-slide-surface`, `ContentSlideCard`'s panel carries
+  `data-slide-panel`, and a panel holding a surface drops its own frame. Compose
+  through `OpenContentSlide` or `FocusSlide` anyway: the attribute keeps a
+  mistake from looking bad, it does not make the composition right.
 - Update the README when you add a slide model field or change its behavior.
 - Run `pnpm typecheck && pnpm lint && pnpm test` after structural changes, plus
   `pnpm deck:validate`, and `pnpm smoke:package` after touching the package

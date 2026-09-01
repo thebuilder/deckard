@@ -7,12 +7,12 @@ import {
 } from "@/app/slides/blocks/media"
 import {
   BreakerSlide,
-  ContentSlideCard,
+  FocusSlide,
   HeroSlide,
   OpenContentSlide,
 } from "@/app/slides/blocks/templates"
 import { Eyebrow } from "@/app/slides/blocks/typography"
-import exampleBackgroundImage from "@/assets/example-background.png"
+import incomingSignalImage from "@/assets/incoming-signal.webp"
 import templateCapabilitiesImage from "@/assets/template-capabilities.svg"
 import "server-only"
 
@@ -24,6 +24,46 @@ const discoveredSlides = discoverSlides(
   import.meta.glob("./slides/**/*.slide.tsx", { eager: true }),
   { sort: "order" }
 )
+
+interface RevealCardProps {
+  children: React.ReactNode
+  label: string
+}
+
+function RevealCardBody({ children, label }: RevealCardProps) {
+  return (
+    <>
+      <p className="font-semibold text-[length:var(--slide-support-size)] uppercase tracking-[0.2em]">
+        {label}
+      </p>
+      <p className="mt-2 text-[length:var(--slide-body-size)] text-muted-foreground leading-[1.4]">
+        {children}
+      </p>
+    </>
+  )
+}
+
+function RevealCard({ children, label }: RevealCardProps) {
+  return (
+    <div
+      className="rounded-[var(--slide-radius)] border border-[var(--slide-surface-border)] bg-[var(--slide-surface-muted)] p-5 text-muted-foreground"
+      data-slide-surface=""
+    >
+      <RevealCardBody label={label}>{children}</RevealCardBody>
+    </div>
+  )
+}
+
+function RevealLandingCard({ children, label }: RevealCardProps) {
+  return (
+    <div
+      className="rounded-[var(--slide-radius)] border border-primary/40 bg-primary/8 p-5 text-primary"
+      data-slide-surface=""
+    >
+      <RevealCardBody label={label}>{children}</RevealCardBody>
+    </div>
+  )
+}
 
 const vitalsDelayMs = 40
 
@@ -55,13 +95,13 @@ async function DeckVitalsSlide() {
   const vitals = await loadDeckVitals()
 
   return (
-    <ContentSlideCard
+    <OpenContentSlide
       description="This body is an async Server Component. It awaits its data, then returns the slide."
       eyebrow="Server components"
       title="Slides can fetch their own data"
     >
       <FeatureGrid items={vitals} />
-    </ContentSlideCard>
+    </OpenContentSlide>
   )
 }
 
@@ -82,7 +122,7 @@ export const slides: SlideDefinition[] = [
   {
     title: "Capabilities",
     body: (
-      <ContentSlideCard
+      <OpenContentSlide
         eyebrow="Capabilities"
         title="A production-ready presentation baseline"
         description="Deckard focuses on practical presentation features you can reuse in demos, talks, and product walkthroughs."
@@ -121,16 +161,15 @@ export const slides: SlideDefinition[] = [
             },
           ]}
         />
-      </ContentSlideCard>
+      </OpenContentSlide>
     ),
   },
   {
     title: "Navigation",
+    notes:
+      "Nothing on this slide but the four ways to move. Demonstrate each one as you read it, and let the room watch the deck answer.",
     body: (
-      <OpenContentSlide
-        eyebrow="Navigation"
-        title="Control the presentation without touching the URL"
-      >
+      <FocusSlide kicker="Presenting without touching the URL">
         <BulletList
           items={[
             <>
@@ -151,7 +190,7 @@ export const slides: SlideDefinition[] = [
             </>,
           ]}
         />
-      </OpenContentSlide>
+      </FocusSlide>
     ),
   },
   {
@@ -159,57 +198,37 @@ export const slides: SlideDefinition[] = [
     notes:
       "Pause between each reveal and ask a short alignment question before advancing to the next step.",
     body: (
-      <ContentSlideCard
+      <OpenContentSlide
         eyebrow="Stepped content"
         title="Reveal information in phases"
         description="This slide uses `stepCount={4}` with `SlideStep` blocks."
       >
         <div className="grid gap-3">
           <SlideStep step={0}>
-            <div className="rounded-[var(--slide-radius)] border border-[var(--slide-surface-border)] bg-[var(--slide-surface-muted)] p-4">
-              <p className="font-semibold text-[length:var(--slide-support-size)] text-muted-foreground uppercase tracking-[0.2em]">
-                Step 1
-              </p>
-              <p className="mt-2 text-[length:var(--slide-support-size)] text-muted-foreground">
-                Start with the core problem or context.
-              </p>
-            </div>
+            <RevealCard label="Step 1">
+              Start with the core problem or context.
+            </RevealCard>
           </SlideStep>
 
           <SlideStep step={1}>
-            <div className="rounded-[var(--slide-radius)] border border-[var(--slide-surface-border)] bg-[var(--slide-surface-muted)] p-4">
-              <p className="font-semibold text-[length:var(--slide-support-size)] text-muted-foreground uppercase tracking-[0.2em]">
-                Step 2
-              </p>
-              <p className="mt-2 text-[length:var(--slide-support-size)] text-muted-foreground">
-                Add supporting evidence once the audience is aligned.
-              </p>
-            </div>
+            <RevealCard label="Step 2">
+              Add supporting evidence once the audience is aligned.
+            </RevealCard>
           </SlideStep>
 
           <SlideStep step={2}>
-            <div className="rounded-[var(--slide-radius)] border border-[var(--slide-surface-border)] bg-[var(--slide-surface-muted)] p-4">
-              <p className="font-semibold text-[length:var(--slide-support-size)] text-muted-foreground uppercase tracking-[0.2em]">
-                Step 3
-              </p>
-              <p className="mt-2 text-[length:var(--slide-support-size)] text-muted-foreground">
-                Show options and tradeoffs before deciding.
-              </p>
-            </div>
+            <RevealCard label="Step 3">
+              Show options and tradeoffs before deciding.
+            </RevealCard>
           </SlideStep>
 
           <SlideStep step={3}>
-            <div className="rounded-[var(--slide-radius)] border border-primary/40 bg-primary/8 p-4">
-              <p className="font-semibold text-[length:var(--slide-support-size)] text-primary uppercase tracking-[0.2em]">
-                Step 4
-              </p>
-              <p className="mt-2 text-[length:var(--slide-support-size)] text-muted-foreground">
-                Land on one recommendation and the next action.
-              </p>
-            </div>
+            <RevealLandingCard label="Step 4">
+              Land on one recommendation and the next action.
+            </RevealLandingCard>
           </SlideStep>
         </div>
-      </ContentSlideCard>
+      </OpenContentSlide>
     ),
     stepCount: 4,
   },
@@ -256,8 +275,8 @@ export const slides: SlideDefinition[] = [
         overlay="strong"
         media={{
           kind: "image",
-          src: exampleBackgroundImage,
-          alt: "Example scenic background",
+          src: incomingSignalImage,
+          alt: "Wireframe monolith rising over a glowing signal grid",
           placeholder: "blur",
           priority: true,
         }}
@@ -279,67 +298,38 @@ export const slides: SlideDefinition[] = [
   {
     slug: "authoring",
     title: "Authoring Example",
-    notes: `Start this section by anchoring on the authoring contract: slides.tsx should remain definitions-only and all implementation detail should live in reusable blocks.
+    notes: `This is the whole authoring contract on one slide, so read it out rather than talking over it.
 
-Call out that this keeps deck iteration fast because we can rearrange narrative flow without touching component logic.
+A slide is metadata plus a body. The body is a block, and the block is where every class name and every token lives. Nothing on this slide is a layout decision made twice.
 
-Mention the practical editing flow:
-1) add metadata (title, layout, background, stepCount),
-2) compose with existing blocks,
-3) only create new primitives when a pattern repeats.
+That split is what keeps the deck cheap to rearrange: reordering the array moves the talk, and no component changes.
 
-Pause briefly on the code snippet and explicitly point to the commented fullscreen media example.
+Point at the last line. The spread is discovery, and the three slides after it are files in deck/slides that this array never names.
 
-Close by reinforcing that this pattern is what makes Deckard scalable for future decks with different visual styles but identical navigation and presenter tooling.`,
+Say what is missing on purpose: no heading, no lead, no panel. The slide is the code, which is the point of the focus layout.`,
     body: (
-      <ContentSlideCard
-        eyebrow="Authoring"
-        title="Slide definitions stay small"
-        description="Author slide metadata in one place and pull visuals from reusable components."
-      >
+      <FocusSlide kicker="deck/slides.tsx">
         <CodeBlock
           code={`export const slides: SlideDefinition[] = [
   {
-    slug: "image",
-    title: "Image-first slide",
+    slug: "pricing",
+    title: "What it costs",
     body: (
-      <ImageShowcaseSlide
-        image={{ src: myImage, alt: "Capability map", placeholder: "blur" }}
-      />
+      <OpenContentSlide eyebrow="Pricing" title="Tiers">
+        <FeatureGrid items={tiers} />
+      </OpenContentSlide>
     ),
-    // Fullscreen video with autoplay:
-    // body: (
-    //   <FullscreenMediaSlide
-    //     media={{ kind: "video", src: "/videos/demo.mp4", autoplay: true }}
-    //   />
-    // ),
-    layout: "fullscreen",
-    background: "none",
-    header: "hidden"
   },
   {
-    title: "Stepped content",
+    title: "Rollout",
     stepCount: 3,
-    notes: "Pause on each step and ask for questions.",
-    body: (
-      <ContentSlideCard eyebrow="Rollout" title="Three phases">
-        <SlideStep step={0}>Pilot team</SlideStep>
-        <SlideStep step={1}>Second wave</SlideStep>
-        <SlideStep step={2}>Everyone else</SlideStep>
-      </ContentSlideCard>
-    )
+    body: <RolloutSlide />,
   },
-  {
-    slug: "numbers",
-    title: "Numbers",
-    body: <QuarterlyNumbersSlide />
-  },
-  ...discoveredSlides
+  ...discoveredSlides,
 ]`}
           language="typescript"
-          maxHeight={360}
         />
-      </ContentSlideCard>
+      </FocusSlide>
     ),
   },
   {

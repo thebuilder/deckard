@@ -44,7 +44,8 @@ Code and `kbd` reset tracking to zero, since the mono face is already even.
 | `--slide-subheading-size` | an `h2` inside a slide body              |
 | `--slide-lead-size`       | the sentence under a headline            |
 | `--slide-body-size`       | bullet copy, the main text of a slide    |
-| `--slide-support-size`    | captions, grid copy, code, metadata rows |
+| `--slide-code-size`       | the type inside a `CodeBlock`            |
+| `--slide-support-size`    | captions, grid copy, metadata rows       |
 | `--slide-label-size`      | eyebrows and other uppercase labels      |
 
 The scale runs one step larger than the default theme at the top and one step

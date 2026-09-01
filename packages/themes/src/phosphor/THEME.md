@@ -50,8 +50,14 @@ rather than refining it, since the letterforms are the theme.
 | `--slide-subheading-size` | an `h2` inside a slide body              |
 | `--slide-lead-size`       | the sentence under a headline            |
 | `--slide-body-size`       | bullet copy, the main text of a slide    |
-| `--slide-support-size`    | captions, grid copy, code, metadata rows |
+| `--slide-code-size`       | the type inside a `CodeBlock`            |
+| `--slide-support-size`    | captions, grid copy, metadata rows       |
 | `--slide-label-size`      | eyebrows and other uppercase labels      |
+
+`--slide-code-size` is `1.25rem` here against a `1.125rem` default. This is the
+one theme where code is not a supporting element: the slide is already set in
+the same family, so a code block that sits below the body size reads as a
+footnote instead of as the thing being shown.
 
 This is the smallest scale in the registry, and it has to be. Monospace runs
 roughly 20% wider than a proportional sans at the same point size, so a title at
