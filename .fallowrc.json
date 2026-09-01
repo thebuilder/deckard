@@ -1,5 +1,8 @@
 {
   "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
   "entry": ["components/ui/**", "app/slides/blocks/**"],
+  "ignoreExports": [
+    { "file": "deck/slides/**/*.slide.tsx", "exports": ["meta", "notes"] }
+  ],
   "ignoreDependencies": ["postcss-load-config", "react-dom", "tailwindcss"]
 }

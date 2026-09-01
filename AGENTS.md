@@ -14,7 +14,7 @@ The reusable parts (`lib/deck`, `components/slideshow`) are headed for `@deckard
 
 - Slide definitions live in `deck/slides.tsx`, and the exported array always
   defines deck order. `resolveSlides` never sorts.
-- File-per-slide modules live in `deck/slides/*.slide.tsx` and join the array through `slideFromModule`.
+- File-per-slide modules live in `deck/slides/*.slide.tsx`. `deck/slides.tsx` discovers them with one eager `import.meta.glob` and spreads the group into the array. A single module can also be imported by hand through `slideFromModule`.
 - Deck config lives in `deck/deck.ts` and is wrapped in `defineDeck`.
 - Slide model, id resolution, and validation live in `lib/deck/*`. A slide id
   is its `slug` or its 1-based position, and lookups match it exactly, so a
@@ -57,6 +57,11 @@ The reusable parts (`lib/deck`, `components/slideshow`) are headed for `@deckard
 - Metadata stays synchronously readable. Export `meta` and `notes` as plain values so the deck can list, order, and title a slide without rendering it.
 - A slide module exports `default` (the component), `meta`, and `notes`. `slideFromModule` turns it into a `SlideDefinition`.
 - Anything crossing into a client component has to be serializable. Pass a `SlideSummary` built from a `ResolvedSlide`, and let the rendered body cross only as `children`.
+- Discovery is an organizational convenience. The glob is eager, so extracting a slide changes where you edit it and nothing about what ships. Keep a slide inline while it is metadata and one block, give it a file once it loads data, brings a client widget, or carries long notes.
+- The spread position in `deck/slides.tsx` is authoritative. `sort` only orders slides inside the discovered group, and `discoverSlides` drops `meta.order` from the definitions so a module can never reorder the deck around it.
+- `sort: "path"` (the default) compares glob keys segment by segment with numeric-aware compare, `sort: "order"` reads `meta.order` and falls back to path order, and a comparator gets `{ path, meta }` for both slides. The deck uses `"order"`.
+- A discovered module has to be synchronous. Top-level await or a WebAssembly dependency anywhere in its imports turns it into an async module, the eager glob hands back a promise, and discovery throws naming the file. That is why a slide using `CodeBlock` (shiki loads WebAssembly) stays in the array with `slideFromModule`.
+- Adding or deleting a `.slide.tsx` file while `next dev` runs leaves page routes serving stale modules. Restart the dev server.
 - A slide that throws renders the inline card from `SlideErrorBoundary` and navigation keeps working. That covers `next dev` and anything a nested client component throws after hydration. In a production build, a Server Component that throws is fatal to the route and Next serves its own error page instead.
 
 ## UX expectations
