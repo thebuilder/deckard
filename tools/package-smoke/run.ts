@@ -85,7 +85,7 @@ function assertRuntimeStyles(css: string) {
 function assertBuiltInTheme(css: string) {
   if (!css.includes(importedTheme)) {
     throw new Error(
-      `The built CSS is missing ${importedTheme}, so importing a theme from @deckard/core/themes did not carry its stylesheet`
+      `The built CSS is missing ${importedTheme}, so importing a theme from @deckard/themes did not carry its stylesheet`
     )
   }
 
@@ -98,12 +98,13 @@ function assertBuiltInTheme(css: string) {
   }
 }
 
-function packCore(destination: string) {
+function pack(filter: string, destination: string, name: string) {
+  const before = new Set(fs.readdirSync(destination))
   const result = spawnSync(
     "pnpm",
     [
       "--filter",
-      "@deckard/core",
+      filter,
       "exec",
       "pnpm",
       "pack",
@@ -114,20 +115,20 @@ function packCore(destination: string) {
   )
 
   if (result.status !== 0) {
-    throw new Error("pnpm pack failed")
+    throw new Error(`pnpm pack failed for ${filter}`)
   }
 
   const packed = fs
     .readdirSync(destination)
-    .find((entry) => entry.endsWith(".tgz"))
+    .find((entry) => entry.endsWith(".tgz") && !before.has(entry))
 
   if (!packed) {
-    throw new Error("pnpm pack produced no tarball")
+    throw new Error(`pnpm pack produced no tarball for ${filter}`)
   }
 
   fs.renameSync(
     path.join(destination, packed),
-    path.join(destination, "deckard-core.tgz")
+    path.join(destination, `${name}.tgz`)
   )
 }
 
@@ -136,8 +137,20 @@ const appDirectory = path.join(scratch, "app")
 
 try {
   assertPlainConsumer()
-  run("pnpm", ["--filter", "@deckard/core", "run", "build"], repoRoot)
-  packCore(scratch)
+  run(
+    "pnpm",
+    [
+      "--filter",
+      "@deckard/core",
+      "--filter",
+      "@deckard/themes",
+      "run",
+      "build",
+    ],
+    repoRoot
+  )
+  pack("@deckard/core", scratch, "deckard-core")
+  pack("@deckard/themes", scratch, "deckard-themes")
   fs.cpSync(fixtureSource, appDirectory, { recursive: true })
 
   run(
@@ -154,7 +167,7 @@ try {
   assertBuiltInTheme(css)
 
   process.stdout.write(
-    "\n@deckard/core builds and styles a standalone Next.js app, theme included\n"
+    "\n@deckard/core and @deckard/themes build and style a standalone Next.js app\n"
   )
 } finally {
   if (keepScratch) {

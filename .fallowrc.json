@@ -8,7 +8,7 @@
     "packages/core/src/deck/slide-from-module.tsx",
     "packages/core/src/lib/utils.ts",
     "packages/core/src/ui/**",
-    "packages/core/src/themes/index.ts",
+    "packages/themes/src/index.ts",
     "apps/playground/components/ui/**",
     "apps/playground/app/slides/blocks/**",
     "apps/demo/app/slides/blocks/**",

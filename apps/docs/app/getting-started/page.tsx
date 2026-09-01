@@ -32,14 +32,16 @@ const appTree = `my-talk/
 const tarballInit = `# from the root of a Deckard checkout
 pnpm cli:build
 pnpm --filter @deckard/core exec pnpm pack --pack-destination /tmp/deckard
+pnpm --filter @deckard/themes exec pnpm pack --pack-destination /tmp/deckard
 pnpm --filter @deckard/cli exec pnpm pack --pack-destination /tmp/deckard
 
 node packages/cli/bin/deckard.mjs init ~/code/my-talk \\
   --core-tarball /tmp/deckard/deckard-core-0.0.1.tgz \\
+  --themes-tarball /tmp/deckard/deckard-themes-0.0.1.tgz \\
   --cli-tarball /tmp/deckard/deckard-cli-0.0.1.tgz`
 
 const deckConfig = `import { defineDeck } from "@deckard/core"
-import { deckard } from "@deckard/core/themes"
+import { deckard } from "@deckard/themes"
 
 import { slides } from "@/deck/slides"
 
@@ -171,11 +173,13 @@ export default function GettingStartedPage() {
 
       <h2 className="pt-4 text-2xl">Where the packages stand today</h2>
       <p>
-        <code>@deckard/core</code> and <code>@deckard/cli</code> are built for
-        npm and are not published there yet. Publishing them is the plan before
-        the API is called stable, so the <code>npx</code> line above does not
-        work from a clean machine yet. Until it does, pack both out of a
-        checkout and point the init at the tarballs.
+        <code>@deckard/core</code>, <code>@deckard/themes</code>, and{" "}
+        <code>@deckard/cli</code> are built for npm and are not published there
+        yet. Publishing them is the plan before the API is called stable, so the{" "}
+        <code>npx</code> line above does not work from a clean machine yet.
+        Until it does, pack all three out of a checkout and point the init at
+        the tarballs. They version together, so <code>init</code> writes the
+        same range for all three when you pass no tarball.
       </p>
       <pre>
         <code>{tarballInit}</code>
@@ -247,11 +251,12 @@ export default function GettingStartedPage() {
 
       <h2 className="pt-4 text-2xl">Switch or eject the theme</h2>
       <p>
-        The six Deckard themes ship inside <code>@deckard/core</code>. A deck
-        picks one by importing it from <code>@deckard/core/themes</code> and
-        passing it to <code>defineDeck</code>, so switching is a one-line edit
-        and nothing is copied into your app.{" "}
-        <code>deckard add theme &lt;name&gt;</code> makes that edit for you.
+        The six Deckard themes are the whole of <code>@deckard/themes</code>,
+        the second package <code>init</code> installs. A deck picks one by
+        importing it from <code>@deckard/themes</code> and passing it to{" "}
+        <code>defineDeck</code>, so switching is a one-line edit and nothing is
+        copied into your app. <code>deckard add theme &lt;name&gt;</code> makes
+        that edit for you.
       </p>
       <pre>
         <code>{themeCommands}</code>
@@ -385,7 +390,7 @@ export default function GettingStartedPage() {
         That writes <code>app/slides/blocks/</code> into your app, plus the
         stylesheet import above. It leaves <code>next.config.ts</code> alone,
         and there is nothing to add there. The theme is not part of it: import
-        one from <code>@deckard/core/themes</code> instead.
+        one from <code>@deckard/themes</code> instead.
       </p>
       <p>
         Then the routes. <code>@deckard/core/next</code> ships them, so an app
@@ -425,7 +430,7 @@ export default function GettingStartedPage() {
           visual checks run against. It exercises every feature on purpose, so
           it is a test surface, not a template. Its blocks are also the source
           the <code>init</code> template is built from, and it imports its theme
-          from <code>@deckard/core/themes</code> the way a generated deck does.
+          from <code>@deckard/themes</code> the way a generated deck does.
         </li>
         <li>
           <code>apps/demo</code> is a 19-slide conference talk shaped exactly

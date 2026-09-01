@@ -133,7 +133,7 @@ function assertEjected(directory: string) {
 
   assert(
     source.includes('import { theme } from "@/deck/theme"') &&
-      !source.includes("@deckard/core/themes"),
+      !source.includes("@deckard/themes"),
     "deckard eject theme left deck.ts pointing at the built-in"
   )
 
@@ -199,13 +199,22 @@ function assertScaffold(manager: string, directory: string) {
   assert(
     fs
       .readFileSync(path.join(directory, "deck/deck.ts"), "utf8")
-      .includes('import { deckard } from "@deckard/core/themes"'),
-    "the generated deck.ts does not import its theme from @deckard/core/themes"
+      .includes('import { deckard } from "@deckard/themes"'),
+    "the generated deck.ts does not import its theme from @deckard/themes"
   )
 
   const generated = JSON.parse(
     fs.readFileSync(path.join(directory, "package.json"), "utf8")
-  ) as { packageManager?: string; scripts: Record<string, string> }
+  ) as {
+    dependencies: Record<string, string>
+    packageManager?: string
+    scripts: Record<string, string>
+  }
+
+  assert(
+    "@deckard/themes" in generated.dependencies,
+    "the generated package.json does not depend on @deckard/themes"
+  )
 
   assert(
     generated.packageManager?.startsWith(`${manager}@`),
@@ -225,14 +234,23 @@ function assertScaffold(manager: string, directory: string) {
 const scratch = fs.mkdtempSync(path.join(os.tmpdir(), "deckard-cli-"))
 
 try {
-  time("build @deckard/core and @deckard/cli", () => {
+  time("build @deckard/core, @deckard/themes, and @deckard/cli", () => {
     run("pnpm", ["cli:build"], repoRoot)
   })
 
   const core = pack("@deckard/core", scratch, "deckard-core")
+  const themes = pack("@deckard/themes", scratch, "deckard-themes")
   const cli = pack("@deckard/cli", scratch, "deckard-cli")
 
-  const initFlags = ["--core-tarball", core, "--cli-tarball", cli, "--no-git"]
+  const initFlags = [
+    "--core-tarball",
+    core,
+    "--themes-tarball",
+    themes,
+    "--cli-tarball",
+    cli,
+    "--no-git",
+  ]
 
   const pnpmInstaller = path.join(scratch, "via-pnpm")
   const pnpmApp = path.join(scratch, "my-talk")

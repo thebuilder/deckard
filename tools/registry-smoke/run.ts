@@ -21,7 +21,7 @@ const blockFiles = [
   "media.tsx",
 ]
 
-// The fixture deck imports this one from @deckard/core/themes. Nothing installs
+// The fixture deck imports this one from @deckard/themes. Nothing installs
 // it, so finding its class in the build proves the import is the whole path.
 const themeSelector = ".broadsheet-theme"
 
@@ -56,12 +56,14 @@ function run(command: string, args: string[], cwd: string) {
   })
 }
 
-async function packCore(destination: string) {
+async function pack(filter: string, destination: string, name: string) {
+  const before = new Set(fs.readdirSync(destination))
+
   await run(
     "pnpm",
     [
       "--filter",
-      "@deckard/core",
+      filter,
       "exec",
       "pnpm",
       "pack",
@@ -73,13 +75,13 @@ async function packCore(destination: string) {
 
   const packed = fs
     .readdirSync(destination)
-    .find((entry) => entry.endsWith(".tgz"))
+    .find((entry) => entry.endsWith(".tgz") && !before.has(entry))
 
-  assert(packed, "pnpm pack produced no tarball")
+  assert(packed, `pnpm pack produced no tarball for ${filter}`)
 
   fs.renameSync(
     path.join(destination, packed),
-    path.join(destination, "deckard-core.tgz")
+    path.join(destination, `${name}.tgz`)
   )
 }
 
@@ -212,8 +214,20 @@ const server = await serveRegistry(registryDirectory)
 
 try {
   await run("shadcn", ["build", "--output", registryDirectory], repoRoot)
-  await run("pnpm", ["--filter", "@deckard/core", "run", "build"], repoRoot)
-  await packCore(scratch)
+  await run(
+    "pnpm",
+    [
+      "--filter",
+      "@deckard/core",
+      "--filter",
+      "@deckard/themes",
+      "run",
+      "build",
+    ],
+    repoRoot
+  )
+  await pack("@deckard/core", scratch, "deckard-core")
+  await pack("@deckard/themes", scratch, "deckard-themes")
   fs.cpSync(fixtureSource, smokeApp, { recursive: true })
   pointAtRegistry(smokeApp, server.port)
 

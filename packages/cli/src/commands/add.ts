@@ -105,7 +105,7 @@ async function assertReachable(url: string): Promise<void> {
   )
 }
 
-// A theme is no longer an install. It is a named export of @deckard/core/themes,
+// A theme is no longer an install. It is a named export of @deckard/themes,
 // so switching one is an edit to the import in deck/deck.ts.
 function switchTheme(name: string): void {
   if (!isBuiltInTheme(name)) {

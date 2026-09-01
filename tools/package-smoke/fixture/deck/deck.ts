@@ -1,5 +1,5 @@
 import { defineDeck } from "@deckard/core"
-import { phosphor } from "@deckard/core/themes"
+import { phosphor } from "@deckard/themes"
 
 import { slides } from "./slides"
 

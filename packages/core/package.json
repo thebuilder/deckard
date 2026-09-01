@@ -52,10 +52,6 @@
       "types": "./dist/lib/utils.d.ts",
       "default": "./dist/lib/utils.js"
     },
-    "./themes": {
-      "types": "./dist/themes/index.d.ts",
-      "default": "./dist/themes/index.js"
-    },
     "./styles.css": "./styles.css",
     "./package.json": "./package.json"
   },
@@ -64,8 +60,8 @@
     "styles.css"
   ],
   "scripts": {
-    "build": "tsc --project tsconfig.build.json && node scripts/copy-theme-assets.ts",
-    "dev": "node scripts/copy-theme-assets.ts && tsc --project tsconfig.build.json --watch --preserveWatchOutput",
+    "build": "tsc --project tsconfig.build.json",
+    "dev": "tsc --project tsconfig.build.json --watch --preserveWatchOutput",
     "test": "vitest run --passWithNoTests",
     "test:browser": "vitest run --project browser --passWithNoTests",
     "test:unit": "vitest run --project node",

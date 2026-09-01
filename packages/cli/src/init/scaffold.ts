@@ -18,6 +18,7 @@ export interface ScaffoldOptions {
   sample: boolean
   target: string
   theme: BuiltInTheme
+  themesDependency: string
   title: string
 }
 
@@ -98,6 +99,7 @@ function packageJson(options: ScaffoldOptions): string {
       },
       dependencies: sortedEntries({
         "@deckard/core": options.coreDependency,
+        "@deckard/themes": options.themesDependency,
         ...versions.dependencies,
       }),
       devDependencies: sortedEntries({

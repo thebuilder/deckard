@@ -20,6 +20,7 @@
   "dependencies": {
     "@base-ui/react": "^1.7.0",
     "@deckard/core": "workspace:*",
+    "@deckard/themes": "workspace:*",
     "class-variance-authority": "^0.7.1",
     "lucide-react": "^1.38.0",
     "motion": "^13.1.1",

@@ -1,5 +1,5 @@
 import { defineDeck } from "@deckard/core"
-import { broadsheet } from "@deckard/core/themes"
+import { broadsheet } from "@deckard/themes"
 
 import { slides } from "@/deck/slides"
 

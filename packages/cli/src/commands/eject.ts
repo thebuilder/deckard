@@ -44,7 +44,7 @@ function chooseTheme(args: ParsedArgs, source: string): string {
 
   if (!name) {
     throw new Error(
-      `${deckSourcePath} imports no theme from @deckard/core/themes, so there is no built-in to copy. Name one with --theme <${builtInThemes.join("|")}>.`
+      `${deckSourcePath} imports no theme from @deckard/themes, so there is no built-in to copy. Name one with --theme <${builtInThemes.join("|")}>.`
     )
   }
 

@@ -7,7 +7,7 @@
     "analyze": "fallow",
     "build": "turbo run build",
     "check-overflow": "pnpm deck:check-overflow && pnpm demo:check-overflow",
-    "cli:build": "turbo run build --filter=@deckard/cli",
+    "cli:build": "turbo run build --filter=@deckard/cli --filter=@deckard/themes",
     "deck:check-overflow": "pnpm cli:build && pnpm --filter playground deck:check-overflow",
     "deck:contact-sheet": "pnpm cli:build && pnpm --filter playground deck:contact-sheet",
     "deck:doctor": "pnpm cli:build && pnpm --filter playground deck:doctor",

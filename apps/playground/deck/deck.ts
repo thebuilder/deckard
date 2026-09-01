@@ -1,5 +1,5 @@
 import { defineDeck } from "@deckard/core"
-import { deckard } from "@deckard/core/themes"
+import { deckard } from "@deckard/themes"
 import { slides } from "@/deck/slides"
 
 export const deck = defineDeck({

@@ -29,18 +29,20 @@ export function hasLocalTheme(): boolean {
   return fs.existsSync(projectPath(localThemeDirectory))
 }
 
+export const themesPackage = "@deckard/themes"
+
 // The presets ship inside the package the deck installed, so their source is
 // wherever that copy landed rather than anywhere in the deck.
 export function builtInThemePath(name: string, ...segments: string[]): string {
-  const manifest = resolveFromProject("@deckard/core/package.json")
+  const manifest = resolveFromProject(`${themesPackage}/package.json`)
 
   if (!manifest) {
     throw new Error(
-      "@deckard/core does not resolve from this directory. Run this from the deck root, next to package.json."
+      `${themesPackage} does not resolve from this directory. Install it, and run this from the deck root, next to package.json.`
     )
   }
 
-  return path.join(path.dirname(manifest), "dist/themes", name, ...segments)
+  return path.join(path.dirname(manifest), "dist", name, ...segments)
 }
 
 function readIfPresent(file: string): string | null {
@@ -63,6 +65,6 @@ export function readThemeStylesheet(themeId: string): ThemeStylesheet {
 
   return {
     css: readIfPresent(builtInThemePath(themeId, "theme.css")),
-    source: `@deckard/core/themes/${themeId}`,
+    source: `${themesPackage}/${themeId}`,
   }
 }

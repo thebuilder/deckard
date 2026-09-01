@@ -35,6 +35,7 @@ const specs: Record<string, FlagSpec> = {
       "package-manager",
       "registry",
       "theme",
+      "themes-tarball",
     ],
   },
   screenshots: { booleans: previewFlags, strings: ["max", "port"] },
@@ -52,6 +53,7 @@ const help = `deckard ${version}
     --no-git                     skip git init and the first commit
     --core-tarball <path>        install @deckard/core from a local tarball
     --cli-tarball <path>         install @deckard/cli from a local tarball
+    --themes-tarball <path>      install @deckard/themes from a local tarball
     --registry <url>             the @deckard registry for components.json
 
   deckard validate           load the deck, check its slides and its theme

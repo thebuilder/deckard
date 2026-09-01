@@ -6,7 +6,7 @@ export interface ThemeImport {
   name: string | null
 }
 
-export const themesSpecifier = "@deckard/core/themes"
+export const themesSpecifier = "@deckard/themes"
 export const localThemeSpecifier = "@/deck/theme"
 
 const importLinePattern = /^import\s.+?\sfrom\s+"([^"]+)"\r?\n/gm

@@ -8,8 +8,8 @@ const packageRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   ".."
 )
-const themesSource = path.join(packageRoot, "src/themes")
-const themesTarget = path.join(packageRoot, "dist/themes")
+const themesSource = path.join(packageRoot, "src")
+const themesTarget = path.join(packageRoot, "dist")
 
 // tsc emits the compiled index.js next to nothing else, so the stylesheet the
 // module imports and the document the eject command copies have to be carried
@@ -34,7 +34,7 @@ function copy(): number {
       const from = path.join(themesSource, theme, asset)
 
       if (!fs.existsSync(from)) {
-        throw new Error(`src/themes/${theme} is missing ${asset}`)
+        throw new Error(`src/${theme} is missing ${asset}`)
       }
 
       fs.copyFileSync(from, path.join(themesTarget, theme, asset))

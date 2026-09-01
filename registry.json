@@ -80,7 +80,7 @@
       "name": "preset-blocks",
       "type": "registry:item",
       "title": "Deckard blocks",
-      "description": "Every slide block in one add, plus the one stylesheet line a consumer cannot guess: the @import of @deckard/core/styles.css, which carries the slide token contract and registers the package's own Tailwind source so the runtime classes survive tree shaking. Use this once, right after installing @deckard/core, then write slides. The theme is not in here and does not need to be: the six Deckard themes are named exports of @deckard/core/themes, so a deck picks one with an import rather than an install.",
+      "description": "Every slide block in one add, plus the one stylesheet line a consumer cannot guess: the @import of @deckard/core/styles.css, which carries the slide token contract and registers the package's own Tailwind source so the runtime classes survive tree shaking. Use this once, right after installing @deckard/core, then write slides. The theme is not in here and does not need to be: the six Deckard themes are named exports of @deckard/themes, so a deck picks one with an import rather than an install.",
       "categories": ["deck", "preset"],
       "dependencies": ["@deckard/core"],
       "registryDependencies": [
@@ -93,7 +93,7 @@
       "css": {
         "@import \"@deckard/core/styles.css\"": {}
       },
-      "docs": "The blocks land in app/slides/blocks/, and the stylesheet import above is the whole build wiring. @deckard/core ships compiled and its stylesheet registers its own Tailwind source, so there is no transpilePackages entry and no @source line for you to add. What is left is deck code: create deck/deck.ts, import a theme from @deckard/core/themes, pass it to defineDeck, then render the deck from app/slides/[id]/page.tsx with createSlideRoute from @deckard/core/next. Run deckard eject theme when you want that theme as three files in deck/theme/ you can edit."
+      "docs": "The blocks land in app/slides/blocks/, and the stylesheet import above is the whole build wiring. @deckard/core ships compiled and its stylesheet registers its own Tailwind source, so there is no transpilePackages entry and no @source line for you to add. What is left is deck code: create deck/deck.ts, import a theme from @deckard/themes, pass it to defineDeck, then render the deck from app/slides/[id]/page.tsx with createSlideRoute from @deckard/core/next. Run deckard eject theme when you want that theme as three files in deck/theme/ you can edit."
     }
   ]
 }

@@ -1,4 +1,4 @@
-import type { SlideTheme } from "../../deck/types"
+import type { SlideTheme } from "@deckard/core"
 
 import "./theme.css"
 

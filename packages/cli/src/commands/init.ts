@@ -186,6 +186,10 @@ export function runInit(args: ParsedArgs, cliVersion: string): void {
     sample,
     target,
     theme,
+    themesDependency: tarballDependency(
+      stringFlag(args, "themes-tarball"),
+      `^${cliVersion}`
+    ),
     title,
   })
 
@@ -213,7 +217,7 @@ export function runInit(args: ParsedArgs, cliVersion: string): void {
 
   write("")
   write(
-    "Slides are deck/slides.tsx. The theme is imported from @deckard/core/themes; run deckard eject theme to own a copy of it."
+    "Slides are deck/slides.tsx. The theme is imported from @deckard/themes; run deckard eject theme to own a copy of it."
   )
 
   if (!healthy) {
