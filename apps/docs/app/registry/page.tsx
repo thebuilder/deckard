@@ -23,7 +23,7 @@ const registryConfig = `{
 
 const themes = [
   {
-    href: "https://github.com/thebuilder/next-slideshow-template/blob/main/packages/themes/src/deckard/theme.css",
+    href: "https://github.com/thebuilder/deckard/blob/main/packages/themes/src/deckard/theme.css",
     modes: "Light and dark",
     name: "deckard",
     summary:
@@ -33,7 +33,7 @@ const themes = [
     when: "You want a deck that reads as a modern product presentation and you do not want to design a theme.",
   },
   {
-    href: "https://github.com/thebuilder/next-slideshow-template/blob/main/packages/themes/src/broadsheet/theme.css",
+    href: "https://github.com/thebuilder/deckard/blob/main/packages/themes/src/broadsheet/theme.css",
     modes: "Light and dark",
     name: "broadsheet",
     summary:
@@ -43,7 +43,7 @@ const themes = [
     when: "A talk that should read as a written argument rather than a product demo. Also the worked example of a second theme on the same token contract.",
   },
   {
-    href: "https://github.com/thebuilder/next-slideshow-template/blob/main/packages/themes/src/ledger/theme.css",
+    href: "https://github.com/thebuilder/deckard/blob/main/packages/themes/src/ledger/theme.css",
     modes: "Light and dark",
     name: "ledger",
     summary:
@@ -53,7 +53,7 @@ const themes = [
     when: "The deck is a written argument with numbers in it and you want the slides to read as pages.",
   },
   {
-    href: "https://github.com/thebuilder/next-slideshow-template/blob/main/packages/themes/src/meridian/theme.css",
+    href: "https://github.com/thebuilder/deckard/blob/main/packages/themes/src/meridian/theme.css",
     modes: "Light and dark",
     name: "meridian",
     summary:
@@ -63,7 +63,7 @@ const themes = [
     when: "A product or planning review where the content should be the loudest thing on the slide.",
   },
   {
-    href: "https://github.com/thebuilder/next-slideshow-template/blob/main/packages/themes/src/nexus/theme.css",
+    href: "https://github.com/thebuilder/deckard/blob/main/packages/themes/src/nexus/theme.css",
     modes: "Light and dark, dark by default",
     name: "nexus",
     summary:
@@ -73,7 +73,7 @@ const themes = [
     when: "An engineering or systems talk that wants instrument-panel authority.",
   },
   {
-    href: "https://github.com/thebuilder/next-slideshow-template/blob/main/packages/themes/src/phosphor/theme.css",
+    href: "https://github.com/thebuilder/deckard/blob/main/packages/themes/src/phosphor/theme.css",
     modes: "Light and dark, dark by default",
     name: "phosphor",
     summary:
