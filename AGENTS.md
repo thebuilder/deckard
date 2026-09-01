@@ -24,7 +24,11 @@ apply there, against their own `deck/` directory.
 - `packages/themes` is `@deckard/themes`, the six deck themes. Each one is a
   `theme.css`, an `index.ts` exporting one `SlideTheme`, and a `THEME.md`. It
   compiles to `dist/` with `tsc` and `scripts/copy-theme-assets.ts` carries the
-  stylesheets and the documents across.
+  stylesheets and the documents across. `pnpm dev` runs `scripts/dev.ts`, which
+  copies once, watches `src/*/theme.css` and `src/*/THEME.md`, and spawns
+  `tsc --watch` as its child. One node process owns both halves so one signal
+  ends both; a shell `a & b` leaves the asset watcher writing into a `dist`
+  nothing is compiling.
 - `registry.json` at the root publishes the blocks through shadcn. Themes are
   not in it.
 - `packages/cli` is `@deckard/cli`, the one public binary: `deckard init`,

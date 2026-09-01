@@ -16,6 +16,10 @@ const themesTarget = path.join(packageRoot, "dist")
 // over by hand.
 const assets = ["theme.css", "THEME.md"]
 
+// An editor writing a file lands as more than one event, and the copy is twelve
+// files, so a burst is answered once the directory has been quiet this long.
+const settleMs = 50
+
 function themeNames(): string[] {
   return fs
     .readdirSync(themesSource, { withFileTypes: true })
@@ -24,7 +28,7 @@ function themeNames(): string[] {
     .sort()
 }
 
-function copy(): number {
+export function copyThemeAssets(): number {
   let copied = 0
 
   for (const theme of themeNames()) {
@@ -45,4 +49,36 @@ function copy(): number {
   return copied
 }
 
-process.stdout.write(`theme assets copied (${copy()} files)\n`)
+// One watcher per theme directory rather than a recursive watch on src: the
+// recursive option is not implemented on every platform Node runs on. Any
+// change recopies all twelve files, which is cheaper than tracking which theme
+// an event came from and cannot leave dist half written.
+export function watchThemeAssets(onCopy: (copied: number) => void): void {
+  let timer: NodeJS.Timeout | undefined
+
+  for (const theme of themeNames()) {
+    fs.watch(path.join(themesSource, theme), (_event, filename) => {
+      if (!(filename && assets.includes(path.basename(filename)))) {
+        return
+      }
+
+      clearTimeout(timer)
+      timer = setTimeout(() => onCopy(copyThemeAssets()), settleMs)
+    })
+  }
+}
+
+function report(copied: number): void {
+  process.stdout.write(`theme assets copied (${copied} files)\n`)
+}
+
+if (
+  process.argv[1] &&
+  path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)
+) {
+  report(copyThemeAssets())
+
+  if (process.argv.includes("--watch")) {
+    watchThemeAssets(report)
+  }
+}
