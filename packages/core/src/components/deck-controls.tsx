@@ -27,10 +27,12 @@ const revealDistance = 160
 
 const coarsePointerQuery = "(pointer: coarse)"
 
-// Module scope on purpose: the cluster remounts on every slide navigation, and
-// without the last pointer position a reveal earned by proximity would drop
-// until the hand moves again.
+// Module scope on purpose: the cluster remounts on every slide navigation.
+// Without the last pointer position a reveal earned by proximity would drop
+// until the hand moves again, and without the last reveal state the cluster
+// would mount hidden and blink back in one frame later.
 let lastPointerPosition: { x: number; y: number } | null = null
+let lastIsNear = false
 
 function subscribeToPointer(onChange: () => void) {
   const media = window.matchMedia(coarsePointerQuery)
@@ -63,7 +65,11 @@ function usePointerProximity(
   anchor: RefObject<HTMLElement | null>,
   enabled: boolean
 ) {
-  const [isNear, setIsNear] = useState(false)
+  const [isNear, setIsNear] = useState(() => enabled && lastIsNear)
+
+  useEffect(() => {
+    lastIsNear = isNear
+  }, [isNear])
 
   useEffect(() => {
     if (!enabled) {
