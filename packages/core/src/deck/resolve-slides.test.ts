@@ -76,17 +76,33 @@ describe("resolveSlides defaults", () => {
   it("applies deck defaults and a zero step count", () => {
     const resolved = resolveSlides(
       [slide(), slide({ background: "grid", stepCount: 3 })],
-      { footer: "counter", header: "auto" }
+      { footer: "visible", header: "auto" }
     )
 
     expect(resolved[0]).toMatchObject({
       background: "default",
-      footer: "counter",
+      footer: "visible",
       header: "auto",
       layout: "default",
       stepCount: 0,
     })
     expect(resolved[1]).toMatchObject({ background: "grid", stepCount: 3 })
+  })
+
+  it("reads the retired counter footer as a visible one", () => {
+    const resolved = resolveSlides([slide(), slide({ footer: "hidden" })], {
+      footer: "counter",
+    })
+
+    expect(resolved.map((item) => item.footer)).toEqual(["visible", "hidden"])
+  })
+
+  it("reads a per-slide counter footer as a visible one", () => {
+    const resolved = resolveSlides([slide({ footer: "counter" })], {
+      footer: "hidden",
+    })
+
+    expect(resolved[0].footer).toBe("visible")
   })
 })
 

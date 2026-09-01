@@ -1,3 +1,4 @@
+import type { SlideFooterMode, SlideFooterModeInput } from "../types/slides"
 import type { ResolvedSlide, SlideDefaults, SlideDefinition } from "./types"
 
 const slugPattern = /^[a-z0-9-]+$/
@@ -8,6 +9,14 @@ const fallbackDefaults: SlideDefaults = {
   footer: "visible",
   header: "auto",
   layout: "default",
+}
+
+// Decks written against the old three-mode footer keep working: the counter is
+// what a visible footer shows now that the navigation buttons live in the corner.
+export function normalizeFooterMode(
+  mode: SlideFooterModeInput
+): SlideFooterMode {
+  return mode === "counter" ? "visible" : mode
 }
 
 function assertValidSlug(slug: string, number: number) {
@@ -63,7 +72,7 @@ export function resolveSlides(
       authoredTitle: slide.title,
       background: slide.background ?? resolvedDefaults.background,
       body: slide.body,
-      footer: slide.footer ?? resolvedDefaults.footer,
+      footer: normalizeFooterMode(slide.footer ?? resolvedDefaults.footer),
       header: slide.header ?? resolvedDefaults.header,
       href: `/slides/${id}`,
       id,

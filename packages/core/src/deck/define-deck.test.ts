@@ -13,7 +13,7 @@ const theme: SlideTheme = {
 function config(overrides: Partial<DeckConfig> = {}): DeckConfig {
   return {
     description: "Test deck",
-    footer: { mode: "counter" },
+    footer: { mode: "visible" },
     header: { brand: "Test", href: "/", mode: "auto" },
     slides: [{ body: null, title: "One" }],
     title: "Test",
@@ -36,5 +36,16 @@ describe("defineDeck", () => {
     expect(() =>
       defineDeck(config({ theme: { ...theme, colorModes: ["light"] } }))
     ).toThrow(systemError)
+  })
+
+  it("carries the optional header date onto the deck", () => {
+    const dated = defineDeck(
+      config({
+        header: { brand: "Test", date: "March 2026", href: "/", mode: "auto" },
+      })
+    )
+
+    expect(dated.header.date).toBe("March 2026")
+    expect(defineDeck(config()).header.date).toBeUndefined()
   })
 })

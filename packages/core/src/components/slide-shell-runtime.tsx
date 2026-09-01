@@ -1,6 +1,6 @@
 "use client"
 
-import type { CSSProperties, ReactNode } from "react"
+import type { ReactNode } from "react"
 import type { SlideSummary } from "../deck/types"
 import { PresenterKeyboardShortcut, PresenterSync } from "./presenter-controls"
 import { SlideContextProvider } from "./slide-context"
@@ -12,6 +12,7 @@ import {
 
 interface SlideShellRuntimeProps {
   children: ReactNode
+  controlsHidden?: boolean
   initialStep?: number
   next?: SlideSummary
   notes?: string
@@ -23,11 +24,9 @@ interface SlideShellRuntimeProps {
   utilityBar?: ReactNode
 }
 
-// Chrome hidden in a preview reserves nothing, so the insets a bleeding frame reads collapse with it.
-const previewStyle = { "--slide-chrome-scale": 0 } as CSSProperties
-
 export function SlideShellRuntime({
   children,
+  controlsHidden = false,
   initialStep = 0,
   next,
   notes,
@@ -57,8 +56,7 @@ export function SlideShellRuntime({
       >
         <div
           className="group/shell relative h-svh w-full overflow-hidden bg-background text-foreground"
-          data-slide-chrome={isPreview ? "hidden" : undefined}
-          style={isPreview ? previewStyle : undefined}
+          data-slide-chrome={isPreview || controlsHidden ? "hidden" : undefined}
         >
           <SlideViewParamsBoundary />
           <PresenterSync
