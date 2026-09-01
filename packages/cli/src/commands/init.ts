@@ -181,7 +181,6 @@ export function runInit(args: ParsedArgs, cliVersion: string): void {
     ),
     description: `${title}, a deck built with Deckard.`,
     name,
-    packageManager: detected,
     registryUrl: stringFlag(args, "registry") ?? defaultRegistryUrl,
     sample,
     target,

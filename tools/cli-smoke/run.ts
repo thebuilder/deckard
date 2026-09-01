@@ -215,9 +215,8 @@ function assertScreenshot(directory: string) {
   assert(fs.statSync(png).size > 0, `${png} is empty`)
 }
 
-// The template files can only have come from inside the installed package, and
-// the manager that ran init is the one the deck records for every later command.
-function assertScaffold(manager: string, directory: string) {
+// The template files can only have come from inside the installed package.
+function assertScaffold(directory: string) {
   for (const file of [
     "app/globals.css",
     "app/slides/[id]/page.tsx",
@@ -256,8 +255,8 @@ function assertScaffold(manager: string, directory: string) {
   )
 
   assert(
-    generated.packageManager?.startsWith(`${manager}@`),
-    `the deck records "${generated.packageManager}" after an init run through ${manager}`
+    generated.packageManager === undefined,
+    `the generated package.json carries "packageManager": "${generated.packageManager}", which corepack enforces against every other manager`
   )
 
   const assuming = Object.entries(generated.scripts).filter(([, line]) =>
@@ -314,7 +313,7 @@ try {
     )
   })
 
-  assertScaffold("pnpm", pnpmApp)
+  assertScaffold(pnpmApp)
 
   const deckard = path.join(pnpmApp, "node_modules/.bin/deckard")
 
@@ -372,7 +371,7 @@ try {
     )
   })
 
-  assertScaffold("npm", npmApp)
+  assertScaffold(npmApp)
   assert(
     fs.existsSync(path.join(npmApp, "package-lock.json")),
     "the npm init did not install with npm"
