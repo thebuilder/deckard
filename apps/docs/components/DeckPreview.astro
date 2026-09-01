@@ -21,6 +21,9 @@ interface Props {
   hidden?: boolean
   id?: string
   mode: ColorMode
+  /* The fit a reader with no script gets, so it has to be the stage's narrowest
+     width over 1920. Anything larger crops, because the stage clips. */
+  scale?: number
   slide?: PreviewSlide
   theme: ThemeName
 }
@@ -31,9 +34,14 @@ const {
   hidden,
   id,
   mode,
+  scale,
   slide = gallerySlide,
   theme,
 } = Astro.props
+
+const canvasStyle = `--canvas-width: 1920px; --canvas-height: 1080px${
+  scale === undefined ? "" : `; --deck-preview-scale-default: ${scale}`
+}`
 
 const layout = slide.layout ?? "panel"
 const figures = slide.figures ?? []
@@ -59,7 +67,7 @@ const label = `A ${theme} slide in ${mode} mode, headed "${slide.heading}"`
     data-slide-canvas
     data-slide-color-mode={mode}
     data-slide-theme={theme}
-    style="--canvas-width: 1920px; --canvas-height: 1080px"
+    style={canvasStyle}
   >
     <div
       aria-hidden="true"
@@ -182,3 +190,65 @@ const label = `A ${theme} slide in ${mode} mode, headed "${slide.heading}"`
     </footer>
   </div>
 </div>
+
+<script>
+  /*
+   * The fit a stage needs is one length over another, which CSS cannot divide
+   * portably: Safari's atan2 takes numbers and angles, not lengths, so the trig
+   * in deck-preview.css never applies there. SlideViewport measures instead,
+   * and so does this. Astro hoists one copy of this module per page, however
+   * many previews are on it.
+   */
+  const canvases = new WeakMap<Element, HTMLElement>()
+  const pending = new Map<HTMLElement, number>()
+  let frame = 0
+
+  const publish = () => {
+    frame = 0
+
+    for (const [canvas, width] of pending) {
+      const target = Number(canvas.dataset.canvasWidth)
+
+      // A hidden preview measures zero, and its static default holds until it shows.
+      if (width > 0 && target > 0) {
+        canvas.style.setProperty("--deck-preview-scale", String(width / target))
+      }
+    }
+
+    pending.clear()
+  }
+
+  const observer = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      const canvas = canvases.get(entry.target)
+
+      if (canvas !== undefined) {
+        pending.set(canvas, entry.contentRect.width)
+      }
+    }
+
+    if (frame === 0) {
+      frame = requestAnimationFrame(publish)
+    }
+  })
+
+  const observe = () => {
+    observer.disconnect()
+
+    for (const canvas of document.querySelectorAll<HTMLElement>(
+      "[data-slide-canvas]"
+    )) {
+      const stage = canvas.parentElement
+
+      if (stage !== null) {
+        canvases.set(stage, canvas)
+        observer.observe(stage)
+      }
+    }
+  }
+
+  observe()
+
+  // The client router swaps the document without re-running this module.
+  document.addEventListener("astro:page-load", observe)
+</script>
