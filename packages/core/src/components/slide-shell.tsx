@@ -8,21 +8,15 @@ import type {
   SlideHeaderMode,
   SlideLayoutMode,
 } from "../types/slides"
-import { SlideshowColorModeToggle } from "./color-mode-toggle"
-import { PresenterPopoutButton } from "./presenter-controls"
+import { DeckControls } from "./deck-controls"
 import { SlideCanvas } from "./slide-canvas"
 import { SlideCanvasFooter, SlideCanvasHeader } from "./slide-chrome"
-import { SlideCommandCenter } from "./slide-command-center"
 import { SlideErrorBoundary } from "./slide-error-boundary"
 import { SlidePrefetch } from "./slide-prefetch"
 import { SlideShellRuntime } from "./slide-shell-runtime"
 import { SlideStepAdvanceArea } from "./slide-stepper"
 import { SlideViewport } from "./slide-viewport"
 import { StaticMediaBoundary } from "./static-media-boundary"
-
-// A preview hides the runtime controls from the URL, which only the client knows,
-// so the server renders them either way and this drops them after hydration.
-const chromeHiddenClass = "group-data-[slide-chrome=hidden]/shell:hidden"
 
 interface SlideShellProps {
   background?: SlideBackgroundMode
@@ -113,38 +107,6 @@ function chromeInset({ isFullscreen, showFooter, showHeader }: ChromeState) {
   }
 }
 
-// Presenter tooling, not slide content, so it sits outside the scaled canvas and keeps the app tokens.
-function SlideUtilityBar({
-  currentNumber,
-  deckTitle,
-  showColorModeToggle,
-  slides,
-}: {
-  currentNumber: number
-  deckTitle: string
-  showColorModeToggle: boolean
-  slides: SlideSummary[]
-}) {
-  return (
-    <div
-      className={cn(
-        "pointer-events-none absolute inset-x-0 top-0 z-50 flex justify-end px-4 py-4 sm:px-6",
-        chromeHiddenClass
-      )}
-    >
-      <div className="pointer-events-auto flex items-center gap-2">
-        <SlideCommandCenter
-          currentNumber={currentNumber}
-          deckTitle={deckTitle}
-          slides={slides}
-        />
-        <PresenterPopoutButton />
-        {showColorModeToggle ? <SlideshowColorModeToggle /> : null}
-      </div>
-    </div>
-  )
-}
-
 export function SlideShell({
   background = "default",
   children,
@@ -168,6 +130,16 @@ export function SlideShell({
 
   return (
     <SlideShellRuntime
+      controls={
+        <DeckControls
+          currentNumber={slide.number}
+          deckTitle={deck.title}
+          next={next}
+          previous={previous}
+          showColorModeToggle={canSwitchColorMode(deck.theme)}
+          slides={slides}
+        />
+      }
       controlsHidden={controlsHidden}
       initialStep={initialStep}
       next={next}
@@ -177,14 +149,6 @@ export function SlideShell({
       readOnly={readOnly}
       slide={slide}
       slides={slides}
-      utilityBar={
-        <SlideUtilityBar
-          currentNumber={slide.number}
-          deckTitle={deck.title}
-          showColorModeToggle={canSwitchColorMode(deck.theme)}
-          slides={slides}
-        />
-      }
     >
       <SlidePrefetch slides={prefetch} />
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { CommandIcon, List } from "lucide-react"
+import { List } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
 import type { SlideSummary } from "../deck/types"
@@ -19,6 +19,7 @@ import {
 interface SlideCommandCenterProps {
   currentNumber: number
   deckTitle: string
+  onOpenChange?: (isOpen: boolean) => void
   slides: SlideSummary[]
 }
 
@@ -55,10 +56,15 @@ function SlideCommandOption({
 export function SlideCommandCenter({
   currentNumber,
   deckTitle,
+  onOpenChange,
   slides,
 }: SlideCommandCenterProps) {
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
+
+  useEffect(() => {
+    onOpenChange?.(isOpen)
+  }, [isOpen, onOpenChange])
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -91,16 +97,12 @@ export function SlideCommandCenter({
 
   return (
     <>
-      <span className="pointer-events-none hidden items-center gap-1 text-[11px] text-muted-foreground tracking-wide sm:inline-flex">
-        <CommandIcon className="size-3" />K
-      </span>
-
       <Button
         aria-label="Open slide command center"
         className="border-border/70 bg-background/80 text-muted-foreground backdrop-blur-sm hover:bg-accent/70 hover:text-foreground"
         onClick={openDialog}
         size="icon-sm"
-        title="Open slide command center"
+        title="Open slide command center (Cmd K)"
         type="button"
         variant="outline"
       >

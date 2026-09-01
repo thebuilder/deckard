@@ -24,7 +24,7 @@ const blockFiles = [
 // Classes only the @deckard/core runtime writes. Tailwind reaches them through
 // the @source the package stylesheet registers against its own compiled output,
 // so finding them proves the single @import is the whole contract.
-const runtimeUtilities = ["min-h-16", "backdrop-blur-xl", "data-slide-chrome"]
+const runtimeUtilities = ["min-h-16", "backdrop-blur-sm", "data-slide-chrome"]
 
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) {

@@ -1,5 +1,6 @@
 export { ColorModeProvider } from "./color-mode-provider"
 export { SlideshowColorModeToggle } from "./color-mode-toggle"
+export { DeckControls } from "./deck-controls"
 export { PresenterConsole } from "./presenter-console"
 export { PresenterPopoutButton } from "./presenter-controls"
 export { SlideBackground } from "./slide-background"

@@ -12,6 +12,7 @@ import {
 
 interface SlideShellRuntimeProps {
   children: ReactNode
+  controls?: ReactNode
   controlsHidden?: boolean
   initialStep?: number
   next?: SlideSummary
@@ -21,11 +22,11 @@ interface SlideShellRuntimeProps {
   readOnly?: boolean
   slide: SlideSummary
   slides: SlideSummary[]
-  utilityBar?: ReactNode
 }
 
 export function SlideShellRuntime({
   children,
+  controls,
   controlsHidden = false,
   initialStep = 0,
   next,
@@ -35,7 +36,6 @@ export function SlideShellRuntime({
   readOnly = false,
   slide,
   slides,
-  utilityBar,
 }: SlideShellRuntimeProps) {
   const params = useSlideViewParams()
   const isPreview = params.isPresenterPreview
@@ -70,7 +70,7 @@ export function SlideShellRuntime({
 
           {children}
 
-          {utilityBar}
+          {controls}
         </div>
       </SlideContextProvider>
     </SlideStepper>
