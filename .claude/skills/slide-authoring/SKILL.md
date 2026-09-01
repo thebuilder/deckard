@@ -37,7 +37,7 @@ new markup only when none of these fits.
 | `FocusSlide` (templates.tsx)              | one block and no heading at all                   |
 | `BulletList` (collections.tsx)            | four to six numbered points                       |
 | `FeatureGrid` (collections.tsx)           | three parallel cards                              |
-| `StatGrid` (metrics.tsx)                  | exactly three figures with their comparisons      |
+| `StatGrid` (metrics.tsx)                  | two to four figures with their comparisons        |
 | `ImageShowcaseSlide` (media.tsx)          | an image beside a caption panel                   |
 | `FullscreenMediaSlide` (media.tsx)        | an image or video bleeding to every canvas edge   |
 | `Eyebrow`, `SlideHeading` (typography.tsx)| your own layout, with the deck's type rhythm      |

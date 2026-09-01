@@ -118,8 +118,8 @@ const blocks = [
     exports: "StatGrid",
     name: "block-metrics",
     summary:
-      "Exactly three columns, typed as a tuple, marked up as a description list: a figure at --slide-title-size in the theme heading font over a caption at --slide-support-size, ruled off at the top in --slide-surface-border. The figure carries data-stat-value, which is how nexus and ledger reach it with their heading treatment.",
-    when: "The one slide in the deck that is numbers. Write the comparison into the caption, because a figure with nothing to measure against is decoration.",
+      "Two to four columns, typed as a union of tuples, marked up as a description list: a figure at --slide-figure-size in the theme heading font, an optional unit at --slide-figure-unit-size, an optional meter bar at --slide-meter-size, and a caption at --slide-support-size, ruled off at the top in --slide-surface-border. Every part is named for themes to reach, from data-stat-value to data-stat-meter.",
+    when: "The one slide in the deck that is numbers. Write the comparison into the caption, because a figure with nothing to measure against is decoration, and leave the meter out unless you can say what it is a proportion of.",
   },
 ]
 
