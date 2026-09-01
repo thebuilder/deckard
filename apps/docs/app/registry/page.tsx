@@ -110,7 +110,7 @@ const blocks = [
     exports: "StatGrid",
     name: "block-metrics",
     summary:
-      "Three columns, each a figure at --slide-title-size over a caption at --slide-support-size, ruled off at the top in --slide-surface-border. It sets no color of its own, so the figures inherit whatever the theme does to headings.",
+      "Exactly three columns, typed as a tuple, marked up as a description list: a figure at --slide-title-size in the theme heading font over a caption at --slide-support-size, ruled off at the top in --slide-surface-border. The figure carries data-stat-value, which is how nexus and ledger reach it with their heading treatment.",
     when: "The one slide in the deck that is numbers. Write the comparison into the caption, because a figure with nothing to measure against is decoration.",
   },
 ]

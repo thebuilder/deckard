@@ -216,7 +216,7 @@
       "name": "block-metrics",
       "type": "registry:block",
       "title": "Slide metrics",
-      "description": "One export, StatGrid, for the three-figures slide every deck reaches for once. Each column is a figure at --slide-title-size with an optional unit at --slide-subheading-size, a caption at --slide-support-size capped to 24 characters a line, and a 2px rule across the top in --slide-surface-border. That is the whole component: it sets no color of its own, so the figures pick up the heading treatment of whatever theme is installed and the rule picks up the border weight. Take the caption seriously. A number on a slide without the thing it is measured against is decoration, and the 24ch measure is sized for \"up from 2.6k\", not for a sentence.",
+      "description": "One export, StatGrid, for the three-figures slide every deck reaches for once. It takes exactly three stats, typed as a tuple so a fourth is a compile error, and marks them up as a description list. Each column is a figure at --slide-title-size in --slide-font-heading with an optional unit at --slide-subheading-size, a caption at --slide-support-size capped to 24 characters a line, and a 2px rule across the top in --slide-surface-border. It sets no color of its own, so the rule picks up the theme border weight. A figure is not a heading element, so it carries data-stat-value for themes that treat headings as more than a font: nexus and ledger style it, the other four leave the figure as the block sets it. Take the caption seriously. A number on a slide without the thing it is measured against is decoration, and the 24ch measure is sized for \"up from 2.6k\", not for a sentence.",
       "categories": ["deck", "metrics"],
       "files": [
         {
