@@ -15,7 +15,10 @@
   color: var(--blume-foreground);
 }
 
-.landing a {
+/* :where() holds this at zero specificity, so it clears the site's anchor color
+ * without also outranking every button and link rule below it. As `.landing a`
+ * it beat .button-primary and painted the accent fill with foreground text. */
+.landing :where(a) {
   color: inherit;
 }
 
