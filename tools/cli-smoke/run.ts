@@ -9,7 +9,9 @@ import { fileURLToPath } from "node:url"
 const toolDirectory = path.dirname(fileURLToPath(import.meta.url))
 const repoRoot = path.resolve(toolDirectory, "../..")
 const keepScratch = process.argv.includes("--keep")
-const cliEntry = path.join(repoRoot, "packages/cli/bin/deckard.mjs")
+
+const timings: [string, number][] = []
+const managerPattern = /\b(pnpm|yarn|bun)\b/
 
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) {
@@ -17,14 +19,40 @@ function assert(condition: unknown, message: string): asserts condition {
   }
 }
 
+// npm_config_* leaks from whatever ran this script. The point of the two passes
+// below is that each manager announces itself, so the parent's announcement has
+// to go.
+function childEnv(): NodeJS.ProcessEnv {
+  const env: NodeJS.ProcessEnv = { ...process.env }
+
+  for (const key of Object.keys(env)) {
+    if (key.startsWith("npm_config_") || key.startsWith("npm_package_")) {
+      delete env[key]
+    }
+  }
+
+  env.NEXT_TELEMETRY_DISABLED = "1"
+
+  return env
+}
+
 function run(command: string, args: string[], cwd: string) {
   const result = spawnSync(command, args, {
     cwd,
-    env: { ...process.env, NEXT_TELEMETRY_DISABLED: "1" },
+    env: childEnv(),
     stdio: "inherit",
   })
 
   assert(result.status === 0, `${command} ${args.join(" ")} failed in ${cwd}`)
+}
+
+function time<T>(label: string, work: () => T): T {
+  const startedAt = Date.now()
+  const value = work()
+
+  timings.push([label, Date.now() - startedAt])
+
+  return value
 }
 
 function pack(filter: string, destination: string, name: string) {
@@ -55,6 +83,40 @@ function pack(filter: string, destination: string, name: string) {
   fs.renameSync(path.join(destination, packed), tarball)
 
   return tarball
+}
+
+// The published tarball has to be able to scaffold on its own: its template has
+// to resolve from inside the installed package, not from a repository checkout
+// next to it. So the CLI is installed outside the workspace and init is run
+// through that copy, never through packages/cli/bin.
+function installCli(manager: string, directory: string, tarball: string) {
+  fs.mkdirSync(directory, { recursive: true })
+  fs.writeFileSync(
+    path.join(directory, "package.json"),
+    `${JSON.stringify(
+      {
+        dependencies: { "@deckard/cli": `file:${tarball}` },
+        name: `deckard-cli-smoke-${manager}`,
+        private: true,
+        version: "0.0.0",
+      },
+      null,
+      2
+    )}\n`
+  )
+
+  time(`${manager}: install the packed CLI`, () => {
+    run(manager, ["install"], directory)
+  })
+
+  const binary = path.join(directory, "node_modules/.bin/deckard")
+
+  assert(
+    fs.existsSync(binary),
+    `${manager} install left no deckard binary in ${directory}`
+  )
+
+  return binary
 }
 
 // The deck it generates has to prerender: every slide route is static HTML on
@@ -88,58 +150,135 @@ function assertScreenshot(directory: string) {
   assert(fs.statSync(png).size > 0, `${png} is empty`)
 }
 
+// The template files can only have come from inside the installed package, and
+// the manager that ran init is the one the deck records for every later command.
+function assertScaffold(manager: string, directory: string) {
+  for (const file of [
+    "app/globals.css",
+    "app/slides/[id]/page.tsx",
+    "deck/deck.ts",
+    "deck/theme/theme.css",
+    "deck/slides/10-keyboard.slide.tsx",
+  ]) {
+    assert(
+      fs.existsSync(path.join(directory, file)),
+      `the packed CLI did not write ${file}, so its template did not resolve`
+    )
+  }
+
+  const generated = JSON.parse(
+    fs.readFileSync(path.join(directory, "package.json"), "utf8")
+  ) as { packageManager?: string; scripts: Record<string, string> }
+
+  assert(
+    generated.packageManager?.startsWith(`${manager}@`),
+    `the deck records "${generated.packageManager}" after an init run through ${manager}`
+  )
+
+  const assuming = Object.entries(generated.scripts).filter(([, line]) =>
+    managerPattern.test(line)
+  )
+
+  assert(
+    assuming.length === 0,
+    `the generated scripts name a package manager: ${assuming.map(([name]) => name).join(", ")}`
+  )
+}
+
 const scratch = fs.mkdtempSync(path.join(os.tmpdir(), "deckard-cli-"))
-const appDirectory = path.join(scratch, "my-talk")
-const deckard = path.join(appDirectory, "node_modules/.bin/deckard")
 
 try {
-  // Through the root script, so turbo builds @deckard/core first. A direct
-  // filtered run leaves the cli compiling against types that do not exist yet.
-  run("pnpm", ["cli:build"], repoRoot)
+  time("build @deckard/core and @deckard/cli", () => {
+    run("pnpm", ["cli:build"], repoRoot)
+  })
 
   const core = pack("@deckard/core", scratch, "deckard-core")
   const cli = pack("@deckard/cli", scratch, "deckard-cli")
-  const startedAt = Date.now()
 
-  run(
-    "node",
-    [
-      cliEntry,
-      "init",
-      "my-talk",
-      "--core-tarball",
-      core,
-      "--cli-tarball",
-      cli,
-      "--no-git",
-      "--package-manager",
+  const initFlags = ["--core-tarball", core, "--cli-tarball", cli, "--no-git"]
+
+  const pnpmInstaller = path.join(scratch, "via-pnpm")
+  const pnpmApp = path.join(scratch, "my-talk")
+
+  installCli("pnpm", pnpmInstaller, cli)
+
+  time("pnpm: deckard init, install included", () => {
+    run(
       "pnpm",
-    ],
-    scratch
-  )
+      ["exec", "deckard", "init", pnpmApp, ...initFlags],
+      pnpmInstaller
+    )
+  })
 
-  const initSeconds = ((Date.now() - startedAt) / 1000).toFixed(1)
+  assertScaffold("pnpm", pnpmApp)
+
+  const deckard = path.join(pnpmApp, "node_modules/.bin/deckard")
 
   assert(
     fs.existsSync(deckard),
     "the generated app has no deckard binary, so the init did not install"
   )
 
-  run("pnpm", ["run", "typecheck"], appDirectory)
-  run("pnpm", ["run", "build"], appDirectory)
-  assertStaticSlides(appDirectory, ["intro", "keyboard", "2"])
+  time("pnpm: typecheck", () => {
+    run("pnpm", ["run", "typecheck"], pnpmApp)
+  })
+  time("pnpm: next build", () => {
+    run("pnpm", ["run", "build"], pnpmApp)
+  })
+  assertStaticSlides(pnpmApp, ["intro", "keyboard", "2"])
 
-  run(deckard, ["validate"], appDirectory)
-  run(deckard, ["doctor"], appDirectory)
-  run(
-    deckard,
-    ["screenshots", "--max", "1", "--skip-build", "--port", "3414"],
-    appDirectory
+  time("pnpm: validate, doctor, one screenshot", () => {
+    run(deckard, ["validate"], pnpmApp)
+    run(deckard, ["doctor"], pnpmApp)
+    run(
+      deckard,
+      ["screenshots", "--max", "1", "--skip-build", "--port", "3414"],
+      pnpmApp
+    )
+  })
+  assertScreenshot(pnpmApp)
+
+  // The headline flow is npx on a machine that has never seen pnpm. It gets the
+  // shorter pass: install, typecheck, build, and no browser.
+  const npmInstaller = path.join(scratch, "via-npm")
+  const npmApp = path.join(scratch, "my-npm-talk")
+
+  installCli("npm", npmInstaller, cli)
+
+  time("npm: deckard init, install included", () => {
+    run(
+      "npm",
+      ["exec", "--", "deckard", "init", npmApp, ...initFlags],
+      npmInstaller
+    )
+  })
+
+  assertScaffold("npm", npmApp)
+  assert(
+    fs.existsSync(path.join(npmApp, "package-lock.json")),
+    "the npm init did not install with npm"
   )
-  assertScreenshot(appDirectory)
+
+  time("npm: typecheck", () => {
+    run("npm", ["run", "typecheck"], npmApp)
+  })
+  time("npm: next build", () => {
+    run("npm", ["run", "build"], npmApp)
+  })
+  assertStaticSlides(npmApp, ["intro", "keyboard", "2"])
+
+  const width = Math.max(...timings.map(([label]) => label.length))
+
+  process.stdout.write("\nthe packed deckard scaffolds a working deck twice\n")
+
+  for (const [label, elapsed] of timings) {
+    process.stdout.write(
+      `  ${label.padEnd(width)}  ${(elapsed / 1000).toFixed(1)}s\n`
+    )
+  }
 
   process.stdout.write(
-    `\ndeckard init builds a working deck outside the workspace, in ${initSeconds}s including install\n`
+    `  ${"total".padEnd(width)}  ${(timings.reduce((sum, [, elapsed]) => sum + elapsed, 0) / 1000).toFixed(1)}s\n`
   )
 } finally {
   if (keepScratch) {
