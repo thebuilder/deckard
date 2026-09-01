@@ -104,8 +104,9 @@ export default function AuthoringPage() {
         done, look at a fresh <code>pnpm deck:contact-sheet</code>, because a
         whole deck in one grid catches what reading the diff does not.{" "}
         <Link href="/getting-started">Getting started</Link> describes what each
-        one measures, and notes that the scripts are workspace-only until{" "}
-        <code>@deckard/deck-scripts</code> publishes.
+        one measures. Every one of them is a <code>deckard</code> subcommand;
+        the <code>pnpm</code> names are the scripts <code>deckard init</code>{" "}
+        writes into your <code>package.json</code>.
       </p>
 
       <h2 className="pt-4 text-2xl">Two things that will confuse you</h2>

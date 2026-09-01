@@ -5,43 +5,39 @@ export const metadata: Metadata = {
   title: "Getting started",
 }
 
+const createCommand = `npx @deckard/cli init my-talk
+cd my-talk
+pnpm dev`
+
 const appTree = `my-talk/
   app/
     globals.css
     layout.tsx
+    not-found.tsx
     page.tsx
     presenter/page.tsx
     sitemap.ts
     slides/[id]/page.tsx
-    slides/blocks/       installed from the registry, yours to edit
-  components/
+    slides/blocks/       the four block families, yours to edit
   deck/
     deck.ts
     slides.tsx
     slides/*.slide.tsx
-    theme/               installed from the registry, yours to edit
+    theme/               the theme you picked, yours to edit
+  lib/utils.ts
   public/
+  components.json
   next.config.mjs
   package.json`
 
-const packCommand = `# from the root of a Deckard checkout
-pnpm --filter @deckard/core exec pnpm pack \\
-  --pack-destination ~/code/my-talk`
+const tarballInit = `# from the root of a Deckard checkout
+pnpm cli:build
+pnpm --filter @deckard/core exec pnpm pack --pack-destination /tmp/deckard
+pnpm --filter @deckard/cli exec pnpm pack --pack-destination /tmp/deckard
 
-const tarballDependency = `{
-  "dependencies": {
-    "@deckard/core": "file:./deckard-core-0.0.1.tgz",
-    "next": "16.3.3",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8"
-  }
-}`
-
-const registryConfig = `{
-  "registries": {
-    "@deckard": "http://localhost:3001/r/{name}.json"
-  }
-}`
+node packages/cli/bin/deckard.mjs init ~/code/my-talk \\
+  --core-tarball /tmp/deckard/deckard-core-0.0.1.tgz \\
+  --cli-tarball /tmp/deckard/deckard-cli-0.0.1.tgz`
 
 const deckConfig = `import { defineDeck } from "@deckard/core"
 
@@ -59,19 +55,13 @@ export const deck = defineDeck({
 })`
 
 const deckChecks = `pnpm deck:validate
+pnpm deck:doctor
 pnpm deck:check-overflow
 pnpm deck:screenshots
 pnpm deck:contact-sheet`
 
-const componentsAliases = `{
-  "aliases": {
-    "components": "@/components",
-    "hooks": "@/hooks",
-    "lib": "@/lib",
-    "ui": "@/components/ui",
-    "utils": "@/lib/utils"
-  }
-}`
+const addCommands = `deckard add theme broadsheet
+deckard add block media`
 
 const slideArray = `import type { SlideDefinition } from "@deckard/core"
 
@@ -112,139 +102,162 @@ export const slides: SlideDefinition[] = [
   ...discoveredSlides,
 ]`
 
+const manualInstall = `pnpm create next-app my-talk --typescript --tailwind --app
+cd my-talk
+pnpm add @deckard/core
+pnpm add -D @deckard/cli`
+
+const registryConfig = `{
+  "registries": {
+    "@deckard": "http://localhost:3001/r/{name}.json"
+  }
+}`
+
+const componentsAliases = `{
+  "aliases": {
+    "components": "@/components",
+    "hooks": "@/hooks",
+    "lib": "@/lib",
+    "ui": "@/components/ui",
+    "utils": "@/lib/utils"
+  }
+}`
+
 export default function GettingStartedPage() {
   return (
     <>
       <h1 className="text-3xl">Getting started</h1>
+      <pre>
+        <code>{createCommand}</code>
+      </pre>
       <p>
-        A Deckard presentation is a Next.js app you own. You write{" "}
-        <code>app/</code>, <code>components/</code>, <code>deck/</code>,{" "}
-        <code>public/</code>, and <code>package.json</code> the way you would in
-        any other Next project. <code>@deckard/core</code> is a dependency
-        inside it. The theme and the slide blocks are source files in your
-        repository, installed once through the shadcn registry and edited from
-        then on.
+        One command writes the app, installs it, makes the first commit, and
+        typechecks it. It asks nothing. What you get is a Next.js app you own,
+        with a five-slide deck in it that you delete.
       </p>
-      <p>
-        You do not clone the Deckard repository to build a deck, and you do not
-        write slides in its playground. That repository is where the framework
-        itself gets built, which is the last section on this page.
-      </p>
+      <ul className="list-disc space-y-1 pl-6">
+        <li>
+          <code>--theme broadsheet</code> installs the editorial theme instead
+          of the default one.
+        </li>
+        <li>
+          <code>--empty</code> writes two slides instead of the sample deck.
+        </li>
+        <li>
+          <code>--package-manager npm|yarn|bun</code> changes the installer. The
+          default is pnpm.
+        </li>
+        <li>
+          <code>--no-install</code> and <code>--no-git</code> skip those steps.
+        </li>
+      </ul>
+
+      <h2 className="pt-4 text-2xl">What it writes</h2>
       <pre>
         <code>{appTree}</code>
       </pre>
-
-      <h2 className="pt-4 text-2xl">Where the package stands today</h2>
       <p>
-        <code>@deckard/core</code> is designed for npm and is not published to
-        npm yet. Publishing it is the plan before the API is called stable, so
-        the install step below is temporary and nothing else on this page
-        depends on it.
+        <code>@deckard/core</code> is a dependency inside it. The theme and the
+        slide blocks are source files in your repository from the first commit,
+        and you edit them from then on. You do not clone the Deckard repository
+        to build a deck, and you do not write slides in its playground. That
+        repository is where the framework itself gets built, which is the last
+        section on this page.
       </p>
-      <p>Two paths work right now.</p>
-      <ol className="list-decimal space-y-1 pl-6">
+
+      <h2 className="pt-4 text-2xl">Where the packages stand today</h2>
+      <p>
+        <code>@deckard/core</code> and <code>@deckard/cli</code> are built for
+        npm and are not published there yet. Publishing them is the plan before
+        the API is called stable, so the <code>npx</code> line above does not
+        work from a clean machine yet. Until it does, pack both out of a
+        checkout and point the init at the tarballs.
+      </p>
+      <pre>
+        <code>{tarballInit}</code>
+      </pre>
+      <p>
+        <code>pnpm smoke:cli</code> runs that exact path on every check: it
+        generates a deck outside the workspace, builds it, validates it, and
+        captures a screenshot from it. So the tarball route is the one with a
+        test behind it. The other option is to build your deck inside the
+        Deckard workspace as a second app, the way <code>apps/demo</code> does,
+        and move it out when the packages publish.
+      </p>
+
+      <h2 className="pt-4 text-2xl">The commands</h2>
+      <p>
+        <code>deckard</code> is the only binary. Every command except{" "}
+        <code>init</code> runs against the deck in the current directory, and{" "}
+        <code>init</code> wires them into your <code>package.json</code> as{" "}
+        <code>deck:validate</code>, <code>deck:screenshots</code>, and the rest.
+      </p>
+      <ul className="list-disc space-y-1 pl-6">
         <li>
-          Pack a tarball out of the Deckard repository and install the file.{" "}
-          <code>pnpm smoke:package</code> runs that exact path into a scratch
-          app on every check, so it is the one with a test behind it.
+          <code>deckard validate</code> loads the real deck in about a second
+          and reports whether it resolves at all, and whether the theme class
+          and its color blocks match the stylesheet. It exits nonzero with the
+          offending slug, token, or path. Run it after a structural change.
         </li>
         <li>
-          Build your deck inside the Deckard workspace as a second app, the way{" "}
-          <code>apps/demo</code> does, and move it out when the package
-          publishes.
+          <code>deckard doctor</code> checks the shape of the app instead of the
+          content of the deck: the node version, that <code>@deckard/core</code>{" "}
+          resolves, that the stylesheet import is there, that{" "}
+          <code>deck/deck.ts</code> loads, and that the four route files still
+          re-export their adapters.
         </li>
-      </ol>
+        <li>
+          <code>deckard check-overflow</code> builds the deck, serves it, and
+          measures each slide against the canvas with the same arithmetic the
+          development overflow guard uses. It exits nonzero listing the slides
+          whose content is clipped, so it works as a CI gate.
+        </li>
+        <li>
+          <code>deckard screenshots</code> writes one PNG per slide at canvas
+          size into <code>out/screenshots</code>, dark by default and light with{" "}
+          <code>--light</code>. <code>--max 1</code> stops after the first
+          slide. <code>deckard contact-sheet</code> composes them into a single
+          grid at <code>out/contact-sheet.png</code>, which is the fastest way
+          to look at a whole deck at once.
+        </li>
+        <li>
+          <code>deckard export pdf</code> runs a production build with{" "}
+          <code>NEXT_PUBLIC_PDF_EXPORT=1</code>, reads slide routes from{" "}
+          <code>/sitemap.xml</code>, and captures one page per slide at the deck
+          canvas size. Page size comes from the canvas config, so the handout
+          cannot drift from what the audience saw.
+        </li>
+      </ul>
+      <pre>
+        <code>{deckChecks}</code>
+      </pre>
       <p>
-        The deck check scripts have the same caveat.{" "}
-        <code>@deckard/deck-scripts</code> is workspace-only today, so a
-        standalone app gets <code>deck-validate</code> and the rest once both
-        packages publish. Until then, run them against a deck that lives in the
-        workspace.
+        The four commands that need a browser build the app and serve it on a
+        spare port. Install Chromium once with{" "}
+        <code>pnpm exec playwright install chromium</code>. They take{" "}
+        <code>--port &lt;n&gt;</code> and <code>--skip-build</code>, and every
+        one but the PDF export takes <code>--light</code>.
       </p>
 
-      <h2 className="pt-4 text-2xl">Create the app</h2>
+      <h2 className="pt-4 text-2xl">Install another theme or block</h2>
       <p>
-        Start a Next.js app with Tailwind and the App Router, or skip this and
-        use an app you already have. Deckard adds routes under{" "}
-        <code>/slides</code> and touches nothing else.
+        Themes and slide blocks are not in the package. They install into your
+        app as files you own, through the shadcn registry.{" "}
+        <code>deckard add</code> is a wrapper around <code>shadcn add</code>{" "}
+        that reads the registry URL from <code>components.json</code>, or takes{" "}
+        <code>--registry</code>.
       </p>
       <pre>
-        <code>
-          {
-            "pnpm create next-app my-talk --typescript --tailwind --app\ncd my-talk"
-          }
-        </code>
-      </pre>
-
-      <h2 className="pt-4 text-2xl">Install @deckard/core</h2>
-      <p>Pack the package into your app directory:</p>
-      <pre>
-        <code>{packCommand}</code>
+        <code>{addCommands}</code>
       </pre>
       <p>
-        Then point the dependency at the file and install. The version in the
-        filename is whatever <code>packages/core/package.json</code> says.
-      </p>
-      <pre>
-        <code>{tarballDependency}</code>
-      </pre>
-      <p>
-        Once the package is on npm this whole step becomes{" "}
-        <code>pnpm add @deckard/core</code>. The import paths, the config, and
-        the deck code are already written against that name.
-      </p>
-
-      <h2 className="pt-4 text-2xl">Wire the stylesheet</h2>
-      <p>
-        <code>@deckard/core</code> ships compiled, so Next consumes it like any
-        other package: no <code>transpilePackages</code> entry, no Tailwind{" "}
-        <code>@source</code>. One import in the app stylesheet is the whole
-        wiring, because the package stylesheet registers the package&apos;s own
-        output as a Tailwind source.
-      </p>
-      <pre>
-        <code>
-          {
-            '/* app/globals.css */\n@import "tailwindcss";\n@import "@deckard/core/styles.css";'
-          }
-        </code>
-      </pre>
-      <p>
-        <code>styles.css</code> defines the slide token contract, the{" "}
-        <code>--slide-*</code> variables every block and every theme reads. A
-        deck with no theme installed renders on those defaults.
-      </p>
-      <p>
-        Point the <code>utils</code> alias in <code>components.json</code> at{" "}
-        <code>@/lib/utils</code>. shadcn resolves that alias against your
-        tsconfig paths, so a package subpath such as{" "}
-        <code>@deckard/core/utils</code> only resolves inside the Deckard
-        workspace and makes <code>shadcn add</code> fail in your app.
-      </p>
-      <pre>
-        <code>{componentsAliases}</code>
-      </pre>
-
-      <h2 className="pt-4 text-2xl">Install the theme and the blocks</h2>
-      <p>
-        The deck theme and the slide blocks are not in the package. They install
-        into your app as files you own, through the shadcn registry. Add the
-        namespace to <code>components.json</code>:
-      </p>
-      <pre>
-        <code>{registryConfig}</code>
-      </pre>
-      <pre>
-        <code>pnpm dlx shadcn@latest add @deckard/preset-deckard</code>
-      </pre>
-      <p>
-        That writes <code>deck/theme/</code> and <code>app/slides/blocks/</code>{" "}
-        into your app, plus the two stylesheet lines above. It leaves{" "}
-        <code>next.config.mjs</code> alone, and there is nothing to add there:
-        the package ships compiled, so the config stays empty. The registry has
-        no public host yet, so the URL points at this docs site running locally.{" "}
-        <Link href="/registry">Registry</Link> covers what each item contains
-        and how to run the server.
+        A theme lands in <code>deck/theme/</code> and replaces whatever theme
+        was there, because a deck has exactly one. Blocks land in{" "}
+        <code>app/slides/blocks/</code>. The registry has no public host yet, so{" "}
+        <code>init</code> points <code>components.json</code> at this docs site
+        running locally on port 3001, and <code>deckard add</code> says so when
+        nothing answers there. <Link href="/registry">Registry</Link> covers
+        what each item contains and how to run the server.
       </p>
 
       <h2 className="pt-4 text-2xl">Describe the deck</h2>
@@ -297,11 +310,59 @@ export default function GettingStartedPage() {
         Extracting a slide buys editing room, not loading speed.
       </p>
 
-      <h2 className="pt-4 text-2xl">Wire the routes</h2>
+      <h2 className="pt-4 text-2xl">Wiring a deck by hand</h2>
       <p>
-        <code>@deckard/core/next</code> ships the routes, so an app owns its
-        deck and nothing else. <code>createSlideRoute</code> returns the slide
-        page with its metadata and static params,{" "}
+        Everything above assumes <code>deckard init</code> wrote the app. Do it
+        by hand when the deck has to live inside an app you already have. This
+        is the same wiring, written out.
+      </p>
+      <pre>
+        <code>{manualInstall}</code>
+      </pre>
+      <p>
+        <code>@deckard/core</code> ships compiled, so Next consumes it like any
+        other package: no <code>transpilePackages</code> entry, no Tailwind{" "}
+        <code>@source</code>. One import in the app stylesheet is the whole
+        wiring, because the package stylesheet registers the package&apos;s own
+        output as a Tailwind source.
+      </p>
+      <pre>
+        <code>
+          {
+            '/* app/globals.css */\n@import "tailwindcss";\n@import "@deckard/core/styles.css";'
+          }
+        </code>
+      </pre>
+      <p>
+        <code>styles.css</code> defines the slide token contract, the{" "}
+        <code>--slide-*</code> variables every block and every theme reads. A
+        deck with no theme installed renders on those defaults.
+      </p>
+      <p>
+        Point the <code>utils</code> alias in <code>components.json</code> at{" "}
+        <code>@/lib/utils</code>, and add the registry namespace. shadcn
+        resolves that alias against your tsconfig paths, so a package subpath
+        such as <code>@deckard/core/utils</code> only resolves inside the
+        Deckard workspace and makes <code>shadcn add</code> fail in your app.
+      </p>
+      <pre>
+        <code>{componentsAliases}</code>
+      </pre>
+      <pre>
+        <code>{registryConfig}</code>
+      </pre>
+      <pre>
+        <code>pnpm dlx shadcn@latest add @deckard/preset-deckard</code>
+      </pre>
+      <p>
+        That writes <code>deck/theme/</code> and <code>app/slides/blocks/</code>{" "}
+        into your app, plus the stylesheet import above. It leaves{" "}
+        <code>next.config.mjs</code> alone, and there is nothing to add there.
+      </p>
+      <p>
+        Then the routes. <code>@deckard/core/next</code> ships them, so an app
+        owns its deck and nothing else. <code>createSlideRoute</code> returns
+        the slide page with its metadata and static params,{" "}
         <code>createPresenterPage</code> the presenter console,{" "}
         <code>createDeckSitemap</code> the sitemap the PDF export reads, and{" "}
         <code>createFirstSlideRedirect</code> the root redirect. Every slide
@@ -318,61 +379,24 @@ export default function GettingStartedPage() {
         body renders into. Reach for it directly when a deck needs a route the
         adapters do not cover.
       </p>
-
-      <h2 className="pt-4 text-2xl">Check the deck</h2>
       <p>
-        <code>pnpm deck:validate</code> loads the real deck in about a second
-        and reports whether it resolves at all, whether the theme class and its
-        color blocks match the stylesheet, and whether every registry file path
-        still exists. It exits nonzero with the offending slug, token, or path.
-        Run it after a structural change.
+        Finish with <code>deckard doctor</code>, which checks every step on this
+        list and names the one you missed.
       </p>
-      <p>
-        <code>pnpm deck:check-overflow</code> builds the deck, serves it, and
-        measures each slide against the canvas with the same arithmetic the
-        development overflow guard uses. It exits nonzero listing the slides
-        whose content is clipped, so it works as a CI gate.
-      </p>
-      <p>
-        <code>pnpm deck:screenshots</code> writes one PNG per slide at canvas
-        size into <code>out/screenshots</code>, dark by default and light with{" "}
-        <code>--light</code>. <code>pnpm deck:contact-sheet</code> composes them
-        into a single grid at <code>out/contact-sheet.png</code>, which is the
-        fastest way to look at a whole deck at once.
-      </p>
-      <pre>
-        <code>{deckChecks}</code>
-      </pre>
-      <p>
-        These come from <code>@deckard/deck-scripts</code>, which each app wires
-        up as bins in its own <code>package.json</code>. That package is
-        workspace-only until it publishes.
-      </p>
-
-      <h2 className="pt-4 text-2xl">Export a PDF</h2>
-      <p>
-        The export script runs a production build with{" "}
-        <code>NEXT_PUBLIC_PDF_EXPORT=1</code>, reads slide routes from{" "}
-        <code>/sitemap.xml</code>, and captures one page per slide at the deck
-        canvas size. Page size comes from the canvas config, so the handout
-        cannot drift from what the audience saw.
-      </p>
-      <pre>
-        <code>{"pnpm exec playwright install chromium\npnpm export:pdf"}</code>
-      </pre>
 
       <h2 className="pt-4 text-2xl">Working on the framework itself</h2>
       <p>
         Everything above is about your app. Cloning the Deckard repository is a
-        different job: changing the runtime, the blocks, the registry, or these
-        docs. It is a pnpm workspace run by Turborepo, and it holds three apps
-        with three distinct jobs.
+        different job: changing the runtime, the CLI, the blocks, the registry,
+        or these docs. It is a pnpm workspace run by Turborepo, and it holds
+        three apps with three distinct jobs.
       </p>
       <ul className="list-disc space-y-1 pl-6">
         <li>
           <code>apps/playground</code> is the reference deck, and the app the
           visual checks run against. It exercises every feature on purpose, so
-          it is a test surface, not a template.
+          it is a test surface, not a template. Its blocks and its theme are
+          also the source the <code>init</code> template is copied from.
         </li>
         <li>
           <code>apps/demo</code> is a 19-slide conference talk shaped exactly

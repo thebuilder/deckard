@@ -35,35 +35,40 @@ export default function OverviewPage() {
       </ul>
 
       <h2 className="pt-4 text-2xl">How you use it</h2>
+      <pre>
+        <code>{"npx @deckard/cli init my-talk\ncd my-talk\npnpm dev"}</code>
+      </pre>
       <p>
         A presentation is a Next.js app you own, with <code>app/</code>,{" "}
-        <code>components/</code>, <code>deck/</code>, <code>public/</code>, and{" "}
-        <code>package.json</code>. <code>@deckard/core</code> is a dependency in
-        it and holds the deck contract and the slideshow runtime. It ships as
-        TypeScript source that your app transpiles.
+        <code>deck/</code>, <code>public/</code>, and <code>package.json</code>.{" "}
+        <code>@deckard/core</code> is a dependency in it and holds the deck
+        contract and the slideshow runtime, compiled. <code>@deckard/cli</code>{" "}
+        is the <code>deckard</code> binary that generated the app and then
+        checks it, screenshots it, and exports it.
       </p>
       <p>
         The theme and the slide blocks are deliberately not in the package. They
-        install as source files in your app through the shadcn registry, so a
-        measure that reads badly at your font is a line you edit rather than a
-        prop you wait for.
+        are source files in your app from the first commit, so a measure that
+        reads badly at your font is a line you edit rather than a prop you wait
+        for.
       </p>
       <p>
-        <code>@deckard/core</code> is built for npm and is not published there
-        yet. Today you install a packed tarball, or build your deck inside the
-        Deckard workspace. <Link href="/getting-started">Getting started</Link>{" "}
-        has both, and says which parts change once it publishes.
+        Neither package is on npm yet, so that <code>npx</code> line does not
+        work from a clean machine. Today you point the init at packed tarballs,
+        or build your deck inside the Deckard workspace.{" "}
+        <Link href="/getting-started">Getting started</Link> has both, and says
+        which parts change once they publish.
       </p>
 
       <h2 className="pt-4 text-2xl">The repository behind it</h2>
       <p>
         The Deckard repository is where the framework gets built, not where you
-        write your talk. It is a pnpm workspace with <code>packages/core</code>{" "}
-        and three apps: <code>apps/playground</code>, the reference deck the
-        visual checks run against, <code>apps/demo</code>, a 19-slide talk
-        shaped like a consumer app, and <code>apps/docs</code>, this site.
-        Slides added to the playground exercise the framework and ship to
-        nobody.
+        write your talk. It is a pnpm workspace holding{" "}
+        <code>packages/core</code> and <code>packages/cli</code> plus three
+        apps. <code>apps/playground</code> is the reference deck the visual
+        checks run against. <code>apps/demo</code> is a 19-slide talk shaped
+        like a consumer app. <code>apps/docs</code> is this site. Slides added
+        to the playground exercise the framework and ship to nobody.
       </p>
       <p>
         <Link href="/getting-started">Getting started</Link> covers the install
