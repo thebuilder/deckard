@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 
 const createCommand = `npx @deckard/cli init my-talk
 cd my-talk
-pnpm dev`
+npm run dev`
 
 const appTree = `my-talk/
   app/
@@ -144,8 +144,10 @@ export default function GettingStartedPage() {
           <code>--empty</code> writes two slides instead of the sample deck.
         </li>
         <li>
-          <code>--package-manager npm|yarn|bun</code> changes the installer. The
-          default is pnpm.
+          <code>--package-manager npm|pnpm|yarn|bun</code> overrides the
+          detected installer. By default <code>init</code> uses the package
+          manager that ran it, and records it in the generated{" "}
+          <code>package.json</code> so later commands use the same one.
         </li>
         <li>
           <code>--no-install</code> and <code>--no-git</code> skip those steps.
@@ -177,12 +179,14 @@ export default function GettingStartedPage() {
         <code>{tarballInit}</code>
       </pre>
       <p>
-        <code>pnpm smoke:cli</code> runs that exact path on every check: it
-        generates a deck outside the workspace, builds it, validates it, and
-        captures a screenshot from it. So the tarball route is the one with a
-        test behind it. The other option is to build your deck inside the
-        Deckard workspace as a second app, the way <code>apps/demo</code> does,
-        and move it out when the packages publish.
+        That is the in-repo path, and it runs the working copy of the binary.{" "}
+        <code>pnpm smoke:cli</code> proves the published one on every check: it
+        installs the CLI tarball outside the workspace and runs{" "}
+        <code>init</code> through that installed copy, once under pnpm and once
+        under npm, then builds and validates what came out. So the tarball route
+        is the one with a test behind it. The other option is to build your deck
+        inside the Deckard workspace as a second app, the way{" "}
+        <code>apps/demo</code> does, and move it out when the packages publish.
       </p>
 
       <h2 className="pt-4 text-2xl">The commands</h2>

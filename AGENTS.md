@@ -27,12 +27,14 @@ apply there, against their own `deck/` directory.
   `validate`, `doctor`, `check-overflow`, `screenshots`, `contact-sheet`,
   `export pdf`, and `add`. It compiles to `dist/` with `tsc` and treats the
   current working directory as the deck. `packages/cli/template` is what `init`
-  writes, and `scripts/sync-template.ts` copies the blocks, both themes, and the
-  pinned dependency versions into it from the playground and `registry/`. Edit
-  the sources, never the copies.
+  writes, and `scripts/sync-template.ts` copies the blocks, both themes, the
+  pinned dependency versions, and the package manager pins into it from the
+  playground, `registry/`, and the root `package.json`. Edit the sources, never
+  the copies.
 - `tools/package-smoke` packs the package and builds a scratch app against it.
 - `tools/registry-smoke` installs the registry into a scratch app and builds it.
-- `tools/cli-smoke` runs `deckard init` outside the workspace, then builds,
+- `tools/cli-smoke` installs the packed CLI outside the workspace and runs
+  `deckard init` through it, once under pnpm and once under npm, then builds,
   validates, and screenshots what it generated.
 
 ## Scripts
@@ -59,7 +61,7 @@ All of these run from the root.
 | `pnpm registry:build`      | compiles `registry.json` into `apps/docs/public/r`           |
 | `pnpm smoke:package`       | packs `@deckard/core` and builds a scratch app against it    |
 | `pnpm smoke:registry`      | installs the registry into a scratch app and builds it       |
-| `pnpm smoke:cli`           | `deckard init` a scratch deck, then build, validate, shoot it |
+| `pnpm smoke:cli`           | `deckard init` from the packed CLI on pnpm and npm, then build, validate, shoot it |
 
 `deck:validate` takes about a second. Run it after any structural change: a new
 slug, a moved slide module, a theme edit, a registry path. Run

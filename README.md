@@ -44,11 +44,16 @@ slide as a bullet list.
 ```bash
 npx @deckard/cli init my-talk
 cd my-talk
-pnpm dev
+npm run dev
 ```
 
 That writes the app below, installs it, makes the first commit, and typechecks
 it. The deck it lands with is five slides you delete.
+
+`init` uses the package manager that ran it. Through `npx` that is npm, through
+`pnpm dlx` it is pnpm, and the generated `package.json` records the one it used
+in its `packageManager` field. Nothing in the generated app assumes pnpm, and
+every later `deckard` command reads that field rather than guessing.
 
 ```
 my-talk/
@@ -66,9 +71,9 @@ my-talk/
 ```
 
 `init` takes `--theme broadsheet` for the editorial look, `--empty` for two
-slides instead of the sample deck, `--package-manager npm|yarn|bun` for the
-installer, and `--no-install` or `--no-git` to skip those steps. It asks no
-questions.
+slides instead of the sample deck, `--package-manager npm|pnpm|yarn|bun` to
+override the one it detected, and `--no-install` or `--no-git` to skip those
+steps. It asks no questions.
 
 A presentation built on Deckard is a plain Next.js app that you own. You do not
 clone this repository to build a deck, and you do not write your slides in
@@ -114,11 +119,14 @@ node packages/cli/bin/deckard.mjs init ~/code/my-talk \
   --cli-tarball /tmp/deckard/deckard-cli-0.0.1.tgz
 ```
 
-`pnpm smoke:cli` runs that exact path into a scratch app on every check, so it
-is the one with a test behind it. The other route is to build your deck inside
-this workspace as a second app, the way `apps/demo` does, and move it out once
-the packages publish. Once they do, `npx @deckard/cli init` is the whole
-install and nothing in the generated app changes.
+That is the in-repo path, and it runs the working copy of the binary. What
+`pnpm smoke:cli` proves is the published one: it installs the CLI tarball into a
+scratch directory outside the workspace and runs `init` through that copy, once
+under pnpm and once under npm, so the template has to resolve from inside the
+installed package. The other route is to build your deck inside this workspace
+as a second app, the way `apps/demo` does, and move it out once the packages
+publish. Once they do, `npx @deckard/cli init` is the whole install and nothing
+in the generated app changes.
 
 ### One line of config
 
@@ -203,6 +211,11 @@ overwrites a theme, and `--yes` answers for it. The registry has no public host
 yet, so it is served from this repository's docs site on port 3001, which is
 what `deckard init` writes into `components.json`. See [Registry](#registry).
 
+shadcn is a dependency of `@deckard/cli`, pinned to the version this repository
+builds the registry with, and `deckard add` runs that installed binary. There is
+no `dlx` and no download, so the same version runs on every package manager and
+on every day.
+
 ### The routes come from the package
 
 `@deckard/core/next` ships the route logic. An app's `app/slides/[id]/page.tsx`,
@@ -258,7 +271,7 @@ pnpm demo:validate  # the same checks against apps/demo, plus demo:doctor,
 pnpm registry:build # write the shadcn registry to apps/docs/public/r
 pnpm smoke:package  # pack @deckard/core and build a scratch app against it
 pnpm smoke:registry # install the registry into a scratch app and build it
-pnpm smoke:cli      # deckard init a scratch deck and build, validate, shoot it
+pnpm smoke:cli      # deckard init from the packed CLI on pnpm and npm, then build it
 ```
 
 Every `deck:` and `demo:` script builds `@deckard/cli` first, through Turbo, so
@@ -773,14 +786,23 @@ copies lives in `tools/package-smoke/fixture` and covers a plain slide, an async
 slide, a discovered module, a stepped slide, and a client widget. The scratch
 directory is deleted afterwards. Pass `--keep` to inspect it.
 
-`pnpm smoke:cli` proves the same thing for the generator. It builds and packs
-both packages, runs `deckard init` into a scratch directory outside the
-workspace with `--core-tarball` and `--cli-tarball`, and lets the init do its
-own install. Then it typechecks and builds the generated app, asserts that
-`/slides/intro`, `/slides/keyboard`, and `/slides/2` are prerendered HTML on
-disk, runs `deckard validate` and `deckard doctor` inside it, and captures one
-screenshot with `--max 1`. The whole run takes about 25 seconds, of which the
-init is 9.
+`pnpm smoke:cli` proves the same thing for the generator, and it proves it from
+the tarball rather than from the checkout. It runs `pnpm cli:build`, so
+`@deckard/core` is built before the CLI compiles against its types, and packs
+both packages. Then it installs the CLI tarball into a scratch directory outside
+the workspace and runs `deckard init` through that installed copy, with
+`--core-tarball` and `--cli-tarball`, letting the init do its own install. The
+template files it writes can only have come from inside the installed package.
+
+It does that twice. The pnpm pass typechecks and builds the generated app,
+asserts that `/slides/intro`, `/slides/keyboard`, and `/slides/2` are
+prerendered HTML on disk, runs `deckard validate` and `deckard doctor` inside
+it, and captures one screenshot with `--max 1`. The npm pass is the `npx` flow
+on a machine without pnpm: install, typecheck, build, and the same prerender
+assertion, with no browser. Both passes check that the generated
+`packageManager` field names the manager that ran init and that no generated
+script names a package manager at all. The whole run takes about 70 seconds and
+prints a per-phase breakdown.
 
 There is one gap worth naming: the template's dependency versions and the two
 tarballs come from this repository, so the smoke proves the generated app works

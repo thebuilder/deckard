@@ -36,7 +36,7 @@ export default function OverviewPage() {
 
       <h2 className="pt-4 text-2xl">How you use it</h2>
       <pre>
-        <code>{"npx @deckard/cli init my-talk\ncd my-talk\npnpm dev"}</code>
+        <code>{"npx @deckard/cli init my-talk\ncd my-talk\nnpm run dev"}</code>
       </pre>
       <p>
         A presentation is a Next.js app you own, with <code>app/</code>,{" "}
