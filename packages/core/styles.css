@@ -85,15 +85,12 @@
 
     /*
      * Background decoration. Flat, ruled, scanned, or hatched: the four things
-     * the source designs actually do. No radial wash and no corner glow, in
-     * either colour mode.
+     * the source designs do, and the whole list. There is no radial wash and no
+     * corner glow token, because a bloom behind the copy reads as a smudge on a
+     * projector and as dirty paper in light mode.
      */
-    --slide-wash: transparent;
-    --slide-veil: transparent;
-    --slide-glow: transparent;
     --slide-grid-color: transparent;
     --slide-grid-size: 44px;
-    --slide-spotlight: transparent;
     --slide-rule: var(--border);
     --slide-scanline: none;
     --slide-hatch: none;

@@ -55,13 +55,13 @@
   --slide-surface-muted: oklch(0.915 0.016 85 / 55%);
   --slide-surface-border: oklch(0.755 0.016 78);
   --slide-surface-shadow: none;
-
-  --slide-wash: oklch(0.6 0.1 30 / 8%);
-  --slide-veil: oklch(0.4 0.03 60 / 11%);
-  --slide-glow: oklch(0.475 0.145 28 / 6%);
   --slide-grid-color: oklch(0.42 0.02 60 / 15%);
+  --slide-hatch: repeating-linear-gradient(
+    135deg,
+    var(--slide-grid-color) 0 22px,
+    transparent 22px 44px
+  );
   --slide-grid-size: 2.5rem;
-  --slide-spotlight: oklch(0.55 0.05 55 / 14%);
   --slide-rule: oklch(0.225 0.018 60 / 70%);
   --slide-margin-rule: oklch(0.475 0.145 28 / 32%);
 
@@ -102,12 +102,7 @@
   --slide-surface-muted: oklch(0.285 0.016 60 / 52%);
   --slide-surface-border: oklch(0.415 0.016 70);
   --slide-surface-shadow: none;
-
-  --slide-wash: oklch(0.735 0.125 42 / 12%);
-  --slide-veil: oklch(0.12 0.01 60 / 34%);
-  --slide-glow: oklch(0.735 0.125 42 / 9%);
   --slide-grid-color: oklch(0.88 0.02 84 / 12%);
-  --slide-spotlight: oklch(0.85 0.05 70 / 10%);
   --slide-rule: oklch(0.955 0.012 88 / 62%);
   --slide-margin-rule: oklch(0.735 0.125 42 / 38%);
   color-scheme: dark;
@@ -148,6 +143,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
+  background-color: var(--background);
 }
 
 .ledger-theme .slide-background::before,
@@ -157,24 +153,9 @@
   content: "";
 }
 
-/* The folio: a warm head wash and the heavy rule this deck sets under everything. */
-
-.ledger-theme .slide-background[data-slide-background="default"] {
-  background-image: linear-gradient(
-    to bottom,
-    var(--slide-wash),
-    transparent 34%
-  );
-}
-
-.ledger-theme .slide-background[data-slide-background="default"]::before {
-  inset: auto 0 0;
-  height: calc(var(--canvas-height) * 0.24);
-  background-image: linear-gradient(to top, var(--slide-glow), transparent);
-}
-
-/* The rule runs to the content measure, not to the bleed, and sits clear of the
- * footer. 20% of the canvas is the gutter the slide frame already reserves. */
+/* The folio: bare paper and the heavy rule this deck sets under everything.
+ * The rule runs to the content measure, not to the bleed, and sits clear of
+ * the footer. 20% of the canvas is the gutter the slide frame already reserves. */
 
 .ledger-theme .slide-background[data-slide-background="default"]::after {
   inset: auto calc(var(--canvas-width) * 0.2) calc(var(--canvas-height) * 0.075);
@@ -201,34 +182,10 @@
   background-color: var(--slide-margin-rule);
 }
 
-.ledger-theme .slide-background[data-slide-background="grid"]::after {
-  inset: 0;
-  background-image: linear-gradient(
-    to bottom,
-    var(--background) 0%,
-    transparent 15%,
-    transparent 85%,
-    var(--background) 100%
-  );
-}
-
-/* A page under a lamp: light at the headline, falling off at every edge. */
+/* Plate: the hatch a printed report reserves a figure with, under the same rule. */
 
 .ledger-theme .slide-background[data-slide-background="spotlight"] {
-  background-image: radial-gradient(
-    ellipse at 50% 24%,
-    var(--slide-spotlight),
-    transparent 58%
-  );
-}
-
-.ledger-theme .slide-background[data-slide-background="spotlight"]::before {
-  inset: 0;
-  background-image: radial-gradient(
-    ellipse at 50% 48%,
-    transparent 52%,
-    var(--slide-veil)
-  );
+  background-image: var(--slide-hatch);
 }
 
 .ledger-theme .slide-background[data-slide-background="spotlight"]::after {

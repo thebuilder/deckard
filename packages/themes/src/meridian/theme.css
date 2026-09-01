@@ -55,13 +55,14 @@
   --slide-surface-muted: oklch(1 0 0 / 94%);
   --slide-surface-border: oklch(0.885 0.005 250);
   --slide-surface-shadow: none;
-
-  --slide-wash: oklch(0.6 0.11 258 / 7%);
-  --slide-veil: oklch(0.5 0.04 250 / 5%);
-  --slide-glow: oklch(0.505 0.145 258 / 5%);
   --slide-grid-color: oklch(0.5 0.012 250 / 8%);
+  --slide-hatch: repeating-linear-gradient(
+    135deg,
+    var(--slide-grid-color) 0 22px,
+    transparent 22px 44px
+  );
+  --slide-rule: oklch(0.885 0.005 250);
   --slide-grid-size: 3.5rem;
-  --slide-spotlight: oklch(0.55 0.09 258 / 9%);
 
   --slide-chrome-foreground: var(--muted-foreground);
   --slide-chrome-emphasis: var(--foreground);
@@ -100,12 +101,8 @@
   --slide-surface-muted: oklch(0.28 0.012 250 / 62%);
   --slide-surface-border: oklch(0.325 0.012 250);
   --slide-surface-shadow: none;
-
-  --slide-wash: oklch(0.735 0.135 258 / 12%);
-  --slide-veil: oklch(0.7 0.05 250 / 6%);
-  --slide-glow: oklch(0.735 0.135 258 / 8%);
   --slide-grid-color: oklch(0.85 0.01 250 / 9%);
-  --slide-spotlight: oklch(0.75 0.1 258 / 12%);
+  --slide-rule: oklch(0.325 0.012 250);
   color-scheme: dark;
 }
 
@@ -138,32 +135,11 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
+  background-color: var(--background);
 }
 
-.meridian-theme .slide-background::before,
-.meridian-theme .slide-background::after {
-  position: absolute;
-  pointer-events: none;
-  content: "";
-}
-
-/* One wash from the head, one lift off the floor, and nothing else. */
-
-.meridian-theme .slide-background[data-slide-background="default"] {
-  background-image: linear-gradient(
-    to bottom,
-    var(--slide-wash),
-    transparent 38%
-  );
-}
-
-.meridian-theme .slide-background[data-slide-background="default"]::before {
-  inset: auto 0 0;
-  height: calc(var(--canvas-height) * 0.3);
-  background-image: linear-gradient(to top, var(--slide-glow), transparent);
-}
-
-/* A drafting grid, held far enough back that copy never fights it. */
+/* Flat. The source design paints one colour behind a slide and lets the type
+ * carry it, and a wash on a pale sheet only ever reads as a printing fault. */
 
 .meridian-theme .slide-background[data-slide-background="grid"] {
   background-image:
@@ -172,34 +148,10 @@
   background-size: var(--slide-grid-size) var(--slide-grid-size);
 }
 
-.meridian-theme .slide-background[data-slide-background="grid"]::before {
-  inset: 0;
-  background-image: radial-gradient(
-    ellipse at 50% 44%,
-    transparent 36%,
-    var(--background) 90%
-  );
-}
+/* The placeholder hatch, promoted to a whole background. */
 
-/* The scrim from the media slide, promoted to a whole background. */
-
-.meridian-theme .slide-background[data-slide-background="spotlight"]::before {
-  top: 0;
-  left: 50%;
-  width: calc(var(--canvas-width) * 0.86);
-  height: calc(var(--canvas-height) * 0.7);
-  background-image: radial-gradient(
-    ellipse at top,
-    var(--slide-spotlight),
-    transparent 64%
-  );
-  transform: translateX(-50%);
-}
-
-.meridian-theme .slide-background[data-slide-background="spotlight"]::after {
-  inset: auto 0 0;
-  height: calc(var(--canvas-height) * 0.34);
-  background-image: linear-gradient(to top, var(--slide-glow), transparent);
+.meridian-theme .slide-background[data-slide-background="spotlight"] {
+  background-image: var(--slide-hatch);
 }
 
 /* Deck chrome. Quiet to the point of nearly not being there: no rules, no

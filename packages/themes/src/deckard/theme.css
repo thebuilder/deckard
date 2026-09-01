@@ -55,13 +55,14 @@
   --slide-surface-shadow:
     0 1px 2px oklch(0.21 0.02 264 / 6%),
     0 18px 40px -28px oklch(0.21 0.02 264 / 35%);
-
-  --slide-wash: oklch(0.68 0.11 200 / 18%);
-  --slide-veil: oklch(0.45 0.06 235 / 10%);
-  --slide-glow: oklch(0.6 0.1 200 / 14%);
   --slide-grid-color: oklch(0.55 0.02 220 / 14%);
+  --slide-hatch: repeating-linear-gradient(
+    135deg,
+    var(--slide-grid-color) 0 22px,
+    transparent 22px 44px
+  );
+  --slide-rule: oklch(0.55 0.02 220 / 30%);
   --slide-grid-size: 44px;
-  --slide-spotlight: oklch(0.5 0.07 225 / 18%);
 
   --slide-chrome-size: 1.5rem;
   --slide-chrome-foreground: var(--muted-foreground);
@@ -101,12 +102,8 @@
   --slide-surface-border: oklch(0.98 0.01 268 / 12%);
   --slide-surface-shadow:
     0 1px 2px oklch(0 0 0 / 40%), 0 18px 40px -28px oklch(0 0 0 / 60%);
-
-  --slide-wash: oklch(0.68 0.11 200 / 28%);
-  --slide-veil: oklch(0.5 0.09 235 / 15%);
-  --slide-glow: oklch(0.78 0.12 197 / 18%);
   --slide-grid-color: oklch(0.75 0.02 220 / 12%);
-  --slide-spotlight: oklch(0.78 0.09 205 / 16%);
+  --slide-rule: oklch(0.75 0.02 220 / 26%);
   color-scheme: dark;
 }
 
@@ -128,37 +125,24 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
+  background-color: var(--background);
 }
 
-.deckard-theme .slide-background::before,
 .deckard-theme .slide-background::after {
   position: absolute;
   pointer-events: none;
   content: "";
 }
 
-.deckard-theme .slide-background[data-slide-background="default"] {
-  background-image: radial-gradient(
-    circle at 50% -12%,
-    var(--slide-wash),
-    transparent 68%
-  );
-}
-
-.deckard-theme .slide-background[data-slide-background="default"]::before {
-  inset: 0 0 auto;
-  height: calc(var(--canvas-height) * 0.72);
-  background-image: linear-gradient(to bottom, var(--slide-veil), transparent);
-}
+/* Flat, with one hairline down the left margin so the frame has an edge to
+ * start at. Nothing behind the copy: the type is the picture. */
 
 .deckard-theme .slide-background[data-slide-background="default"]::after {
-  right: 0;
-  bottom: 0;
-  width: 28rem;
-  height: 28rem;
-  background-color: var(--slide-glow);
-  border-radius: 9999px;
-  filter: blur(64px);
+  top: calc(var(--canvas-height) * 0.12);
+  bottom: calc(var(--canvas-height) * 0.12);
+  left: calc(var(--slide-padding-inline) / 2);
+  width: 1px;
+  background-color: var(--slide-rule);
 }
 
 .deckard-theme .slide-background[data-slide-background="grid"] {
@@ -168,36 +152,8 @@
   background-size: var(--slide-grid-size) var(--slide-grid-size);
 }
 
-.deckard-theme .slide-background[data-slide-background="grid"]::before {
-  inset: 0;
-  background-image: radial-gradient(
-    circle at 50% 0%,
-    var(--slide-wash),
-    transparent 62%
-  );
-}
-
-.deckard-theme .slide-background[data-slide-background="spotlight"]::before {
-  top: 0;
-  left: 50%;
-  width: calc(var(--canvas-width) * 0.92);
-  height: calc(var(--canvas-height) * 0.78);
-  background-image: radial-gradient(
-    circle at top,
-    var(--slide-spotlight),
-    transparent 66%
-  );
-  transform: translateX(-50%);
-}
-
-.deckard-theme .slide-background[data-slide-background="spotlight"]::after {
-  right: 0;
-  bottom: 0;
-  width: 24rem;
-  height: 24rem;
-  background-color: var(--slide-glow);
-  border-radius: 9999px;
-  filter: blur(64px);
+.deckard-theme .slide-background[data-slide-background="spotlight"] {
+  background-image: var(--slide-hatch);
 }
 
 /* Deck chrome. The runtime renders the header and the footer inside the canvas

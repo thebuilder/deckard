@@ -55,13 +55,14 @@
   --slide-surface-muted: oklch(0.9 0.012 258 / 58%);
   --slide-surface-border: oklch(0.835 0.012 258);
   --slide-surface-shadow: none;
-
-  --slide-wash: oklch(0.6 0.12 48 / 9%);
-  --slide-veil: oklch(0.45 0.03 258 / 7%);
-  --slide-glow: oklch(0.535 0.155 48 / 7%);
   --slide-grid-color: oklch(0.45 0.03 258 / 9%);
+  --slide-hatch: repeating-linear-gradient(
+    135deg,
+    var(--slide-grid-color) 0 22px,
+    transparent 22px 44px
+  );
+  --slide-rule: oklch(0.535 0.155 48 / 45%);
   --slide-grid-size: 1.75rem;
-  --slide-spotlight: oklch(0.6 0.1 48 / 11%);
   --slide-grid-major: oklch(0.45 0.05 258 / 16%);
   --slide-halo: none;
 
@@ -100,12 +101,8 @@
   --slide-surface-muted: oklch(0.255 0.03 258 / 58%);
   --slide-surface-border: oklch(0.335 0.03 258);
   --slide-surface-shadow: none;
-
-  --slide-wash: oklch(0.79 0.155 68 / 14%);
-  --slide-veil: oklch(0.08 0.02 258 / 42%);
-  --slide-glow: oklch(0.79 0.155 68 / 12%);
   --slide-grid-color: oklch(0.75 0.05 258 / 9%);
-  --slide-spotlight: oklch(0.79 0.13 68 / 13%);
+  --slide-rule: oklch(0.79 0.155 68 / 45%);
   --slide-grid-major: oklch(0.79 0.09 68 / 15%);
   --slide-halo: 0 0 0.5em oklch(0.79 0.155 68 / 32%);
   color-scheme: dark;
@@ -151,6 +148,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
+  background-color: var(--background);
 }
 
 .nexus-theme .slide-background::before,
@@ -160,30 +158,26 @@
   content: "";
 }
 
-/* Deep field: a wash off the top edge, a horizon band, one running light. */
-
-.nexus-theme .slide-background[data-slide-background="default"] {
-  background-image: radial-gradient(
-    ellipse at 50% -10%,
-    var(--slide-wash),
-    transparent 62%
-  );
-}
+/* Deep field: flat, with a hairline bracket in each opposite corner. The
+ * brackets are the frame the source design rules its panels with, pulled out
+ * to the canvas edge. */
 
 .nexus-theme .slide-background[data-slide-background="default"]::before {
-  inset: auto 0 0;
-  height: calc(var(--canvas-height) * 0.32);
-  background-image: linear-gradient(to top, var(--slide-veil), transparent);
+  top: 2.5rem;
+  left: 2.5rem;
+  width: 7rem;
+  height: 7rem;
+  border-top: 1px solid var(--slide-rule);
+  border-left: 1px solid var(--slide-rule);
 }
 
 .nexus-theme .slide-background[data-slide-background="default"]::after {
-  right: 0;
-  bottom: 0;
-  width: 26rem;
-  height: 26rem;
-  background-color: var(--slide-glow);
-  border-radius: 9999px;
-  filter: blur(72px);
+  right: 2.5rem;
+  bottom: 2.5rem;
+  width: 7rem;
+  height: 7rem;
+  border-right: 1px solid var(--slide-rule);
+  border-bottom: 1px solid var(--slide-rule);
 }
 
 /* Blueprint: a fine cell grid with every fifth line drawn heavier. */
@@ -201,48 +195,10 @@
     calc(var(--slide-grid-size) * 5) calc(var(--slide-grid-size) * 5);
 }
 
-.nexus-theme .slide-background[data-slide-background="grid"]::before {
-  inset: 0;
-  background-image: radial-gradient(
-    ellipse at 50% 42%,
-    transparent 44%,
-    var(--background) 100%
-  );
-}
-
-.nexus-theme .slide-background[data-slide-background="grid"]::after {
-  inset: 0 0 auto;
-  height: calc(var(--canvas-height) * 0.5);
-  background-image: linear-gradient(to bottom, var(--slide-wash), transparent);
-}
-
-/* Approach light: one wide beam off the top edge and a tube vignette under it. */
+/* Hazard hatch, the fill the source design puts behind a missing plate. */
 
 .nexus-theme .slide-background[data-slide-background="spotlight"] {
-  background-image: radial-gradient(
-    ellipse at 50% -6%,
-    var(--slide-spotlight),
-    transparent 60%
-  );
-}
-
-.nexus-theme .slide-background[data-slide-background="spotlight"]::before {
-  inset: 0;
-  background-image: radial-gradient(
-    ellipse at 50% 46%,
-    transparent 44%,
-    var(--slide-veil)
-  );
-}
-
-.nexus-theme .slide-background[data-slide-background="spotlight"]::after {
-  right: 0;
-  bottom: 0;
-  width: 22rem;
-  height: 22rem;
-  background-color: var(--slide-glow);
-  border-radius: 9999px;
-  filter: blur(72px);
+  background-image: var(--slide-hatch);
 }
 
 /* Deck chrome. Console strips: everything set in capitals, spaced out, and
