@@ -66,7 +66,7 @@ my-talk/
     theme/               the theme you picked, yours to edit
   public/
   components.json
-  next.config.mjs
+  next.config.ts
   package.json
 ```
 
@@ -889,7 +889,7 @@ there. `block-typography`, `block-slide-layouts`, `block-collections`,
 `preset-deckard` pulls in the default theme and every block, and writes the one
 line the app stylesheet needs, `@import "@deckard/core/styles.css"`. That sheet
 registers the package's own Tailwind source, so there is nothing left to wire in
-`next.config.mjs`.
+`next.config.ts`.
 
 Theme sources live in two places. The deckard theme is published straight out
 of `apps/playground/deck/theme`, where the reference deck uses it, so the
@@ -900,7 +900,7 @@ and live in `registry/themes/<name>`.
 on a spare port, packs `@deckard/core`, and installs both into a scratch app
 outside the workspace. It checks the files land where the items claim, that the
 preset wrote the stylesheet import and nothing else, that the app builds with
-an empty `next.config.mjs`, and that both an edit to the installed `theme.css`
+an empty `next.config.ts`, and that both an edit to the installed `theme.css`
 and the runtime's own utility classes reach the built stylesheet. Then it swaps
 in `theme-broadsheet` and typechecks again. It takes about a minute.
 

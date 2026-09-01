@@ -31,7 +31,7 @@ function run(command: string, args: string[], cwd: string) {
 // doing for them cannot appear in it.
 function assertPlainConsumer() {
   const config = fs.readFileSync(
-    path.join(fixtureSource, "next.config.mjs"),
+    path.join(fixtureSource, "next.config.ts"),
     "utf8"
   )
 

@@ -198,7 +198,7 @@ export default function RegistryPage() {
       </p>
       <p>
         That import is the whole build wiring. <code>@deckard/core</code> ships
-        compiled, so <code>next.config.mjs</code> stays empty and nothing has to
+        compiled, so <code>next.config.ts</code> stays empty and nothing has to
         be transpiled. What is left is deck code. See{" "}
         <Link href="/getting-started">Getting started</Link> for the rest of the
         setup.

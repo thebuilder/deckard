@@ -27,7 +27,7 @@ const appTree = `my-talk/
   lib/utils.ts
   public/
   components.json
-  next.config.mjs
+  next.config.ts
   package.json`
 
 const tarballInit = `# from the root of a Deckard checkout
@@ -362,7 +362,7 @@ export default function GettingStartedPage() {
       <p>
         That writes <code>deck/theme/</code> and <code>app/slides/blocks/</code>{" "}
         into your app, plus the stylesheet import above. It leaves{" "}
-        <code>next.config.mjs</code> alone, and there is nothing to add there.
+        <code>next.config.ts</code> alone, and there is nothing to add there.
       </p>
       <p>
         Then the routes. <code>@deckard/core/next</code> ships them, so an app

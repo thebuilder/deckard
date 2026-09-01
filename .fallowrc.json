@@ -29,7 +29,7 @@
       "exports": ["meta", "notes"]
     }
   ],
-  "ignoreDependencies": ["postcss-load-config", "react-dom", "tailwindcss"],
+  "ignoreDependencies": ["react-dom", "tailwindcss"],
   "duplicates": {
     "ignore": ["apps/demo/app/**", "apps/demo/deck/theme/**"]
   }

@@ -169,11 +169,7 @@ export function scaffold(options: ScaffoldOptions): void {
     path.join(target, "deck/theme")
   )
 
-  for (const file of [
-    "next.config.mjs",
-    "postcss.config.mjs",
-    "tsconfig.json",
-  ]) {
+  for (const file of ["next.config.ts", "postcss.config.ts", "tsconfig.json"]) {
     write(path.join(target, file), readTemplate(file))
   }
 

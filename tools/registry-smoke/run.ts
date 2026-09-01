@@ -154,7 +154,7 @@ function assertStylesheetWiring(appDirectory: string) {
 }
 
 function assertPlainNextConfig(appDirectory: string) {
-  const config = readFile(appDirectory, "next.config.mjs")
+  const config = readFile(appDirectory, "next.config.ts")
 
   assert(
     !config.includes("transpilePackages"),

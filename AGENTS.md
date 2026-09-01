@@ -132,4 +132,4 @@ is what generates it, so a change to that shape belongs in
 - Read the Next.js docs for the pinned version in `node_modules/next/dist/docs/`
   before writing App Router code. The APIs move fast, and `next dev` is
   configured not to inject its own agent-rules block into this file
-  (`agentRules: false` in each app's `next.config.mjs`).
+  (`agentRules: false` in each app's `next.config.ts`).
