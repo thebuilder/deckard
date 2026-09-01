@@ -110,6 +110,14 @@
   letter-spacing: -0.012em;
 }
 
+/* A metrics figure is display type without being a heading element, so the
+ * block marks it and the heading tracking reaches it here. */
+
+.ledger-theme [data-stat-value] {
+  font-weight: 600;
+  letter-spacing: -0.012em;
+}
+
 /* Eyebrows, folio numbers, and captions all speak in the mono face. */
 
 .ledger-theme :is(code, kbd, pre, samp) {

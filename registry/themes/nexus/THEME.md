@@ -20,6 +20,10 @@ positive tracking, and `h1` and `h2` carry a `--slide-halo` text shadow in the
 accent. The halo is `none` in light mode, because a glow on paper looks like a
 printing fault.
 
+The same treatment covers `[data-stat-value]`, the figure the metrics block
+renders. It is display type inside a description list rather than a heading
+element, so it needs the selector to reach it.
+
 The accent is amber, which is the readable choice on a blue-black field.
 `--slide-grid-major` carries it into the blueprint background. In light mode the
 amber drops to `oklch(0.535 0.155 48)`, a step darker and slightly redder than

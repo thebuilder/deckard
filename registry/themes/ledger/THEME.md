@@ -54,7 +54,10 @@ The scale drops hard between title and heading, `5rem` to `3.25rem`, because the
 design opens a chapter at nearly twice the size of the slide it introduces.
 Keep that gap if you retune. Closing it makes every slide look like a cover.
 
-Headings carry `-0.012em` of tracking and weight 600. `--slide-label-tracking`
+Headings carry `-0.012em` of tracking and weight 600, and so does
+`[data-stat-value]`, the figure the metrics block renders. That figure is
+display type inside a description list rather than a heading element, so it
+needs the selector to reach it. `--slide-label-tracking`
 is `0.18em`, which suits the mono labels this theme leans on. Mono capitals
 already sit wide, so the `0.3em` of the default theme reads as broken.
 

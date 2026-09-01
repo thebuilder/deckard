@@ -116,6 +116,16 @@
   text-shadow: var(--slide-halo);
 }
 
+/* A metrics figure is display type without being a heading element, so the
+ * block marks it and the callsign treatment reaches it here. */
+
+.nexus-theme [data-stat-value] {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  text-shadow: var(--slide-halo);
+}
+
 .nexus-theme :is(code, kbd, pre, samp) {
   font-family: var(--slide-font-mono);
   text-transform: none;
