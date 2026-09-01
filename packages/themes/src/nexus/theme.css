@@ -4,6 +4,31 @@
  * Nothing here reaches the utility bar, the command center, or the presenter console.
  */
 
+/*
+ * Orbitron, variable across weight 400 to 900, self-hosted beside this file under SIL Open
+ * Font License 1.1. fonts/OFL.txt is the licence and travels with the woff2
+ * files, through the package and through `deckard eject theme`.
+ *
+ * The url is relative to this stylesheet, so it resolves the same from
+ * node_modules and from deck/theme after an eject. font-display: swap draws the
+ * fallback stack first and never leaves a slide blank. Every family below stays
+ * at the front of a system stack, so a missing file degrades instead of failing.
+ *
+ * The latin file is what an English deck downloads. latin-ext carries its own
+ * unicode-range, so a deck that never sets a character in it never asks for it.
+ */
+
+@font-face {
+  font-family: "Orbitron";
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url("./fonts/orbitron-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
 .nexus-theme {
   --background: oklch(0.975 0.004 258);
   --foreground: oklch(0.205 0.025 258);
@@ -26,7 +51,8 @@
   --radius: 0.125rem;
 
   --slide-font-heading:
-    ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    Orbitron, ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue",
+    sans-serif;
   --slide-font-body:
     ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
   --slide-font-mono: var(--font-mono);
