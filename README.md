@@ -225,11 +225,11 @@ the modules nothing uses, stylesheets included.
 
 `deckard eject theme` is the way out. It copies the theme the deck imports out
 of the installed package into `deck/theme/` as `theme.css`, `index.ts`, and
-`THEME.md`, and repoints `deck/deck.ts` at the copy. From then on the theme is
-your source and the package never touches it. It refuses when `deck/theme/`
-already exists, because a deck has exactly one theme. `apps/demo` is that
-arrangement in the repository: an ejected fork of broadsheet it has since
-edited.
+`THEME.md`, plus a `fonts/` directory when the theme self-hosts a typeface, and
+repoints `deck/deck.ts` at the copy. From then on the theme is your source and
+the package never touches it. It refuses when `deck/theme/` already exists,
+because a deck has exactly one theme. `apps/demo` is that arrangement in the
+repository: an ejected fork of broadsheet it has since edited.
 
 ### The blocks come from the registry
 
@@ -821,6 +821,40 @@ Inside the canvas, style with semantic tokens (`bg-card`, `text-muted-foreground
 or slide tokens (`--slide-title-size`, `--slide-code-size`, `--slide-surface`).
 Never a hardcoded color. The theme's `THEME.md` lists the tokens and what they
 control.
+
+### A theme carries its own typefaces
+
+Four of the built-ins are drawn from a source design that sets its type in a
+real face, and they ship those files rather than approximating them. Ledger uses
+Source Serif 4, Public Sans, and IBM Plex Mono; meridian uses Schibsted Grotesk
+and JetBrains Mono; nexus uses Orbitron, IBM Plex Sans, and IBM Plex Mono;
+phosphor uses JetBrains Mono for every role. Broadsheet and deckard stay on
+system stacks and download nothing.
+
+The files sit in `packages/themes/src/fonts`, one copy per family shared by the
+themes that want it, and each `theme.css` declares its own `@font-face` rules
+pointing at `../fonts/`. That url is relative to the stylesheet, so a theme
+resolves its faces from `node_modules`, from a published tarball, and from
+`deck/theme/` after an eject, with nothing for the deck to wire up. `deckard
+eject theme` copies only the faces the ejected stylesheet names and rewrites the
+url to `./fonts/`.
+
+Every family is SIL Open Font License 1.1, which is what permits shipping the
+binaries. Each one's licence sits beside its files as `<family>.OFL.txt` and
+travels with them into the package and into an ejected theme. The `THEME.md` of
+each theme names the families it loads and the licence file that covers them.
+
+The cost is paid per theme and only by the deck that uses it. Each face is a
+variable woff2 subset to latin, with latin-ext behind its own `unicode-range` so
+an English deck never asks for it, and every family stays at the front of the
+system stack it replaces so a missing file degrades instead of failing.
+`font-display: swap` paints that stack first, so a slide is never blank.
+Measured on the playground deck: phosphor 31KB, nexus 72KB, meridian 78KB,
+ledger 139KB. A deck on another theme downloads none of them.
+
+`packages/themes/scripts/fetch-fonts.ts` is where the files come from. It pins a
+url and a version per family and rewrites the directory; nothing calls a font
+host at render time.
 
 Every size token is set against the 1920x1080 canvas at a 16px root, so 1rem is
 16 canvas pixels and the scale reads the way it does on a projector rather than

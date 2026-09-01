@@ -32,14 +32,22 @@ highlighted table row.
 
 ## Typography
 
-One family for everything, from the system sans stack. No web font loads.
+Schibsted Grotesk for headings and body, JetBrains Mono for labels and code.
+Both are the source design's own, and both ship with the theme: `theme.css`
+declares them from `../fonts/`, so there is nothing to load in `app/layout.tsx`
+and no font host is called at render time. Both are SIL Open Font License 1.1,
+covered by `fonts/schibsted-grotesk.OFL.txt` and `fonts/jetbrains-mono.OFL.txt`.
 
-The original design used Schibsted Grotesk for headings and body and JetBrains
-Mono for labels. Schibsted is a touch narrower than the system grotesks and
-carries a lower cap height, so a headline set in it fits about a word more per
-line than what ships here. Load it in `app/layout.tsx` and put it at the front
-of `--slide-font-heading` and `--slide-font-body` if you want the original
-measure back.
+Schibsted is a touch narrower than the system grotesks and carries a lower cap
+height, so a headline set in it fits about a word more per line than a system
+stack does. That measure is the design's, and the `-0.03em` on `h1` and `h2` was
+tuned against it. It is one variable file across 400 to 900.
+
+Each family stays at the front of the system stack it replaces, so a build that
+loses a file degrades rather than fails, and `font-display: swap` paints that
+stack while the woff2 lands. An English deck downloads 78KB across the two
+files; latin-ext sits behind its own `unicode-range` and is only fetched by a
+deck that sets a character in it.
 
 | Token                      | Used by                               |
 | -------------------------- | ------------------------------------- |
