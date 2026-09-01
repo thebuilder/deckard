@@ -5,6 +5,9 @@ export default defineConfig({
     llmsTxt: true,
     openInChat: ["claude", "chatgpt", "cursor"],
   },
+  deployment: {
+    site: "https://deckard.thebuilder.dk",
+  },
   description: "Beautiful React presentations with shadcn-native theming.",
   github: {
     branch: "main",
@@ -28,6 +31,10 @@ export default defineConfig({
     sidebar: {
       display: "flat",
     },
+    tabs: [
+      { href: "/introduction", icon: "book-open", label: "Docs", path: "/" },
+      { icon: "terminal", label: "CLI", path: "/cli" },
+    ],
   },
   search: {
     popular: [
