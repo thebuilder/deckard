@@ -103,8 +103,11 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm smoke
 
-  cli-smoke:
-    name: CLI smoke
+  # release:pack is the CLI smoke plus a clean build, a pack, and a look inside
+  # each tarball, which costs seconds against the smoke's minute. So the release
+  # path is the tested path and there is no second job running the smoke alone.
+  release-pack:
+    name: Release pack
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -115,4 +118,4 @@ jobs:
           node-version: 24
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @deckard/core exec playwright install --with-deps chromium
-      - run: pnpm smoke:cli
+      - run: pnpm release:pack

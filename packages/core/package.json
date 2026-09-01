@@ -62,6 +62,7 @@
   "scripts": {
     "build": "tsc --project tsconfig.build.json",
     "dev": "tsc --project tsconfig.build.json --watch --preserveWatchOutput",
+    "prepack": "tsc --project tsconfig.build.json",
     "test": "vitest run --passWithNoTests",
     "test:browser": "vitest run --project browser --passWithNoTests",
     "test:unit": "vitest run --project node",

@@ -9,6 +9,9 @@ import { fileURLToPath } from "node:url"
 const toolDirectory = path.dirname(fileURLToPath(import.meta.url))
 const repoRoot = path.resolve(toolDirectory, "../..")
 const keepScratch = process.argv.includes("--keep")
+const packageNames = ["core", "themes", "cli"] as const
+
+type PackageName = (typeof packageNames)[number]
 
 const timings: [string, number][] = []
 const managerPattern = /\b(pnpm|yarn|bun)\b/
@@ -53,6 +56,27 @@ function time<T>(label: string, work: () => T): T {
   timings.push([label, Date.now() - startedAt])
 
   return value
+}
+
+// The release command builds and packs the three tarballs itself, inspects them,
+// and then hands this script the exact files it is about to publish. Run without
+// them, this script builds and packs its own.
+function injectedTarball(name: PackageName): string | null {
+  const flag = process.argv.indexOf(`--${name}-tarball`)
+  const value = flag === -1 ? null : process.argv[flag + 1]
+
+  if (!value) {
+    return null
+  }
+
+  const resolved = path.resolve(value)
+
+  assert(
+    fs.existsSync(resolved),
+    `--${name}-tarball names no file: ${resolved}`
+  )
+
+  return resolved
 }
 
 function pack(filter: string, destination: string, name: string) {
@@ -249,13 +273,23 @@ function assertScaffold(manager: string, directory: string) {
 const scratch = fs.mkdtempSync(path.join(os.tmpdir(), "deckard-cli-"))
 
 try {
-  time("build @deckard/core, @deckard/themes, and @deckard/cli", () => {
-    run("pnpm", ["cli:build"], repoRoot)
-  })
+  const injected = packageNames.map(injectedTarball)
 
-  const core = pack("@deckard/core", scratch, "deckard-core")
-  const themes = pack("@deckard/themes", scratch, "deckard-themes")
-  const cli = pack("@deckard/cli", scratch, "deckard-cli")
+  assert(
+    injected.every(Boolean) || injected.every((entry) => entry === null),
+    "pass every one of --core-tarball, --themes-tarball, and --cli-tarball, or none of them"
+  )
+
+  if (injected[0] === null) {
+    time("build @deckard/core, @deckard/themes, and @deckard/cli", () => {
+      run("pnpm", ["cli:build"], repoRoot)
+    })
+  }
+
+  const core = injected[0] ?? pack("@deckard/core", scratch, "deckard-core")
+  const themes =
+    injected[1] ?? pack("@deckard/themes", scratch, "deckard-themes")
+  const cli = injected[2] ?? pack("@deckard/cli", scratch, "deckard-cli")
 
   const initFlags = [
     "--core-tarball",

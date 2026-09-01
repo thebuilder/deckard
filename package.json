@@ -25,6 +25,7 @@
     "lint": "ultracite fix --error-on-warnings",
     "lint:check": "ultracite check",
     "registry:build": "shadcn build --output apps/docs/public/r",
+    "release:pack": "node tools/release-pack/run.ts",
     "smoke": "pnpm smoke:package && pnpm smoke:registry",
     "smoke:cli": "node tools/cli-smoke/run.ts",
     "smoke:package": "node tools/package-smoke/run.ts",
