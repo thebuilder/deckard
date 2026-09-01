@@ -9,6 +9,7 @@
   "files": {
     "includes": [
       "!**/*.svg",
+      "!**/*.astro",
       "!packages/cli/template",
       "!packages/cli/template-src"
     ]
