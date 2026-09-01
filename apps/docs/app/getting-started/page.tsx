@@ -47,8 +47,8 @@ import { theme } from "@/deck/theme"
 export const deck = defineDeck({
   canvas: { fit: "contain", height: 1080, mode: "fixed", width: 1920 },
   description: "What the talk is about.",
-  footer: { mode: "counter" },
-  header: { brand: "My talk", href: "/", mode: "auto" },
+  footer: { mode: "visible" },
+  header: { brand: "My talk", date: "March 2026", href: "/", mode: "auto" },
   slides,
   theme,
   title: "My talk",

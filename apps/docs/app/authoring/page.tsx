@@ -75,7 +75,7 @@ export default function AuthoringPage() {
         font size where a token exists.
       </p>
       <p>
-        Outside the canvas, in the utility bar, command center, presenter
+        Outside the canvas, in the deck controls, command center, presenter
         console, and dialogs, keep the app tokens. Those have to stay readable
         whatever the deck theme does.
       </p>
@@ -84,6 +84,14 @@ export default function AuthoringPage() {
         <code>data-slide-background</code>. It is a hook, not a look. Changing
         how the <code>spotlight</code> or <code>grid</code> variant looks is a
         theme stylesheet edit, not a component edit.
+      </p>
+      <p>
+        The deck header and footer work the same way. The runtime renders{" "}
+        <code>[data-slide-header]</code> and <code>[data-slide-footer]</code>{" "}
+        inside the canvas with named parts for the brand, the slide title, the
+        date, the counter, and <code>[data-slide-progress]</code>, which carries
+        the position in the deck on <code>--slide-progress</code>. The theme
+        decides what they look like.
       </p>
 
       <h2 className="pt-4 text-2xl">Composition over flags</h2>

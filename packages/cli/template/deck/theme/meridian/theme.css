@@ -57,6 +57,14 @@
   --slide-grid-color: oklch(0.5 0.012 250 / 8%);
   --slide-grid-size: 3.5rem;
   --slide-spotlight: oklch(0.55 0.09 258 / 9%);
+
+  --slide-chrome-foreground: var(--muted-foreground);
+  --slide-chrome-emphasis: var(--foreground);
+  --slide-chrome-border: transparent;
+  --slide-chrome-size: 0.8125rem;
+  --slide-chrome-tracking: 0.02em;
+  --slide-progress-track: transparent;
+  --slide-progress-fill: var(--border);
   color-scheme: light;
 }
 
@@ -187,4 +195,31 @@
   inset: auto 0 0;
   height: calc(var(--canvas-height) * 0.34);
   background-image: linear-gradient(to top, var(--slide-glow), transparent);
+}
+
+/* Deck chrome. Quiet to the point of nearly not being there: no rules, no
+ * uppercase, one weight below the body, and a hairline for the progress. */
+
+.meridian-theme :is([data-slide-header], [data-slide-footer]) {
+  border-color: transparent;
+  opacity: 0.75;
+}
+
+.meridian-theme [data-slide-header-brand] {
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.meridian-theme [data-slide-header-title]::before {
+  margin-inline-end: var(--slide-chrome-gap);
+  content: "·";
+}
+
+.meridian-theme [data-slide-counter] {
+  font-variant-numeric: tabular-nums;
+}
+
+.meridian-theme [data-slide-progress] {
+  inset-block: auto 0;
+  height: 1px;
 }

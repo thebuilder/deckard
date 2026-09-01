@@ -57,6 +57,13 @@
   --slide-grid-color: oklch(0.55 0.02 220 / 14%);
   --slide-grid-size: 44px;
   --slide-spotlight: oklch(0.5 0.07 225 / 18%);
+
+  --slide-chrome-foreground: var(--muted-foreground);
+  --slide-chrome-emphasis: var(--foreground);
+  --slide-chrome-border: var(--slide-surface-border);
+  --slide-chrome-tracking: 0.02em;
+  --slide-progress-track: transparent;
+  --slide-progress-fill: var(--primary);
   color-scheme: light;
 }
 
@@ -185,4 +192,43 @@
   background-color: var(--slide-glow);
   border-radius: 9999px;
   filter: blur(64px);
+}
+
+/* Deck chrome. The runtime renders the header and the footer inside the canvas
+ * and names the parts; this decides what they look like. */
+
+.deckard-theme [data-slide-header] {
+  border-block-end-color: transparent;
+}
+
+.deckard-theme [data-slide-header-brand] {
+  letter-spacing: -0.01em;
+}
+
+.deckard-theme [data-slide-header-title]::before {
+  margin-inline-end: var(--slide-chrome-gap);
+  color: var(--slide-chrome-border);
+  content: "/";
+}
+
+.deckard-theme [data-slide-header-date] {
+  font-variant-numeric: tabular-nums;
+}
+
+.deckard-theme [data-slide-footer] {
+  border-block-start-color: transparent;
+}
+
+.deckard-theme [data-slide-counter] {
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+}
+
+/* The bar sits on the canvas edge rather than under the footer rule, so it
+ * reads as a deck-long measure and not as a border. */
+
+.deckard-theme [data-slide-progress] {
+  inset-block: auto 0;
+  height: 3px;
 }

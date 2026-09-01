@@ -4,9 +4,11 @@ This directory is the deck's look. `theme.css` holds every audience-facing color
 size, and background in the deck, scoped to `.ledger-theme` on the slide canvas.
 `index.ts` exports the `SlideTheme` that `deck/deck.ts` hands to `defineDeck`.
 
-Nothing here reaches the utility bar, the command center, the presenter console,
-or any dialog. Those keep the app tokens in `app/globals.css` so they stay
-readable whatever the deck looks like.
+The header and the footer belong to this file. They are painted inside the
+canvas, so they scale with the deck and print with it. Nothing here reaches the
+deck controls in the corner, the command center, the presenter console, or any
+dialog. Those keep the app tokens in `app/globals.css` so they stay readable
+whatever the deck looks like.
 
 ## Visual direction
 
@@ -106,6 +108,26 @@ Both are defined in the light block and overridden in dark, like every other
 token here. Nothing outside this file reads them, so renaming them is safe as
 long as you rename every use.
 
+## Deck chrome
+
+The runtime renders the header and the footer and names their parts, the way it
+does with backgrounds. The header holds `[data-slide-header-brand]`, the deck
+name as a link; `[data-slide-header-title]`, the current slide, rendered only
+when the slide has a title of its own; and `[data-slide-header-date]`, rendered
+only when `deck.ts` sets one. The footer holds `[data-slide-counter]`, split
+into `[data-slide-counter-current]`, `[data-slide-counter-separator]`, and
+`[data-slide-counter-total]`, and `[data-slide-progress]`, which carries the
+position in the deck as a fraction on `--slide-progress`.
+
+Ledger sets a folio line. The head carries the deck name in small caps under the
+heavy 2px rule this theme uses everywhere, the slide title in the italic of the
+heading face, and the date on the right in mono capitals. The foot centers the
+page numbers in mono, where a printed page carries them, under a lighter rule.
+
+There is no progress bar: `--slide-progress-fill` is `transparent`, because a
+page does not tell you how far into the book you are. Set it to `--primary` if
+your talk wants one.
+
 ## Safe to change
 
 Every token in `theme.css` is meant to be edited. Move the accent by changing
@@ -145,7 +167,7 @@ Hardcoding a color inside the canvas. `text-white`, `bg-slate-900`, and
 semantic token (`text-foreground`, `bg-card`) or a slide token.
 
 Redefining app tokens outside the theme class. A rule on `:root` or `.dark`
-changes the utility bar and the presenter console too. Everything in this file
+changes the deck controls and the presenter console too. Everything in this file
 starts at `.ledger-theme`.
 
 Assuming `.dark` on `<html>` is the only switch. A deck can pin the canvas

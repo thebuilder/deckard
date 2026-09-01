@@ -11,10 +11,11 @@ export const deck = defineDeck({
   },
   description: "Beautiful React presentations with shadcn-native theming.",
   footer: {
-    mode: "counter",
+    mode: "visible",
   },
   header: {
     brand: "Deckard",
+    date: "March 2026",
     href: "/",
     mode: "auto",
   },

@@ -7,7 +7,7 @@ import { checkRegistry, checkSlides, checkTheme } from "./deck-checks.ts"
 function buildDeck(slides: SlideDefinition[]) {
   return defineDeck({
     description: "A deck under test.",
-    footer: { mode: "counter" },
+    footer: { mode: "visible" },
     header: { brand: "Test", href: "/", mode: "auto" },
     slides,
     title: "Test",

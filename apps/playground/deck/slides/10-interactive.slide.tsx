@@ -27,13 +27,13 @@ async function loadChromePresets(): Promise<ChromePreset[]> {
   return [
     {
       background: "default",
-      footer: "counter",
+      footer: "visible",
       header: "auto",
       id: "talk",
       label: "Talk",
       layout: "default",
       summary:
-        "The default frame. Header for branding and the command center, a slide counter at the bottom.",
+        "The default frame. A header with the deck name and this slide, a counter and a progress line at the foot.",
     },
     {
       background: "spotlight",
@@ -43,7 +43,7 @@ async function loadChromePresets(): Promise<ChromePreset[]> {
       label: "Breaker",
       layout: "default",
       summary:
-        "For section breaks. The counter disappears so one sentence carries the slide.",
+        "For section breaks. The footer goes so one sentence carries the slide.",
     },
     {
       background: "none",
