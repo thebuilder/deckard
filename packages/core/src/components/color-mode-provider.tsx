@@ -3,14 +3,19 @@
 import { ThemeProvider as NextThemesProvider, useTheme } from "next-themes"
 import { type ReactNode, useEffect } from "react"
 
-import type { SlideTheme } from "../deck/types"
+import type { SlideColorMode, SlideTheme } from "../deck/types"
 
 // Light/dark only. The deck theme is static config and never switches at runtime.
+// forcedColorMode pins the mode for a render that has to be one of them, the PDF
+// export above all: without it a theme defaulting to dark answers a light export
+// in dark, because the default beats the operating system preference.
 function ColorModeProvider({
   children,
+  forcedColorMode,
   theme,
 }: {
   children: ReactNode
+  forcedColorMode?: SlideColorMode
   theme: SlideTheme
 }) {
   const switchable = theme.colorModes.length > 1
@@ -21,8 +26,9 @@ function ColorModeProvider({
       defaultTheme={theme.defaultColorMode}
       disableTransitionOnChange
       enableSystem={switchable}
+      forcedTheme={forcedColorMode}
     >
-      {switchable ? <ColorModeHotkey /> : null}
+      {switchable && !forcedColorMode ? <ColorModeHotkey /> : null}
       {children}
     </NextThemesProvider>
   )

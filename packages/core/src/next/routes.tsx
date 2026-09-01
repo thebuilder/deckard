@@ -2,6 +2,7 @@ import type { Metadata, MetadataRoute } from "next"
 import { notFound, redirect } from "next/navigation"
 import { PresenterConsole } from "../components/presenter-console"
 import { SlideShell } from "../components/slide-shell"
+import { isPdfExport } from "../deck/pdf-export"
 import { getSlideById } from "../deck/resolve-slides"
 import { toSlideSummaries, toSlideSummary } from "../deck/slide-summary"
 import { toDeckPresentation } from "../deck/theme"
@@ -12,10 +13,6 @@ interface SlideRouteProps {
 }
 
 const defaultSiteUrl = "http://localhost:3000"
-
-function isPdfExport() {
-  return process.env.NEXT_PUBLIC_PDF_EXPORT === "1"
-}
 
 export function createSlideRoute(deck: Deck) {
   function generateStaticParams() {
