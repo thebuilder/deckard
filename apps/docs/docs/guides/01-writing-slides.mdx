@@ -1,6 +1,6 @@
 ---
 title: Writing slides
-description: The block families, when a slide earns its own file, and how discoverSlides orders the modules it finds.
+description: The block families, when a slide earns its own file instead of an array entry, and how discoverSlides orders the modules it finds.
 sidebar:
   icon: file-text
 ---
@@ -140,6 +140,8 @@ Slugs take lowercase letters, digits, and hyphens. The deck fails to build on a 
 
 Titles never become slugs. A slide with no `title` falls back to `Slide 4` in the header, the command center, and the presenter flow.
 
+[Slide metadata](/reference/slide-metadata) has the full field list, including the chrome and layout overrides a single slide can set.
+
 ## Check the work
 
 ```bash
@@ -149,3 +151,5 @@ deckard contact-sheet   # every slide in one grid, after deckard screenshots
 ```
 
 Run `validate` after a structural change, `check-overflow` after changing copy, and read the contact sheet before calling a deck done. It catches the things no checker can, like three slides in a row that all end above the halfway line.
+
+Every flag on all three is in the [CLI reference](/reference/cli), and [Exporting](/guides/exporting) covers what they produce.

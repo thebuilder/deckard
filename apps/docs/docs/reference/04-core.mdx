@@ -26,7 +26,7 @@ The package compiles to `dist/` with `tsc`: ESM, `.d.ts`, and `"use client"` dir
 
 ## @deckard/core
 
-| Export | |
+| Export | What it does |
 | --- | --- |
 | `defineDeck(config)` | Resolve a `DeckConfig` into a `Deck`. |
 | `resolveCanvas(partial)` | Fill in and validate the canvas config. |
@@ -44,7 +44,7 @@ Types: `Deck`, `DeckConfig`, `DeckCanvasConfig`, `DeckHeaderConfig`, `DeckFooter
 
 ## @deckard/core/components
 
-| Export | |
+| Export | What it does |
 | --- | --- |
 | `SlideShell` | Assembles a slide: frame, canvas chrome, deck controls. |
 | `SlideViewport` | Fits the canvas to the browser window and publishes `--deckard-scale`. |
@@ -61,7 +61,7 @@ Types: `Deck`, `DeckConfig`, `DeckCanvasConfig`, `DeckHeaderConfig`, `DeckFooter
 | `SlideErrorBoundary` | The inline error card a throwing slide renders under `next dev`. |
 | `SlideMediaVideo` | A `<video>` that suppresses autoplay in the presenter preview. |
 | `SlidePrefetch` | Prefetches the neighbouring slides. |
-| `StaticMediaBoundary` | |
+| `StaticMediaBoundary` | Freezes video and audio inside a slide the audience is not on, so a presenter preview never plays. |
 
 ### useSlideTitle
 

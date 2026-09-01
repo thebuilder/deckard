@@ -18,11 +18,11 @@ One page per slide at the deck's canvas size, captured from the canvas element. 
 
 Output lands at `out/slides.pdf` in the deck's own directory.
 
-| Flag | Default | |
+| Flag | Default | What it does |
 | --- | --- | --- |
 | `--dark` | off, so the export is **light** | Export the dark deck instead. |
 | `--skip-build` | off | Reuse whatever is in `.next`. |
-| `--port <n>` | `3410`, or `PDF_EXPORT_PORT` | |
+| `--port <n>` | `3410`, or `PDF_EXPORT_PORT` | Move the temporary server off a busy port. |
 
 The light default is deliberate: a handout gets printed.
 
@@ -47,12 +47,12 @@ deckard screenshots --light --max 5
 
 One PNG per slide at canvas size, written to `out/screenshots/<id>.png`, plus a `manifest.json` recording the canvas size, the color mode, and every slide's file, id, number, and title.
 
-| Flag | Default | |
+| Flag | Default | What it does |
 | --- | --- | --- |
 | `--light` | off, so **dark** | Capture light mode. |
 | `--max <n>` | all | Stop after n slides. |
 | `--skip-build` | off | Reuse whatever is in `.next`. |
-| `--port <n>` | `3411` | |
+| `--port <n>` | `3411` | Move the temporary server off a busy port. |
 
 The directory is wiped and recreated on each run, so the manifest and the PNGs never disagree.
 

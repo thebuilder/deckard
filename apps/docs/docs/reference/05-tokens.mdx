@@ -1,6 +1,6 @@
 ---
 title: Token contract
-description: Every --slide-* custom property declared in @deckard/core/styles.css, its neutral default, and what reads it.
+description: Every --slide-* custom property declared in @deckard/core/styles.css, its neutral default, and which part of the runtime reads it.
 sidebar:
   label: Tokens
   icon: swatch-book
@@ -36,7 +36,7 @@ Line height rides along as a unitless multiplier in the blocks, so changing a si
 
 ## Spacing
 
-| Token | Default | |
+| Token | Default | What it controls |
 | --- | --- | --- |
 | `--slide-padding-inline` | `1.5rem` | The gutter on both sides of the frame, and inside the canvas header |
 | `--slide-padding-block` | `2rem` | Top and bottom padding when the slide has no header or footer |
@@ -44,7 +44,7 @@ Line height rides along as a unitless multiplier in the blocks, so changing a si
 
 ## Surfaces
 
-| Token | Default | |
+| Token | Default | What it controls |
 | --- | --- | --- |
 | `--slide-radius` | `0.75rem` | Cards, code blocks, small panels |
 | `--slide-radius-lg` | `1.25rem` | The `ContentSlideCard` panel |
@@ -57,7 +57,7 @@ Line height rides along as a unitless multiplier in the blocks, so changing a si
 
 `SlideBackground` renders one empty element carrying `data-slide-background`, and the theme paints each variant with these:
 
-| Token | Default | |
+| Token | Default | What it controls |
 | --- | --- | --- |
 | `--slide-wash` | `transparent` | The broad tint over the sheet |
 | `--slide-veil` | `transparent` | A second layer that separates from the wash |
@@ -68,7 +68,7 @@ Line height rides along as a unitless multiplier in the blocks, so changing a si
 
 ## Media
 
-| Token | Default | |
+| Token | Default | What it controls |
 | --- | --- | --- |
 | `--slide-media-foreground` | `oklch(1 0 0)` | Text over photography |
 | `--slide-media-foreground-muted` | `oklch(1 0 0 / 85%)` | Secondary text over photography |
@@ -80,7 +80,7 @@ Line height rides along as a unitless multiplier in the blocks, so changing a si
 
 The eight tokens every built-in theme overrides, plus the two that decide how much canvas the chrome gets:
 
-| Token | Default | |
+| Token | Default | What it controls |
 | --- | --- | --- |
 | `--slide-chrome-foreground` | `var(--muted-foreground)` | Header and footer text |
 | `--slide-chrome-emphasis` | `var(--foreground)` | The brand |
@@ -99,7 +99,7 @@ A theme that redesigns the chrome to a different height sets the last two and th
 
 These are set in the DOM rather than declared in the contract, and a theme or a block reads them:
 
-| Variable | Set on | |
+| Variable | Set on | What it carries |
 | --- | --- | --- |
 | `--slide-progress` | `[data-slide-progress]` | Position in the deck as a fraction from 0 to 1 |
 | `--slide-chrome-top` | the canvas | `--slide-header-space` republished as an inset for a bleeding layout |
