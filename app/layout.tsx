@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
-import { ThemeProvider } from "@/components/theme-provider"
+import { ColorModeProvider } from "@/components/color-mode-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { deck } from "@/deck/deck"
 import { cn } from "@/lib/utils"
@@ -47,9 +47,9 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body>
-        <ThemeProvider>
+        <ColorModeProvider theme={deck.theme}>
           <TooltipProvider>{children}</TooltipProvider>
-        </ThemeProvider>
+        </ColorModeProvider>
       </body>
     </html>
   )

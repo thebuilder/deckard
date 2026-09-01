@@ -48,9 +48,11 @@ function PresetButton({
 
 function MetadataRow({ name, value }: { name: string; value: string }) {
   return (
-    <div className="flex items-baseline justify-between gap-4 border-border/60 border-b py-2 last:border-b-0">
-      <dt className="font-mono text-muted-foreground text-sm">{name}</dt>
-      <dd className="font-mono text-sm">{`"${value}"`}</dd>
+    <div className="flex items-baseline justify-between gap-4 border-[var(--slide-surface-border)] border-b py-2 last:border-b-0">
+      <dt className="font-[family-name:var(--slide-font-mono)] text-[length:var(--slide-support-size)] text-muted-foreground">
+        {name}
+      </dt>
+      <dd className="font-[family-name:var(--slide-font-mono)] text-[length:var(--slide-support-size)]">{`"${value}"`}</dd>
     </div>
   )
 }
@@ -80,8 +82,8 @@ export function ChromePresetPlayground({
         ))}
       </div>
 
-      <div className="rounded-2xl border border-border/70 bg-card/70 p-5">
-        <p className="text-muted-foreground text-sm leading-7">
+      <div className="rounded-[var(--slide-radius)] border border-[var(--slide-surface-border)] bg-[var(--slide-surface-muted)] p-5">
+        <p className="text-[length:var(--slide-support-size)] text-muted-foreground leading-[1.7]">
           {selected.summary}
         </p>
         <dl className="mt-4">

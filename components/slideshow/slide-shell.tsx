@@ -1,5 +1,6 @@
 import Link from "next/link"
 import type { ReactNode } from "react"
+import { SlideshowColorModeToggle } from "@/components/slideshow/color-mode-toggle"
 import {
   PresenterKeyboardShortcut,
   PresenterPopoutButton,
@@ -16,8 +17,8 @@ import {
 } from "@/components/slideshow/slide-stepper"
 import { SlideViewport } from "@/components/slideshow/slide-viewport"
 import { StaticMediaBoundary } from "@/components/slideshow/static-media-boundary"
-import { SlideshowThemeToggle } from "@/components/slideshow/theme-toggle"
-import type { DeckCanvasConfig, SlideSummary } from "@/lib/deck/types"
+import { canSwitchColorMode } from "@/lib/deck/theme"
+import type { DeckPresentation, SlideSummary } from "@/lib/deck/types"
 import { cn } from "@/lib/utils"
 import type {
   SlideBackgroundMode,
@@ -28,10 +29,8 @@ import type {
 
 interface SlideShellProps {
   background?: SlideBackgroundMode
-  canvas: DeckCanvasConfig
   children: ReactNode
-  deckTitle: string
-  deckTitleHref?: string
+  deck: DeckPresentation
   footerMode?: SlideFooterMode
   freezeMedia?: boolean
   headerMode?: SlideHeaderMode
@@ -75,9 +74,9 @@ function resolveChrome({
 // Canvas coordinates, not browser viewport coordinates. Every value below is a slice of the 1080px-tall canvas.
 const canvasFrames = {
   default: {
-    base: "mx-auto max-w-6xl px-6",
-    footer: { off: "pb-6", on: "pb-28" },
-    header: { off: "pt-10", on: "pt-32" },
+    base: "mx-auto max-w-6xl px-[var(--slide-padding-inline)]",
+    footer: { off: "pb-[var(--slide-padding-block)]", on: "pb-28" },
+    header: { off: "pt-[var(--slide-padding-block)]", on: "pt-32" },
   },
   fullscreen: {
     base: "p-0",
@@ -119,7 +118,7 @@ function SlideCanvasHeader({
 }) {
   return (
     <header className="absolute inset-x-0 top-0 z-40 border-transparent border-b bg-background/50 backdrop-blur-sm">
-      <div className="flex min-h-16 items-center px-6 py-4">
+      <div className="flex min-h-16 items-center px-[var(--slide-padding-inline)] py-4">
         <Link
           className="font-semibold text-sm tracking-tight"
           href={deckTitleHref}
@@ -131,14 +130,16 @@ function SlideCanvasHeader({
   )
 }
 
-// Presenter tooling, not slide content, so it sits outside the scaled canvas and keeps its own hit targets.
+// Presenter tooling, not slide content, so it sits outside the scaled canvas and keeps the app tokens.
 function SlideUtilityBar({
   currentNumber,
   deckTitle,
+  showColorModeToggle,
   slides,
 }: {
   currentNumber: number
   deckTitle: string
+  showColorModeToggle: boolean
   slides: SlideSummary[]
 }) {
   return (
@@ -150,7 +151,7 @@ function SlideUtilityBar({
           slides={slides}
         />
         <PresenterPopoutButton />
-        <SlideshowThemeToggle />
+        {showColorModeToggle ? <SlideshowColorModeToggle /> : null}
       </div>
     </div>
   )
@@ -158,10 +159,8 @@ function SlideUtilityBar({
 
 export function SlideShell({
   background = "default",
-  canvas,
   children,
-  deckTitle,
-  deckTitleHref = "/",
+  deck,
   footerMode = "visible",
   freezeMedia = false,
   headerMode = "auto",
@@ -198,10 +197,10 @@ export function SlideShell({
           />
           <PresenterKeyboardShortcut enabled={isPresenterLive} />
 
-          <SlideViewport canvas={canvas}>
+          <SlideViewport canvas={deck.canvas}>
             <SlideCanvas
               background={background}
-              canvas={canvas}
+              canvas={deck.canvas}
               chromeInset={chromeInset(chrome)}
               footer={
                 chrome.showFooter ? (
@@ -219,11 +218,12 @@ export function SlideShell({
               header={
                 chrome.showHeader ? (
                   <SlideCanvasHeader
-                    deckTitle={deckTitle}
-                    deckTitleHref={deckTitleHref}
+                    deckTitle={deck.title}
+                    deckTitleHref={deck.titleHref}
                   />
                 ) : null
               }
+              theme={deck.theme}
             >
               <SlideStepAdvanceArea className="h-full w-full">
                 <StaticMediaBoundary
@@ -244,7 +244,8 @@ export function SlideShell({
           {chrome.showHeader ? (
             <SlideUtilityBar
               currentNumber={slide.number}
-              deckTitle={deckTitle}
+              deckTitle={deck.title}
+              showColorModeToggle={canSwitchColorMode(deck.theme)}
               slides={slides}
             />
           ) : null}

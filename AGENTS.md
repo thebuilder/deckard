@@ -27,7 +27,9 @@ The reusable parts (`lib/deck`, `components/slideshow`) are headed for `@deckard
   - `media.tsx` for image/media composition blocks
 - Shell/chrome behavior lives in `components/slideshow/slide-shell.tsx`.
 - The fixed canvas lives in `components/slideshow/slide-viewport.tsx` (fit and centering) and `components/slideshow/slide-canvas.tsx` (the 1920x1080 coordinate space). Canvas size comes from `deck/deck.ts` through `lib/deck/canvas.ts`.
-- Background variants are centralized in `components/slideshow/slide-background.tsx`.
+- The deck theme lives in `deck/theme/` (`theme.css`, the `SlideTheme` export, `THEME.md`). `SlideCanvas` puts the theme class on the canvas, so the theme reaches the slide and nothing else.
+- `components/slideshow/slide-background.tsx` is a hook, not a look. It renders one element carrying `data-slide-background`; the theme paints the variants.
+- Light/dark lives in `components/color-mode-provider.tsx`. It is color mode only. The deck theme is static config and never switches at runtime.
 
 ## Authoring rules
 
@@ -43,6 +45,9 @@ The reusable parts (`lib/deck`, `components/slideshow`) are headed for `@deckard
 - Use reusable media primitives (for example `ImageShowcaseSlide`) for media-first slides and keep assets in `public/images`.
 - Prefer static image imports (`ImageProps["src"]`) over raw strings when possible, so blur placeholders are available.
 - Reuse `deck` values for branding/title instead of hardcoding strings.
+- Inside the canvas, style with semantic tokens (`bg-card`, `text-muted-foreground`, `border-border`) or slide tokens (`--slide-title-size`, `--slide-surface`, `--slide-radius`). Never a hardcoded color, and never a raw font size where a token exists. Read `deck/theme/THEME.md` before adding one.
+- Outside the canvas (utility bar, command center, presenter console, dialogs), keep the app tokens from `app/globals.css`. Those have to stay readable whatever the deck theme does.
+- Changing how a background variant looks is a `deck/theme/theme.css` edit, not a component edit.
 
 ## Slide modules and Server Components
 

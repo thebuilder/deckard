@@ -162,44 +162,44 @@ export const slides: SlideDefinition[] = [
       >
         <div className="grid gap-3">
           <SlideStep step={0}>
-            <div className="rounded-2xl border border-border/70 bg-card/70 p-4">
-              <p className="font-semibold text-muted-foreground text-xs uppercase tracking-[0.2em]">
+            <div className="rounded-[var(--slide-radius)] border border-[var(--slide-surface-border)] bg-[var(--slide-surface-muted)] p-4">
+              <p className="font-semibold text-[length:var(--slide-support-size)] text-muted-foreground uppercase tracking-[0.2em]">
                 Step 1
               </p>
-              <p className="mt-2 text-muted-foreground text-sm">
+              <p className="mt-2 text-[length:var(--slide-support-size)] text-muted-foreground">
                 Start with the core problem or context.
               </p>
             </div>
           </SlideStep>
 
           <SlideStep step={1}>
-            <div className="rounded-2xl border border-border/70 bg-card/70 p-4">
-              <p className="font-semibold text-muted-foreground text-xs uppercase tracking-[0.2em]">
+            <div className="rounded-[var(--slide-radius)] border border-[var(--slide-surface-border)] bg-[var(--slide-surface-muted)] p-4">
+              <p className="font-semibold text-[length:var(--slide-support-size)] text-muted-foreground uppercase tracking-[0.2em]">
                 Step 2
               </p>
-              <p className="mt-2 text-muted-foreground text-sm">
+              <p className="mt-2 text-[length:var(--slide-support-size)] text-muted-foreground">
                 Add supporting evidence once the audience is aligned.
               </p>
             </div>
           </SlideStep>
 
           <SlideStep step={2}>
-            <div className="rounded-2xl border border-border/70 bg-card/70 p-4">
-              <p className="font-semibold text-muted-foreground text-xs uppercase tracking-[0.2em]">
+            <div className="rounded-[var(--slide-radius)] border border-[var(--slide-surface-border)] bg-[var(--slide-surface-muted)] p-4">
+              <p className="font-semibold text-[length:var(--slide-support-size)] text-muted-foreground uppercase tracking-[0.2em]">
                 Step 3
               </p>
-              <p className="mt-2 text-muted-foreground text-sm">
+              <p className="mt-2 text-[length:var(--slide-support-size)] text-muted-foreground">
                 Show options and tradeoffs before deciding.
               </p>
             </div>
           </SlideStep>
 
           <SlideStep step={3}>
-            <div className="rounded-2xl border border-primary/40 bg-primary/8 p-4">
-              <p className="font-semibold text-primary text-xs uppercase tracking-[0.2em]">
+            <div className="rounded-[var(--slide-radius)] border border-primary/40 bg-primary/8 p-4">
+              <p className="font-semibold text-[length:var(--slide-support-size)] text-primary uppercase tracking-[0.2em]">
                 Step 4
               </p>
-              <p className="mt-2 text-muted-foreground text-sm">
+              <p className="mt-2 text-[length:var(--slide-support-size)] text-muted-foreground">
                 Land on one recommendation and the next action.
               </p>
             </div>
@@ -232,10 +232,10 @@ export const slides: SlideDefinition[] = [
         }}
       >
         <Eyebrow>Image slide</Eyebrow>
-        <h2 className="font-semibold text-3xl tracking-tight">
+        <h2 className="font-semibold text-[length:var(--slide-subheading-size)] tracking-tight">
           Media-first storytelling
         </h2>
-        <p className="text-muted-foreground text-sm leading-7">
+        <p className="text-[length:var(--slide-support-size)] text-muted-foreground leading-[1.7]">
           Keep image slides as regular `body` composition with reusable
           components.
         </p>
@@ -259,10 +259,10 @@ export const slides: SlideDefinition[] = [
         }}
       >
         <Eyebrow>Fullscreen mode</Eyebrow>
-        <h1 className="mt-3 text-balance font-semibold text-6xl text-white tracking-tight">
+        <h1 className="mt-3 text-balance font-semibold text-[length:var(--slide-heading-size)] text-[var(--slide-media-foreground)] tracking-tight">
           Image and video can take over the full canvas
         </h1>
-        <p className="mt-3 max-w-3xl text-lg text-white/85 leading-7">
+        <p className="mt-3 max-w-3xl text-[length:var(--slide-lead-size)] text-[var(--slide-media-foreground-muted)] leading-[1.6]">
           Use fullscreen media for transitions, product trailers, launch
           moments, or immersive visual slides.
         </p>

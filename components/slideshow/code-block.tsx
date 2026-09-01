@@ -18,7 +18,7 @@ function escapeHtml(value: string) {
 }
 
 const highlightedClassName =
-  "[&_.line]:inline-block [&_.line]:min-h-[1.5rem] [&_code]:grid [&_code]:gap-0.5 [&_code]:font-mono [&_code]:text-sm [&_pre]:overflow-x-auto [&_pre]:px-5 [&_pre]:py-4 [&_pre]:text-sm [&_pre]:leading-6"
+  "[&_.line]:inline-block [&_.line]:min-h-[1.5rem] [&_code]:grid [&_code]:gap-0.5 [&_code]:font-[family-name:var(--slide-font-mono)] [&_code]:text-[length:var(--slide-support-size)] [&_pre]:overflow-x-auto [&_pre]:px-5 [&_pre]:py-4 [&_pre]:leading-6"
 
 export async function CodeBlock({
   code,
@@ -50,7 +50,7 @@ export async function CodeBlock({
   )
 
   return (
-    <div className="overflow-hidden rounded-2xl border bg-card/80 shadow-sm backdrop-blur-sm">
+    <div className="overflow-hidden rounded-[var(--slide-radius)] border border-[var(--slide-surface-border)] bg-[var(--slide-surface)] shadow-[var(--slide-surface-shadow)] backdrop-blur-sm">
       {maxHeight ? (
         <SlideScrollArea label="Code sample" maxHeight={maxHeight}>
           {highlighted}

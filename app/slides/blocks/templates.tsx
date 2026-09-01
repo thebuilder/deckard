@@ -3,9 +3,26 @@
 import { Eyebrow, SlideHeading } from "@/app/slides/blocks/typography"
 import { useSlideTitle } from "@/components/slideshow/slide-context"
 
+interface SlideIntroProps {
+  description?: React.ReactNode
+  eyebrow: React.ReactNode
+  title?: React.ReactNode
+}
+
 function useResolvedSlideTitle(title?: React.ReactNode) {
   const contextTitle = useSlideTitle()
   return title ?? contextTitle ?? null
+}
+
+function SlideIntro({ description, eyebrow, title }: SlideIntroProps) {
+  const resolvedTitle = useResolvedSlideTitle(title)
+
+  return (
+    <div className="space-y-3">
+      <Eyebrow>{eyebrow}</Eyebrow>
+      <SlideHeading description={description} title={resolvedTitle} />
+    </div>
+  )
 }
 
 export function ContentSlideCard({
@@ -13,22 +30,12 @@ export function ContentSlideCard({
   title,
   description,
   children,
-}: {
-  eyebrow: React.ReactNode
-  title?: React.ReactNode
-  description?: React.ReactNode
-  children: React.ReactNode
-}) {
-  const resolvedTitle = useResolvedSlideTitle(title)
-
+}: SlideIntroProps & { children: React.ReactNode }) {
   return (
-    <div className="space-y-6">
-      <div className="space-y-3">
-        <Eyebrow>{eyebrow}</Eyebrow>
-        <SlideHeading description={description} title={resolvedTitle} />
-      </div>
+    <div className="space-y-[var(--slide-content-gap)]">
+      <SlideIntro description={description} eyebrow={eyebrow} title={title} />
 
-      <div className="grid gap-4 rounded-[calc(var(--radius)*2)] border border-border/70 bg-card/80 p-5 shadow-sm backdrop-blur-sm">
+      <div className="grid gap-4 rounded-[var(--slide-radius-lg)] border border-[var(--slide-surface-border)] bg-[var(--slide-surface)] p-5 shadow-[var(--slide-surface-shadow)] backdrop-blur-sm">
         {children}
       </div>
     </div>
@@ -40,45 +47,27 @@ export function OpenContentSlide({
   title,
   description,
   children,
-}: {
-  eyebrow: React.ReactNode
-  title?: React.ReactNode
-  description?: React.ReactNode
-  children: React.ReactNode
-}) {
-  const resolvedTitle = useResolvedSlideTitle(title)
-
+}: SlideIntroProps & { children: React.ReactNode }) {
   return (
-    <div className="space-y-6">
-      <div className="space-y-3">
-        <Eyebrow>{eyebrow}</Eyebrow>
-        <SlideHeading description={description} title={resolvedTitle} />
-      </div>
+    <div className="space-y-[var(--slide-content-gap)]">
+      <SlideIntro description={description} eyebrow={eyebrow} title={title} />
       <div>{children}</div>
     </div>
   )
 }
 
-export function HeroSlide({
-  eyebrow,
-  title,
-  description,
-}: {
-  eyebrow: React.ReactNode
-  title?: React.ReactNode
-  description?: React.ReactNode
-}) {
+export function HeroSlide({ eyebrow, title, description }: SlideIntroProps) {
   const resolvedTitle = useResolvedSlideTitle(title)
 
   return (
     <div className="flex h-full items-center justify-center py-12 text-center">
       <div className="space-y-8">
         <Eyebrow>{eyebrow}</Eyebrow>
-        <h1 className="mx-auto max-w-[14ch] text-balance font-semibold text-7xl leading-[1.02] tracking-tight">
+        <h1 className="mx-auto max-w-[14ch] text-balance font-semibold text-[length:var(--slide-title-size)] leading-[1.02] tracking-tight">
           {resolvedTitle}
         </h1>
         {description ? (
-          <p className="mx-auto max-w-4xl text-muted-foreground text-xl leading-8">
+          <p className="mx-auto max-w-4xl text-[length:var(--slide-lead-size)] text-muted-foreground leading-[1.6]">
             {description}
           </p>
         ) : null}
@@ -91,21 +80,17 @@ export function BreakerSlide({
   eyebrow,
   title,
   description,
-}: {
-  eyebrow: React.ReactNode
-  title?: React.ReactNode
-  description: React.ReactNode
-}) {
+}: SlideIntroProps & { description: React.ReactNode }) {
   const resolvedTitle = useResolvedSlideTitle(title)
 
   return (
     <section className="flex h-full items-center py-12">
-      <div className="max-w-4xl space-y-6">
+      <div className="max-w-4xl space-y-[var(--slide-content-gap)]">
         <Eyebrow>{eyebrow}</Eyebrow>
-        <h1 className="max-w-4xl text-pretty font-semibold text-7xl leading-[0.98] tracking-tight">
+        <h1 className="max-w-4xl text-pretty font-semibold text-[length:var(--slide-title-size)] leading-[0.98] tracking-tight">
           {resolvedTitle}
         </h1>
-        <p className="max-w-3xl text-muted-foreground text-xl leading-8">
+        <p className="max-w-3xl text-[length:var(--slide-lead-size)] text-muted-foreground leading-[1.6]">
           {description}
         </p>
       </div>

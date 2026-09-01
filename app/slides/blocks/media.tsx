@@ -97,10 +97,10 @@ function resolvePlaceholder(
 }
 
 const overlayClassNames: Record<FullscreenMediaOverlay, string> = {
-  medium: "bg-gradient-to-t from-black/55 via-black/20 to-transparent",
+  medium: "bg-[image:var(--slide-media-overlay-medium)]",
   none: "",
-  strong: "bg-gradient-to-t from-black/75 via-black/35 to-transparent",
-  subtle: "bg-gradient-to-t from-black/35 via-black/10 to-transparent",
+  strong: "bg-[image:var(--slide-media-overlay-strong)]",
+  subtle: "bg-[image:var(--slide-media-overlay-subtle)]",
 }
 
 export function FullscreenMediaSlide({
@@ -123,7 +123,7 @@ export function FullscreenMediaSlide({
   const containerClassName =
     variant === "background"
       ? "relative h-full w-full overflow-hidden"
-      : "relative h-full w-full overflow-hidden rounded-3xl border border-border/70 bg-card/60"
+      : "relative h-full w-full overflow-hidden rounded-[var(--slide-radius-lg)] border border-[var(--slide-surface-border)] bg-[var(--slide-surface-muted)]"
   const overlayClassName = overlayClassNames[overlay]
 
   return (
@@ -193,7 +193,7 @@ export function ImageShowcaseSlide({
 
   return (
     <section className="grid h-full grid-cols-[1.2fr_0.8fr] gap-6 px-6 pt-[calc(1.5rem+var(--slide-chrome-top,0px))] pb-[calc(1.5rem+var(--slide-chrome-bottom,0px))]">
-      <div className="relative overflow-hidden rounded-3xl border border-border/70 bg-card/60">
+      <div className="relative overflow-hidden rounded-[var(--slide-radius-lg)] border border-[var(--slide-surface-border)] bg-[var(--slide-surface-muted)]">
         <Image
           alt={alt ?? ""}
           blurDataURL={resolvedBlurDataURL}
@@ -206,13 +206,15 @@ export function ImageShowcaseSlide({
         />
       </div>
 
-      <div className="flex flex-col justify-end gap-4 rounded-3xl border border-border/70 bg-card/70 p-6 backdrop-blur-sm">
+      <div className="flex flex-col justify-end gap-4 rounded-[var(--slide-radius-lg)] border border-[var(--slide-surface-border)] bg-[var(--slide-surface)] p-6 shadow-[var(--slide-surface-shadow)] backdrop-blur-sm">
         {children}
         {caption ? (
-          <p className="text-muted-foreground text-sm leading-7">{caption}</p>
+          <p className="text-[length:var(--slide-support-size)] text-muted-foreground leading-[1.7]">
+            {caption}
+          </p>
         ) : null}
         {credit ? (
-          <p className="text-muted-foreground text-xs uppercase tracking-[0.2em]">
+          <p className="text-[length:var(--slide-support-size)] text-muted-foreground uppercase tracking-[0.2em]">
             {credit}
           </p>
         ) : null}
