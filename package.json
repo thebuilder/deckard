@@ -6,6 +6,7 @@
   "scripts": {
     "analyze": "fallow",
     "build": "turbo run build",
+    "check-overflow": "pnpm deck:check-overflow && pnpm demo:check-overflow",
     "deck:check-overflow": "pnpm --filter playground deck:check-overflow",
     "deck:contact-sheet": "pnpm --filter playground deck:contact-sheet",
     "deck:screenshots": "pnpm --filter playground deck:screenshots",
@@ -21,12 +22,15 @@
     "lint": "ultracite fix --error-on-warnings",
     "lint:check": "ultracite check",
     "registry:build": "shadcn build --output apps/docs/public/r",
+    "smoke": "pnpm smoke:package && pnpm smoke:registry",
     "smoke:package": "node tools/package-smoke/run.ts",
     "smoke:registry": "node tools/registry-smoke/run.ts",
     "test": "turbo run test",
     "test:browser": "turbo run test:browser",
+    "test:browser:install": "playwright install --with-deps chromium firefox webkit",
     "test:unit": "turbo run test:unit",
-    "typecheck": "turbo run typecheck"
+    "typecheck": "turbo run typecheck",
+    "validate": "pnpm deck:validate && pnpm demo:validate"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.11",
