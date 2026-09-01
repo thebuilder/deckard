@@ -11,8 +11,9 @@ import { galleryTheme, themeNames } from "../lib/deck-preview"
       const opensDark = entry.defaultColorMode === "dark"
 
       return (
-        <article class="theme-card">
+        <article aria-labelledby={`gallery-${name}-name`} class="theme-card">
           <input
+            aria-label={`${name} light`}
             checked={!opensDark}
             class="theme-card-input"
             data-mode="light"
@@ -21,6 +22,7 @@ import { galleryTheme, themeNames } from "../lib/deck-preview"
             type="radio"
           />
           <input
+            aria-label={`${name} dark`}
             checked={opensDark}
             class="theme-card-input"
             data-mode="dark"
@@ -52,7 +54,9 @@ import { galleryTheme, themeNames } from "../lib/deck-preview"
 
           <div class="theme-card-body">
             <div class="theme-card-head">
-              <h3 class="theme-card-name">{name}</h3>
+              <h3 class="theme-card-name" id={`gallery-${name}-name`}>
+                {name}
+              </h3>
               <span class="theme-card-badge">
                 opens {entry.defaultColorMode}
               </span>
