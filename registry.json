@@ -1,7 +1,7 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry.json",
   "name": "deckard",
-  "homepage": "https://github.com/thebuilder/next-slideshow-template",
+  "homepage": "https://github.com/thebuilder/deckard",
   "items": [
     {
       "name": "block-typography",

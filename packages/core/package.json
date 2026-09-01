@@ -9,10 +9,10 @@
     "react",
     "slides"
   ],
-  "homepage": "https://github.com/thebuilder/next-slideshow-template#readme",
+  "homepage": "https://github.com/thebuilder/deckard#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/thebuilder/next-slideshow-template.git"
+    "url": "https://github.com/thebuilder/deckard.git"
   },
   "license": "MIT",
   "sideEffects": [
