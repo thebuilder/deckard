@@ -58,6 +58,14 @@
   --slide-grid-size: 2.75rem;
   --slide-spotlight: oklch(0.5 0.04 60 / 12%);
   --slide-rule: oklch(0.3 0.02 58 / 55%);
+
+  --slide-chrome-foreground: var(--muted-foreground);
+  --slide-chrome-emphasis: var(--foreground);
+  --slide-chrome-border: var(--slide-rule);
+  --slide-chrome-size: 0.875rem;
+  --slide-chrome-tracking: 0.14em;
+  --slide-progress-track: transparent;
+  --slide-progress-fill: transparent;
   color-scheme: light;
 }
 
@@ -212,4 +220,37 @@
   inset: auto 0 0;
   height: calc(var(--canvas-height) * 0.28);
   background-image: linear-gradient(to top, var(--background), transparent);
+}
+
+/* Deck chrome. A running head across the top of the page and a centred folio at
+ * the foot, both set in the text face. No progress bar: a page has no scrollbar. */
+
+.broadsheet-theme [data-slide-header] {
+  font-family: var(--slide-font-heading);
+}
+
+.broadsheet-theme [data-slide-header-brand] {
+  font-variant-caps: small-caps;
+  letter-spacing: var(--slide-chrome-tracking);
+}
+
+/* The title runs in the middle of the head, between the masthead and the date. */
+
+.broadsheet-theme [data-slide-header-title] {
+  margin-inline: auto;
+  font-style: italic;
+}
+
+.broadsheet-theme [data-slide-header-date] {
+  font-variant-numeric: oldstyle-nums;
+  letter-spacing: 0.06em;
+}
+
+.broadsheet-theme [data-slide-footer] {
+  font-family: var(--slide-font-heading);
+}
+
+.broadsheet-theme [data-slide-counter] {
+  margin-inline: auto;
+  font-variant-caps: small-caps;
 }

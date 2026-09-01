@@ -4,9 +4,11 @@ This directory is the deck's look. `theme.css` holds every audience-facing color
 size, and background in the deck, scoped to `.nexus-theme` on the slide canvas.
 `index.ts` exports the `SlideTheme` that `deck/deck.ts` hands to `defineDeck`.
 
-Nothing here reaches the utility bar, the command center, the presenter console,
-or any dialog. Those keep the app tokens in `app/globals.css` so they stay
-readable whatever the deck looks like.
+The header and the footer belong to this file. They are painted inside the
+canvas, so they scale with the deck and print with it. Nothing here reaches the
+deck controls in the corner, the command center, the presenter console, or any
+dialog. Those keep the app tokens in `app/globals.css` so they stay readable
+whatever the deck looks like.
 
 ## Visual direction
 
@@ -106,6 +108,26 @@ black levels, where the glow smears rather than reads.
 Both are defined in the light block and overridden in dark, like every other
 token here.
 
+## Deck chrome
+
+The runtime renders the header and the footer and names their parts, the way it
+does with backgrounds. The header holds `[data-slide-header-brand]`, the deck
+name as a link; `[data-slide-header-title]`, the current slide, rendered only
+when the slide has a title of its own; and `[data-slide-header-date]`, rendered
+only when `deck.ts` sets one. The footer holds `[data-slide-counter]`, split
+into `[data-slide-counter-current]`, `[data-slide-counter-separator]`, and
+`[data-slide-counter-total]`, and `[data-slide-progress]`, which carries the
+position in the deck as a fraction on `--slide-progress`.
+
+Nexus runs console strips. Both are set in capitals at `0.28em`, the deck name in
+`--primary` with the same halo as the headings, `//` before the slide title, and
+the date in the mono face at a tighter tracking. The counter lights its current
+number in the accent.
+
+The progress element is a tick readout: the track repeats 2px ticks across the
+full width in `--slide-grid-major`, and the fill repeats the same ticks in
+`--primary` up to `--slide-progress`. Nothing animates but the width.
+
 ## Safe to change
 
 Every token in `theme.css` is meant to be edited. Move the accent by changing
@@ -145,7 +167,7 @@ Hardcoding a color inside the canvas. `text-white`, `bg-slate-900`, and
 semantic token (`text-foreground`, `bg-card`) or a slide token.
 
 Redefining app tokens outside the theme class. A rule on `:root` or `.dark`
-changes the utility bar and the presenter console too. Everything in this file
+changes the deck controls and the presenter console too. Everything in this file
 starts at `.nexus-theme`.
 
 Assuming `.dark` on `<html>` is the only switch. This theme defaults the canvas

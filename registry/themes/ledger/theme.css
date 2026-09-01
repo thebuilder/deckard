@@ -59,6 +59,14 @@
   --slide-spotlight: oklch(0.55 0.05 55 / 14%);
   --slide-rule: oklch(0.225 0.018 60 / 70%);
   --slide-margin-rule: oklch(0.475 0.145 28 / 32%);
+
+  --slide-chrome-foreground: var(--muted-foreground);
+  --slide-chrome-emphasis: var(--foreground);
+  --slide-chrome-border: var(--slide-rule);
+  --slide-chrome-size: 0.9375rem;
+  --slide-chrome-tracking: 0.12em;
+  --slide-progress-track: transparent;
+  --slide-progress-fill: transparent;
   color-scheme: light;
 }
 
@@ -222,4 +230,46 @@
   inset: auto calc(var(--canvas-width) * 0.2) calc(var(--canvas-height) * 0.075);
   height: 2px;
   background-color: var(--slide-rule);
+}
+
+/* Deck chrome. A folio line at the head of the page and page numbers at the
+ * foot, set in the mono face this deck uses for every number. */
+
+.ledger-theme [data-slide-header] {
+  border-block-end-width: 2px;
+}
+
+.ledger-theme [data-slide-header-brand] {
+  font-family: var(--slide-font-heading);
+  font-weight: 600;
+  font-variant-caps: small-caps;
+  letter-spacing: var(--slide-chrome-tracking);
+}
+
+.ledger-theme [data-slide-header-title] {
+  font-family: var(--slide-font-heading);
+  font-style: italic;
+}
+
+.ledger-theme [data-slide-header-date] {
+  font-family: var(--slide-font-mono);
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+}
+
+/* The folio sits centred under the text block, where a printed page carries it,
+ * and the deck has no progress bar: a page does not tell you how far in you are. */
+
+.ledger-theme [data-slide-footer] {
+  border-block-start-width: 1px;
+}
+
+.ledger-theme [data-slide-counter] {
+  margin-inline: auto;
+  font-family: var(--slide-font-mono);
+  color: var(--slide-chrome-emphasis);
+}
+
+.ledger-theme [data-slide-counter-separator] {
+  color: var(--slide-chrome-foreground);
 }

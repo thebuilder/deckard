@@ -4,9 +4,11 @@ This directory is the deck's look. `theme.css` holds every audience-facing color
 size, and background, scoped to `.demo-theme` on the slide canvas. `index.ts`
 exports the `SlideTheme` that `deck/deck.ts` hands to `defineDeck`.
 
-Nothing here reaches the utility bar, the command center, the presenter console,
-or any dialog. Those keep the app tokens in `app/globals.css` so they stay
-readable whatever the deck looks like.
+The header and the footer belong to this file. They are painted inside the
+canvas, so they scale with the deck and print with it. Nothing here reaches the
+deck controls in the corner, the command center, the presenter console, or any
+dialog. Those keep the app tokens in `app/globals.css` so they stay readable
+whatever the deck looks like.
 
 It started as `theme-broadsheet` from the registry, installed unchanged into
 `deck/theme/`. Everything below is what this deck changed after that, and why.
@@ -133,6 +135,26 @@ in a block. This deck writes `"use client"` and `deck:validate` in the middle of
 sentences, and undecorated mono at `0.92em` disappears into the line. The chip is
 accent-tinted rather than bordered, so it reads as a thing being named and not as
 emphasis.
+
+## Deck chrome
+
+The runtime renders the header and the footer and names their parts, the way it
+does with backgrounds. The header holds `[data-slide-header-brand]`, the deck
+name as a link; `[data-slide-header-title]`, the current slide, rendered only
+when the slide has a title of its own; and `[data-slide-header-date]`, rendered
+only when `deck.ts` sets one. The footer holds `[data-slide-counter]`, split
+into `[data-slide-counter-current]`, `[data-slide-counter-separator]`, and
+`[data-slide-counter-total]`, and `[data-slide-progress]`, which carries the
+position in the deck as a fraction on `--slide-progress`.
+
+The demo deck keeps broadsheet's running head: masthead small caps, the slide
+title italic in the middle of the line, the date right, and the folio centered at
+the foot in small caps. Both strips are set in `--slide-font-heading`, which is
+the serif, while the slide body is sans.
+
+It differs from broadsheet in one place. Broadsheet has no progress bar, and this
+deck keeps a 2px rule along the bottom edge of the canvas in `--primary`, because
+a talk has a length and a page does not.
 
 ## Removed
 

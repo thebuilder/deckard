@@ -5,9 +5,11 @@ size, and background in the deck, scoped to `.meridian-theme` on the slide
 canvas. `index.ts` exports the `SlideTheme` that `deck/deck.ts` hands to
 `defineDeck`.
 
-Nothing here reaches the utility bar, the command center, the presenter console,
-or any dialog. Those keep the app tokens in `app/globals.css` so they stay
-readable whatever the deck looks like.
+The header and the footer belong to this file. They are painted inside the
+canvas, so they scale with the deck and print with it. Nothing here reaches the
+deck controls in the corner, the command center, the presenter console, or any
+dialog. Those keep the app tokens in `app/globals.css` so they stay readable
+whatever the deck looks like.
 
 ## Visual direction
 
@@ -98,6 +100,26 @@ The colors come from `--slide-wash`, `--slide-veil`, `--slide-glow`,
 `--slide-grid-color`, `--slide-grid-size`, and `--slide-spotlight`. This theme
 adds no private tokens of its own.
 
+## Deck chrome
+
+The runtime renders the header and the footer and names their parts, the way it
+does with backgrounds. The header holds `[data-slide-header-brand]`, the deck
+name as a link; `[data-slide-header-title]`, the current slide, rendered only
+when the slide has a title of its own; and `[data-slide-header-date]`, rendered
+only when `deck.ts` sets one. The footer holds `[data-slide-counter]`, split
+into `[data-slide-counter-current]`, `[data-slide-counter-separator]`, and
+`[data-slide-counter-total]`, and `[data-slide-progress]`, which carries the
+position in the deck as a fraction on `--slide-progress`.
+
+Meridian keeps both nearly silent. No rules, no capitals, one step below the body
+size, and the whole strip held at three quarters opacity. A middle dot separates
+the deck name from the slide title, the counter runs in tabular figures, and the
+progress is a 1px hairline on the bottom edge of the canvas in `--border`.
+
+If a deck needs the chrome to be readable from the back of a room, raise
+`--slide-chrome-size` and drop the opacity rule. That is the trade this theme
+makes on purpose.
+
 ## Safe to change
 
 Every token in `theme.css` is meant to be edited. Move the accent by changing
@@ -137,7 +159,7 @@ Hardcoding a color inside the canvas. `text-white`, `bg-slate-900`, and
 semantic token (`text-foreground`, `bg-card`) or a slide token.
 
 Redefining app tokens outside the theme class. A rule on `:root` or `.dark`
-changes the utility bar and the presenter console too. Everything in this file
+changes the deck controls and the presenter console too. Everything in this file
 starts at `.meridian-theme`.
 
 Assuming `.dark` on `<html>` is the only switch. A deck can pin the canvas
