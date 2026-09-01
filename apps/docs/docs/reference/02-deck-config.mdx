@@ -1,6 +1,6 @@
 ---
 title: Deck config
-description: Every field defineDeck accepts, what it resolves them into, and the markup the deck header and footer render.
+description: Every field defineDeck accepts, what it resolves them into, and the markup the deck header and footer render inside the canvas.
 sidebar:
   icon: settings
 ---
@@ -141,7 +141,7 @@ See [Themes](/guides/themes) for the full object. `defineDeck` validates it: `de
 
 `Deck` is `DeckConfig` with `canvas`, `slides`, and `theme` resolved. Each slide becomes a `ResolvedSlide`:
 
-| Field | |
+| Field | What it holds |
 | --- | --- |
 | `id` | The URL segment: the slug, or the 1-based position. |
 | `href` | `/slides/<id>`. |
