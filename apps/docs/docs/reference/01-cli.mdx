@@ -1,0 +1,271 @@
+---
+title: CLI
+description: Every deckard command and flag, with defaults, exit codes, and the environment variables each one reads.
+sidebar:
+  icon: terminal
+---
+
+```bash
+deckard <command> [options]
+```
+
+`deckard` is the only binary `@deckard/cli` puts on the path. Every command except `init` takes the current working directory as the deck, which is how a generated app wires its own scripts:
+
+```json package.json
+{
+  "scripts": {
+    "deck:validate": "deckard validate",
+    "deck:check-overflow": "deckard check-overflow",
+    "export:pdf": "deckard export pdf"
+  }
+}
+```
+
+`deckard --help` (or `-h`, or no arguments) prints the command list. `deckard --version` (or `-v`) prints the version and nothing else.
+
+## Commands
+
+| Command | What it does |
+| --- | --- |
+| [`deckard init <dir>`](#deckard-init) | Write a deck, install it, commit it, typecheck it. |
+| [`deckard validate`](#deckard-validate) | Load the deck, check its slides and its theme. |
+| [`deckard doctor`](#deckard-doctor) | Check node, the package, the stylesheet, the deck, and the routes. |
+| [`deckard check-overflow`](#deckard-check-overflow) | Fail listing the slides the canvas clips. |
+| [`deckard screenshots`](#deckard-screenshots) | One PNG per slide at canvas size. |
+| [`deckard contact-sheet`](#deckard-contact-sheet) | Every screenshot in one labelled grid. |
+| [`deckard export pdf`](#deckard-export-pdf) | One PDF page per slide. |
+| [`deckard add theme <name>`](#deckard-add-theme) | Point `deck/deck.ts` at another built-in theme. |
+| [`deckard add block <name>`](#deckard-add-block) | Install a registry block into `app/slides/blocks`. |
+| [`deckard eject theme`](#deckard-eject-theme) | Copy the built-in the deck uses into `deck/theme`. |
+
+## How flags parse
+
+Only long `--flags`. There are no short aliases anywhere except the top-level `-h` and `-v`.
+
+- **String flags** take `--flag value` and `--flag=value` alike. A missing value, or a next token starting with `--`, is an error.
+- **Boolean flags** never consume the next token. `--light` is `true`; `--light true` sets the flag and leaves `true` as a stray positional.
+- **`--no-<name>`** sets a declared boolean to `false`. It does not work on string flags.
+- **Unknown flags** are rejected with the list of flags that command does take.
+
+:::warning
+`deckard <command> --help` is an error, not help. `--help` is not in any command's flag set, so it hits the unknown-flag check. Help lives at the top level only.
+:::
+
+## deckard init
+
+```bash
+deckard init my-talk --theme phosphor
+```
+
+Takes exactly one positional, the target directory, and refuses one that already has files in it.
+
+| Flag | Value | Default |
+| --- | --- | --- |
+| `--theme <name>` | `broadsheet`, `deckard`, `ledger`, `meridian`, `nexus`, `phosphor` | `deckard` |
+| `--empty` | boolean | off, so the five-slide sample deck |
+| `--package-manager <name>` | `bun`, `npm`, `pnpm`, `yarn` | detected |
+| `--no-install` | boolean | install runs |
+| `--no-git` | boolean | git runs |
+| `--registry <url>` | a URL with a `{name}` placeholder | `http://localhost:3001/r/{name}.json` |
+| `--core-tarball <path>` | a local `.tgz` | `^<cli version>` from npm |
+| `--themes-tarball <path>` | a local `.tgz` | `^<cli version>` from npm |
+| `--cli-tarball <path>` | a local `.tgz` | `^<cli version>` from npm |
+
+The package name comes from the directory basename, lowercased with anything outside `[a-z0-9-]` collapsed to a hyphen.
+
+Package manager precedence: the `--package-manager` flag, then `npm_config_user_agent`, then the first lockfile found walking up from the target's parent (`pnpm-lock.yaml`, `bun.lock`, `bun.lockb`, `yarn.lock`, `package-lock.json`), then `npm`. Whichever wins is written into the generated `package.json` as `packageManager`, and every later `deckard` command reads that field.
+
+`--no-install` skips the typecheck too, since there is nothing installed to typecheck against. A git failure is a warning, not an exit. A typecheck failure exits 1 after everything is written, so the files are on disk either way.
+
+## deckard validate
+
+```bash
+deckard validate
+deckard validate --registry ../../registry.json
+```
+
+| Flag | Value | Default |
+| --- | --- | --- |
+| `--registry <path>` | path to a shadcn `registry.json` | none |
+
+Loads the real `deck/deck.ts` through a throwaway in-memory Vite SSR server, in about a second, and reports three sections:
+
+- **slides**: the deck resolves, every slide has a body, every `sourcePath` a discovered module reports is a file on disk. A duplicate slug, an unsafe slug, or a module with no default export comes back as one line naming the slide or the file, not a build-time stack trace.
+- **theme**: the theme class is a real selector in the stylesheet the deck renders, the dark block defines nothing the light block does not, and `colorModes` matches the blocks that stylesheet carries. It reads `deck/theme/theme.css` for an ejected theme and the copy inside the installed package for an imported one, and names which it read.
+- **registry**, only with `--registry`: every `items[].files[].path` exists, resolved against that file's own directory.
+
+Exits 1 on any problem. Prints slide counts otherwise.
+
+## deckard doctor
+
+```bash
+deckard doctor
+```
+
+Takes no flags at all. Checks the shape of the app rather than the content of the deck:
+
+| Check | Passes when |
+| --- | --- |
+| `node` | Node is at least 20.9.0. |
+| `core` | `@deckard/core/package.json` resolves from the project. |
+| `styles` | `app/globals.css` contains `@import "@deckard/core/styles.css"`. |
+| `routes` | Each of the four route files re-exports its adapter. |
+| `deck` | `deck/deck.ts` loads. |
+
+Each failure prints what to do about it. Exits 1 if anything failed.
+
+Reach for `doctor` when a deck that used to work stops, and for `validate` when the slides changed.
+
+## deckard check-overflow
+
+```bash
+deckard check-overflow --light
+```
+
+| Flag | Value | Default |
+| --- | --- | --- |
+| `--light` | boolean | off, so **dark** |
+| `--skip-build` | boolean | off |
+| `--port <n>` | positive integer | `3412` |
+
+Builds the deck, serves it, and opens every slide, measuring the slide frame, the header, and the footer against the canvas with a 1px tolerance. Exits 1 listing every slide the canvas clips and by how much, naming which region overflowed.
+
+## deckard screenshots
+
+```bash
+deckard screenshots --max 5
+```
+
+| Flag | Value | Default |
+| --- | --- | --- |
+| `--light` | boolean | off, so **dark** |
+| `--max <n>` | positive integer | all slides |
+| `--skip-build` | boolean | off |
+| `--port <n>` | positive integer | `3411` |
+
+Writes `out/screenshots/<id>.png` per slide plus `out/screenshots/manifest.json`. Wipes the directory first.
+
+## deckard contact-sheet
+
+```bash
+deckard contact-sheet --columns 5
+```
+
+| Flag | Value | Default |
+| --- | --- | --- |
+| `--columns <n>` | positive integer | `4` |
+
+Reads `out/screenshots/manifest.json` and composes `out/contact-sheet.png`. It builds and serves nothing, so run `deckard screenshots` first.
+
+:::note
+`contact-sheet` also accepts `--light`, but never reads it: the color mode comes from the manifest. It does not accept `--port` or `--skip-build`, despite what the built-in help text implies about "the four checks above".
+:::
+
+## deckard export pdf
+
+```bash
+deckard export pdf --dark
+```
+
+The positional must be exactly `pdf`. Anything else, including nothing, is an error.
+
+| Flag | Value | Default |
+| --- | --- | --- |
+| `--dark` | boolean | off, so **light** |
+| `--skip-build` | boolean | off |
+| `--port <n>` | positive integer | `PDF_EXPORT_PORT`, else `3410` |
+
+Note the inversion: the checks default to dark, the PDF defaults to light, because a handout gets printed. Writes `out/slides.pdf`, or wherever `PDF_EXPORT_OUTPUT` points.
+
+## deckard add theme
+
+```bash
+deckard add theme broadsheet
+```
+
+A pure source edit, with no install. Rewrites the `@deckard/themes` import and the `theme` property in `defineDeck`, keeping import order (package imports, then `@/` imports, alphabetical within each). It no-ops when the deck is already on that theme, rejects a name that is not one of the six built-ins, and warns when a stale `deck/theme` directory is still sitting there.
+
+`--registry` and `--yes` are accepted on this path and do nothing.
+
+## deckard add block
+
+```bash
+deckard add block metrics
+deckard add block metrics --registry https://example.com/r/{name}.json --yes
+```
+
+| Flag | Value | Default |
+| --- | --- | --- |
+| `--registry <url>` | a URL carrying a `{name}` placeholder | `components.json` -> `registries["@deckard"]` |
+| `--yes` | boolean | off |
+
+Builds the item id as `block-<name>`, probes the registry with a 5-second timeout, and then runs the `shadcn` binary installed alongside the CLI as `shadcn add <target>`. `--yes` adds `-y -o`, overwriting without asking.
+
+With no `--registry` and no `registries["@deckard"]` in `components.json`, it errors naming the shape it expects. When the registry does not answer, it tells you to start the docs site on port 3001.
+
+## deckard eject theme
+
+```bash
+deckard eject theme
+deckard eject theme --theme meridian
+```
+
+| Flag | Value | Default |
+| --- | --- | --- |
+| `--theme <name>` | one of the six built-ins | the theme `deck/deck.ts` imports |
+
+Creates `deck/theme/` with `theme.css` and `THEME.md` copied out of the installed `@deckard/themes`, generates an `index.ts` exporting a `SlideTheme` literal, and rewrites `deck/deck.ts` to `import { theme } from "@/deck/theme"`.
+
+It refuses when `deck/theme/` already exists, when the deck already imports from `@/deck/theme` and no `--theme` was given, and when the loaded deck's `theme.id` disagrees with the name you asked for.
+
+## Environment variables
+
+| Variable | Read by | What it does |
+| --- | --- | --- |
+| `PDF_EXPORT_OUTPUT` | `export pdf` | Output path, resolved against the deck directory. Default `out/slides.pdf`. |
+| `PDF_EXPORT_PORT` | `export pdf` | Default port when `--port` is absent. |
+| `npm_config_user_agent` | `init` | Package-manager detection. |
+
+`NEXT_PUBLIC_PDF_EXPORT` and `NEXT_PUBLIC_PDF_THEME` are set by the export build, not read by the CLI.
+
+## Exit codes
+
+| Code | When |
+| --- | --- |
+| `0` | Success. |
+| `1` | Any error, including `validate` and `doctor` finding problems, and `bin/deckard.mjs` running before `dist/` exists. |
+| `130` | Interrupted with `Ctrl-C` during a build-and-serve session. |
+
+## The build harness
+
+`check-overflow`, `screenshots`, and `export pdf` share one harness:
+
+<Steps>
+  <Step title="Build, unless it is fresh">
+    A stamp at `.next/deckard-build.json` is compared against the newest file
+    under `app/`, `assets/`, `components/`, `deck/`, `hooks/`, `lib/`,
+    `public/`, plus `components.json`, `next.config.*`, `package.json`,
+    `postcss.config.*`, `tsconfig.json`, and the resolved `@deckard/core` and
+    its `src/`. `--skip-build` skips the comparison entirely.
+  </Step>
+  <Step title="Refuse an occupied port">
+    Anything already answering on the port is an error telling you to pass
+    `--port`.
+  </Step>
+  <Step title="Serve and wait">
+    `next start` with `NODE_ENV=production`, polled every 500ms for up to 60
+    seconds.
+  </Step>
+  <Step title="Read the slide list">
+    Slide ids come from `/sitemap.xml`, which is `app/sitemap.ts`. An empty list
+    is an error naming that file.
+  </Step>
+  <Step title="Open at scale 1">
+    Headless Chromium with the requested `colorScheme`, then the viewport is
+    resized to the canvas size read off the rendered page, so nothing is
+    captured scaled. Every slide asserts the applied color mode matches the one
+    requested.
+  </Step>
+</Steps>
+
+A Chromium launch failure prints the `playwright install chromium` command for your package manager.
