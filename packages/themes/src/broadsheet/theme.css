@@ -31,18 +31,23 @@
     ui-serif, Georgia, "Iowan Old Style", "Times New Roman", serif;
   --slide-font-mono: var(--font-mono);
 
-  --slide-padding-inline: 2.5rem;
-  --slide-padding-block: 3rem;
-  --slide-content-gap: 1.75rem;
+  --slide-padding-inline: 8rem;
+  --slide-padding-block: 6.5rem;
+  --slide-content-gap: 2.75rem;
+  --slide-item-gap: 1.625rem;
 
-  --slide-title-size: 5rem;
-  --slide-heading-size: 3.75rem;
-  --slide-subheading-size: 2rem;
-  --slide-lead-size: 1.375rem;
-  --slide-body-size: 1.7rem;
-  --slide-support-size: 0.9375rem;
-  --slide-label-size: 0.8125rem;
+  --slide-title-size: 7.5rem;
+  --slide-heading-size: 4.75rem;
+  --slide-subheading-size: 2.75rem;
+  --slide-lead-size: 2.75rem;
+  --slide-body-size: 2.0625rem;
+  --slide-code-size: 1.875rem;
+  --slide-support-size: 1.75rem;
+  --slide-label-size: 1.5rem;
   --slide-label-tracking: 0.22em;
+
+  --slide-figure-size: 8.5rem;
+  --slide-figure-unit-size: 3.5rem;
 
   --slide-radius: 0.125rem;
   --slide-radius-lg: 0.125rem;
@@ -62,7 +67,7 @@
   --slide-chrome-foreground: var(--muted-foreground);
   --slide-chrome-emphasis: var(--foreground);
   --slide-chrome-border: var(--slide-rule);
-  --slide-chrome-size: 0.875rem;
+  --slide-chrome-size: 1.5rem;
   --slide-chrome-tracking: 0.14em;
   --slide-progress-track: transparent;
   --slide-progress-fill: transparent;

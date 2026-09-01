@@ -32,19 +32,23 @@
   --slide-font-mono:
     ui-monospace, SFMono-Regular, Menlo, "Cascadia Mono", Consolas, monospace;
 
-  --slide-padding-inline: 2rem;
-  --slide-padding-block: 2.5rem;
-  --slide-content-gap: 1.5rem;
+  --slide-padding-inline: 6rem;
+  --slide-padding-block: 5.25rem;
+  --slide-content-gap: 2.75rem;
+  --slide-item-gap: 1.5rem;
 
-  --slide-title-size: 3.75rem;
-  --slide-heading-size: 2.625rem;
-  --slide-subheading-size: 1.625rem;
-  --slide-lead-size: 1.25rem;
-  --slide-body-size: 1.5rem;
-  --slide-code-size: 1.25rem;
-  --slide-support-size: 0.9375rem;
-  --slide-label-size: 0.875rem;
+  --slide-title-size: 5.5rem;
+  --slide-heading-size: 3.75rem;
+  --slide-subheading-size: 2.375rem;
+  --slide-lead-size: 2.375rem;
+  --slide-body-size: 1.875rem;
+  --slide-code-size: 1.875rem;
+  --slide-support-size: 1.625rem;
+  --slide-label-size: 1.5rem;
   --slide-label-tracking: 0.2em;
+
+  --slide-figure-size: 7rem;
+  --slide-figure-unit-size: 3rem;
 
   --slide-radius: 0rem;
   --slide-radius-lg: 0rem;
@@ -66,14 +70,14 @@
   --slide-chrome-foreground: var(--muted-foreground);
   --slide-chrome-emphasis: var(--primary);
   --slide-chrome-border: var(--border);
-  --slide-chrome-size: 0.875rem;
+  --slide-chrome-size: 1.5rem;
   --slide-chrome-tracking: 0.16em;
   --slide-progress-track: transparent;
   --slide-progress-fill: currentcolor;
 
   /* The status bar below holds itself a line thinner than the base footer, so
    * the slide above it gets that line back. */
-  --slide-footer-space: 5rem;
+  --slide-footer-space: 5.5rem;
   color-scheme: light;
 }
 
@@ -255,7 +259,7 @@
  * than the base footer. */
 
 .phosphor-theme [data-slide-footer] {
-  min-block-size: 2.5rem;
+  min-block-size: 3.5rem;
   padding-block: 0.5rem;
   color: var(--primary-foreground);
   background-color: var(--primary);

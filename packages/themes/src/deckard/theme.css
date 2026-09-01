@@ -29,18 +29,23 @@
   --slide-font-body: var(--font-sans);
   --slide-font-mono: var(--font-mono);
 
-  --slide-padding-inline: 1.5rem;
-  --slide-padding-block: 2.5rem;
-  --slide-content-gap: 1.5rem;
+  --slide-padding-inline: 7rem;
+  --slide-padding-block: 6rem;
+  --slide-content-gap: 2.75rem;
+  --slide-item-gap: 1.625rem;
 
-  --slide-title-size: 4.5rem;
-  --slide-heading-size: 3.5rem;
-  --slide-subheading-size: 1.875rem;
-  --slide-lead-size: 1.25rem;
-  --slide-body-size: 1.6rem;
-  --slide-support-size: 0.875rem;
-  --slide-label-size: 0.875rem;
+  --slide-title-size: 6rem;
+  --slide-heading-size: 4.25rem;
+  --slide-subheading-size: 2.625rem;
+  --slide-lead-size: 2.625rem;
+  --slide-body-size: 2rem;
+  --slide-code-size: 1.75rem;
+  --slide-support-size: 1.75rem;
+  --slide-label-size: 1.5rem;
   --slide-label-tracking: 0.3em;
+
+  --slide-figure-size: 7.5rem;
+  --slide-figure-unit-size: 3.5rem;
 
   --slide-radius: 1rem;
   --slide-radius-lg: 1.5rem;
@@ -58,6 +63,7 @@
   --slide-grid-size: 44px;
   --slide-spotlight: oklch(0.5 0.07 225 / 18%);
 
+  --slide-chrome-size: 1.5rem;
   --slide-chrome-foreground: var(--muted-foreground);
   --slide-chrome-emphasis: var(--foreground);
   --slide-chrome-border: var(--slide-surface-border);
@@ -220,7 +226,7 @@
 }
 
 .deckard-theme [data-slide-counter] {
-  font-size: 0.8125rem;
+  font-size: 1.375rem;
   text-transform: uppercase;
   letter-spacing: 0.22em;
 }

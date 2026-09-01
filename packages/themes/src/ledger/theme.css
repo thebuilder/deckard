@@ -31,18 +31,23 @@
     ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
   --slide-font-mono: var(--font-mono);
 
-  --slide-padding-inline: 2.75rem;
-  --slide-padding-block: 3rem;
-  --slide-content-gap: 1.75rem;
+  --slide-padding-inline: 8rem;
+  --slide-padding-block: 6.5rem;
+  --slide-content-gap: 2.75rem;
+  --slide-item-gap: 1.625rem;
 
-  --slide-title-size: 5rem;
-  --slide-heading-size: 3.25rem;
-  --slide-subheading-size: 1.875rem;
-  --slide-lead-size: 1.5rem;
-  --slide-body-size: 1.75rem;
-  --slide-support-size: 1rem;
-  --slide-label-size: 0.875rem;
+  --slide-title-size: 7.75rem;
+  --slide-heading-size: 4.875rem;
+  --slide-subheading-size: 2.75rem;
+  --slide-lead-size: 2.75rem;
+  --slide-body-size: 2.0625rem;
+  --slide-code-size: 1.9375rem;
+  --slide-support-size: 1.75rem;
+  --slide-label-size: 1.5rem;
   --slide-label-tracking: 0.18em;
+
+  --slide-figure-size: 8.75rem;
+  --slide-figure-unit-size: 3.5rem;
 
   --slide-radius: 0rem;
   --slide-radius-lg: 0rem;
@@ -63,7 +68,7 @@
   --slide-chrome-foreground: var(--muted-foreground);
   --slide-chrome-emphasis: var(--foreground);
   --slide-chrome-border: var(--slide-rule);
-  --slide-chrome-size: 0.9375rem;
+  --slide-chrome-size: 1.5rem;
   --slide-chrome-tracking: 0.12em;
   --slide-progress-track: transparent;
   --slide-progress-fill: transparent;
@@ -253,7 +258,7 @@
 
 .ledger-theme [data-slide-header-meta] {
   font-family: var(--slide-font-mono);
-  font-size: 0.8125rem;
+  font-size: 1.25rem;
   text-transform: uppercase;
 }
 

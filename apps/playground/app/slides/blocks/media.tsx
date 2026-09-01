@@ -162,7 +162,8 @@ export function FullscreenMediaSlide({
 
       {children ? (
         <div
-          className={`pointer-events-none absolute inset-x-0 bottom-0 z-10 px-12 pt-12 pb-[calc(3rem+var(--slide-chrome-bottom,0px))] ${overlayClassName}`}
+          className={`pointer-events-none absolute inset-x-0 bottom-0 z-10 px-[var(--slide-padding-inline)] pt-[var(--slide-padding-block)] pb-[calc(var(--slide-padding-block)+var(--slide-chrome-bottom,0px))] ${overlayClassName}`}
+          data-slide-media-overlay=""
         >
           <div className="pointer-events-auto">{children}</div>
         </div>
@@ -195,7 +196,10 @@ export function ImageShowcaseSlide({
     placeholder === "blur" && !resolvedBlurDataURL ? undefined : placeholder
 
   return (
-    <section className="grid h-full grid-cols-[1.2fr_0.8fr] gap-6 px-6 pt-[calc(1.5rem+var(--slide-chrome-top,0px))] pb-[calc(1.5rem+var(--slide-chrome-bottom,0px))]">
+    <section
+      className="grid h-full grid-cols-[1.2fr_0.8fr] gap-12 pt-[calc(var(--slide-item-gap)+var(--slide-chrome-top,0px))] pb-[calc(var(--slide-item-gap)+var(--slide-chrome-bottom,0px))]"
+      data-slide-media=""
+    >
       <div className="relative overflow-hidden rounded-[var(--slide-radius-lg)] border border-[var(--slide-surface-border)] bg-[var(--slide-surface-muted)]">
         <Image
           alt={alt ?? ""}
@@ -210,15 +214,21 @@ export function ImageShowcaseSlide({
         />
       </div>
 
-      <div className="flex flex-col justify-end gap-4 rounded-[var(--slide-radius-lg)] border border-[var(--slide-surface-border)] bg-[var(--slide-surface)] p-6 shadow-[var(--slide-surface-shadow)] backdrop-blur-sm">
+      <div className="flex flex-col justify-end gap-6 rounded-[var(--slide-radius-lg)] border border-[var(--slide-surface-border)] bg-[var(--slide-surface)] p-11 shadow-[var(--slide-surface-shadow)] backdrop-blur-sm">
         {children}
         {caption ? (
-          <p className="text-[length:var(--slide-support-size)] text-muted-foreground leading-[1.7]">
+          <p
+            className="text-pretty text-[length:var(--slide-support-size)] text-muted-foreground leading-[1.5]"
+            data-slide-media-caption=""
+          >
             {caption}
           </p>
         ) : null}
         {credit ? (
-          <p className="text-[length:var(--slide-support-size)] text-muted-foreground uppercase tracking-[0.2em]">
+          <p
+            className="text-[length:var(--slide-label-size)] text-muted-foreground uppercase tracking-[var(--slide-label-tracking)]"
+            data-slide-media-credit=""
+          >
             {credit}
           </p>
         ) : null}

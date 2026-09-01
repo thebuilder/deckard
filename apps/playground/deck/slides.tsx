@@ -116,6 +116,7 @@ export const slides: SlideDefinition[] = [
         eyebrow="React presentation framework"
         title="Build polished slides fast"
         description="Keyboard controls, step reveals, command center, themed UI, and flexible layout options out of the box."
+        meta={["14 slides", "Deckard 0.0.1", "March 2026"]}
       />
     ),
   },
@@ -347,6 +348,7 @@ Say what is missing on purpose: no heading, no lead, no panel. The slide is the 
         eyebrow="Ready"
         title="Start from Deckard"
         description="Replace the demo slides, keep the structure, and ship presentation-grade decks faster."
+        meta={["npx shadcn add deckard", "deckard.dev"]}
       />
     ),
   },

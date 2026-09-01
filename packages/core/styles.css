@@ -8,6 +8,20 @@
  * Presentation token contract. A deck theme redefines these on the canvas and wins,
  * because it ships unlayered CSS and everything here sits in the base layer.
  * A deck without a theme still renders: neutral sizes, app surfaces, no decoration.
+ *
+ * The contract has two halves, and a theme is free to use both.
+ *
+ * Tokens are values: a size, a colour, a gradient, a shadow. Every number below
+ * is set against the 1920x1080 canvas at a 16px root, so 1rem is 16 canvas
+ * pixels and the scale reads the way it does on a projector rather than the way
+ * it does in a browser window.
+ *
+ * Data attributes are parts. A block names the piece of itself a theme might
+ * want to reach, and the theme styles that attribute, decorative ::before
+ * content included. The full list is documented under "Block part contract"
+ * below. Between them they are the whole surface a theme is allowed to depend
+ * on, so a block is free to change its class names and its markup as long as
+ * the attributes stay where they are.
  */
 @layer base {
   :root {
@@ -15,19 +29,31 @@
     --slide-font-body: var(--font-sans);
     --slide-font-mono: var(--font-mono);
 
-    --slide-padding-inline: 1.5rem;
-    --slide-padding-block: 2rem;
-    --slide-content-gap: 1.5rem;
+    /*
+     * The frame is left aligned and runs the full canvas, so these are the
+     * margins a slide's first word starts at rather than the gutter around a
+     * centred column.
+     */
+    --slide-padding-inline: 7rem;
+    --slide-padding-block: 6rem;
+    --slide-content-gap: 2.75rem;
+    --slide-item-gap: 1.625rem;
 
-    --slide-title-size: 4rem;
-    --slide-heading-size: 3rem;
-    --slide-subheading-size: 1.75rem;
-    --slide-lead-size: 1.25rem;
-    --slide-body-size: 1.5rem;
-    --slide-code-size: 1.125rem;
-    --slide-support-size: 0.875rem;
-    --slide-label-size: 0.875rem;
+    --slide-title-size: 6rem;
+    --slide-heading-size: 4.25rem;
+    --slide-subheading-size: 2.625rem;
+    --slide-lead-size: 2.625rem;
+    --slide-body-size: 2rem;
+    --slide-code-size: 1.75rem;
+    --slide-support-size: 1.75rem;
+    --slide-label-size: 1.5rem;
     --slide-label-tracking: 0.25em;
+
+    /* A metrics figure is display type without being a heading, so it sizes
+     * itself rather than borrowing the title size. */
+    --slide-figure-size: 7.5rem;
+    --slide-figure-unit-size: 3.5rem;
+    --slide-meter-size: 0.875rem;
 
     --slide-radius: 0.75rem;
     --slide-radius-lg: 1.25rem;
@@ -57,17 +83,26 @@
       transparent
     );
 
+    /*
+     * Background decoration. Flat, ruled, scanned, or hatched: the four things
+     * the source designs actually do. No radial wash and no corner glow, in
+     * either colour mode.
+     */
     --slide-wash: transparent;
     --slide-veil: transparent;
     --slide-glow: transparent;
     --slide-grid-color: transparent;
     --slide-grid-size: 44px;
     --slide-spotlight: transparent;
+    --slide-rule: var(--border);
+    --slide-scanline: none;
+    --slide-hatch: none;
+    --slide-halo: none;
 
     --slide-chrome-foreground: var(--muted-foreground);
     --slide-chrome-emphasis: var(--foreground);
     --slide-chrome-border: var(--border);
-    --slide-chrome-size: var(--slide-support-size);
+    --slide-chrome-size: var(--slide-label-size);
     --slide-chrome-tracking: 0.08em;
     --slide-chrome-gap: 1rem;
     --slide-progress-track: transparent;
