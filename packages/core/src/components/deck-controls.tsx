@@ -25,7 +25,12 @@ const controlsHiddenClass = "group-data-[slide-chrome=hidden]/shell:hidden"
 // hand, so it stays the same size whatever the deck is scaled to.
 const revealDistance = 160
 
-const coarsePointerQuery = "(pointer: coarse)"
+// A hybrid laptop has a trackpad and a touchscreen, and (pointer: coarse) names
+// only the primary one. any-pointer asks whether a finger is available at all,
+// and hover asks whether anything on the machine can reveal by proximity, so a
+// hybrid gets the handle and the reveal rather than one or the other.
+const touchQuery = "(any-pointer: coarse)"
+const hoverQuery = "(hover: hover)"
 
 // Module scope on purpose: the cluster remounts on every slide navigation.
 // Without the last pointer position a reveal earned by proximity would drop
@@ -34,24 +39,20 @@ const coarsePointerQuery = "(pointer: coarse)"
 let lastPointerPosition: { x: number; y: number } | null = null
 let lastIsNear = false
 
-function subscribeToPointer(onChange: () => void) {
-  const media = window.matchMedia(coarsePointerQuery)
+function useMediaQuery(query: string, serverValue: boolean) {
+  const subscribe = useCallback(
+    (onChange: () => void) => {
+      const media = window.matchMedia(query)
 
-  media.addEventListener("change", onChange)
-  return () => media.removeEventListener("change", onChange)
-}
-
-function readCoarsePointer() {
-  return window.matchMedia(coarsePointerQuery).matches
-}
-
-// Touch has no hover to reveal anything, so those decks get a handle instead.
-function useCoarsePointer() {
-  return useSyncExternalStore(
-    subscribeToPointer,
-    readCoarsePointer,
-    () => false
+      media.addEventListener("change", onChange)
+      return () => media.removeEventListener("change", onChange)
+    },
+    [query]
   )
+
+  const read = useCallback(() => window.matchMedia(query).matches, [query])
+
+  return useSyncExternalStore(subscribe, read, () => serverValue)
 }
 
 function distanceToBox(box: DOMRect, x: number, y: number) {
@@ -180,8 +181,9 @@ export function DeckControls({
   const router = useRouter()
   const stepper = useSlideStepper()
   const anchor = useRef<HTMLElement | null>(null)
-  const isCoarsePointer = useCoarsePointer()
-  const isNear = usePointerProximity(anchor, !isCoarsePointer)
+  const hasTouch = useMediaQuery(touchQuery, false)
+  const canHover = useMediaQuery(hoverQuery, true)
+  const isNear = usePointerProximity(anchor, canHover)
   const isFocused = useFocusWithin(anchor)
   const [isCommandOpen, setIsCommandOpen] = useState(false)
   const [isPinned, setIsPinned] = useState(false)
@@ -230,7 +232,7 @@ export function DeckControls({
       data-deck-controls-revealed={isRevealed ? "" : undefined}
       ref={anchor}
     >
-      {isCoarsePointer ? (
+      {hasTouch ? (
         <Button
           aria-expanded={isRevealed}
           aria-label={isRevealed ? "Hide deck controls" : "Show deck controls"}

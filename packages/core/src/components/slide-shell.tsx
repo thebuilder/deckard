@@ -169,7 +169,7 @@ export function SlideShell({
               <SlideCanvasHeader
                 brand={deck.title}
                 brandHref={deck.titleHref}
-                date={deck.date}
+                meta={deck.meta}
                 title={slide.authoredTitle}
               />
             ) : null

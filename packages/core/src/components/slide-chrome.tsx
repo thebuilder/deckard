@@ -8,12 +8,12 @@ import type { CSSProperties } from "react"
 export function SlideCanvasHeader({
   brand,
   brandHref,
-  date,
+  meta,
   title,
 }: {
   brand: string
   brandHref: string
-  date?: string
+  meta?: string
   title?: string
 }) {
   // A title slide is usually named after the deck, and a header that says the
@@ -29,7 +29,7 @@ export function SlideCanvasHeader({
         {brand}
       </Link>
       {showTitle ? <span data-slide-header-title="">{title}</span> : null}
-      {date ? <time data-slide-header-date="">{date}</time> : null}
+      {meta ? <span data-slide-header-meta="">{meta}</span> : null}
     </header>
   )
 }

@@ -12,8 +12,8 @@ export const deck = defineDeck({
   },
   header: {
     brand: "Deckard",
-    date: "March 2026",
     href: "/",
+    meta: "March 2026",
     mode: "auto",
   },
   slides,

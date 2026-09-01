@@ -38,14 +38,14 @@ describe("defineDeck", () => {
     ).toThrow(systemError)
   })
 
-  it("carries the optional header date onto the deck", () => {
-    const dated = defineDeck(
+  it("carries the optional header meta onto the deck", () => {
+    const described = defineDeck(
       config({
-        header: { brand: "Test", date: "March 2026", href: "/", mode: "auto" },
+        header: { brand: "Test", href: "/", meta: "March 2026", mode: "auto" },
       })
     )
 
-    expect(dated.header.date).toBe("March 2026")
-    expect(defineDeck(config()).header.date).toBeUndefined()
+    expect(described.header.meta).toBe("March 2026")
+    expect(defineDeck(config()).header.meta).toBeUndefined()
   })
 })

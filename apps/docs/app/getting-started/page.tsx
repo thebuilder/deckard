@@ -49,7 +49,7 @@ export const deck = defineDeck({
   canvas: { fit: "contain", height: 1080, mode: "fixed", width: 1920 },
   description: "What the talk is about.",
   footer: { mode: "visible" },
-  header: { brand: "My talk", date: "March 2026", href: "/", mode: "auto" },
+  header: { brand: "My talk", href: "/", meta: "March 2026", mode: "auto" },
   slides,
   theme: deckard,
   title: "My talk",

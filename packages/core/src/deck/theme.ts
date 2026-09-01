@@ -68,7 +68,7 @@ export function canSwitchColorMode(theme: SlideTheme): boolean {
 export function toDeckPresentation(deck: Deck): DeckPresentation {
   return {
     canvas: deck.canvas,
-    date: deck.header.date,
+    meta: deck.header.meta,
     theme: deck.theme,
     title: deck.header.brand,
     titleHref: deck.header.href,

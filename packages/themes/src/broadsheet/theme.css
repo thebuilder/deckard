@@ -241,7 +241,7 @@
   font-style: italic;
 }
 
-.broadsheet-theme [data-slide-header-date] {
+.broadsheet-theme [data-slide-header-meta] {
   font-variant-numeric: oldstyle-nums;
   letter-spacing: 0.06em;
 }

@@ -132,7 +132,7 @@
     text-decoration: none;
   }
 
-  [data-slide-canvas] [data-slide-header-date] {
+  [data-slide-canvas] [data-slide-header-meta] {
     margin-inline-start: auto;
   }
 

@@ -17,13 +17,13 @@ let root: Root
 
 function renderChrome({
   brand = "Deckard",
-  date,
+  meta,
   number,
   title,
   total,
 }: {
   brand?: string
-  date?: string
+  meta?: string
   number: number
   title?: string
   total: number
@@ -38,7 +38,7 @@ function renderChrome({
           <SlideCanvasHeader
             brand={brand}
             brandHref="/"
-            date={date}
+            meta={meta}
             title={title}
           />
         }
@@ -99,10 +99,10 @@ describe("canvas chrome", () => {
     )
   })
 
-  it("leaves out the date and the title a deck never set", () => {
+  it("leaves out the meta and the title a deck never set", () => {
     renderChrome({ number: 3, total: 12 })
 
-    expect(container.querySelector("[data-slide-header-date]")).toBeNull()
+    expect(container.querySelector("[data-slide-header-meta]")).toBeNull()
     expect(container.querySelector("[data-slide-header-title]")).toBeNull()
   })
 
@@ -112,10 +112,10 @@ describe("canvas chrome", () => {
     expect(container.querySelector("[data-slide-header-title]")).toBeNull()
   })
 
-  it("renders a date the deck did set", () => {
-    renderChrome({ date: "March 2026", number: 3, total: 12 })
+  it("renders the meta line the deck did set", () => {
+    renderChrome({ meta: "March 2026", number: 3, total: 12 })
 
-    expect(element("[data-slide-header-date]").textContent).toBe("March 2026")
+    expect(element("[data-slide-header-meta]").textContent).toBe("March 2026")
   })
 
   it("counts the slide out of the deck", () => {
@@ -153,10 +153,10 @@ describe("canvas chrome containment", () => {
       6
     )
 
-  it("keeps an absurd brand, title, and date inside the canvas", () => {
+  it("keeps an absurd brand, title, and meta inside the canvas", () => {
     renderChrome({
       brand: absurd,
-      date: absurd,
+      meta: absurd,
       number: 3,
       title: absurd,
       total: 12,
@@ -168,7 +168,7 @@ describe("canvas chrome containment", () => {
 
   it("truncates the title before the brand gives up any of itself", () => {
     renderChrome({
-      date: "March 2026",
+      meta: "March 2026",
       number: 3,
       title: absurd,
       total: 12,
@@ -176,6 +176,6 @@ describe("canvas chrome containment", () => {
 
     expect(overflowsSideways(element("[data-slide-header-title]"))).toBe(true)
     expect(overflowsSideways(element("[data-slide-header-brand]"))).toBe(false)
-    expect(overflowsSideways(element("[data-slide-header-date]"))).toBe(false)
+    expect(overflowsSideways(element("[data-slide-header-meta]"))).toBe(false)
   })
 })

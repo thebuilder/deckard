@@ -92,9 +92,10 @@ export interface SlideTheme {
 
 export interface DeckHeaderConfig {
   brand: string
-  // Rendered as written, so a deck picks its own format: "March 2026", "2026-03-04", "Rev. C".
-  date?: string
   href: string
+  // One line of standing detail beside the brand, rendered as written, so a deck
+  // picks what it is and how it reads: "March 2026", "Rev. C", "Internal".
+  meta?: string
   mode: SlideHeaderMode
 }
 
@@ -125,7 +126,7 @@ export interface Deck {
 // Everything the shell needs from the deck. Crosses into client components, so it stays serializable.
 export interface DeckPresentation {
   canvas: DeckCanvasConfig
-  date?: string
+  meta?: string
   theme: SlideTheme
   title: string
   titleHref: string

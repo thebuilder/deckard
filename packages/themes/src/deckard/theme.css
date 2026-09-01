@@ -211,7 +211,7 @@
   content: "/";
 }
 
-.deckard-theme [data-slide-header-date] {
+.deckard-theme [data-slide-header-meta] {
   font-variant-numeric: tabular-nums;
 }
 
