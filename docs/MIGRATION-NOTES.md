@@ -62,6 +62,29 @@ export { default } from "@deckard/core/route"
 
 with an escape hatch for the deck that genuinely needs its own.
 
+**Resolved.** `@deckard/core/next` now ships `createSlideRoute`,
+`createPresenterPage`, `createDeckSitemap`, and `createFirstSlideRedirect`. Each
+one takes the deck and returns the route pieces, so all four route files are
+re-exports an app writes once and never revisits:
+
+```tsx
+// app/slides/[id]/page.tsx
+import { createSlideRoute } from "@deckard/core/next"
+import { deck } from "@/deck/deck"
+
+const { Page, generateMetadata, generateStaticParams } = createSlideRoute(deck)
+
+export { generateMetadata, generateStaticParams }
+export default Page
+```
+
+The 87 lines are now 7. The presenter preview flag and the step parameter moved
+into the client, which is what lets every slide prerender statically instead of
+opting into a dynamic render to read a query string. The escape hatch is that
+nothing forces the adapter: the components it composes are still exported, so a
+deck that needs its own route writes one. `apps/demo` runs on the adapters, and
+so do both smoke fixtures.
+
 ### A slide cannot read its own deck
 
 The scale demo needs the canvas dimensions. `deck/deck.ts` imports
@@ -99,7 +122,7 @@ to turn on for one file I wrote myself. Next's own error message suggests the
 `unoptimized` prop, and the media block had no way to pass it.
 
 Fixed in the block, in both the registry source and the demo copy. The demo's
-`next.config.mjs` is back to two keys.
+`next.config.mjs` never had to grow a key for it.
 
 This one was worth fixing rather than documenting. A deck full of diagrams is a
 normal deck, diagrams are SVG, and the first thing a consumer would have found is
@@ -195,18 +218,19 @@ apps/demo/deck/theme/**   the theme, forked from broadsheet
 The blocks and the theme belong there. Those are registry files, owned by the
 deck by design, and the duplication is the feature.
 
-`app/layout.tsx`, `app/globals.css`, and `app/slides/[id]/page.tsx` are the ones
-worth reading as a debt list. Every deck writes those three files, they are the
-same three files every time, and the route is the one with no decisions in it at
-all. If the recommendation above lands, that entry gets shorter.
+`app/layout.tsx`, `app/globals.css`, and `app/slides/[id]/page.tsx` were the ones
+worth reading as a debt list. Every deck wrote those three files, they were the
+same three files every time, and the route was the one with no decisions in it at
+all. The route adapters took that entry off the list: all four route files are
+now re-exports too short to clone. What is left is the layout and the token map,
+which do carry per-deck decisions.
 
-`fallow health` still reports 20 high-complexity functions and exits nonzero, so
-`pnpm analyze` does not pass. It did not pass before this work either: the branch
-point reports 16, all of them in `packages/core` and `apps/playground`. The four
-new ones are `apps/demo/app/slides/blocks/media.tsx` and
-`apps/demo/app/slides/[id]/page.tsx`, byte-for-byte copies of playground files
-already on that list. Nothing new is wrong, and lowering the threshold to make
-the run green would hide 16 findings that predate this branch.
+`fallow health` reported 20 high-complexity functions against 16 at the branch
+point, and `pnpm analyze` did not pass either way. The four new ones lived in
+`apps/demo/app/slides/blocks/media.tsx` and `apps/demo/app/slides/[id]/page.tsx`,
+byte-for-byte copies of playground files already on that list. The route copy is
+gone now. Lowering the threshold to make the run green would still hide the 16
+findings that predate this branch.
 
 ## Verdict
 
@@ -218,8 +242,9 @@ The gaps are not missing exports. They are two places where the framework asks
 the deck to write code that has no decision in it: the route, and the canvas
 import cycle. Both are additive fixes. Neither breaks an existing deck.
 
-I would ship the route before calling the API stable. The other two
-recommendations can wait for a second consumer to confirm them.
+The route shipped, in `@deckard/core/next`, and `apps/demo` was moved onto it.
+The canvas in slide context and the theme fork ledger are still open, and both
+can wait for a second consumer to confirm them.
 
 ## Changes this migration made
 
@@ -228,7 +253,10 @@ recommendations can wait for a second consumer to confirm them.
 | Moved the deck harness out of the playground and made it app-agnostic | `tools/deck-scripts` |
 | `--registry=<path>` made the registry check opt-in | `tools/deck-scripts/validate-deck.ts` |
 | `unoptimized` passthrough on both media blocks | `app/slides/blocks/media.tsx` |
+| Route adapters, so an app re-exports its four route files | `packages/core/src/next/routes.tsx` |
+| The demo, the playground, and both smoke fixtures moved onto the adapters | `apps/*/app`, `tools/*-smoke/fixture/app` |
 
-No speculative API work went into `@deckard/core`. The one code fix that came out
-of the migration is the media block prop, and it exists because a slide in this
-deck needed it.
+No speculative API work went into `@deckard/core` while the talk was being built.
+The one code fix that came out of it at the time is the media block prop, and it
+exists because a slide in this deck needed it. The route adapters landed after,
+against the finding above, which is the order the notes were meant to produce.

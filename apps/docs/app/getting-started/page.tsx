@@ -239,11 +239,12 @@ export default function GettingStartedPage() {
       </pre>
       <p>
         That writes <code>deck/theme/</code> and <code>app/slides/blocks/</code>{" "}
-        into your app, plus the two stylesheet lines above. It cannot edit{" "}
-        <code>next.config.mjs</code>, so <code>transpilePackages</code> stays a
-        manual edit. The registry has no public host yet, so the URL points at
-        this docs site running locally. <Link href="/registry">Registry</Link>{" "}
-        covers what each item contains and how to run the server.
+        into your app, plus the two stylesheet lines above. It leaves{" "}
+        <code>next.config.mjs</code> alone, and there is nothing to add there:
+        the package ships compiled, so the config stays empty. The registry has
+        no public host yet, so the URL points at this docs site running locally.{" "}
+        <Link href="/registry">Registry</Link> covers what each item contains
+        and how to run the server.
       </p>
 
       <h2 className="pt-4 text-2xl">Describe the deck</h2>

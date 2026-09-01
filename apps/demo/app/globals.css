@@ -1,8 +1,6 @@
 @import "tailwindcss";
 @import "@deckard/core/styles.css";
 
-@source "../node_modules/@deckard/core/src";
-
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

@@ -1,11 +1,7 @@
-import { PresenterConsole } from "@deckard/core/components"
-import type { Metadata } from "next"
+import { createPresenterPage } from "@deckard/core/next"
 import { deck } from "@/deck/deck"
 
-export const metadata: Metadata = {
-  title: "Presenter View",
-}
+const { Page, metadata } = createPresenterPage(deck)
 
-export default function PresenterPage() {
-  return <PresenterConsole canvas={deck.canvas} />
-}
+export { metadata }
+export default Page
