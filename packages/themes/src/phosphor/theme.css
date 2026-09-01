@@ -306,6 +306,54 @@
   text-shadow: var(--slide-halo);
 }
 
+/* Display type without a heading element around it, so the bloom reaches both
+ * of them here. */
+
+.phosphor-theme :is([data-slide-statement-text], [data-slide-quote-text]) {
+  text-shadow: var(--slide-halo);
+}
+
+/* A log status and a badge are bracketed, the way the checklist marker above
+ * is. Both are decoration on a part the block already named, so the brackets
+ * live here and the words stay in the deck. */
+
+.phosphor-theme [data-slide-log-status]::before {
+  content: "[";
+}
+
+.phosphor-theme [data-slide-log-status]::after {
+  content: "]";
+}
+
+.phosphor-theme [data-slide-badge] {
+  text-shadow: var(--slide-halo);
+}
+
+.phosphor-theme [data-slide-badge]::before {
+  margin-inline-end: 0.5ch;
+  content: "[";
+}
+
+.phosphor-theme [data-slide-badge]::after {
+  margin-inline-start: 0.5ch;
+  content: "]";
+}
+
+/* The status light the source design puts on a module card, lit on a milestone
+ * that has landed and on the rule that opens a statement. */
+
+.phosphor-theme
+:is(
+  [data-slide-accent-rule],
+  [data-slide-timeline-marker][data-slide-timeline-done]
+) {
+  box-shadow: var(--slide-halo);
+}
+
+.phosphor-theme [data-slide-log-row][data-slide-log-tone="alert"] {
+  color: var(--destructive);
+}
+
 /* The statement slide, flooded with phosphor and read in reverse video. The
  * tube is off: scanlines over a lit field read as a fault rather than a CRT.
  * The field colour is read on the canvas and the ink is remapped one level
