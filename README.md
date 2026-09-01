@@ -90,7 +90,8 @@ you edit.
 
 ## Documentation
 
-The docs site is `apps/docs`. To run it locally:
+The docs site is [deckard.thebuilder.dk](https://deckard.thebuilder.dk), built from
+`apps/docs`. To run it locally:
 
 ```bash
 pnpm --filter docs dev
