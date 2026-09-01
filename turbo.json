@@ -1,0 +1,42 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "stream",
+  "globalDependencies": ["biome.json", ".fallowrc.json"],
+  "globalEnv": [
+    "NEXT_PUBLIC_PDF_EXPORT",
+    "NEXT_PUBLIC_PDF_THEME",
+    "NEXT_PUBLIC_SITE_URL"
+  ],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+    },
+    "dev": {
+      "cache": false,
+      "dependsOn": ["^build"],
+      "persistent": true
+    },
+    "typecheck": {
+      "dependsOn": ["^build", "^typecheck"]
+    },
+    "test": {
+      "dependsOn": ["^build"]
+    },
+    "test:unit": {
+      "dependsOn": ["^build"]
+    },
+    "test:browser": {
+      "dependsOn": ["^build"]
+    },
+    "//#lint": {
+      "cache": false
+    },
+    "//#lint:check": {
+      "cache": false
+    },
+    "//#analyze": {
+      "cache": false
+    }
+  }
+}

@@ -27,7 +27,7 @@ slide as a bullet list.
 - Click-to-advance reveal area for stepped slides
 - Command center (`Cmd/Ctrl + K`) for quick jump
 - Presenter popout window with `BroadcastChannel` sync
-- Presenter notes per slide via `notes` in `deck/slides.tsx`
+- Presenter notes per slide via `notes` in `apps/playground/deck/slides.tsx`
 - Presenter timer + 24h current-time clock
 - Presenter next-step preview (aware of reveal steps)
 - Presenter flow window (previous 2 + current + next 5 slide titles)
@@ -46,20 +46,108 @@ pnpm install
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000) for the playground deck.
+`pnpm --filter docs dev` serves the documentation site on port 3001.
 
-## Project structure
+## The monorepo
 
-- `deck/slides.tsx`: slide definitions
-- `deck/slides/*.slide.tsx`: file-per-slide modules, discovered by one glob or wired in with `slideFromModule`
-- `deck/deck.ts`: deck config (title, description, canvas, theme, header and footer defaults) wrapped in `defineDeck`
-- `deck/theme/`: the deck theme (`theme.css`, the `SlideTheme` export, and `THEME.md`)
-- `lib/deck/*`: slide model, id resolution, and validation
-- `app/slides/blocks/*`: deck-authoring building blocks (layout, typography, collections, media)
-- `components/slideshow/slide-shell.tsx`: slideshow chrome (header, navigation, frame)
-- `components/slideshow/slide-viewport.tsx`: fits the canvas to the browser viewport
-- `components/slideshow/slide-canvas.tsx`: the fixed coordinate space slides are authored in
-- `components/slideshow/slide-background.tsx`: the background hook the theme paints
+This is a pnpm workspace run by Turborepo.
+
+| Path | What it is |
+| --- | --- |
+| `packages/core` | `@deckard/core`, the deck contract and the slideshow runtime |
+| `apps/playground` | the reference deck, and the app the visual checks run against |
+| `apps/docs` | the documentation site |
+| `tools/package-smoke` | proves the package installs into a plain Next.js app |
+
+Every script runs from the root:
+
+```bash
+pnpm dev            # playground on :3000, core rebuilding on save
+pnpm build          # every app
+pnpm typecheck
+pnpm test           # 73 tests across core and playground
+pnpm lint
+pnpm analyze
+pnpm smoke:package  # pack @deckard/core and build a scratch app against it
+```
+
+### @deckard/core
+
+The package compiles to `dist/` with `tsc`: ESM, `.d.ts`, and the `use client`
+directives preserved. No bundler, so a stack trace still points at a file that
+matches the source. An app installs it and imports it like any other package,
+with no `transpilePackages` entry and no Tailwind `@source` of its own.
+`pnpm dev` runs `tsc --watch` beside the app, so an edit in the runtime lands
+in the next render.
+
+| Entry point | Contents |
+| --- | --- |
+| `@deckard/core` | `defineDeck`, slide resolution, summaries, theme helpers, every type |
+| `@deckard/core/components` | `SlideShell`, `SlideViewport`, `SlideCanvas`, `SlideStep`, `SlideScrollArea`, `PresenterConsole`, `ColorModeProvider`, the slide context hooks |
+| `@deckard/core/code-block` | `CodeBlock`, kept off the components barrel because shiki loads WebAssembly |
+| `@deckard/core/discovery` | `discoverSlides` |
+| `@deckard/core/next` | `createSlideRoute`, `createPresenterPage`, `createDeckSitemap`, `createFirstSlideRedirect` |
+| `@deckard/core/slide-from-module` | `slideFromModule` |
+| `@deckard/core/ui` | the shadcn primitives the runtime renders |
+| `@deckard/core/utils` | `cn` |
+| `@deckard/core/styles.css` | the `--slide-*` token contract |
+
+The package holds nothing deck-specific. Colors, sizes, and backgrounds live in
+the deck theme of the app that owns them.
+
+### Adding Deckard to your own app
+
+A presentation built on Deckard is a plain Next.js app: `app/`, `components/`,
+`deck/`, `public/`, `package.json`. One line connects it to the package.
+
+```css
+/* app/globals.css */
+@import "tailwindcss";
+@import "@deckard/core/styles.css";
+```
+
+That stylesheet registers the package's own compiled output as a Tailwind
+source, so the chrome gets its utilities without the app naming a path inside
+`node_modules`.
+
+The routes come from `@deckard/core/next`, so an app owns its deck and nothing
+else:
+
+```tsx
+// app/slides/[id]/page.tsx
+import { createSlideRoute } from "@deckard/core/next"
+import { deck } from "@/deck/deck"
+
+const { Page, generateMetadata, generateStaticParams } = createSlideRoute(deck)
+
+export { generateMetadata, generateStaticParams }
+export default Page
+```
+
+| Adapter | Route |
+| --- | --- |
+| `createSlideRoute(deck)` | `app/slides/[id]/page.tsx`, returns `Page`, `generateMetadata`, `generateStaticParams` |
+| `createPresenterPage(deck)` | `app/presenter/page.tsx`, returns `Page` and `metadata` |
+| `createDeckSitemap(deck, { siteUrl })` | `app/sitemap.ts`, defaults to `NEXT_PUBLIC_SITE_URL` |
+| `createFirstSlideRedirect(deck)` | `app/page.tsx`, redirects to the first slide |
+
+### Inside the playground
+
+- `apps/playground/deck/slides.tsx`: slide definitions
+- `apps/playground/deck/slides/*.slide.tsx`: file-per-slide modules, discovered by one glob or wired in with `slideFromModule`
+- `apps/playground/deck/deck.ts`: deck config (title, description, canvas, theme, header and footer defaults) wrapped in `defineDeck`
+- `apps/playground/deck/theme/`: the deck theme (`theme.css`, the `SlideTheme` export, and `THEME.md`)
+- `apps/playground/app/slides/blocks/*`: deck-authoring building blocks (layout, typography, collections, media)
+- `apps/playground/components/ui/*`: shadcn primitives this app adds on top of the ones the runtime ships
+
+### Inside the package
+
+- `packages/core/src/deck/*`: slide model, id resolution, validation, discovery
+- `packages/core/src/components/slide-shell.tsx`: slideshow chrome (header, navigation, frame)
+- `packages/core/src/components/slide-viewport.tsx`: fits the canvas to the browser viewport
+- `packages/core/src/components/slide-canvas.tsx`: the fixed coordinate space slides are authored in
+- `packages/core/src/components/slide-background.tsx`: the background hook the theme paints
 
 ## The canvas
 
@@ -74,7 +162,7 @@ CSS cannot divide a length by a length in every engine Deckard targets. Slide
 content stays server rendered, and the canvas stays hidden until the first
 measurement lands so it never flashes at the wrong size.
 
-Configure it in `deck/deck.ts`:
+Configure it in `apps/playground/deck/deck.ts`:
 
 ```ts
 canvas: {
@@ -159,7 +247,7 @@ title text inside the layout.
 - `"hidden"`: never render header
 - `"auto"`: render in default layout, hide in fullscreen layout
 
-Global default is configured in `deck/deck.ts`.
+Global default is configured in `apps/playground/deck/deck.ts`.
 
 ### Footer behavior
 
@@ -171,7 +259,7 @@ Global default is configured in `deck/deck.ts`.
 
 ## Adding slides
 
-Add entries to `deck/slides.tsx`.
+Add entries to `apps/playground/deck/slides.tsx`.
 
 Example content slide:
 
@@ -256,8 +344,8 @@ async function ReleaseSlide() {
 ```
 
 Interactivity goes one level down, in a nested client component the slide
-renders. Never put `"use client"` at the top of `deck/slides.tsx` or a slide
-module, `deck/slides.test.ts` fails on it.
+renders. Never put `"use client"` at the top of `apps/playground/deck/slides.tsx` or a slide
+module, `apps/playground/deck/slides.test.ts` fails on it.
 
 A slide can also live in its own file as a module that exports `default`,
 `meta`, and `notes`:
@@ -291,7 +379,7 @@ error page.
 
 ## Discovering slide modules
 
-`deck/slides.tsx` is a plain array and stays one. Discovery only saves you the
+`apps/playground/deck/slides.tsx` is a plain array and stays one. Discovery only saves you the
 imports:
 
 ```tsx
@@ -345,7 +433,9 @@ itself past a manual slide or out of the spread. Explicit array placement wins.
 A discovered module has to be a synchronous module. If it or anything it imports
 uses top-level await or WebAssembly, the eager glob hands back a promise instead
 of the exports, and discovery throws with the file path. `CodeBlock` is the case
-in this repo, because shiki loads a WebAssembly regex engine. A slide that shows
+here, because shiki loads a WebAssembly regex engine. That is why it ships from
+`@deckard/core/code-block` instead of the components barrel: pulling it through
+the barrel would make every discovered module async. A slide that shows
 highlighted code belongs in the array, wired with `slideFromModule`.
 
 Adding or deleting a matched file while `next dev` runs updates route handlers
@@ -356,7 +446,13 @@ adding a slide file.
 
 Presenter previews render slide routes with `?presenterPreview=1`, and slides
 can detect that mode with `useIsPresenterPreview()` from
-`components/slideshow/slide-context.tsx`.
+`@deckard/core/components`.
+
+The slide route never reads the query itself. `?presenterPreview=1` and `?step=`
+are read on the client, inside a Suspense boundary that holds nothing but the
+reader, so every slide prerenders as static HTML and only the preview wiring
+(chrome visibility, the read-only stepper, presenter sync, frozen media) settles
+after hydration.
 
 Use that hook in custom client components to skip autoplay, audio, canvas, or
 other expensive interactive rendering inside the presenter preview iframe.
@@ -375,11 +471,11 @@ preview.
 
 `SlideBackground` renders one empty element carrying `data-slide-background`.
 What each variant paints lives in the deck theme, so change the look in
-`deck/theme/theme.css` and read `deck/theme/THEME.md` first.
+`apps/playground/deck/theme/theme.css` and read `apps/playground/deck/theme/THEME.md` first.
 
 ## Theme
 
-`deck/theme/` owns every audience-facing color, size, and background in the
+`apps/playground/deck/theme/` owns every audience-facing color, size, and background in the
 deck. The stylesheet is scoped to the theme class, which `SlideCanvas` puts on
 the canvas element, so the utility bar, command center, and presenter console
 keep the app tokens and stay readable whatever the deck looks like.
@@ -399,7 +495,7 @@ light/dark toggle. There is no runtime switching between named themes.
 
 Inside the canvas, style with semantic tokens (`bg-card`, `text-muted-foreground`)
 or slide tokens (`--slide-title-size`, `--slide-surface`). Never a hardcoded
-color. `deck/theme/THEME.md` lists the tokens and what they control.
+color. `apps/playground/deck/theme/THEME.md` lists the tokens and what they control.
 
 ## PDF export
 
@@ -418,9 +514,9 @@ pnpm export:pdf -- --dark
 
 This runs a production build in `NEXT_PUBLIC_PDF_EXPORT=1` mode and writes:
 
-- `out/slides.pdf`
+- `apps/playground/out/slides.pdf`
 
-Slide routes are discovered from `app/sitemap.ts` (`/sitemap.xml`) so export
+Slide routes are discovered from the app's `app/sitemap.ts` (`/sitemap.xml`) so export
 stays aligned with your published slide paths.
 
 Export mode behavior:
@@ -429,13 +525,13 @@ Export mode behavior:
 - animations/transitions disabled
 - deck header/footer hidden
 
-Page size comes from the `canvas` config in `deck/deck.ts`, so the export
+Page size comes from the `canvas` config in `apps/playground/deck/deck.ts`, so the export
 cannot drift from what the audience sees.
 
 Optional env vars:
 
 - `PDF_EXPORT_PORT` (default `3410`)
-- `PDF_EXPORT_OUTPUT` (default `out/slides.pdf`)
+- `PDF_EXPORT_OUTPUT` (default `out/slides.pdf`, relative to the app)
 
 Skip build (reuse existing `.next` build):
 
@@ -443,9 +539,16 @@ Skip build (reuse existing `.next` build):
 pnpm export:pdf -- --skip-build
 ```
 
-## Packages
+## Package compatibility
 
-Deckard is one app today. The reusable parts, the deck contract in `lib/deck`
-and the chrome in `components/slideshow`, are being pulled out into `@deckard`
-packages, so keep new code inside those directories free of deck-specific
-content.
+`pnpm smoke:package` packs `@deckard/core` with `pnpm pack`, installs the
+tarball into a scratch app under the system temp directory, and runs
+`next typegen`, `tsc --noEmit`, and `next build` there. The scratch app sits
+outside the workspace and resolves nothing from this repo, so a missing
+dependency or a broken export map fails there instead of in someone else's
+project. It takes about 16 seconds.
+
+The fixture it copies lives in `tools/package-smoke/fixture` and covers a plain
+slide, an async slide, a discovered module, a stepped slide, and a client
+widget. The scratch directory is deleted afterwards. Pass `--keep` to inspect
+it.

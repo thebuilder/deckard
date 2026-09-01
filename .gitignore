@@ -1,5 +1,5 @@
 # dependencies
-/node_modules
+node_modules/
 /.pnp
 .pnp.*
 .yarn/*
@@ -8,14 +8,17 @@
 !.yarn/releases
 !.yarn/versions
 
+# turborepo
+.turbo
+
 # testing
 /coverage
 .vitest-attachments
 **/__screenshots__
 
 # next.js
-/.next/
-/out/
+**/.next/
+**/out/
 
 # production
 /build
@@ -35,6 +38,7 @@ pnpm-debug.log*
 .env*.local
 
 # typescript
+packages/*/dist
 *.tsbuildinfo
 next-env.d.ts
 posters

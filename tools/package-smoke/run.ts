@@ -1,0 +1,130 @@
+#!/usr/bin/env node
+import { spawnSync } from "node:child_process"
+import fs from "node:fs"
+import os from "node:os"
+import path from "node:path"
+import process from "node:process"
+import { fileURLToPath } from "node:url"
+
+const toolDirectory = path.dirname(fileURLToPath(import.meta.url))
+const repoRoot = path.resolve(toolDirectory, "../..")
+const fixtureSource = path.join(toolDirectory, "fixture")
+const keepScratch = process.argv.includes("--keep")
+
+// Classes only the runtime writes. Tailwind can only reach them through the
+// @source the package stylesheet registers against its own compiled output.
+const runtimeUtilities = ["min-h-16", "backdrop-blur-xl", "data-slide-chrome"]
+
+function run(command: string, args: string[], cwd: string) {
+  const result = spawnSync(command, args, {
+    cwd,
+    env: { ...process.env, NEXT_TELEMETRY_DISABLED: "1" },
+    stdio: "inherit",
+  })
+
+  if (result.status !== 0) {
+    throw new Error(`${command} ${args.join(" ")} failed in ${cwd}`)
+  }
+}
+
+// The fixture is the app a consumer writes, so anything the package should be
+// doing for them cannot appear in it.
+function assertPlainConsumer() {
+  const config = fs.readFileSync(
+    path.join(fixtureSource, "next.config.mjs"),
+    "utf8"
+  )
+
+  if (config.includes("transpilePackages")) {
+    throw new Error("The fixture must build without transpilePackages")
+  }
+
+  const css = fs.readFileSync(
+    path.join(fixtureSource, "app/globals.css"),
+    "utf8"
+  )
+
+  if (css.includes("@source")) {
+    throw new Error("The fixture must build without a consumer-level @source")
+  }
+}
+
+function assertRuntimeStyles(directory: string) {
+  const staticDirectory = path.join(directory, ".next/static")
+  const css = fs
+    .readdirSync(staticDirectory, { recursive: true })
+    .map((entry) => path.join(staticDirectory, String(entry)))
+    .filter((entry) => entry.endsWith(".css"))
+    .map((entry) => fs.readFileSync(entry, "utf8"))
+    .join("\n")
+
+  const missing = runtimeUtilities.filter((utility) => !css.includes(utility))
+
+  if (missing.length > 0) {
+    throw new Error(
+      `The built CSS is missing runtime utilities: ${missing.join(", ")}`
+    )
+  }
+}
+
+function packCore(destination: string) {
+  const result = spawnSync(
+    "pnpm",
+    [
+      "--filter",
+      "@deckard/core",
+      "exec",
+      "pnpm",
+      "pack",
+      "--pack-destination",
+      destination,
+    ],
+    { cwd: repoRoot, encoding: "utf8", stdio: ["inherit", "pipe", "inherit"] }
+  )
+
+  if (result.status !== 0) {
+    throw new Error("pnpm pack failed")
+  }
+
+  const packed = fs
+    .readdirSync(destination)
+    .find((entry) => entry.endsWith(".tgz"))
+
+  if (!packed) {
+    throw new Error("pnpm pack produced no tarball")
+  }
+
+  fs.renameSync(
+    path.join(destination, packed),
+    path.join(destination, "deckard-core.tgz")
+  )
+}
+
+const scratch = fs.mkdtempSync(path.join(os.tmpdir(), "deckard-smoke-"))
+const appDirectory = path.join(scratch, "app")
+
+try {
+  assertPlainConsumer()
+  run("pnpm", ["--filter", "@deckard/core", "run", "build"], repoRoot)
+  packCore(scratch)
+  fs.cpSync(fixtureSource, appDirectory, { recursive: true })
+
+  run(
+    "pnpm",
+    ["install", "--prefer-offline", "--ignore-workspace"],
+    appDirectory
+  )
+  run("pnpm", ["run", "typecheck"], appDirectory)
+  run("pnpm", ["run", "build"], appDirectory)
+  assertRuntimeStyles(appDirectory)
+
+  process.stdout.write(
+    "\n@deckard/core builds and styles a standalone Next.js app\n"
+  )
+} finally {
+  if (keepScratch) {
+    process.stdout.write(`scratch kept at ${scratch}\n`)
+  } else {
+    fs.rmSync(scratch, { force: true, recursive: true })
+  }
+}

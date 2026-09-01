@@ -1,8 +1,22 @@
 {
   "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
-  "entry": ["components/ui/**", "app/slides/blocks/**"],
+  "entry": [
+    "packages/core/src/index.ts",
+    "packages/core/src/components/index.ts",
+    "packages/core/src/components/code-block.tsx",
+    "packages/core/src/deck/discovery.ts",
+    "packages/core/src/deck/slide-from-module.tsx",
+    "packages/core/src/lib/utils.ts",
+    "packages/core/src/ui/**",
+    "apps/playground/components/ui/**",
+    "apps/playground/app/slides/blocks/**"
+  ],
+  "ignorePatterns": ["tools/package-smoke/fixture/**"],
   "ignoreExports": [
-    { "file": "deck/slides/**/*.slide.tsx", "exports": ["meta", "notes"] }
+    {
+      "file": "apps/playground/deck/slides/**/*.slide.tsx",
+      "exports": ["meta", "notes"]
+    }
   ],
   "ignoreDependencies": ["postcss-load-config", "react-dom", "tailwindcss"]
 }

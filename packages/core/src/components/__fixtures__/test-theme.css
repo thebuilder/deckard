@@ -1,0 +1,14 @@
+/*
+ * Stands in for a deck theme so the canvas scoping tests have something to read.
+ * Two tokens, no look. Real themes live in the deck that owns them.
+ */
+.test-theme {
+  --background: oklch(0.985 0 0);
+  color-scheme: light;
+}
+
+.test-theme:where(.dark, .dark *):where(:not([data-slide-color-mode="light"])),
+.test-theme:where([data-slide-color-mode="dark"]) {
+  --background: oklch(0.17 0 0);
+  color-scheme: dark;
+}
