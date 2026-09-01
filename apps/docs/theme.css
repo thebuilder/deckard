@@ -138,3 +138,24 @@ h6,
   --deckard-icon-surface: #0f172a;
   --deckard-icon-ink: #e2e8f0;
 }
+
+/*
+ * The brand mark, styled on Blume's own logo markup rather than through the
+ * layout.Logo override. PageLayout does not forward layout overrides, so a
+ * custom page and a docs page would otherwise render two different logos.
+ */
+[data-blume-header] a:has(svg) {
+  gap: 0.625rem;
+  font-weight: 500;
+}
+
+[data-blume-header] a svg {
+  width: auto;
+  height: 1.5rem;
+}
+
+[data-blume-header] a > span:not(:has(svg)) {
+  font-family: var(--blume-font-display);
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+}
