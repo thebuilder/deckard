@@ -1,0 +1,155 @@
+---
+title: Writing slides
+description: The block families, when a slide earns its own file instead of an array entry, and how discoverSlides orders the modules it finds.
+sidebar:
+  icon: file-text
+---
+
+A slide is an object with a `body` and some optional metadata. The array in `deck/slides.tsx` is the deck, in order.
+
+```tsx deck/slides.tsx
+export const slides: SlideDefinition[] = [
+  { slug: "intro", title: "Deckard", body: <HeroSlide eyebrow="A talk" /> },
+  { title: "The problem", body: <OpenContentSlide eyebrow="Context"><BulletList items={points} /></OpenContentSlide> },
+]
+```
+
+## Start from a block
+
+The blocks install into `app/slides/blocks/` as source you own. Compose from them and write your own markup only when none fits.
+
+| Block | File | Reach for it when |
+| --- | --- | --- |
+| `HeroSlide` | `templates.tsx` | The opener. One headline, oversized. |
+| `BreakerSlide` | `templates.tsx` | A section divider, left aligned. |
+| `ContentSlideCard` | `templates.tsx` | Intro copy above a bordered panel. |
+| `OpenContentSlide` | `templates.tsx` | The same intro, no panel. |
+| `FocusSlide` | `templates.tsx` | One block and no heading at all. |
+| `BulletList` | `collections.tsx` | Four to six numbered points. |
+| `FeatureGrid` | `collections.tsx` | Three parallel cards. |
+| `StatGrid` | `metrics.tsx` | Exactly three figures with their comparisons. |
+| `ImageShowcaseSlide` | `media.tsx` | An image beside a caption panel. |
+| `FullscreenMediaSlide` | `media.tsx` | Image or video bleeding to every canvas edge. |
+| `Eyebrow`, `SlideHeading` | `typography.tsx` | Your own layout, with the deck's type rhythm. |
+
+`ContentSlideCard`, `OpenContentSlide`, and `FocusSlide` are three components rather than one with a `variant` prop, on purpose. Picking between them is picking what the slide is.
+
+### One surface per slide
+
+A slide is either a framed panel holding flat content, or an open frame holding content that brings its own border. Never a bordered panel full of bordered cards.
+
+Blocks that paint their own surface carry `data-slide-surface`. `ContentSlideCard`'s panel carries `data-slide-panel` and always paints its card, so putting a surfaced block inside one gives you a frame inside a frame plus a development console warning naming `OpenContentSlide` and `FocusSlide`. Nothing rewrites the slide for you.
+
+If you write a block that paints a border or a background, put `data-slide-surface` on its outer element so a card wrapped around it says so.
+
+## Inline, or its own file
+
+Keep a slide in the array while it is metadata plus one block. Move it to `deck/slides/<name>.slide.tsx` once it loads data, brings a client widget, or carries speaker notes longer than the slide body.
+
+A slide module exports the component as `default`, plus `meta` and `notes` as plain values so the deck can title and order it without rendering it:
+
+```tsx deck/slides/pricing.slide.tsx
+import type { SlideMeta } from "@deckard/core"
+
+export const meta: SlideMeta = { slug: "pricing", title: "Pricing" }
+export const notes = "Pause on the middle tier."
+
+export default async function PricingSlide() {
+  return <PricingTable plans={await loadPlans()} />
+}
+```
+
+:::note
+Extraction buys editing room, never loading speed. The discovery glob is eager, so both forms ship identical bundles. A deck that never adds a file loses nothing.
+:::
+
+## Server components
+
+Slide entry modules are Server Components. A body can be `async` and await its own data before it renders:
+
+```tsx
+async function ReleaseSlide() {
+  const releases = await loadReleases()
+
+  return (
+    <OpenContentSlide eyebrow="Releases" title="Shipped this quarter">
+      <FeatureGrid items={releases} />
+    </OpenContentSlide>
+  )
+}
+```
+
+Never put `"use client"` at the top of `deck/slides.tsx` or a `*.slide.tsx` file. Interactivity goes one level down, in a nested client component the slide renders. The repository's decks guard this with a `deck/slides.test.ts` that fails on the directive.
+
+A slide that throws under `next dev` renders an inline error card with the slide id and the message, and navigation keeps working. In a production build a Server Component that throws is fatal to the route, so Next serves its own error page.
+
+## Discovery
+
+`discoverSlides` takes an eager glob and returns slide definitions, so you skip the imports:
+
+```tsx deck/slides.tsx
+import { discoverSlides } from "@deckard/core/discovery"
+
+const discovered = discoverSlides(
+  import.meta.glob("./slides/**/*.slide.tsx", { eager: true }),
+  { sort: "order" }
+)
+
+export const slides: SlideDefinition[] = [
+  { slug: "intro", title: "Deckard", body: <HeroSlide eyebrow="A talk" /> },
+  ...discovered,
+  { title: "Questions", body: <HeroSlide eyebrow="Thanks" /> },
+]
+```
+
+The spread decides where the group lands. Slides before and after it are manual entries and the discovered ones fill the gap in their sorted order.
+
+### Ordering
+
+`sort` takes three forms:
+
+- **`"path"`** (default) compares the normalized glob keys segment by segment with numbers compared as numbers, so `2-intro.slide.tsx` sorts before `10-outro.slide.tsx`, and `10-context/20-b.slide.tsx` sorts after `10-context/10-a.slide.tsx` and before `20-solution/10-a.slide.tsx`.
+- **`"order"`** reads each module's `meta.order` first and falls back to path order for ties and for modules that set none. Number the slides you care about and let filenames handle the rest.
+- **A comparator** receives `{ path, meta }` for both slides and is used as given.
+
+Sorting never reads the enumeration order of the glob object.
+
+`meta.order` sorts inside the discovered group and nowhere else. `discoverSlides` consumes it and leaves it off the definition it returns, so a module cannot push itself past a manual slide or out of the spread.
+
+### Two limits
+
+**A discovered module has to be synchronous.** If it or anything it imports uses top-level await or WebAssembly, the eager glob hands back a promise instead of the exports and discovery throws naming the file. `CodeBlock` is the case that bites: shiki loads a WebAssembly regex engine, which is why it ships from `@deckard/core/code-block` rather than the components barrel. A slide that shows highlighted code belongs in the array, wired with `slideFromModule` if you want it in a file anyway:
+
+```tsx
+import * as pricingSlide from "@/deck/slides/pricing.slide"
+import { slideFromModule } from "@deckard/core/slide-from-module"
+
+slideFromModule(pricingSlide, "deck/slides/pricing.slide.tsx")
+```
+
+**Adding or deleting a matched file while `next dev` runs leaves page routes serving stale modules.** Restart the dev server after adding a slide file.
+
+## Slide ids
+
+Every slide gets an id, and the id is the URL.
+
+- No `slug`: the slide is served at its 1-based position, so the fourth slide is `/slides/4`.
+- A `slug`: the slide is served at `/slides/<slug>` and only there. Give a slide a slug when you want a link that survives reordering.
+
+Slugs take lowercase letters, digits, and hyphens. The deck fails to build on a duplicate slug, an empty slug, a slug with characters unsafe in a URL path, or a slug made only of digits.
+
+Titles never become slugs. A slide with no `title` falls back to `Slide 4` in the header, the command center, and the presenter flow.
+
+[Slide metadata](/reference/slide-metadata) has the full field list, including the chrome and layout overrides a single slide can set.
+
+## Check the work
+
+```bash
+deckard validate        # the deck resolves, slugs are unique, the theme is coherent
+deckard check-overflow  # every slide fits the canvas
+deckard contact-sheet   # every slide in one grid, after deckard screenshots
+```
+
+Run `validate` after a structural change, `check-overflow` after changing copy, and read the contact sheet before calling a deck done. It catches the things no checker can, like three slides in a row that all end above the halfway line.
+
+Every flag on all three is in the [CLI reference](/reference/cli), and [Exporting](/guides/exporting) covers what they produce.

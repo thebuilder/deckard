@@ -4,23 +4,20 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "next build",
-    "dev": "next dev --turbopack --port 3001",
-    "start": "next start --port 3001",
-    "typecheck": "next typegen && tsc --noEmit"
+    "build": "blume build",
+    "dev": "blume dev --port 3001",
+    "preview": "blume preview --port 3001",
+    "start": "blume preview --port 3001",
+    "typecheck": "blume check"
   },
   "dependencies": {
-    "next": "16.3.3",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "blume": "^1.5.3"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.3.3",
+    "@deckard/core": "workspace:*",
+    "@deckard/themes": "workspace:*",
     "@types/node": "^26.4.0",
-    "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.5",
-    "postcss": "^8.5.26",
-    "tailwindcss": "^4.3.3",
+    "astro": "7.2.10",
     "typescript": "^7.0.2"
   }
 }

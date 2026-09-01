@@ -1,0 +1,74 @@
+---
+title: Theme gallery
+description: The six built-in Deckard themes, each previewed as a real slide canvas painted by that theme's own stylesheet, switchable between light and dark.
+sidebar:
+  label: Theme gallery
+  icon: swatch-book
+  order: 2
+---
+
+Every preview below is a slide, not a picture of one. Each is a `[data-slide-canvas]` element carrying the theme class, with the header, body, footer, and progress bar the runtime renders, scaled down to fit the card. The stylesheet painting it is `packages/themes/src/<name>/theme.css`, the same file a deck loads, so a preview cannot drift from the theme it shows.
+
+Switch a card between light and dark, or enlarge it to take the full row. All six carry both color modes; `defaultColorMode` decides which one a browser opens on.
+
+<ThemeGallery />
+
+Pick one by importing it:
+
+```ts deck/deck.ts
+import { meridian } from "@deckard/themes"
+```
+
+Or switch an existing deck with `deckard add theme meridian`. See the [themes guide](/guides/themes) for ejecting and for writing your own.
+
+## deckard
+
+`defaultColorMode: "system"`, both modes.
+
+Quiet paper, one teal accent. The canvas is an off-white sheet in light mode and a blue-black sheet in dark, never the pure white or pure black of the app chrome around it, so the canvas reads as a slide rather than as the page. Content sits on raised surfaces with a hairline border and a soft shadow, which in light mode does most of the separating work.
+
+<ThemePalette theme="deckard" />
+
+## broadsheet
+
+`defaultColorMode: "system"`, both modes.
+
+Print, not screen. Warm newsprint in light mode, warm ink in dark. Everything is serif and everything is flat: `--slide-radius` is `0.125rem` and there is no shadow at all, so a content card is a panel with a rule around it. The border sits two steps darker than the default, because a flat card on flat paper needs the line to do all the work.
+
+<ThemePalette theme="broadsheet" />
+
+## ledger
+
+`defaultColorMode: "system"`, both modes.
+
+A bound report. Both radii are `0rem` and there is no shadow; rules carry the structure a shadow would carry elsewhere. Three families on one slide, each with exactly one job: serif says what the section is, sans argues it, mono numbers it. The accent is oxblood on paper and a warmer rust after dark.
+
+<ThemePalette theme="ledger" />
+
+## meridian
+
+`defaultColorMode: "system"`, both modes.
+
+The quietest theme here, and that is the entire brief. A near-white blue-gray in light mode and a cool near-black in dark, flat surfaces with a hairline border and `0.625rem` corners, no shadow in either mode. A white card on a white sheet with no shadow asks a lot of its border. If a deck of yours reads flat rather than calm, that is the thing to put back.
+
+<ThemePalette theme="meridian" />
+
+## nexus
+
+`defaultColorMode: "dark"`, both modes.
+
+A flight console. Dark is home. Every heading is capitalised with a hair of positive tracking, and `h1`, `h2`, and the `StatGrid` figure carry an accent halo through `--slide-halo`. The halo is `none` in light mode, because a glow on paper looks like a printing fault, and light mode reads as the printed version of the same document rather than as a second theme.
+
+<ThemePalette theme="nexus" />
+
+## phosphor
+
+`defaultColorMode: "dark"`, both modes.
+
+A green CRT. One monospace family for every word on the slide, scanlines painted across every background variant, and a phosphor bloom on display headings. It also runs a thinner status bar than the other five, taking `--slide-footer-space` down to `5rem`, which moves the slide content down with it. Light mode turns the tube off, for handouts and for printing.
+
+<ThemePalette theme="phosphor" />
+
+## About the swatches
+
+Each palette above is six tokens read out of the theme's stylesheet when this page builds: the sheet, the card, the muted surface, the border, the accent, and the text. A theme is a hundred-odd declarations and its own `THEME.md` explaining them, so this is a small slice on purpose. The preview shows you what the theme looks like; the swatches tell you what to type when you want that green.

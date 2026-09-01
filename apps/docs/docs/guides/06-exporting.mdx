@@ -1,0 +1,82 @@
+---
+title: Exporting
+description: PDF handouts, per-slide screenshots, and the contact sheet. All three run the deck in a real browser at canvas scale.
+sidebar:
+  icon: image-down
+---
+
+Three commands turn a deck into files. All of them build the app, serve it on a spare port, and open a browser sized so the canvas renders at scale 1, so what they capture is what the room sees.
+
+## PDF
+
+```bash
+pnpm exec playwright install chromium
+deckard export pdf
+```
+
+One page per slide at the deck's canvas size, captured from the canvas element. `1920x1080` becomes `1440x810pt`, which is the same thing at 96dpi. The page size comes from the `canvas` config in `deck/deck.ts`, so the export cannot drift from what the audience saw.
+
+Output lands at `out/slides.pdf` in the deck's own directory.
+
+| Flag | Default | What it does |
+| --- | --- | --- |
+| `--dark` | off, so the export is **light** | Export the dark deck instead. |
+| `--skip-build` | off | Reuse whatever is in `.next`. |
+| `--port <n>` | `3410`, or `PDF_EXPORT_PORT` | Move the temporary server off a busy port. |
+
+The light default is deliberate: a handout gets printed.
+
+In export mode the build runs with `NEXT_PUBLIC_PDF_EXPORT=1`, which:
+
+- disables animations and transitions
+- drops the deck controls
+- keeps the deck header and footer, exactly as each slide's own modes say
+
+Set `PDF_EXPORT_OUTPUT` to write somewhere other than `out/slides.pdf`. It resolves against the deck directory.
+
+:::note
+The export uses its own build profile, separate from the one the screenshot and overflow commands share, because it needs the export environment variables compiled in. Expect a build the first time even if you just ran `deckard screenshots`.
+:::
+
+## Screenshots
+
+```bash
+deckard screenshots
+deckard screenshots --light --max 5
+```
+
+One PNG per slide at canvas size, written to `out/screenshots/<id>.png`, plus a `manifest.json` recording the canvas size, the color mode, and every slide's file, id, number, and title.
+
+| Flag | Default | What it does |
+| --- | --- | --- |
+| `--light` | off, so **dark** | Capture light mode. |
+| `--max <n>` | all | Stop after n slides. |
+| `--skip-build` | off | Reuse whatever is in `.next`. |
+| `--port <n>` | `3411` | Move the temporary server off a busy port. |
+
+The directory is wiped and recreated on each run, so the manifest and the PNGs never disagree.
+
+Every capture asserts the applied color mode matches the one requested, and throws naming the slide rather than writing a mislabelled PNG. A theme that pins itself to dark still shoots light when you ask, because the harness seeds the color-mode storage key before the page loads.
+
+## Contact sheet
+
+```bash
+deckard screenshots
+deckard contact-sheet --columns 5
+```
+
+Composes the existing screenshots into `out/contact-sheet.png`, a labelled grid of the whole deck. It does not build or serve anything; it reads `out/screenshots/manifest.json` and fails telling you to run the screenshots first if that file is missing. The color mode comes from the manifest.
+
+`--columns <n>` sets the grid width and defaults to `4`.
+
+This is the check that catches what no linter can. Three slides in a row that all end above the halfway line, or the same numbered list twice back to back, are invisible one slide at a time and obvious in a grid.
+
+## Build reuse
+
+The screenshot, overflow, and PDF commands share one harness. It stamps `.next/deckard-build.json` after a build and compares that timestamp against the newest file under `app/`, `assets/`, `components/`, `deck/`, `hooks/`, `lib/`, and `public/`, plus `components.json`, `next.config.*`, `package.json`, `postcss.config.*`, `tsconfig.json`, and the resolved `@deckard/core` and its `src/`. A stale stamp triggers `next build`.
+
+`--skip-build` reuses whatever is there regardless. `--port <n>` moves off the default when something else has the port; the harness refuses to start if anything already answers on it.
+
+## Slide discovery
+
+The harness reads slide ids from the app's own `/sitemap.xml`, which is `app/sitemap.ts` re-exporting `createDeckSitemap(deck)`. Export and screenshots stay aligned with your published slide paths, and an app that dropped that route gets an error naming it.

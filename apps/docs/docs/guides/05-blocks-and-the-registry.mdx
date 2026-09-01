@@ -1,0 +1,138 @@
+---
+title: Blocks and the registry
+description: Slide blocks install into your app as source through a shadcn registry. What the six items contain, how to install them, and where they are served from today.
+sidebar:
+  icon: blocks
+---
+
+Slide blocks are deliberately not in `@deckard/core`. They install into your app as source files through shadcn, into `app/slides/blocks/`, and you edit them from then on.
+
+That is the point. A block that assumed your theme would be a block you fight. `HeroSlide` caps its headline with `text-balance` tuned for a sans display face; on a 4.5rem serif you will want to change it, and you can, because it is your file.
+
+## The items
+
+| Item | Installs | Contains |
+| --- | --- | --- |
+| `block-typography` | `typography.tsx` | `Eyebrow`, `SlideHeading`. Every other block depends on it. |
+| `block-slide-layouts` | `templates.tsx` | `HeroSlide`, `BreakerSlide`, `ContentSlideCard`, `OpenContentSlide`, `FocusSlide`. |
+| `block-collections` | `collections.tsx` | `BulletList`, `FeatureGrid`. |
+| `block-media` | `media.tsx` | `ImageShowcaseSlide`, `FullscreenMediaSlide`. |
+| `block-metrics` | `metrics.tsx` | `StatGrid`. |
+| `preset-blocks` | all five | Plus the one stylesheet line a consumer cannot guess. |
+
+`preset-blocks` is the one to run. Alongside the five block files it adds `@import "@deckard/core/styles.css"` to your app stylesheet, which carries the token contract and registers the package's own compiled output as a Tailwind source. That import is the entire build wiring. There is no `transpilePackages` entry and no `@source` line for you to add.
+
+Themes used to be registry items and are not any more. They ship as `@deckard/themes`, so a deck gets one by importing it rather than by installing six files it did not ask to own.
+
+## Installing
+
+```bash
+deckard add block metrics
+```
+
+Or straight through shadcn:
+
+```bash
+pnpm dlx shadcn@latest add @deckard/preset-blocks
+```
+
+`deckard add block` reads the registry URL from `components.json` under `registries["@deckard"]`, or takes `--registry <url>` with a `{name}` placeholder. It probes the host before doing anything and tells you what to start when the probe fails. `--yes` passes shadcn `-y -o`, overwriting the files it installs without asking.
+
+shadcn is a dependency of `@deckard/cli`, pinned to the version the registry is built with, and `deckard add` runs that installed binary. There is no `dlx` and no download, so the same version runs on every package manager and on every day.
+
+:::warning
+There is no public host for the registry yet. `deckard init` writes `http://localhost:3001/r/{name}.json` into `components.json`, which is this documentation site running locally. Start it with `pnpm --filter docs dev` from a checkout of the Deckard repository before you run `deckard add block`.
+:::
+
+## Building it
+
+From the repository root:
+
+```bash
+pnpm registry:build
+```
+
+That runs `shadcn build --output apps/docs/public/r`, writing one JSON file per item. This site serves `public/` as static files, so each item lands at `/r/<name>.json`.
+
+The source of truth is `registry.json` at the repository root. Each item's `files[].path` points at the real file in `apps/playground/app/slides/blocks/`, which is why `deckard validate --registry <path>` can check that every path still exists.
+
+## Composing
+
+Two rules cover almost every slide.
+
+**One surface per slide.** A framed panel holds flat content, an open frame holds content that brings its own border. Blocks with a surface carry `data-slide-surface`; `ContentSlideCard`'s panel carries `data-slide-panel` and always paints its card. Nest them and you get a frame inside a frame, plus a development console warning naming `OpenContentSlide` and `FocusSlide`.
+
+**Prefer a component over a prop.** `ContentSlideCard`, `OpenContentSlide`, and `FocusSlide` are three components rather than one with a `variant` boolean, because choosing between them is choosing what the slide is.
+
+### The layout blocks
+
+<Tabs>
+  <Tab title="ContentSlideCard">
+    Eyebrow, heading, and lead above a bordered `--slide-surface` panel. For
+    body content with no surface of its own.
+
+    ```tsx
+    <ContentSlideCard eyebrow="Context" description="Where this came from.">
+      <p>Flat prose, a definition list, your own markup.</p>
+    </ContentSlideCard>
+    ```
+
+  </Tab>
+  <Tab title="OpenContentSlide">
+    The same intro with no panel, for content that brings its own frame.
+
+    ```tsx
+    <OpenContentSlide eyebrow="Results" description="Three quarters in.">
+      <FeatureGrid items={features} />
+    </OpenContentSlide>
+    ```
+
+  </Tab>
+  <Tab title="FocusSlide">
+    One block and nothing else. No heading, no lead, no panel. It hands the
+    block the whole frame at the normal type scale, so a code sample shows more
+    lines rather than bigger ones, and takes one optional `kicker` for
+    orientation.
+
+    ```tsx
+    <FocusSlide kicker="deck/slides.tsx">
+      <CodeBlock code={sample} language="typescript" />
+    </FocusSlide>
+    ```
+
+  </Tab>
+</Tabs>
+
+All of `HeroSlide`, `BreakerSlide`, `ContentSlideCard`, and `OpenContentSlide` fall back to the slide's own `title` through `useSlideTitle()` when you do not pass one, so a title stays defined in one place.
+
+### Media
+
+```tsx
+<ImageShowcaseSlide
+  image={{
+    src: diagram,
+    alt: "System architecture",
+    caption: "Everything upstream of the queue.",
+    placeholder: "blur",
+  }}
+/>
+```
+
+```tsx
+<FullscreenMediaSlide
+  media={{ kind: "video", src: "/videos/launch.mp4", autoplay: true }}
+  overlay="strong"
+>
+  <h2>Launch</h2>
+</FullscreenMediaSlide>
+```
+
+`FullscreenMediaSlide` takes `variant` (`"background"`, the default, bleeds to every edge; `"framed"` insets it in a bordered surface) and `overlay` (`"none"`, `"subtle"`, `"medium"` by default, `"strong"`) for text readability over media. Both blocks take `next/image` sources, forward `blurDataURL` from a static import, and accept `unoptimized` so an SVG served from `public/` skips the image optimizer instead of needing `images.dangerouslyAllowSVG`. Video goes through `SlideMediaVideo` from `@deckard/core/components`, which suppresses autoplay inside the presenter preview iframe, and defaults an autoplaying video to muted and looping with no controls.
+
+Both pad against `--slide-chrome-top` and `--slide-chrome-bottom`, so the deck header and slide counter never sit on top of a caption. Use them instead of dropping an `<img>` on a slide, which will not fit the canvas and will not respect the chrome.
+
+### Known edges
+
+`FeatureGrid` renders three columns. Four items give you three on one row and one alone on the next; write a local 2x2 grid instead, which is ten minutes and the right answer for one deck.
+
+`StatGrid` takes exactly three stats, typed as a tuple, so a fourth is a compile error. A fourth figure does not fit at the title size and two leave a hole. Its caption is capped at a 24-character measure, sized for "up from 2.6k" and not for a sentence. A number on a slide without the thing it is measured against is decoration.
