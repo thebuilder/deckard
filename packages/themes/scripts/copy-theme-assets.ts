@@ -11,9 +11,8 @@ const packageRoot = path.resolve(
 const themesSource = path.join(packageRoot, "src")
 const themesTarget = path.join(packageRoot, "dist")
 
-// tsc emits the compiled index.js next to nothing else, so the stylesheet the
-// module imports and the document the eject command copies have to be carried
-// over by hand.
+// tsc emits only the compiled index.js, so the stylesheet the module imports
+// and the document the eject command copies have to be carried over by hand.
 const assets = ["theme.css", "THEME.md"]
 
 // A theme that self-hosts a typeface reaches its woff2 files at ../fonts,

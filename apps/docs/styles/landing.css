@@ -1,6 +1,6 @@
 /*
  * The landing page. PageLayout gives the document shell, the header, and the
- * fonts, and nothing else, so every rule the page needs is here.
+ * fonts. Every other rule the page needs is here.
  *
  * The theme switcher and the deck stepper are radio groups read with :checked.
  * They work with JavaScript off, and a radio group is already the right thing

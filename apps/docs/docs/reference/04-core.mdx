@@ -22,7 +22,7 @@ The package compiles to `dist/` with `tsc`: ESM, `.d.ts`, and `"use client"` dir
 | `@deckard/core/utils` | `cn` |
 | `@deckard/core/styles.css` | The `--slide-*` token contract |
 
-`CodeBlock` is split out for a real reason: shiki pulls in a WebAssembly regex engine, and importing it through the components barrel would turn every discovered slide module async, which discovery refuses. A slide that shows highlighted code belongs in the `slides` array.
+`CodeBlock` is split out because shiki pulls in a WebAssembly regex engine. Importing it through the components barrel would turn every discovered slide module async, which discovery refuses. A slide that shows highlighted code belongs in the `slides` array.
 
 ## @deckard/core
 
@@ -77,7 +77,7 @@ Returns `{ currentStep, stepCount, advance, retreat, canAdvance, canRetreat, isR
 
 ## Route adapters
 
-`@deckard/core/next` ships the route logic, so an app owns its deck and nothing else. Each adapter takes the resolved deck and returns the route pieces.
+`@deckard/core/next` ships the route logic, so an app owns its deck and re-exports the routes. Each adapter takes the resolved deck and returns the route pieces.
 
 | Adapter | File | Returns |
 | --- | --- | --- |
@@ -128,7 +128,7 @@ Every slide prerenders statically. The route reads no request: `?presenterPrevie
 
 `createDeckSitemap` falls back to `NEXT_PUBLIC_SITE_URL` and then to `http://localhost:3000` when you pass no `siteUrl`. That sitemap is also how `deckard screenshots`, `check-overflow`, and `export pdf` find the slide list, so an app that drops the route breaks those three.
 
-Nothing forces the adapters. The components they compose are still exported, so a deck that genuinely needs its own route writes one.
+The components the adapters compose are exported too, so a deck that needs its own route can write one.
 
 ## The dependency direction
 

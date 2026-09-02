@@ -21,7 +21,7 @@ deckard <command> [options]
 }
 ```
 
-`deckard --help` (or `-h`, or no arguments) prints the command list. `deckard --version` (or `-v`) prints the version and nothing else.
+`deckard --help` (or `-h`, or no arguments) prints the command list. `deckard --version` (or `-v`) prints the version.
 
 ## Commands
 
@@ -349,7 +349,7 @@ The positional must be exactly `pdf`. Anything else, including nothing, is an er
 | `--skip-build` | boolean | off |
 | `--port <n>` | positive integer | `PDF_EXPORT_PORT`, else `3410` |
 
-Note the inversion: the checks default to dark, the PDF defaults to light, because a handout gets printed. Writes `out/slides.pdf`, or wherever `PDF_EXPORT_OUTPUT` points, one slide to a page and sized from the canvas.
+The checks default to dark and the PDF defaults to light, so pass `--dark` for a PDF meant for a screen. Writes `out/slides.pdf`, or wherever `PDF_EXPORT_OUTPUT` points, one slide to a page and sized from the canvas.
 
 ```bash ~/my-talk
 deckard export pdf

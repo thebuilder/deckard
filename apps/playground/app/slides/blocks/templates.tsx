@@ -374,9 +374,9 @@ export function BreakerSlide({
 }
 
 /*
- * The other centred layout. A rule, a title, and nothing else: no eyebrow, no
- * lead, no index. Reach for BreakerSlide when the section needs explaining and
- * this one when the room only needs to know the subject changed.
+ * The other centred layout. A rule and a title, with no eyebrow, lead, or
+ * index. Reach for BreakerSlide when the section needs explaining and this one
+ * when the room only needs to know the subject changed.
  */
 export function MinimalBreakerSlide({ title }: { title?: React.ReactNode }) {
   const resolvedTitle = useResolvedSlideTitle(title)

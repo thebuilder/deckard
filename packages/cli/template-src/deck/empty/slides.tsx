@@ -12,7 +12,7 @@ export const slides: SlideDefinition[] = [
     title: "Second slide",
     body: (
       <ContentSlideCard
-        description="Add slides to this array. A slide needs a body and nothing else."
+        description="Add slides to this array. A slide needs only a body."
         eyebrow="Write here"
       >
         <p className="text-[length:var(--slide-body-size)] text-muted-foreground">

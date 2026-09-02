@@ -59,7 +59,7 @@ function copyTree(from: string, to: string): void {
   fs.cpSync(from, to, { recursive: true })
 }
 
-// No packageManager field on purpose: corepack treats it as an enforcement
+// No packageManager field: corepack treats it as an enforcement
 // lock, so writing the manager that happened to run init would refuse every
 // other manager afterwards. Later deckard commands read the lockfile instead.
 function packageJson(options: ScaffoldOptions): string {

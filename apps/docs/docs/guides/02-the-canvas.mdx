@@ -11,9 +11,9 @@ A slide looks the same on a laptop, a projector, a phone, and in the PDF. Only t
 
 ## Why fixed
 
-A presentation is not a website. It is shown once, at one size, to a room, and the thing you are optimising for is that the version you rehearsed is the version they see. Responsive layout inside a slide means every venue is a new layout you did not test.
+A presentation is shown once, at one size, to a room. Responsive layout inside a slide makes every venue a layout you did not rehearse.
 
-The fit is measured in the browser and published as `--deckard-scale`, because CSS cannot divide a length by a length in every engine Deckard targets. Slide content stays server rendered, and the canvas stays hidden until the first measurement lands so it never flashes at the wrong size.
+The fit is measured in the browser and published as `--deckard-scale`. Slide content stays server rendered, and the canvas stays hidden until the first measurement lands, so it never flashes at the wrong size.
 
 ## Configuring it
 
@@ -61,11 +61,11 @@ The canvas clips what does not fit. Three things tell you about it:
   </Step>
   <Step title="The contact sheet">
     `deckard screenshots` then `deckard contact-sheet` puts the whole deck in
-    one grid. Nothing else catches a slide that fits but looks unfinished.
+    one grid. It catches the slide that fits but looks unfinished.
   </Step>
 </Steps>
 
-The usual fix is deleting a sentence, and the slide is usually better for it.
+The usual fix is deleting a sentence.
 
 ## SlideScrollArea
 
@@ -90,10 +90,10 @@ import { SlideScrollArea } from "@deckard/core/components"
 
 ## Where the chrome lives
 
-Chrome splits in two, and the split is the whole design.
+Chrome splits in two.
 
 **Inside the canvas** sit the deck header and footer. They scale with the deck, print into the PDF export, show up in a presenter preview, and belong to the theme.
 
 **Outside the canvas** sit the deck controls: the command center trigger, the presenter popout, the color mode toggle, and compact previous and next buttons. They keep their own size and hit targets at any scale, down to a phone.
 
-Two tokens decide how much of the canvas the chrome gets: `--slide-header-space` (`8rem`) and `--slide-footer-space` (`6rem`). The frame reserves them as padding, and a fullscreen slide republishes them as `--slide-chrome-top` and `--slide-chrome-bottom`, the inset a bleeding layout has to clear. A theme that redesigns the chrome to a different height sets those two and the slide content moves with it. `phosphor` does exactly that, taking `--slide-footer-space` down to `5rem` for its thinner status bar.
+Two tokens decide how much of the canvas the chrome gets: `--slide-header-space` (`8rem`) and `--slide-footer-space` (`6rem`). The frame reserves them as padding, and a fullscreen slide republishes them as `--slide-chrome-top` and `--slide-chrome-bottom`, the inset a bleeding layout has to clear. A theme that redesigns the chrome to a different height sets those two and the slide content moves with it. `phosphor` does exactly that, taking `--slide-footer-space` down to `5.5rem` for its thinner status bar.
