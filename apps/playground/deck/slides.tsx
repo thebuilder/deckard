@@ -65,7 +65,8 @@ function RevealLandingCard({ children, label }: RevealCardProps) {
   )
 }
 
-const vitalsDelayMs = 40
+// Exported so the numbers slide reports the delay rather than repeating it.
+export const vitalsDelayMs = 40
 
 async function loadDeckVitals() {
   await new Promise((resolve) => {
@@ -116,7 +117,7 @@ export const slides: SlideDefinition[] = [
         eyebrow="React presentation framework"
         title="Build polished slides fast"
         description="Keyboard controls, step reveals, command center, themed UI, and flexible layout options out of the box."
-        meta={["14 slides", "Deckard 0.0.1", "March 2026"]}
+        meta={["Deckard 0.0.1", "March 2026"]}
       />
     ),
   },
@@ -157,7 +158,7 @@ export const slides: SlideDefinition[] = [
             {
               title: "Backgrounds",
               description:
-                "Five variants, from flat to the inverted accent statement.",
+                "Flat, ruled, hatched, unpainted, or the inverted accent statement.",
             },
           ]}
         />
@@ -305,7 +306,7 @@ A slide is metadata plus a body. The body is a block, and the block is where eve
 
 That split is what keeps the deck cheap to rearrange: reordering the array moves the talk, and no component changes.
 
-Point at the last line. The spread is discovery, and the three slides after it are files in deck/slides that this array never names.
+Point at the last line. The spread is discovery, and every slide after it is a file in deck/slides that this array never names.
 
 Say what is missing on purpose: no heading, no lead, no panel. The slide is the code, which is the point of the focus layout.`,
     body: (

@@ -17,98 +17,45 @@ That is the whole arrangement. The runtime depends on these names and never on a
 
 ## Type
 
-| Token | Default | Reads it |
-| --- | --- | --- |
-| `--slide-font-heading` | `var(--font-sans)` | Headings and figures |
-| `--slide-font-body` | `var(--font-sans)` | Body copy and the chrome |
-| `--slide-font-mono` | `var(--font-mono)` | Code |
-| `--slide-title-size` | `6rem` | Hero and breaker headlines |
-| `--slide-heading-size` | `4.25rem` | The `h1` on a content slide |
-| `--slide-subheading-size` | `2.625rem` | An `h2` inside a body |
-| `--slide-lead-size` | `2.625rem` | The sentence under a headline |
-| `--slide-body-size` | `2rem` | Bullet copy, the main text of a slide |
-| `--slide-code-size` | `1.75rem` | Type inside a `CodeBlock` |
-| `--slide-support-size` | `1.75rem` | Captions, grid copy, metadata rows |
-| `--slide-label-size` | `1.5rem` | Eyebrows and other uppercase labels |
-| `--slide-label-tracking` | `0.25em` | Letter spacing on those labels |
+<SlideTokens column="Reads it" group="type" />
 
-Every size is set against the 1920x1080 canvas at a 16px root, so `1rem` is 16 canvas pixels and the scale reads the way it does on a projector rather than the way it does in a browser window. A 6rem title is 96 canvas pixels, which is about a fifth of the canvas height.
+Every size is set against the 1920x1080 canvas at a 16px root, so `1rem` is 16 canvas pixels and the scale reads the way it does on a projector rather than the way it does in a browser window. Multiply a default above by 16 to get what it measures on a canvas 1080 pixels tall.
 
 Line height rides along as a unitless multiplier in the blocks, so changing a size token keeps its leading proportional. Never pair a size token with a fixed `leading-7`.
 
 ## Spacing
 
-| Token | Default | What it controls |
-| --- | --- | --- |
-| `--slide-padding-inline` | `7rem` | The gutter on both sides of the frame, and inside the canvas header |
-| `--slide-padding-block` | `6rem` | Top and bottom padding when the slide has no header or footer |
-| `--slide-content-gap` | `2.75rem` | The rhythm between blocks inside a slide |
-| `--slide-item-gap` | `1.625rem` | The rhythm between rows inside one block |
+<SlideTokens group="spacing" />
 
 The frame those gutters leave is the whole slide, left aligned and uncapped: content starts at the left margin and runs to the right one. Blocks cap their own measure where prose needs it, and anything that wants to be centred centres itself.
 
 ## Figures
 
-| Token | Default | What it controls |
-| --- | --- | --- |
-| `--slide-figure-size` | `7.5rem` | A `StatGrid` figure |
-| `--slide-figure-unit-size` | `3.5rem` | The unit suffix on it |
-| `--slide-meter-size` | `0.875rem` | The height of the proportion bar under it |
+<SlideTokens group="figures" />
 
 ## Surfaces
 
-| Token | Default | What it controls |
-| --- | --- | --- |
-| `--slide-radius` | `0.75rem` | Cards, code blocks, small panels |
-| `--slide-radius-lg` | `1.25rem` | The `ContentSlideCard` panel |
-| `--slide-surface` | `var(--card)` | The raised surface a panel paints |
-| `--slide-surface-muted` | `var(--muted)` | `FeatureGrid` cards, secondary panels |
-| `--slide-surface-border` | `var(--border)` | Panel borders, the `StatGrid` rule |
-| `--slide-surface-shadow` | `none` | Depth under a panel, where the theme wants it |
+<SlideTokens group="surfaces" />
 
 ## Backgrounds
 
 `SlideBackground` renders one empty element carrying `data-slide-background`, and the theme paints each variant with these:
 
-| Token | Default | What it controls |
-| --- | --- | --- |
-| `--slide-grid-color` | `transparent` | The rule color for the `grid` variant |
-| `--slide-grid-size` | `44px` | The grid pitch |
-| `--slide-rule` | `var(--border)` | Hairlines a theme draws on the sheet, such as corner brackets |
-| `--slide-scanline` | `none` | A repeating line mask over the canvas |
-| `--slide-hatch` | `none` | A diagonal fill, which the `spotlight` variant uses |
-| `--slide-halo` | `none` | The `text-shadow` a theme puts behind display type |
+<SlideTokens group="backgrounds" />
 
-There is no radial wash, veil, glow or spotlight token. A theme has four textures to work with, flat colour, a rule, a grid, and a hatch, because a radial gradient reads as a smudge on a projector and as grey on paper.
+There is no radial wash, veil, glow or spotlight token. The textures a theme has are flat colour, a rule, a grid, and a hatch, because a radial gradient reads as a smudge on a projector and as grey on paper.
 
 ## Media
 
-| Token | Default | What it controls |
-| --- | --- | --- |
-| `--slide-media-foreground` | `oklch(1 0 0)` | Text over photography |
-| `--slide-media-foreground-muted` | `oklch(1 0 0 / 85%)` | Secondary text over photography |
-| `--slide-media-overlay-subtle` | a bottom-up black gradient at 35% | `overlay="subtle"` |
-| `--slide-media-overlay-medium` | the same at 55% | `overlay="medium"` |
-| `--slide-media-overlay-strong` | the same at 75% | `overlay="strong"` |
+<SlideTokens group="media" />
 
 ## Chrome
 
-The eight tokens every built-in theme overrides, plus the two that decide how much canvas the chrome gets:
+The colours, type, and spacing of the header and footer, plus the canvas each is allowed:
 
-| Token | Default | What it controls |
-| --- | --- | --- |
-| `--slide-chrome-foreground` | `var(--muted-foreground)` | Header and footer text |
-| `--slide-chrome-emphasis` | `var(--foreground)` | The brand |
-| `--slide-chrome-border` | `var(--border)` | The rules above the footer and below the header |
-| `--slide-chrome-size` | `var(--slide-support-size)` | Chrome type size |
-| `--slide-chrome-tracking` | `0.08em` | Letter spacing on the counter |
-| `--slide-chrome-gap` | `1rem` | Column gap inside header and footer |
-| `--slide-progress-track` | `transparent` | The progress element's own background |
-| `--slide-progress-fill` | `var(--slide-chrome-border)` | The filled portion |
-| `--slide-header-space` | `8rem` | Canvas padding reserved for the header |
-| `--slide-footer-space` | `6rem` | Canvas padding reserved for the footer |
+<SlideTokens group="chrome" />
 
-A theme that redesigns the chrome to a different height sets the last two and the slide content moves with it.
+A theme that redesigns the chrome to a different height sets `--slide-header-space` and `--slide-footer-space`, and the slide content moves with it.
 
 ## Published by the runtime
 

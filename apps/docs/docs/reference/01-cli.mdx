@@ -107,7 +107,7 @@ Takes exactly one positional, the target directory, and refuses one that already
 | Flag | Value | Default |
 | --- | --- | --- |
 | `--theme <name>` | `broadsheet`, `deckard`, `ledger`, `meridian`, `nexus`, `phosphor` | `deckard` |
-| `--empty` | boolean | off, so the five-slide sample deck |
+| `--empty` | boolean | off, so the sample deck |
 | `--package-manager <name>` | `bun`, `npm`, `pnpm`, `yarn` | detected |
 | `--no-install` | boolean | install runs |
 | `--no-git` | boolean | git runs |
@@ -175,7 +175,7 @@ deck   6 slides: 4 inline, 2 discovered
        3 slugs, 3 numbered
        canvas 1920x1080, margin 0
 theme  deckard (.deckard-theme): light and dark, default system
-       51 tokens in the light block, 27 dark overrides, from @deckard/themes/deckard
+       56 tokens in the light block, 24 dark overrides, from @deckard/themes/deckard
 
 deckard validate passed
 ```
@@ -201,7 +201,7 @@ deck      14 slides: 10 inline, 4 discovered
           7 slugs, 7 numbered
           canvas 1920x1080, margin 0
 theme     deckard (.deckard-theme): light and dark, default system
-          51 tokens in the light block, 27 dark overrides, from @deckard/themes/deckard
+          56 tokens in the light block, 24 dark overrides, from @deckard/themes/deckard
 registry  6 items, 5 files
 
 deckard validate passed
@@ -370,7 +370,7 @@ PDF written to ~/my-talk/out/slides.pdf
 deckard add theme broadsheet
 ```
 
-A pure source edit, with no install. Rewrites the `@deckard/themes` import and the `theme` property in `defineDeck`, keeping import order (package imports, then `@/` imports, alphabetical within each). It no-ops when the deck is already on that theme, rejects a name that is not one of the six built-ins, and warns when a stale `deck/theme` directory is still sitting there.
+A pure source edit, with no install. Rewrites the `@deckard/themes` import and the `theme` property in `defineDeck`, keeping import order (package imports, then `@/` imports, alphabetical within each). It no-ops when the deck is already on that theme, rejects a name that is not a built-in, and warns when a stale `deck/theme` directory is still sitting there.
 
 ```bash ~/my-talk
 deckard add theme broadsheet
@@ -378,7 +378,7 @@ deckard add theme broadsheet
 deck/deck.ts now uses the broadsheet theme.
 ```
 
-A name outside the six comes back with the six:
+A name that is not a built-in comes back with the ones that are:
 
 ```bash ~/my-talk
 deckard add theme brutalist
@@ -400,7 +400,7 @@ deckard add block metrics --registry https://example.com/r/{name}.json --yes
 | `--registry <url>` | a URL carrying a `{name}` placeholder | `components.json` -> `registries["@deckard"]` |
 | `--yes` | boolean | off |
 
-Builds the item id as `block-<name>`, probes the registry with a 5-second timeout, and then runs the `shadcn` binary installed alongside the CLI as `shadcn add <target>`. `--yes` adds `-y -o`, overwriting without asking. The five block families in `app/slides/blocks` arrive with `init` and are yours to edit, so this writes over the copy you have, skipping a file that already matches.
+Builds the item id as `block-<name>`, probes the registry with a 5-second timeout, and then runs the `shadcn` binary installed alongside the CLI as `shadcn add <target>`. `--yes` adds `-y -o`, overwriting without asking. The block families in `app/slides/blocks` arrive with `init` and are yours to edit, so this writes over the copy you have, skipping a file that already matches.
 
 ```bash ~/my-talk
 deckard add block metrics
@@ -431,7 +431,7 @@ deckard eject theme --theme meridian
 
 | Flag | Value | Default |
 | --- | --- | --- |
-| `--theme <name>` | one of the six built-ins | the theme `deck/deck.ts` imports |
+| `--theme <name>` | a built-in theme name | the theme `deck/deck.ts` imports |
 
 Creates `deck/theme/` with `theme.css` and `THEME.md` copied out of the installed `@deckard/themes`, generates an `index.ts` exporting a `SlideTheme` literal, and rewrites `deck/deck.ts` to `import { theme } from "@/deck/theme"`.
 
@@ -455,7 +455,7 @@ deck   5 slides: 4 inline, 1 discovered
        2 slugs, 3 numbered
        canvas 1920x1080, margin 0
 theme  broadsheet (.broadsheet-theme): light and dark, default system
-       53 tokens in the light block, 28 dark overrides, from deck/theme/theme.css
+       56 tokens in the light block, 24 dark overrides, from deck/theme/theme.css
 
 deckard validate passed
 ```

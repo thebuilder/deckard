@@ -80,7 +80,7 @@
       "name": "preset-blocks",
       "type": "registry:item",
       "title": "Deckard blocks",
-      "description": "Every slide block in one add, plus the one stylesheet line a consumer cannot guess: the @import of @deckard/core/styles.css, which carries the slide token contract and registers the package's own Tailwind source so the runtime classes survive tree shaking. Use this once, right after installing @deckard/core, then write slides. The theme is not in here and does not need to be: the six Deckard themes are named exports of @deckard/themes, so a deck picks one with an import rather than an install.",
+      "description": "Every slide block in one add, plus the one stylesheet line a consumer cannot guess: the @import of @deckard/core/styles.css, which carries the slide token contract and registers the package's own Tailwind source so the runtime classes survive tree shaking. Use this once, right after installing @deckard/core, then write slides. The theme is not in here and does not need to be: the Deckard themes are named exports of @deckard/themes, so a deck picks one with an import rather than an install.",
       "categories": ["deck", "preset"],
       "dependencies": ["@deckard/core"],
       "registryDependencies": [

@@ -26,7 +26,7 @@ On a stepped slide the arrow keys walk the steps first and only then move to the
 
 The command center trigger, presenter popout, color mode toggle, and compact previous and next buttons sit in one cluster in the bottom right corner, outside the canvas.
 
-The cluster is hidden at rest. It reveals when the pointer comes within 160px of the corner, when anything inside it takes focus, or while the command dialog is open. A device matching `(any-pointer: coarse)` also gets a handle in the corner that expands the cluster on tap, and the proximity reveal is on wherever `(any-pointer: fine)` matches. Both queries ask per capability rather than about the primary pointer, so a hybrid laptop with a trackpad and a touchscreen gets both affordances.
+The cluster is hidden at rest. It reveals when the pointer comes near the corner, when anything inside it takes focus, or while the command dialog is open. A device matching `(any-pointer: coarse)` also gets a handle in the corner that expands the cluster on tap, and the proximity reveal is on wherever `(any-pointer: fine)` matches. Both queries ask per capability rather than about the primary pointer, so a hybrid laptop with a trackpad and a touchscreen gets both affordances.
 
 Hidden means transparent, not absent. The buttons stay in the accessibility tree and tabbing into them reveals the cluster. A presenter preview and a PDF export drop the cluster entirely and keep the header and footer.
 
@@ -39,7 +39,7 @@ What it shows:
 - The current slide, and a preview of what comes next (aware of reveal steps, so the preview advances with them)
 - Speaker notes for the current slide, with font-size controls
 - A timer you start, and a 24-hour clock
-- A flow window: the previous two slides, the current one, and the next five, by title. Click any of them to jump the deck there.
+- A flow window: the current slide with a little of the deck behind it and more of it ahead, by title. Click any of them to jump the deck there.
 
 Arrow keys in either window drive both.
 

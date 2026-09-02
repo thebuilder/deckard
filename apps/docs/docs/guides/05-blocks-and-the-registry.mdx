@@ -1,13 +1,13 @@
 ---
 title: Blocks and the registry
-description: Slide blocks install into your app as source through a shadcn registry. What the six items contain, how to install them, and where they are served from today.
+description: Slide blocks install into your app as source through a shadcn registry. What the items contain, how to install them, and where they are served from today.
 sidebar:
   icon: blocks
 ---
 
 Slide blocks are deliberately not in `@deckard/core`. They install into your app as source files through shadcn, into `app/slides/blocks/`, and you edit them from then on.
 
-That is the point. A block that assumed your theme would be a block you fight. `HeroSlide` caps its headline with `text-balance` tuned for a sans display face; on a 4.5rem serif you will want to change it, and you can, because it is your file.
+That is the point. A block that assumed your theme would be a block you fight. `HeroSlide` caps its headline with `text-balance` tuned for a sans display face; on a serif you will want to change it, and you can, because it is your file.
 
 ## The items
 
@@ -18,11 +18,11 @@ That is the point. A block that assumed your theme would be a block you fight. `
 | `block-collections` | `collections.tsx` | `BulletList`, `FeatureGrid`. |
 | `block-media` | `media.tsx` | `ImageShowcaseSlide`, `FullscreenMediaSlide`. |
 | `block-metrics` | `metrics.tsx` | `StatGrid`. |
-| `preset-blocks` | all five | Plus the one stylesheet line a consumer cannot guess. |
+| `preset-blocks` | all of them | Plus the one stylesheet line a consumer cannot guess. |
 
-`preset-blocks` is the one to run. Alongside the five block files it adds `@import "@deckard/core/styles.css"` to your app stylesheet, which carries the token contract and registers the package's own compiled output as a Tailwind source. That import is the entire build wiring. There is no `transpilePackages` entry and no `@source` line for you to add.
+`preset-blocks` is the one to run. Alongside the block files it adds `@import "@deckard/core/styles.css"` to your app stylesheet, which carries the token contract and registers the package's own compiled output as a Tailwind source. That import is the entire build wiring. There is no `transpilePackages` entry and no `@source` line for you to add.
 
-Themes used to be registry items and are not any more. They ship as `@deckard/themes`, so a deck gets one by importing it rather than by installing six files it did not ask to own.
+Themes used to be registry items and are not any more. They ship as `@deckard/themes`, so a deck gets one by importing it rather than by installing files it did not ask to own.
 
 ## Installing
 
