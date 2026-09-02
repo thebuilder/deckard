@@ -123,8 +123,8 @@ the contract's `0.875rem` in both themes.
 
 Broadsheet's muted surface is a shade lighter than the paper, which is invisible
 once it sits inside a content card that is also lighter than the paper. With no
-shadow to separate them, a feature card read as a border and nothing else. Going
-one step darker than the sheet gives the nesting a direction.
+shadow to separate them, a feature card read as a border alone. Going one step
+darker than the sheet gives the nesting a direction.
 
 ### `spotlight` is a plate, not columns
 

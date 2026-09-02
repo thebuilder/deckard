@@ -192,7 +192,7 @@
    * beats this layer.
    *
    * The field colour is read on the canvas and the ink is remapped one level
-   * down, on purpose. A custom property resolves against the element that uses
+   * down. A custom property resolves against the element that uses
    * it, so remapping --primary on the same element that reads var(--primary)
    * for the field would flood the slide with its own ink.
    *

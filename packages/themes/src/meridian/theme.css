@@ -276,7 +276,7 @@
 }
 
 /* The statement slide: one flat field of the accent with the type in the page
- * colour. No border, no card, nothing else on it.
+ * colour, with no border and no card.
  * The field colour is read on the canvas and the ink is remapped one level
  * down: a custom property resolves against the element that uses it, so
  * remapping --primary here would flood the slide with its own ink. */

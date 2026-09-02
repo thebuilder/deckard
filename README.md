@@ -2,7 +2,7 @@
 
 Beautiful React presentations with shadcn-native theming.
 
-A slide is a React component. That is the whole idea. A chart, a live demo, a
+A slide is a React component. A chart, a live demo, a
 form, or an awaited database query goes on a slide the same way it goes in an
 app, because a deck is a Next.js app: routes, Server Components, your
 components, your styles.
@@ -109,7 +109,7 @@ A pnpm workspace on Turborepo. Node 22.12 or newer.
 | Path | What it is |
 | --- | --- |
 | `packages/core`, `packages/themes`, `packages/cli` | the three published packages |
-| `apps/playground` | the reference deck. It exercises every feature on purpose, so it is a test surface, not a template |
+| `apps/playground` | the reference deck. It exercises every feature, so it is a test surface rather than a template |
 | `apps/demo` | a 19-slide talk shaped like a real consumer app, with its own ejected theme |
 | `apps/docs` | the documentation site, which also serves the block registry |
 | `tools/*` | smoke tests that pack the packages and build scratch apps against them |
