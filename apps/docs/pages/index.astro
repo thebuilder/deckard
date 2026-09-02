@@ -50,7 +50,9 @@ const stateRules = demoSteps
     return [
       `${active} .line:not(${range}) { opacity: 0.42 }`,
       `${active} .demo-slide[data-step="${index + 1}"] { display: block }`,
-      `${active} .demo-caption[data-step="${index + 1}"] { display: block }`,
+      // visibility, not display: the four captions are stacked in one grid
+      // cell, so the hidden three are what hold the slide above them still.
+      `${active} .demo-caption[data-step="${index + 1}"] { visibility: visible }`,
     ].join("\n")
   })
   .join("\n")
@@ -131,60 +133,80 @@ ${motionRules}
       </div>
 
       <div class="demo">
-        <fieldset class="demo-steps">
-          <legend class="sr-only">Slide</legend>
+        <div class="demo-viewer">
+          <fieldset class="demo-steps">
+            <legend class="sr-only">Slide</legend>
+            {
+              demoSteps.map((step, index) => (
+                <label>
+                  <input
+                    checked={index === 0}
+                    class="switch-input"
+                    id={`demo-step-${index + 1}`}
+                    name="demo-step"
+                    type="radio"
+                    value={String(index + 1)}
+                  />
+                  <span class="demo-step-number">{index + 1}</span>
+                  {step.label}
+                </label>
+              ))
+            }
+          </fieldset>
+
+          <div class="demo-panels">
+            <figure class="demo-code">
+              <figcaption>deck/slides.tsx</figcaption>
+              <Code
+                code={demoCode}
+                defaultColor={false}
+                lang="tsx"
+                themes={codeThemes}
+                transformers={[numberLines]}
+              />
+            </figure>
+
+            <div class="demo-stage">
+              {
+                demoSteps.map((step, index) => (
+                  <div class="demo-slide" data-step={String(index + 1)}>
+                    <DeckPreview
+                      background={demoBackgrounds[index]}
+                      mode="light"
+                      scale={0.17}
+                      slide={step.slide}
+                      theme="deckard"
+                    />
+                  </div>
+                ))
+              }
+              <div class="demo-captions">
+                {
+                  demoSteps.map((step, index) => (
+                    <p class="demo-caption" data-step={String(index + 1)}>
+                      {step.summary}
+                    </p>
+                  ))
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/*
+         * One block per step, and between them the height the walkthrough
+         * scrolls through. The script observes these and checks the matching
+         * radio as each block reaches the middle of the screen; the panels above
+         * stay put while they pass. The step's own prose is the caption under
+         * the slide, so there is nothing to read down here, and the compact
+         * layout drops the track and its height with it.
+         */}
+        <div aria-hidden="true" class="demo-track">
           {
-            demoSteps.map((step, index) => (
-              <label>
-                <input
-                  checked={index === 0}
-                  class="switch-input"
-                  id={`demo-step-${index + 1}`}
-                  name="demo-step"
-                  type="radio"
-                  value={String(index + 1)}
-                />
-                <span class="demo-step-number">{index + 1}</span>
-                {step.label}
-              </label>
+            demoSteps.map((_step, index) => (
+              <div class="demo-beat" data-step={String(index + 1)} />
             ))
           }
-        </fieldset>
-
-        <div class="demo-panels">
-          <figure class="demo-code">
-            <figcaption>deck/slides.tsx</figcaption>
-            <Code
-              code={demoCode}
-              defaultColor={false}
-              lang="tsx"
-              themes={codeThemes}
-              transformers={[numberLines]}
-            />
-          </figure>
-
-          <div class="demo-stage">
-            {
-              demoSteps.map((step, index) => (
-                <div class="demo-slide" data-step={String(index + 1)}>
-                  <DeckPreview
-                    background={demoBackgrounds[index]}
-                    mode="light"
-                    scale={0.17}
-                    slide={step.slide}
-                    theme="deckard"
-                  />
-                </div>
-              ))
-            }
-            {
-              demoSteps.map((step, index) => (
-                <p class="demo-caption" data-step={String(index + 1)}>
-                  {step.summary}
-                </p>
-              ))
-            }
-          </div>
         </div>
       </div>
 
@@ -353,3 +375,100 @@ ${motionRules}
     </nav>
   </footer>
 </PageLayout>
+
+<script>
+  /*
+   * The stepped demo advances as the reader scrolls through it.
+   *
+   * The radio group stays the control. This writes `checked` and nothing else,
+   * so the rules the page already generates do the switching, and a reader with
+   * no script gets the same stepper they get today. Nothing here moves focus.
+   *
+   * The query is the one the stylesheet lays the scroll track out under, third
+   * condition included: without a script there is no track, so there is nothing
+   * to observe and nothing to scroll through either.
+   */
+  const layout = matchMedia(
+    "(min-width: 64rem) and (prefers-reduced-motion: no-preference) and (scripting: enabled)"
+  )
+
+  /* The middle tenth of the screen. A block is most of a screen tall, so one
+   * covers that band at a time, and the one covering it is the step. */
+  const band = "-45% 0px -45% 0px"
+
+  const covering = new Set<Element>()
+
+  let observer: IntersectionObserver | null = null
+
+  const disconnect = () => {
+    observer?.disconnect()
+    observer = null
+    covering.clear()
+  }
+
+  const connect = () => {
+    const demo = document.querySelector(".demo")
+    const beats = demo?.querySelectorAll<HTMLElement>(".demo-beat")
+
+    if (demo == null || beats == null || beats.length === 0) {
+      return
+    }
+
+    const steps = demo.querySelector(".demo-steps")
+
+    observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            covering.add(entry.target)
+          } else {
+            covering.delete(entry.target)
+          }
+        }
+
+        /* A reader who has just picked a step with the keyboard keeps it until
+         * they leave the group. Scrolling never moves focus, and it does not
+         * overrule someone who has it either. */
+        if (steps?.contains(document.activeElement)) {
+          return
+        }
+
+        /* Two beats meet inside the band for one frame at the handover. The
+         * upper one holds it until it has left, so the step does not flicker. */
+        for (const beat of beats) {
+          if (covering.has(beat)) {
+            const radio = demo.querySelector<HTMLInputElement>(
+              `#demo-step-${beat.dataset.step}`
+            )
+
+            if (radio != null && !radio.checked) {
+              radio.checked = true
+            }
+
+            return
+          }
+        }
+      },
+      { rootMargin: band }
+    )
+
+    for (const beat of beats) {
+      observer.observe(beat)
+    }
+  }
+
+  const sync = () => {
+    disconnect()
+
+    if (layout.matches) {
+      connect()
+    }
+  }
+
+  layout.addEventListener("change", sync)
+
+  // The client router swaps the document without re-running this module.
+  document.addEventListener("astro:page-load", sync)
+
+  sync()
+</script>
