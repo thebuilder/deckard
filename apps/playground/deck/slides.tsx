@@ -30,6 +30,11 @@ import { Eyebrow } from "@/app/slides/blocks/typography"
 import deckViewImage from "@/assets/deck-view.png"
 import incomingSignalImage from "@/assets/incoming-signal.webp"
 import presenterWindowImage from "@/assets/presenter-window.png"
+import { canvas } from "@/deck/canvas"
+import {
+  CanvasScaleCalculator,
+  type Screen,
+} from "@/deck/slides/canvas-scale-widget"
 import "server-only"
 
 import type { SlideDefinition } from "@deckard/core"
@@ -122,6 +127,15 @@ async function DeckVitalsSlide() {
   )
 }
 
+// Real screens the deck lands on, so the multiplier is one a room recognises.
+const screens: Screen[] = [
+  { height: 900, id: "laptop", label: "Laptop 1440x900", width: 1440 },
+  { height: 1080, id: "projector", label: "Projector 1920x1080", width: 1920 },
+  { height: 1440, id: "ultrawide", label: "Ultrawide 3440x1440", width: 3440 },
+  { height: 768, id: "tablet", label: "Tablet 1024x768", width: 1024 },
+  { height: 844, id: "phone", label: "Phone 390x844", width: 390 },
+]
+
 export const slides: SlideDefinition[] = [
   {
     slug: "intro",
@@ -151,11 +165,11 @@ export const slides: SlideDefinition[] = [
         <ContentsList
           items={[
             { folio: "04", title: "What a slide is made of" },
-            { folio: "06", title: "Blocks, and the one-surface rule" },
-            { folio: "10", title: "Media on a canvas that never resizes" },
-            { folio: "17", title: "Data a slide fetches for itself" },
-            { folio: "22", title: "Themes and the token contract" },
-            { folio: "26", title: "Checking a deck before you present it" },
+            { folio: "07", title: "Blocks, and the one-surface rule" },
+            { folio: "10", title: "The canvas, and media on it" },
+            { folio: "18", title: "Writing the deck, and the data it fetches" },
+            { folio: "25", title: "Themes and the token contract" },
+            { folio: "29", title: "Checking a deck before you present it" },
           ]}
         />
       </OpenContentSlide>
@@ -239,6 +253,42 @@ export const slides: SlideDefinition[] = [
     ),
   },
   {
+    slug: "presenter",
+    title: "Presenter View",
+    notes: `Open the window here. Press P, drag it to the second screen, and arrow through while the room watches the two stay in sync.
+
+The notes you are reading are the demo. Say that.
+
+If the room is a single screen, describe it instead of showing it.`,
+    body: (
+      <OpenContentSlide
+        eyebrow="Presenting"
+        title="Notes and the next slide"
+        description="What the lectern needs, on a screen the room never sees."
+      >
+        <BulletList
+          items={[
+            <>
+              <code>P</code> opens <code>/presenter</code> in a second window. A{" "}
+              <code>BroadcastChannel</code> holds both on the same slide and
+              step, in either direction.
+            </>,
+            <>
+              Notes are a plain string on the slide. The console renders them at
+              a size you set from the lectern, beside a timer and a clock.
+            </>,
+            <>
+              The next-slide preview is the real route with{" "}
+              <code>?presenterPreview=1</code>, not a thumbnail. Media holds
+              still in there, and <code>useIsPresenterPreview()</code> lets your
+              widgets do the same.
+            </>,
+          ]}
+        />
+      </OpenContentSlide>
+    ),
+  },
+  {
     slug: "blocks",
     title: "Blocks",
     body: <MinimalBreakerSlide title="Blocks" />,
@@ -272,42 +322,6 @@ export const slides: SlideDefinition[] = [
         />
       </FocusSlide>
     ),
-  },
-  {
-    slug: "steps",
-    title: "Step Reveals",
-    notes:
-      "Pause after each reveal. This is a real argument from a real review, so let the room reach the recommendation before you show it.",
-    body: (
-      <OpenContentSlide
-        eyebrow="Stepped content"
-        title="Reveal an argument in order"
-        description="Each block below is a SlideStep, revealed in order."
-      >
-        <div className="grid gap-3">
-          <SlideStep step={0}>
-            <RevealCard label="The problem">
-              A deploy takes 40 minutes and nobody can say which step is slow.
-            </RevealCard>
-          </SlideStep>
-
-          <SlideStep step={1}>
-            <RevealCard label="The evidence">
-              31 of those minutes are one test shard building its container from
-              scratch.
-            </RevealCard>
-          </SlideStep>
-
-          <SlideStep step={2}>
-            <RevealLandingCard label="The call">
-              Cache the container. Two days of work, and the other two stay
-              open.
-            </RevealLandingCard>
-          </SlideStep>
-        </div>
-      </OpenContentSlide>
-    ),
-    stepCount: 3,
   },
   {
     slug: "one-surface",
@@ -354,17 +368,117 @@ export const slides: SlideDefinition[] = [
     ),
   },
   {
-    slug: "layout-background",
-    title: "Layout and Background",
+    slug: "canvas",
+    title: "The Canvas",
     body: (
       <BreakerSlide
-        eyebrow="Layout and background"
+        eyebrow="The canvas"
         index="02"
-        title="Each slide picks its own frame"
+        title="One rectangle, and the frame on it"
         description="layout, header, footer, and background are fields on the slide, so a fullscreen shot in the middle of a talk needs no route of its own."
       />
     ),
     background: "spotlight",
+  },
+  {
+    slug: "fixed-canvas",
+    title: "Fixed Canvas",
+    notes: `This is the decision the rest of the deck hangs off, so slow down here.
+
+Say it as a trade: you give up reflow, and you get a layout you can trust. Nobody has ever watched a deck on a projector and been pleased that the third bullet wrapped differently.
+
+If someone asks about phones, the answer is that a phone gets this slide at a fifth of the size. It is small, and it is correct. The next slide lets you watch that happen.`,
+    body: (
+      <OpenContentSlide
+        eyebrow="The canvas"
+        title="One rectangle, decided once"
+        description={`Every slide is authored at ${canvas.width} by ${canvas.height}. The viewport scales that rectangle to fit the window and centers it.`}
+      >
+        <BulletList
+          items={[
+            <>
+              Size against the canvas: <code>h-full</code>, percentages, fixed
+              pixels. <code>vh</code> and <code>sm:</code> answer to the browser
+              window, and the browser window is not the slide.
+            </>,
+            <>
+              The default frame reserves room for the header and the footer.{" "}
+              <code>layout: "fullscreen"</code> hands the whole rectangle over,
+              so media can bleed to every edge.
+            </>,
+            <>
+              What does not fit is clipped rather than shrunk, so the size you
+              author is the size that projects.
+            </>,
+          ]}
+        />
+      </OpenContentSlide>
+    ),
+  },
+  {
+    slug: "scale",
+    title: "Contain Fit",
+    notes: `Click through the screens rather than reading the numbers out. The ultrawide preset is the one that lands: it gives you letterbox bars down the sides, not a wider slide.
+
+Then point at the type readout. The same authored heading is a different number of real pixels on every preset, which is why theme sizes look enormous while you edit them and correct while you present them.
+
+The whole widget is one min() call. Say that out loud, it is the entire fitting model.`,
+    body: (
+      <OpenContentSlide
+        eyebrow="Contain fit"
+        title="Pick a screen, watch the multiplier"
+        description="The canvas does not reflow, it multiplies. Every number here falls out of one min() over the window."
+      >
+        <CanvasScaleCalculator
+          canvasHeight={canvas.height}
+          canvasWidth={canvas.width}
+          screens={screens}
+        />
+      </OpenContentSlide>
+    ),
+  },
+  {
+    slug: "clipping",
+    title: "Clipping",
+    notes: `Three clicks, and the third one is the argument.
+
+First click: the amber outline. Development only, and the thing you notice while you are writing.
+
+Second click: the same measurement as a gate, so the warning and the failure can never disagree.
+
+Third click: hold here. The temptation is to shrink the type, and shrinking the type is how a deck ends up unreadable from row eight. Cut the sentence.`,
+    body: (
+      <OpenContentSlide
+        eyebrow="Clipping"
+        title="The canvas clips, and CI fails on it"
+        description="Each block below is a SlideStep, revealed in order."
+      >
+        <div className="grid gap-3">
+          <SlideStep step={0}>
+            <RevealCard label="While you write">
+              An amber outline and one console line, naming the slide and the
+              overflow in pixels. Development only.
+            </RevealCard>
+          </SlideStep>
+
+          <SlideStep step={1}>
+            <RevealCard label="On the way in">
+              <code>deck:check-overflow</code> runs that same measurement and
+              exits nonzero, naming every slide that loses content to the canvas
+              edge, the chrome, or a box that hides its own overflow.
+            </RevealCard>
+          </SlideStep>
+
+          <SlideStep step={2}>
+            <RevealLandingCard label="The fix">
+              Cut a bullet, or wrap the part that has to scroll in{" "}
+              <code>SlideScrollArea</code>. Shrinking the type is not a fix.
+            </RevealLandingCard>
+          </SlideStep>
+        </div>
+      </OpenContentSlide>
+    ),
+    stepCount: 3,
   },
   {
     slug: "image",
@@ -718,7 +832,7 @@ Say what is missing: no heading, no lead, no panel. The slide is the code, which
               tone: "ok",
             },
             {
-              message: "deckard export pdf: out/deck.pdf, 29 pages",
+              message: "deckard export pdf: out/deck.pdf, one page per slide",
               status: "done",
               time: "09:17:20",
               tone: "ok",

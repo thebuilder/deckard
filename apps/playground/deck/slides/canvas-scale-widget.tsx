@@ -10,8 +10,11 @@ export interface Screen {
   width: number
 }
 
-const diagramWidth = 540
-const diagramHeight = 320
+const diagramWidth = 460
+const diagramHeight = 260
+
+// An authored size to carry through the multiplier. Not a token, an example.
+const sampleTypeSize = 48
 
 function ScreenButton({
   isSelected,
@@ -53,10 +56,10 @@ function Readout({
       <dt className="font-semibold text-[length:var(--slide-label-size)] text-primary uppercase tracking-[var(--slide-label-tracking)]">
         {term}
       </dt>
-      <dd className="mt-2 font-[family-name:var(--slide-font-mono)] text-2xl tabular-nums">
+      <dd className="mt-2 font-[family-name:var(--slide-font-mono)] text-[length:var(--slide-body-size)] tabular-nums">
         {value}
       </dd>
-      <dd className="mt-2 text-[length:var(--slide-support-size)] text-muted-foreground leading-[1.5]">
+      <dd className="mt-1 text-[length:var(--slide-support-size)] text-muted-foreground leading-[1.4]">
         {note}
       </dd>
     </div>
@@ -85,6 +88,7 @@ export function CanvasScaleCalculator({
   const [selectedId, setSelectedId] = useState(screens[0].id)
   const screen = screens.find((item) => item.id === selectedId) ?? screens[0]
 
+  // The whole of contain fit: one min() over the two ratios.
   const scale = Math.min(
     screen.width / canvasWidth,
     screen.height / canvasHeight
@@ -102,7 +106,7 @@ export function CanvasScaleCalculator({
   )
 
   return (
-    <div className="grid gap-6">
+    <div className="grid gap-5">
       <div className="flex flex-wrap gap-2">
         {screens.map((item) => (
           <ScreenButton
@@ -115,7 +119,7 @@ export function CanvasScaleCalculator({
       </div>
 
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-10">
-        <dl className="grid grid-cols-2 gap-x-8 gap-y-6">
+        <dl className="grid grid-cols-2 gap-x-8 gap-y-5">
           <Readout
             note={`${screen.width} by ${screen.height} device pixels`}
             term="Scale"
@@ -127,9 +131,9 @@ export function CanvasScaleCalculator({
             value={`${Math.round(paintedWidth)} x ${Math.round(paintedHeight)}`}
           />
           <Readout
-            note="A 24px heading, authored on the canvas"
+            note={`An authored ${sampleTypeSize}px heading, at this scale`}
             term="Type"
-            value={`${(24 * scale).toFixed(1)}px`}
+            value={`${(sampleTypeSize * scale).toFixed(1)}px`}
           />
           <Readout
             note={letterbox.note}
@@ -144,7 +148,7 @@ export function CanvasScaleCalculator({
             style={{ height: diagramHeight, width: diagramWidth }}
           >
             <div
-              className="flex items-center justify-center border border-[var(--slide-surface-border)] bg-secondary"
+              className="flex items-center justify-center border border-[var(--slide-surface-border)] bg-[var(--slide-surface-muted)]"
               style={{ height: screen.height * fit, width: screen.width * fit }}
             >
               <div
@@ -156,9 +160,8 @@ export function CanvasScaleCalculator({
               />
             </div>
           </div>
-          <figcaption className="mt-3 text-[length:var(--slide-support-size)] text-muted-foreground">
-            The outer rectangle is the window. The tinted one is this canvas, at
-            the scale on the left.
+          <figcaption className="mt-2 text-[length:var(--slide-support-size)] text-muted-foreground leading-[1.4]">
+            The outer rectangle is the window. The tinted one is this canvas.
           </figcaption>
         </figure>
       </div>

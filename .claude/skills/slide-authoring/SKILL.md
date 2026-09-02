@@ -9,19 +9,15 @@ A slide is an object with a `body` in `apps/playground/deck/slides.tsx`, or a
 module in `apps/playground/deck/slides/*.slide.tsx` that discovery spreads into
 that array. Everything else is metadata.
 
-`apps/demo` has the same shape, and its blocks and its ejected theme are its own
-copies. Work in whichever deck the change belongs to, and read that deck's
-theme, not the other one's.
-
-Those two decks are this repository's decks. A presentation someone builds on
+`apps/playground` is this repository's deck. A presentation someone builds on
 Deckard is their own Next.js app with the same `deck/` layout, and every rule
 below applies there unchanged. Paths in this skill are written for this repo, so
-drop the `apps/<name>/` prefix when the deck is a standalone app.
+drop the `apps/playground/` prefix when the deck is a standalone app.
 
 Read the `THEME.md` of the theme the deck renders before you touch a color or a
 size. The playground imports `deckard` from `@deckard/themes`, so that is
-`packages/themes/src/deckard/THEME.md`; the demo ejected its own, so that
-is `apps/demo/deck/theme/THEME.md`.
+`packages/themes/src/deckard/THEME.md`. A deck that ejected its theme reads
+`deck/theme/THEME.md` instead.
 
 ## Start from a block
 
@@ -118,6 +114,11 @@ cursor line with words in it are slide content, so they go in a block.
 Keep a slide inline in `deck/slides.tsx` while it is metadata plus one block.
 Move it to `deck/slides/<name>.slide.tsx` once it loads data, brings a client
 widget, or carries long speaker notes.
+
+Extraction moves the slide into the discovered group, and the group lands where
+the array spreads it. A slide that has to sit at a particular point in the talk
+stays in the array, with its widget in a file beside the modules the way
+`deck/slides/canvas-scale-widget.tsx` does.
 
 A slide module exports the component as `default`, plus `meta` and `notes` as
 plain values so the deck can title and order it without rendering it:
@@ -228,10 +229,6 @@ pnpm deck:check-overflow  # every slide fits the canvas, nonzero exit on clippin
 pnpm deck:screenshots     # out/screenshots/<id>.png, dark by default, --light for light
 pnpm deck:contact-sheet   # out/contact-sheet.png, every slide in one grid
 ```
-
-Every one of those has a `demo:` twin (`pnpm demo:validate`,
-`pnpm demo:check-overflow`, `pnpm demo:screenshots`, `pnpm demo:contact-sheet`)
-that runs the same script against `apps/demo`.
 
 Run `pnpm deck:validate` after any structural change: a new slug, a moved file, a
 theme edit, a registry path. It loads the real deck in about a second.

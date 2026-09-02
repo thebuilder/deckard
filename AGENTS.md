@@ -4,22 +4,20 @@ Deckard is a React presentation framework for fixed-canvas slides with reusable
 blocks, presenter tooling, and shadcn-native themes. It runs on Next.js and is a
 pnpm workspace driven by Turborepo.
 
-This file describes work inside this repository, where the decks are
-`apps/playground` and `apps/demo`. Someone building a real presentation does not
-clone this repo: they own a Next.js app with `@deckard/core` as a dependency and
-their theme and blocks installed from the registry. The same authoring rules
-apply there, against their own `deck/` directory.
+This file describes work inside this repository, where the deck is
+`apps/playground`. Someone building a real presentation does not clone this
+repo: they own a Next.js app with `@deckard/core` as a dependency and their
+theme and blocks installed from the registry. The same authoring rules apply
+there, against their own `deck/` directory.
 
 - `packages/core` is `@deckard/core`, the deck contract and the slideshow
   runtime. It compiles to `dist/` with `tsc`, and apps consume the build. Turbo
   builds it before an app builds, and `pnpm dev` runs its `tsc --watch`
   alongside the app.
-- `apps/playground` is the reference deck and the app every visual check runs
-  against. It exercises every feature, so it is a test surface rather than a
-  template.
-- `apps/demo` is a 19-slide talk shaped like a consumer project, and the proof
-  that the framework works outside the playground. `docs/MIGRATION-NOTES.md`
-  records what that migration surfaced.
+- `apps/playground` is the deck: the reference presentation and the app every
+  visual check runs against. It exercises every feature, so it is a test surface
+  rather than a template. It imports its theme from `@deckard/themes`, so a
+  theme swap is one line in `deck/deck.ts`.
 - `apps/docs` is the documentation site.
 - `packages/themes` is `@deckard/themes`, the six deck themes. Each one is a
   `theme.css`, an `index.ts` exporting one `SlideTheme`, and a `THEME.md`. It
@@ -45,7 +43,11 @@ apply there, against their own `deck/` directory.
 - `tools/registry-smoke` installs the registry into a scratch app and builds it.
 - `tools/cli-smoke` installs the packed CLI outside the workspace and runs
   `deckard init` through it, once under pnpm and once under npm, then builds,
-  validates, and screenshots what it generated.
+  validates, and screenshots what it generated. It also ejects the theme,
+  asserts the copied files land non-empty and that `deck/deck.ts` repoints at
+  them, typechecks against the copy, and switches back with `deckard add theme`.
+  That is where `eject` is proved, so no deck in this repository has to carry an
+  ejected theme to cover it.
 
 ## Scripts
 
@@ -66,8 +68,6 @@ All of these run from the root.
 | `pnpm deck:screenshots`    | one PNG per slide at canvas size, `--light` for light mode   |
 | `pnpm deck:contact-sheet`  | every screenshot in one grid image for review                |
 | `pnpm export:pdf`          | one PDF page per slide at canvas size                        |
-| `pnpm demo`                | the demo talk on :3002                                       |
-| `pnpm demo:validate`       | the same checks against `apps/demo`, plus `demo:doctor`, `demo:check-overflow`, `demo:screenshots`, `demo:contact-sheet`, `demo:export:pdf` |
 | `pnpm registry:build`      | compiles `registry.json` into `apps/docs/public/r`           |
 | `pnpm smoke:package`       | packs `@deckard/core` and builds a scratch app against it    |
 | `pnpm smoke:registry`      | installs the registry into a scratch app and builds it       |
@@ -127,7 +127,8 @@ is what generates it, so a change to that shape belongs in
 - The themes: `packages/themes/src/<name>/`, each a `theme.css`, an
   `index.ts` exporting one `SlideTheme`, and a `THEME.md`. `SlideCanvas` puts
   the theme class on the canvas, so the theme reaches the slide and nothing
-  else. `apps/demo/deck/theme` is an ejected fork and stays local.
+  else. The playground imports its theme from `@deckard/themes` rather than
+  ejecting a copy, so `deck:check-overflow` can sweep it across every one.
 - Color mode: `packages/core/src/components/color-mode-provider.tsx`. It is
   light and dark only. The deck theme is static config and never switches at
   runtime.
