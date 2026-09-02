@@ -232,9 +232,27 @@
   color: var(--shiki-dark);
 }
 
-/* The stepped demo */
+/*
+ * The stepped demo.
+ *
+ * Two layouts, and the markup is the compact one: a row of pills, the array,
+ * the slide, and a caption under it. The pills switch it, with no script.
+ *
+ * The walkthrough is what the last media query adds. There the two panels hold
+ * still and a track of one block per step scrolls past behind them, and the
+ * script checks the radio for whichever block is crossing the middle of the
+ * screen. Its three conditions are the ones that make that readable: room for
+ * two panels, no reduced-motion preference, and a script to do the driving.
+ * The script matches the same three before it observes anything. A reader with
+ * none of it gets a section as tall as its panels and the pills to press.
+ */
 
 .demo {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.demo-viewer {
   display: grid;
   gap: 1.25rem;
 }
@@ -317,13 +335,89 @@
   display: none;
 }
 
-.demo-caption {
+/* Height only, and only in the walkthrough. */
+.demo-track {
   display: none;
+}
+
+/*
+ * One cell, four captions in it, and the tallest of them is what the box
+ * measures. The slide above never moves as the step changes, at any width, and
+ * nothing here has to name a height.
+ */
+.demo-captions {
+  display: grid;
   margin-block-start: 1rem;
+}
+
+.demo-caption {
+  visibility: hidden;
+  grid-area: 1 / 1;
   font-size: 0.875rem;
   line-height: 1.65;
   color: var(--blume-muted-foreground);
   text-wrap: pretty;
+}
+
+/*
+ * The walkthrough. The panels sit still under the header while the track runs
+ * past behind them, which is what gives the section a screen of scroll per step.
+ */
+@media (min-width: 64rem) and (prefers-reduced-motion: no-preference) and (
+    scripting: enabled
+  ) {
+  .demo {
+    align-items: start;
+  }
+
+  /* Held to the screen, so a short window scrolls the array inside its own
+   * panel rather than cropping it. 5rem clears the sticky site header. */
+  .demo-viewer {
+    position: sticky;
+    inset-block-start: 5rem;
+    grid-template-rows: auto minmax(0, 1fr);
+    max-block-size: calc(100dvh - 6rem);
+  }
+
+  /* stretch, so the array is held to the viewer and takes its scrollbar. The
+   * slide keeps its own height and sits level with the middle of the array. */
+  .demo-panels {
+    align-items: stretch;
+    min-block-size: 0;
+  }
+
+  .demo-code {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    min-block-size: 0;
+  }
+
+  /* Small enough that the whole array is on screen at once, which is what
+   * makes dimming the lines outside the step mean anything. */
+  .demo-code pre.astro-code {
+    padding-block: 0.75rem;
+    overflow: auto;
+    font-size: 0.6875rem;
+    line-height: 1.5;
+  }
+
+  /* The viewer is the sticky one here, so the slide gives up its own offset
+   * and centres against the array instead. */
+  .demo-stage {
+    position: static;
+    align-self: center;
+  }
+
+  /* The first block reaches the middle of the screen once the panels have
+   * settled, and the last one leaves it before the section ends. */
+  .demo-track {
+    display: block;
+    padding-block: 24vh 16vh;
+  }
+
+  .demo-beat {
+    block-size: 72vh;
+  }
 }
 
 .demo-code .line {
