@@ -158,3 +158,59 @@ is what generates it, so a change to that shape belongs in
   before writing App Router code. The APIs move fast, and `next dev` is
   configured not to inject its own agent-rules block into this file
   (`agentRules: false` in each app's `next.config.ts`).
+
+## Writing
+
+These rules cover prose: docs pages, registry descriptions, `THEME.md`, README,
+slide copy, and CLI output. They exist because a review found the same habits
+across all of them.
+
+**State the behaviour, the consequence, and the next action. Give the rationale
+only where it changes what the reader does.** A reader deciding between two
+options needs the tradeoff. A reader who has already decided does not need the
+argument for the decision.
+
+- Write for one audience per page. A landing page sells, a guide gets a task
+  done, a reference documents the whole contract. Do not mix them.
+- Do not defend the design. Explaining that a choice was intentional persuades
+  nobody and reads as an argument with an imagined critic. Cut every "on
+  purpose", "deliberately", "that is the whole idea", "that is the point",
+  "nothing else", "the entire brief", and "never" that is carrying that job.
+- Do not claim what you cannot demonstrate. "Cannot drift" is a guarantee; "uses
+  the same canvas and the same routes" is the fact behind it. Ship the fact.
+- Let a demo prove itself. Do not tell the reader the live preview is really
+  live.
+- Say what a thing is for, not what it is not. "Use `FocusSlide` when the block
+  is the whole slide" beats a paragraph on why it is not a prop on another
+  component.
+- History belongs in a changelog. A deprecated field's entry says
+  `"counter" is a deprecated alias for "visible"`, not the story of the rename.
+- No em dashes. Commas or hyphens.
+- No "powerful", "seamless", "simply", "just", "elegant", "blazing", or
+  "out of the box".
+
+Reference entries carry, in this order: import path, signature, props or
+arguments with types and defaults, return value, behaviour, errors, an example,
+and related APIs. A sentence of description is not a reference entry.
+
+Generated behaviour has one source of truth. Before documenting what a command
+writes or what a package requires, read the code that does it. Three separate
+contradictions between the README, the quickstart, and the CLI reference reached
+the deployed site because each was written from memory.
+
+**Do not type a number that already exists in code.** Counts and measurements
+drift the moment anything changes, and every one of them has: the deck slide
+count, the registry item count, the block family count, a theme's footer space,
+the node floor, a token default. Each was correct when written.
+
+- Counts. Write "every built-in theme", not "six themes"; "the block families
+  the registry ships", not "five block families". A count earns its place only
+  when the number itself is the point, and then it comes from the source.
+- Concrete values from a theme. A reader who needs phosphor's footer space reads
+  `phosphor/theme.css`. Prose that repeats it is a second copy that nothing
+  checks.
+- The core token defaults are a contract, so the reference does list them, and
+  that table is generated from `packages/core/styles.css` rather than typed.
+
+Where a number has to appear in prose and cannot be generated, cite where it
+comes from so the next person can check it in one step.
