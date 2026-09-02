@@ -591,13 +591,9 @@ Say what is missing on purpose: no heading, no lead, no panel. The slide is the 
     slug: "theme-table",
     title: "Six Themes",
     notes:
-      "The highlighted row is the theme this deck is rendering right now. Swap it in deck/deck.ts and every slide you have seen restyles with no other edit.",
+      "The last column is what each theme puts where a list number would go, and none of it is an edit to the block. The highlighted row is the theme this deck is rendering right now. Swap it in deck/deck.ts and every slide you have seen restyles with no other edit.",
     body: (
-      <OpenContentSlide
-        eyebrow="Themes"
-        title="Same deck, six stylesheets"
-        description="The last column is what each theme puts where a list number would go."
-      >
+      <OpenContentSlide eyebrow="Themes" title="Same deck, six stylesheets">
         <DataTable
           columns={[
             { label: "Theme" },
@@ -751,7 +747,7 @@ Say what is missing on purpose: no heading, no lead, no panel. The slide is the 
         description="The blocks install as source in your app. Change them, rename them, throw half of them away."
         rail={[
           { detail: "npx shadcn@latest add deckard", term: "Install" },
-          { detail: "deckard.dev", term: "Docs" },
+          { detail: "deckard.thebuilder.dk", term: "Docs" },
           { detail: "github.com/thebuilder/deckard", term: "Source" },
         ]}
       />
