@@ -45,7 +45,7 @@ pnpm dlx shadcn@latest add @deckard/preset-blocks
 shadcn is a dependency of `@deckard/cli`, pinned to the version the registry is built with, and `deckard add` runs that installed binary. There is no `dlx` and no download, so the same version runs on every package manager and on every day.
 
 :::warning
-There is no public host for the registry yet. `deckard init` writes `http://localhost:3001/r/{name}.json` into `components.json`, which is this documentation site running locally. Start it with `pnpm --filter docs dev` from a checkout of the Deckard repository before you run `deckard add block`.
+`deckard init` writes `https://deckard.thebuilder.dk/r/{name}.json` into `components.json`, which is this documentation site. Nothing to run locally: `deckard add block` fetches from it directly. Point `--registry` at another URL with a `{name}` placeholder to install from your own.
 :::
 
 ## Building it

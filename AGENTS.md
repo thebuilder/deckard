@@ -197,3 +197,20 @@ Generated behaviour has one source of truth. Before documenting what a command
 writes or what a package requires, read the code that does it. Three separate
 contradictions between the README, the quickstart, and the CLI reference reached
 the deployed site because each was written from memory.
+
+**Do not type a number that already exists in code.** Counts and measurements
+drift the moment anything changes, and every one of them has: the deck slide
+count, the registry item count, the block family count, a theme's footer space,
+the node floor, a token default. Each was correct when written.
+
+- Counts. Write "every built-in theme", not "six themes"; "the block families
+  the registry ships", not "five block families". A count earns its place only
+  when the number itself is the point, and then it comes from the source.
+- Concrete values from a theme. A reader who needs phosphor's footer space reads
+  `phosphor/theme.css`. Prose that repeats it is a second copy that nothing
+  checks.
+- The core token defaults are a contract, so the reference does list them, and
+  that table is generated from `packages/core/styles.css` rather than typed.
+
+Where a number has to appear in prose and cannot be generated, cite where it
+comes from so the next person can check it in one step.

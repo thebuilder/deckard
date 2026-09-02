@@ -21,7 +21,7 @@ import {
   runScript,
 } from "../package-manager.ts"
 
-const defaultRegistryUrl = "http://localhost:3001/r/{name}.json"
+const defaultRegistryUrl = "https://deckard.thebuilder.dk/r/{name}.json"
 const namePattern = /[^a-z0-9-]+/g
 
 function toPackageName(directory: string): string {

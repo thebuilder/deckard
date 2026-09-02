@@ -23,7 +23,7 @@ const previewFlags = ["light", "skip-build"]
 const specs: Record<string, FlagSpec> = {
   add: { booleans: ["yes"], strings: ["registry"] },
   "check-overflow": { booleans: previewFlags, strings: ["port"] },
-  "contact-sheet": { booleans: ["light"], strings: ["columns"] },
+  "contact-sheet": { strings: ["columns"] },
   doctor: {},
   eject: { strings: ["theme"] },
   export: { booleans: ["dark", "skip-build"], strings: ["port"] },
@@ -64,13 +64,17 @@ const help = `deckard ${version}
   deckard check-overflow     fail on slides the canvas clips
   deckard screenshots        one PNG per slide at canvas size, into out/screenshots
     --max <n>                    stop after n slides
-  deckard contact-sheet      every screenshot in one grid, into out/contact-sheet.png
-    --columns <n>                columns in the grid (default 4)
   deckard export pdf         one PDF page per slide, into out/slides.pdf
     --dark                       export the dark deck instead of the light one
 
-  The four checks above build the app and serve it. They take --port <n> and
-  --skip-build, and every one but the PDF export takes --light.
+  Those three build the app and serve it. They take --port <n> and --skip-build,
+  and the two that are not the PDF export take --light.
+
+  deckard contact-sheet      every screenshot in one grid, into out/contact-sheet.png
+    --columns <n>                columns in the grid (default 4)
+
+  contact-sheet builds nothing. It reads out/screenshots and the color mode
+  those were captured in, so run deckard screenshots first.
 
   deckard add theme <name>   point deck/deck.ts at another built-in theme
   deckard eject theme        copy the built-in the deck uses into deck/theme, yours to edit

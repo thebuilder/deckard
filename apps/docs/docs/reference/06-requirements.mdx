@@ -1,0 +1,127 @@
+---
+title: Requirements and compatibility
+description: The Node, Next, React, and Tailwind versions a deck needs, which package managers work, what a presented deck asks of the browser, and which commands need Chromium.
+sidebar:
+  label: Requirements
+  icon: circle-check-big
+---
+
+A deck is a Next.js app with `@deckard/core` as a dependency. Everything below is what that app needs.
+
+## Versions
+
+| What | Version | Where it comes from |
+| --- | --- | --- |
+| Node | 20.9 or newer | `engines` on all three packages, and the floor `deckard doctor` checks |
+| Next.js | 16 or newer | `peerDependencies` on `@deckard/core` |
+| React | 19 or newer | `peerDependencies` on `@deckard/core` |
+| React DOM | 19 or newer | `peerDependencies` on `@deckard/core` |
+| Tailwind CSS | 4 | `@deckard/core/styles.css` uses `@source`, which is v4 only |
+
+`deckard init` pins the versions the reference deck runs rather than the floors, so a deck generated today installs Next `16.3.3`, React `^19.2.8`, Tailwind `^4.3.3`, and TypeScript `^7.0.2`.
+
+Tailwind is not a declared peer dependency of any Deckard package. The requirement arrives through the one stylesheet import:
+
+```css app/globals.css
+@import "tailwindcss";
+@import "@deckard/core/styles.css";
+```
+
+That second line carries the `--slide-*` tokens and registers the runtime's own Tailwind source. Drop it and the deck renders unstyled. [`deckard doctor`](/reference/cli#deckard-doctor) checks for it by name.
+
+:::note
+The Node floor is 20.9, not a major version. Node 20.8 fails the check and Node 20.9 passes. This repository and its CI run Node 24.
+:::
+
+## Package managers
+
+`bun`, `npm`, `pnpm`, and `yarn` all work. Pass `--package-manager <name>` to [`deckard init`](/reference/cli#deckard-init), or let it use the one that invoked it.
+
+A generated deck carries no `packageManager` field. Corepack reads that field as an enforcement lock, so writing it would refuse every other manager afterwards. Later `deckard` commands read the lockfile instead, walking up from the deck directory: `pnpm-lock.yaml`, `bun.lock`, `bun.lockb`, `yarn.lock`, `package-lock.json`.
+
+That detection is what fills in the commands the CLI prints. A missing Chromium tells a pnpm deck to run `pnpm exec playwright install chromium` and an npm deck to run `npm exec -- playwright install chromium`.
+
+`init` is covered by an automated smoke test on pnpm and npm. Yarn and bun are supported in the code and are not covered by that test.
+
+## Chromium
+
+Four commands drive a real browser, so they need the Playwright Chromium binary on the machine:
+
+- [`deckard check-overflow`](/reference/cli#deckard-check-overflow)
+- [`deckard screenshots`](/reference/cli#deckard-screenshots)
+- [`deckard contact-sheet`](/reference/cli#deckard-contact-sheet)
+- [`deckard export pdf`](/reference/cli#deckard-export-pdf)
+
+Playwright itself is a dependency of `@deckard/cli` and installs with it. The browser binary is a separate download:
+
+```bash
+pnpm exec playwright install chromium
+```
+
+Without it those four commands fail with `Failed to launch Chromium` and the install line for your package manager. Nothing else in the CLI needs a browser: `init`, `validate`, `doctor`, `add`, and `eject` do not.
+
+`check-overflow`, `screenshots`, and `export pdf` also run `next build` and `next start` before they capture, so they need a machine that can build and serve the deck. `contact-sheet` needs the browser but neither the build nor the server, because it composes PNGs that `screenshots` already wrote.
+
+## Browsers for a presented deck
+
+The runtime is tested on Chromium, Firefox, and WebKit. Those three are what `pnpm test` runs the browser suite against, and they are the closest thing to a support matrix the repository states.
+
+There is no `browserslist` in the repository and no configured build target, so the shipped bundle takes Next 16's defaults. That means there is no minimum browser version to quote here.
+
+What the deck uses that a browser has to support:
+
+- `oklch()` colours and `color-mix()`, in the token contract and every theme
+- Tailwind v4 cascade layers
+- `svh` units for the shell height
+- `ResizeObserver`, for measuring the canvas fit
+- `BroadcastChannel`, for presenter sync
+- The `inert` attribute, on unrevealed step content
+
+`ResizeObserver` is used without a fallback, so a browser without it will not scale the canvas. `BroadcastChannel` is checked before use: a browser without it runs the deck normally and the presenter window never syncs.
+
+The canvas scale is measured in JavaScript and published as `--deckard-scale` rather than divided in CSS, because Firefox before 155 has no typed CSS arithmetic. That is the one engine difference the runtime works around by design.
+
+## Edge runtime
+
+Not established, and nothing in the repository claims it either way. There is no `export const runtime` anywhere, no middleware, and no test that runs a deck on Edge.
+
+What is true: the route adapters in `@deckard/core/next` import no Node APIs, and the slide route reads nothing from the request. `@deckard/core/code-block` is the part to check first if you try it, because shiki loads a WebAssembly regex engine there.
+
+Treat Edge as untested rather than as supported or unsupported.
+
+## Static export
+
+`output: "export"` works, with two changes to the app.
+
+<Steps>
+  <Step title="Force the sitemap static">
+    Without this the build fails with `export const dynamic = "force-static"/export const revalidate not configured on route "/sitemap.xml" with "output: export"`.
+
+    ```ts app/sitemap.ts
+    import { createDeckSitemap } from "@deckard/core/next"
+    import { deck } from "@/deck/deck"
+
+    export const dynamic = "force-static"
+
+    export default createDeckSitemap(deck)
+    ```
+
+  </Step>
+  <Step title="Turn off image optimization">
+    The media blocks use `next/image`. Left alone, the export emits `/_next/image?...` URLs, which need the optimizer a static host does not run, so every image 404s.
+
+    ```ts next.config.ts
+    const nextConfig: NextConfig = {
+      images: { unoptimized: true },
+      output: "export",
+    }
+    ```
+
+  </Step>
+</Steps>
+
+Every slide, the presenter page, and the sitemap prerender. One thing changes: `/` becomes a page that redirects to the first slide once it loads in the browser, rather than a server 307.
+
+The capture commands do not work against a static export. They run `next start`, which `output: "export"` disables. Build twice, or run the captures before you switch the config.
+
+[Deploying](/guides/deploying) covers the rest of getting a built deck in front of an audience.
