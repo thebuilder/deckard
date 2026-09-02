@@ -9,7 +9,11 @@ import {
   type ParsedArgs,
   stringFlag,
 } from "../args.ts"
-import { type BuiltInTheme, builtInThemes } from "../deck/theme-source.ts"
+import {
+  type BuiltInTheme,
+  builtInThemes,
+  defaultTheme,
+} from "../deck/theme-source.ts"
 import { scaffold } from "../init/scaffold.ts"
 import { write } from "../output.ts"
 import {
@@ -164,7 +168,7 @@ export function runInit(args: ParsedArgs, cliVersion: string): void {
     args,
     "theme",
     builtInThemes,
-    "deckard"
+    defaultTheme
   )
   const sample = !booleanFlag(args, "empty")
   const name = toPackageName(target)

@@ -12,6 +12,7 @@ import { runExportPdf } from "./commands/export-pdf.ts"
 import { runInit } from "./commands/init.ts"
 import { runScreenshots } from "./commands/screenshots.ts"
 import { runValidate } from "./commands/validate.ts"
+import { builtInThemes, defaultTheme } from "./deck/theme-source.ts"
 import { fail, write } from "./output.ts"
 
 const { version } = JSON.parse(
@@ -42,11 +43,49 @@ const specs: Record<string, FlagSpec> = {
   validate: { strings: ["registry"] },
 }
 
+// Flag descriptions start in this column and wrap under themselves, so a list
+// the themes package grows keeps the shape the rest of the help has.
+const helpIndent = " ".repeat(33)
+const helpWidth = 78
+
+function wrapHelp(text: string): string {
+  const lines: string[] = []
+  let line = ""
+
+  for (const word of text.split(" ")) {
+    const next = line ? `${line} ${word}` : word
+
+    if (helpIndent.length + next.length > helpWidth) {
+      lines.push(line)
+      line = word
+      continue
+    }
+
+    line = next
+  }
+
+  lines.push(line)
+
+  return lines.join(`\n${helpIndent}`)
+}
+
+function themeChoices(): string {
+  const names = [
+    defaultTheme,
+    ...builtInThemes.filter((name) => name !== defaultTheme),
+  ]
+  const last = names.length - 1
+  const listed = names
+    .map((name, index) => (index === last ? `or ${name}` : `${name},`))
+    .join(" ")
+
+  return wrapHelp(`${listed} (default ${defaultTheme})`)
+}
+
 const help = `deckard ${version}
 
   deckard init <dir>          create a deck: a Next.js app with slides, a theme, and the checks
-    --theme <name>               deckard, broadsheet, ledger, meridian, nexus,
-                                 or phosphor (default deckard)
+    --theme <name>               ${themeChoices()}
     --empty                      two slides instead of the sample deck
     --package-manager <name>     npm, pnpm, yarn, or bun (default: the one that ran init)
     --no-install                 write the files and stop

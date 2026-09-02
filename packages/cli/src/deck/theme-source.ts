@@ -1,6 +1,8 @@
 import fs from "node:fs"
 import path from "node:path"
 
+import { type BuiltInThemeId, themeIds } from "@deckard/themes/ids"
+
 import { projectPath, resolveFromProject } from "../project.ts"
 import {
   deckSourcePath,
@@ -8,16 +10,13 @@ import {
   type ThemeImportKind,
 } from "./deck-source.ts"
 
-export const builtInThemes = [
-  "broadsheet",
-  "deckard",
-  "ledger",
-  "meridian",
-  "nexus",
-  "phosphor",
-] as const
+// The names come from @deckard/themes, off the subpath that carries no
+// stylesheet, so the CLI never lists a theme the package stopped shipping.
+export const builtInThemes = themeIds
 
-export type BuiltInTheme = (typeof builtInThemes)[number]
+export type BuiltInTheme = BuiltInThemeId
+
+export const defaultTheme: BuiltInTheme = "deckard"
 
 export const localThemeDirectory = "deck/theme"
 

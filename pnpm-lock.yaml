@@ -176,6 +176,9 @@ importers:
 
   packages/cli:
     dependencies:
+      '@deckard/themes':
+        specifier: workspace:*
+        version: link:../themes
       pdf-lib:
         specifier: ^1.17.1
         version: 1.17.1
