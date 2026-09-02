@@ -28,8 +28,8 @@
     "template"
   ],
   "scripts": {
-    "build": "node scripts/sync-template.ts && tsc --project tsconfig.build.json",
-    "prepack": "node scripts/sync-template.ts",
+    "build": "node scripts/write-theme-ids.ts && node scripts/sync-template.ts && tsc --project tsconfig.build.json",
+    "prepack": "node scripts/write-theme-ids.ts && node scripts/sync-template.ts",
     "test": "vitest run --passWithNoTests",
     "test:unit": "vitest run --passWithNoTests",
     "typecheck": "tsc --noEmit"

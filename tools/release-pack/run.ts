@@ -5,6 +5,8 @@ import path from "node:path"
 import process from "node:process"
 import { fileURLToPath } from "node:url"
 
+import { themeIds } from "../../packages/themes/src/ids.ts"
+
 const toolDirectory = path.dirname(fileURLToPath(import.meta.url))
 const repoRoot = path.resolve(toolDirectory, "../..")
 const tarballDirectory = path.join(repoRoot, "dist-tarballs")
@@ -20,15 +22,6 @@ interface Package {
   // output it describes.
   stale: string[]
 }
-
-const themeNames = [
-  "broadsheet",
-  "deckard",
-  "ledger",
-  "meridian",
-  "nexus",
-  "phosphor",
-]
 
 const packages: Package[] = [
   {
@@ -49,7 +42,7 @@ const packages: Package[] = [
     contents: [
       "dist/index.js",
       "dist/index.d.ts",
-      ...themeNames.flatMap((theme) => [
+      ...themeIds.flatMap((theme) => [
         `dist/${theme}/index.js`,
         `dist/${theme}/theme.css`,
         `dist/${theme}/THEME.md`,

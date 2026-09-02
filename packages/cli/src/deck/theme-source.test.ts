@@ -31,8 +31,9 @@ export const deck = defineDeck({
 })
 `
 
-// The CLI names the themes itself so the published package installs without
-// @deckard/themes. That copy only holds while this passes.
+// built-in-themes.ts is generated, and committed so that typecheck and these
+// tests can read it without a build. This is what catches it left behind: the
+// checks job never regenerates it before running them.
 describe("builtInThemes", () => {
   it("names every theme @deckard/themes ships, and no other", () => {
     expect([...builtInThemes]).toEqual([...themeIds])
