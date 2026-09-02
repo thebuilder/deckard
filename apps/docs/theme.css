@@ -159,3 +159,16 @@ h6,
   font-size: 0.95rem;
   letter-spacing: 0.04em;
 }
+
+/*
+ * Blume pads the scrolling code element 0.375rem at the bottom and nothing at
+ * the top, as a gutter for the horizontal scrollbar. It applies whether or not
+ * the block scrolls, so a one-line block sits 18px under its top edge and 25px
+ * over its bottom one and reads as misaligned. The pre already carries 1rem of
+ * vertical padding, which is the block's rhythm; the code element owns only the
+ * horizontal inset. The exclusions match Blume's own rule so this does not
+ * reach the blocks it leaves alone.
+ */
+.prose :where(pre:not(.twoslash, .twoslash pre, blume-panel-tabs *) > code) {
+  padding-block: 0;
+}
