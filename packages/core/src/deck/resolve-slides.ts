@@ -9,6 +9,7 @@ const fallbackDefaults: SlideDefaults = {
   footer: "visible",
   header: "auto",
   layout: "default",
+  motion: "auto",
 }
 
 // Decks written against the old three-mode footer keep working: the counter is
@@ -78,6 +79,7 @@ export function resolveSlides(
       id,
       index,
       layout: slide.layout ?? resolvedDefaults.layout,
+      motion: slide.motion ?? resolvedDefaults.motion,
       notes: slide.notes,
       number,
       slug: slide.slug,

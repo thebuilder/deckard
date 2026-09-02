@@ -51,9 +51,14 @@ An entry in the array. `body` is required, everything else is optional.
       description: "fullscreen hands the whole canvas to the slide so media can bleed to every edge.",
     },
     background: {
-      type: '"default" | "none" | "spotlight" | "grid"',
+      type: '"default" | "none" | "spotlight" | "grid" | "accent" | a name the theme adds',
       default: '"default"',
-      description: "Which background variant the theme paints. SlideBackground renders one empty element carrying data-slide-background.",
+      description: "Which background variant the theme paints. SlideBackground carries the name on data-slide-background, and deckard validate reports a name neither the runtime nor the theme paints.",
+    },
+    motion: {
+      type: '"auto" | "frozen"',
+      default: "the deck's motion",
+      description: "\"frozen\" holds this slide's motion background on one fixed frame. A slide whose background is painted in CSS is unaffected.",
     },
     sourcePath: {
       type: "string",

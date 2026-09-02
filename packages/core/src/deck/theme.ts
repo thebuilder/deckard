@@ -1,3 +1,4 @@
+import { slideMotionFields } from "../types/slides"
 import type {
   Deck,
   DeckPresentation,
@@ -45,6 +46,28 @@ function assertDefaultColorMode(theme: SlideTheme) {
   }
 }
 
+function assertMotion(theme: SlideTheme) {
+  for (const [variant, field] of Object.entries(theme.motion ?? {})) {
+    if (variant.trim().length === 0) {
+      throw new Error(
+        `Slide theme "${theme.id}" paints a motion background for a variant with no name. Key it by the name a deck writes as \`background\`.`
+      )
+    }
+
+    if (variant === "none") {
+      throw new Error(
+        `Slide theme "${theme.id}" paints a motion background for "none", which is the variant that renders no background at all. Give it a name of its own.`
+      )
+    }
+
+    if (!slideMotionFields.includes(field)) {
+      throw new Error(
+        `Slide theme "${theme.id}" paints "${variant}" with the field "${field}". The fields are ${slideMotionFields.join(", ")}.`
+      )
+    }
+  }
+}
+
 export function resolveTheme(theme: SlideTheme = baseTheme): SlideTheme {
   if (theme.id.trim().length === 0) {
     throw new Error("Slide theme needs a non-empty id.")
@@ -52,8 +75,14 @@ export function resolveTheme(theme: SlideTheme = baseTheme): SlideTheme {
 
   assertColorModes(theme)
   assertDefaultColorMode(theme)
+  assertMotion(theme)
 
   return { ...theme, colorModes: [...theme.colorModes] }
+}
+
+/** The field a theme paints a background variant with, or nothing. */
+export function motionField(theme: SlideTheme, background: string) {
+  return theme.motion?.[background]
 }
 
 // A single-mode theme pins the canvas to that mode, whatever the app chrome is doing.

@@ -1,4 +1,5 @@
 export { resolveCanvas } from "./deck/canvas"
+export { captureAttribute, isCapturing } from "./deck/capture"
 export { defineDeck } from "./deck/define-deck"
 export { isPdfExport, pdfExportColorMode } from "./deck/pdf-export"
 export {
@@ -10,6 +11,7 @@ export { toSlideSummaries, toSlideSummary } from "./deck/slide-summary"
 export {
   canSwitchColorMode,
   forcedColorMode,
+  motionField,
   resolveTheme,
   toDeckPresentation,
 } from "./deck/theme"
@@ -37,9 +39,16 @@ export type {
 } from "./types/presenter"
 export { PRESENTER_CHANNEL_NAME } from "./types/presenter"
 export type {
+  BuiltInSlideBackgroundMode,
   SlideBackgroundMode,
   SlideFooterMode,
   SlideFooterModeInput,
   SlideHeaderMode,
   SlideLayoutMode,
+  SlideMotionField,
+  SlideMotionMode,
+} from "./types/slides"
+export {
+  slideBackgroundModes,
+  slideMotionFields,
 } from "./types/slides"

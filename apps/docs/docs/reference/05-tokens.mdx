@@ -45,6 +45,19 @@ The frame those gutters leave is the whole slide, left aligned and uncapped: con
 
 There is no radial wash, veil, glow or spotlight token. The textures a theme has are flat colour, a rule, a grid, and a hatch, because a radial gradient reads as a smudge on a projector and as grey on paper.
 
+The four `--slide-motion-*` tokens are read off the canvas by the animated background, and only for a variant the theme names in `motion`. See [Motion backgrounds](/reference/core#motion-backgrounds). A theme sets them per variant and per color mode the way it sets everything else it paints:
+
+```css
+.aurora-theme .slide-background[data-slide-background="hero"] {
+  --slide-motion-color-1: #0a0d1f;
+  --slide-motion-color-2: #3a2f86;
+  --slide-motion-color-3: #1c7c96;
+  background: linear-gradient(160deg, #0a0d1f, #1c2350);
+}
+```
+
+That `background` is what the slide shows while the runtime loads, when the browser has no WebGL, and when the context is lost, so paint a variant you animate as though it never would.
+
 ## Media
 
 <SlideTokens group="media" />
@@ -84,6 +97,8 @@ The runtime renders these and the theme styles them. They are as much a part of 
 | `data-slide-viewport` | The element that scales the canvas |
 | `data-slide-frame` | The slide frame the overflow check measures |
 | `data-slide-background` | The background element, valued with the variant name |
+| `data-slide-motion` | The canvas inside it, valued with the field: `aurora`, `waves`, or `wash` |
+| `data-slide-motion-state` | What that canvas is doing: `running`, `frozen`, or `unavailable` |
 | `data-slide-header`, `data-slide-footer` | The chrome |
 | `data-slide-header-brand`, `-title`, `-meta` | The three header parts |
 | `data-slide-counter`, `-current`, `-separator`, `-total` | The counter |

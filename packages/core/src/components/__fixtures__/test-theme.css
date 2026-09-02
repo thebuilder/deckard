@@ -4,6 +4,9 @@
  */
 .test-theme {
   --background: oklch(0.985 0 0);
+  --slide-motion-color-1: #0a0d1f;
+  --slide-motion-color-2: #3a2f86;
+  --slide-motion-color-3: #1c7c96;
   color-scheme: light;
 }
 
