@@ -357,7 +357,7 @@ export function BreakerSlide({
       <Eyebrow>{eyebrow}</Eyebrow>
       {resolvedTitle ? (
         <h1
-          className="max-w-[1500px] text-pretty font-semibold text-[length:var(--slide-title-size)] leading-[1.02] tracking-tight"
+          className="max-w-[1500px] text-balance font-semibold text-[length:var(--slide-title-size)] leading-[1.02] tracking-tight"
           data-slide-title=""
         >
           {resolvedTitle}

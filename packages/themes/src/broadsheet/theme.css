@@ -145,8 +145,7 @@
 /* Bare stock with one rule across the head, where a paper carries its folio. */
 
 .broadsheet-theme .slide-background[data-slide-background="default"]::before {
-  inset: calc(var(--canvas-height) * 0.055) calc(var(--canvas-width) * 0.055)
-    auto;
+  inset: var(--slide-header-space) calc(var(--canvas-width) * 0.055) auto;
   height: 1px;
   background-color: var(--slide-rule);
 }

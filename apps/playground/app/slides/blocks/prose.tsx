@@ -114,7 +114,7 @@ export function ProseSlide({
       <div className="min-w-0" data-slide-prose-body="">
         {eyebrow ? <Eyebrow>{eyebrow}</Eyebrow> : null}
         <h1
-          className="mt-4 max-w-[1200px] text-pretty font-semibold text-[length:var(--slide-heading-size)] leading-[1.08] tracking-tight"
+          className="mt-4 max-w-[1200px] text-balance font-semibold text-[length:var(--slide-heading-size)] leading-[1.08] tracking-tight"
           data-slide-title=""
         >
           {title}
