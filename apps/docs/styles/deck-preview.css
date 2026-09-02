@@ -79,18 +79,16 @@
     min-block-size: 3.5rem;
   }
 
-  /* SlideShell's default frame: centred to the content measure, with the chrome
-   * space the theme asks for reserved as padding. */
+  /* SlideShell's frame: the whole canvas inside the theme's gutters, left
+   * aligned and uncapped. Blocks cap their own measure where prose needs it. */
   .deck-preview-frame {
     position: absolute;
     inset: 0;
     z-index: 10;
     display: flex;
     align-items: stretch;
-    max-width: 72rem;
     padding-block: var(--slide-header-space) var(--slide-footer-space);
     padding-inline: var(--slide-padding-inline);
-    margin-inline: auto;
   }
 
   .deck-preview-body {
@@ -100,35 +98,33 @@
     width: 100%;
   }
 
-  /* HeroSlide: the opener runs past --slide-title-size, because a theme sizes
-   * a heading for a slide that also carries body copy. */
+  /* HeroSlide: the eyebrow sits on the top edge and the title block on the
+   * bottom one, so the opener runs the height of the frame. */
   .deck-preview-hero {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
     width: 100%;
     height: 100%;
-    padding-block: 3rem;
-    text-align: center;
+    padding-block: var(--slide-item-gap);
   }
 
   .deck-preview-hero-title {
-    margin-block-start: 2.5rem;
-    font-size: calc(var(--slide-title-size) * 1.5);
+    max-width: 1500px;
+    margin-block-start: auto;
+    font-size: var(--slide-title-size);
     font-weight: 700;
-    line-height: 0.9;
-    letter-spacing: -0.03em;
+    line-height: 1.02;
+    letter-spacing: -0.025em;
     text-wrap: balance;
   }
 
   .deck-preview-hero-lead {
-    max-width: 46ch;
-    margin-block-start: 2.25rem;
-    font-size: calc(var(--slide-lead-size) * 1.4);
-    line-height: 1.45;
+    max-width: 1100px;
+    margin-block-start: 2rem;
+    font-size: var(--slide-lead-size);
+    line-height: 1.35;
     color: var(--muted-foreground);
-    text-wrap: balance;
+    text-wrap: pretty;
   }
 
   .deck-preview-breaker {
@@ -141,11 +137,11 @@
   .deck-preview-breaker-body {
     display: grid;
     gap: var(--slide-content-gap);
-    max-width: 56rem;
+    max-width: 1500px;
   }
 
   .deck-preview-breaker-title {
-    max-width: 56rem;
+    max-width: 1500px;
     font-size: var(--slide-title-size);
     font-weight: 600;
     line-height: 0.98;
@@ -168,7 +164,7 @@
   }
 
   .deck-preview-heading {
-    max-width: 64rem;
+    max-width: 1500px;
     font-size: var(--slide-heading-size);
     font-weight: 600;
     line-height: 1.02;
@@ -177,7 +173,7 @@
   }
 
   .deck-preview-lead {
-    max-width: 48rem;
+    max-width: 1100px;
     font-size: var(--slide-lead-size);
     line-height: 1.55;
     color: var(--muted-foreground);
@@ -240,10 +236,15 @@
     gap: 2.5rem;
   }
 
+  /* column-reverse keeps the caption before the figure in the DOM; flex-end
+   * then anchors the stack at the top, so figures line up across the row
+   * whatever the captions wrap to. Without it each column hugs its own bottom
+   * and the row of figures goes wavy. */
   .deck-preview-stat {
     display: flex;
     flex-direction: column-reverse;
-    padding-block-start: 1.75rem;
+    justify-content: flex-end;
+    padding-block-start: 2.25rem;
     border-block-start: 2px solid var(--slide-surface-border);
   }
 
@@ -254,22 +255,22 @@
 
   .deck-preview-stat dd {
     font-family: var(--slide-font-heading);
-    font-size: var(--slide-title-size);
+    font-size: var(--slide-figure-size);
     font-weight: 600;
     line-height: 0.86;
     letter-spacing: -0.025em;
   }
 
   .deck-preview-stat dd span {
-    font-size: var(--slide-subheading-size);
+    font-size: var(--slide-figure-unit-size);
     color: var(--muted-foreground);
   }
 
   .deck-preview-stat dt {
-    max-width: 24ch;
+    max-width: 26ch;
     margin-block-start: 1.25rem;
     font-size: var(--slide-support-size);
-    line-height: 1.45;
+    line-height: 1.4;
     color: var(--muted-foreground);
   }
 }
