@@ -236,10 +236,15 @@
     gap: 2.5rem;
   }
 
+  /* column-reverse keeps the caption before the figure in the DOM; flex-end
+   * then anchors the stack at the top, so figures line up across the row
+   * whatever the captions wrap to. Without it each column hugs its own bottom
+   * and the row of figures goes wavy. */
   .deck-preview-stat {
     display: flex;
     flex-direction: column-reverse;
-    padding-block-start: 1.75rem;
+    justify-content: flex-end;
+    padding-block-start: 2.25rem;
     border-block-start: 2px solid var(--slide-surface-border);
   }
 
@@ -250,22 +255,22 @@
 
   .deck-preview-stat dd {
     font-family: var(--slide-font-heading);
-    font-size: var(--slide-title-size);
+    font-size: var(--slide-figure-size);
     font-weight: 600;
     line-height: 0.86;
     letter-spacing: -0.025em;
   }
 
   .deck-preview-stat dd span {
-    font-size: var(--slide-subheading-size);
+    font-size: var(--slide-figure-unit-size);
     color: var(--muted-foreground);
   }
 
   .deck-preview-stat dt {
-    max-width: 24ch;
+    max-width: 26ch;
     margin-block-start: 1.25rem;
     font-size: var(--slide-support-size);
-    line-height: 1.45;
+    line-height: 1.4;
     color: var(--muted-foreground);
   }
 }
