@@ -699,8 +699,7 @@ Say what is missing: no heading, no lead, no panel. The slide is the code, which
         <LogList
           items={[
             {
-              message:
-                "deckard validate: deck, theme and registry all resolve",
+              message: "deckard validate: deck, theme and registry all resolve",
               status: "pass",
               time: "09:14:02",
               tone: "ok",

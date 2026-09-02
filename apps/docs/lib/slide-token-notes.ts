@@ -129,10 +129,6 @@ export const slideTokenNotes: Record<string, TokenNote> = {
     group: "chrome",
     note: "The progress element's own background",
   },
-  "slide-rail-size": {
-    group: "spacing",
-    note: "The fixed side column on `HeroSplitSlide` and `ProseSlide`",
-  },
   "slide-radius": {
     group: "surfaces",
     note: "Cards, code blocks, small panels",
@@ -140,6 +136,10 @@ export const slideTokenNotes: Record<string, TokenNote> = {
   "slide-radius-lg": {
     group: "surfaces",
     note: "The `ContentSlideCard` panel",
+  },
+  "slide-rail-size": {
+    group: "spacing",
+    note: "The fixed side column on `HeroSplitSlide` and `ProseSlide`",
   },
   "slide-rule": {
     group: "backgrounds",
