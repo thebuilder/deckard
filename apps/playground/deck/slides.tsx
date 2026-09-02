@@ -353,7 +353,7 @@ export const slides: SlideDefinition[] = [
               description:
                 "Put a block carrying data-slide-surface inside a panel and the console names the two layouts to use instead.",
               label: "In development",
-              title: "It says so out loud",
+              title: "The console warning",
             },
           ]}
         />
@@ -492,13 +492,13 @@ export const slides: SlideDefinition[] = [
     title: "Authoring Example",
     notes: `This is the whole authoring contract on one slide, so read it out rather than talking over it.
 
-A slide is metadata plus a body. The body is a block, and the block is where every class name and every token lives. Nothing on this slide is a layout decision made twice.
+A slide is metadata plus a body. The body is a block, and the block is where every class name and every token lives.
 
 That split is what keeps the deck cheap to rearrange: reordering the array moves the talk, and no component changes.
 
 Point at the last line. The spread is discovery, and every slide after it is a file in deck/slides that this array never names.
 
-Say what is missing on purpose: no heading, no lead, no panel. The slide is the code, which is the point of the focus layout.`,
+Say what is missing: no heading, no lead, no panel. The slide is the code, which is what the focus layout is for.`,
     body: (
       <FocusSlide kicker="deck/slides.tsx">
         <CodeBlock
@@ -577,7 +577,7 @@ Say what is missing on purpose: no heading, no lead, no panel. The slide is the 
         label="The contract"
         paragraphs={[
           "A theme is one stylesheet scoped to the slide canvas. It sets the type scale, the frame padding, the surfaces, and the background, and it reaches the inside of a block only through the data attributes that block published.",
-          "That is the whole surface. A block is free to rewrite its markup and its class names as long as the attributes stay where they are, and a theme is free to restyle anything with a name without knowing what the block does.",
+          "A block is free to rewrite its markup and its class names as long as the attributes stay where they are, and a theme is free to restyle anything with a name without knowing what the block does.",
           "The line a theme does not cross is content. Phosphor writes a bracketed x where a list number goes and ledger hangs a rule there instead, and neither puts a word on the slide.",
         ]}
         support={[
@@ -693,7 +693,7 @@ Say what is missing on purpose: no heading, no lead, no panel. The slide is the 
     slug: "checks",
     title: "The Checks",
     notes:
-      "This is a real session, trimmed. The failure in the middle is the point: check-overflow found a clipped slide at one theme in one colour mode, and nothing else would have.",
+      "This is a session, trimmed. Point at the failure in the middle: check-overflow found a clipped slide at one theme in one colour mode.",
     body: (
       <FocusSlide kicker="A ten minute pass before a talk">
         <LogList

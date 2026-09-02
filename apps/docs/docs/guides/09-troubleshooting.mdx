@@ -269,24 +269,18 @@ The capture commands read the slide list from the deck's own `/sitemap.xml`. An 
 **Symptom.**
 
 ```text
-The registry at http://localhost:3001/r/metrics.json did not answer.
+The registry at https://deckard.thebuilder.dk/r/metrics.json did not answer.
 ```
 
-**Cause.** Deckard has no public registry host. The URL in `components.json` points at the docs site, which has to be running.
+**Cause.** The URL in `components.json` points at the Deckard docs site, which serves every registry item at `/r/{name}.json`. Either the site is unreachable or the URL was changed.
 
-**Fix.** Start it, in a checkout of the Deckard repository:
-
-```bash
-pnpm --filter docs dev
-```
-
-Or point `deckard add block` somewhere else with `--registry <url>`. The URL carries a `{name}` placeholder.
+**Fix.** Check the network, or point `deckard add block` somewhere else with `--registry <url>`. The URL carries a `{name}` placeholder.
 
 **A different message, no registry configured at all:**
 
 ```text
 No @deckard registry in components.json and no --registry flag.
-Add one: { "registries": { "@deckard": "http://localhost:3001/r/{name}.json" } }
+Add one: { "registries": { "@deckard": "https://deckard.thebuilder.dk/r/{name}.json" } }
 ```
 
 The blocks are yours as source either way. `deckard add block` is for taking an update or undoing an edit, so a deck that never needs one never needs the registry. [Blocks and the registry](/guides/blocks-and-the-registry) has the details.

@@ -13,7 +13,7 @@ A theme is three files:
 | --- | --- |
 | `theme.css` | Every token and every selector, scoped to the theme class. |
 | `index.ts` | One `SlideTheme` object. |
-| `THEME.md` | What each token controls, and why the theme is the way it is. |
+| `THEME.md` | What each token controls and what this theme sets it to. |
 
 ## The built-ins
 
@@ -32,7 +32,7 @@ Each frame is a slide canvas, not a picture of one, painted by that theme's own 
 
 ## Picking one
 
-Import it and hand it to `defineDeck`. Importing the module pulls in its stylesheet, so there is nothing else to wire:
+Import it and hand it to `defineDeck`. Importing the module pulls in its stylesheet:
 
 ```ts deck/deck.ts
 import { defineDeck } from "@deckard/core"
@@ -65,10 +65,10 @@ deckard eject theme
 deckard eject theme --theme broadsheet   # eject a different built-in instead
 ```
 
-It refuses when `deck/theme/` already exists, because a deck has exactly one theme.
+It refuses when `deck/theme/` already exists.
 
 :::warning
-A fork inherits nothing. If the built-in you started from gains a token or fixes a contrast bug, your copy never hears about it, and no check can tell the two files have drifted. Owning the file is the right default and this is its real cost.
+An ejected theme no longer receives updates from `@deckard/themes`. If the built-in you started from gains a token or fixes a contrast bug, your copy does not, and no check compares the two files.
 :::
 
 ## The SlideTheme object
@@ -97,7 +97,7 @@ export const theme = {
 
 ## The token contract
 
-`@deckard/core/styles.css` declares every `--slide-*` token with a neutral default, in the `base` layer. A theme redefines them on the canvas and wins, because it ships unlayered CSS. That is the whole contract: the runtime depends on the tokens, never on a preset, and a deck with no theme at all still renders in neutral sizes with no decoration.
+`@deckard/core/styles.css` declares every `--slide-*` token with a neutral default, in the `base` layer. A theme redefines them on the canvas and wins, because it ships unlayered CSS. The runtime depends on the tokens, never on a preset, so a deck with no theme still renders in neutral sizes with no decoration.
 
 The [token reference](/reference/tokens) lists all of them. The short version of what a theme sets:
 
@@ -143,8 +143,8 @@ Then:
 <Steps>
   <Step title="Rename the class and the id">
     Change `className` and `id` in `index.ts`, and the selector prefix
-    throughout `theme.css`. They do not have to match, but every built-in uses
-    `<id>-theme` as the class and it reads well in devtools.
+    throughout `theme.css`. They do not have to match; every built-in uses
+    `<id>-theme` as the class.
   </Step>
   <Step title="Set the tokens">
     Work top-down: the shadcn color variables first (`--background`, `--card`,
@@ -153,10 +153,9 @@ Then:
     one line.
   </Step>
   <Step title="Do both color modes">
-    Or declare only one in `colorModes` and pin the deck to it. What you cannot
-    do is claim two and ship one: `deckard validate` checks that the dark block
-    defines nothing the light block does not, and that `colorModes` matches the
-    blocks the stylesheet actually carries.
+    Or declare only one in `colorModes` and pin the deck to it. `deckard
+    validate` checks that the dark block defines nothing the light block does
+    not, and that `colorModes` matches the blocks the stylesheet carries.
   </Step>
   <Step title="Style the chrome">
     The header and footer are yours. Core renders `[data-slide-header]` and

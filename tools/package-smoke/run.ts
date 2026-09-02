@@ -19,9 +19,9 @@ const runtimeUtilities = ["min-h-16", "backdrop-blur-sm", "data-slide-chrome"]
 // <family>.OFL.txt.
 const faceVariant = /-(?:italic|\d{3})$/
 
-// The fixture deck imports one built-in theme and nothing else. Its stylesheet
-// has to reach the build with no wiring, and the other five have to stay out of
-// it, because the barrel re-exports all six from one module.
+// The fixture deck imports one built-in theme. Its stylesheet has to reach the
+// build with no wiring, and the other five have to stay out of it, because the
+// barrel re-exports all six from one module.
 const importedTheme = ".phosphor-theme"
 
 // phosphor self-hosts JetBrains Mono, so the fixture is also the proof that a

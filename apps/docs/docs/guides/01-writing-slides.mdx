@@ -24,12 +24,12 @@ The blocks install into `app/slides/blocks/` as source you own. Compose from the
 | `HeroSplitSlide` | `templates.tsx` | The opener with its facts in a side rail. |
 | `HeroCenteredSlide` | `templates.tsx` | The centered opener, with an optional pill badge. |
 | `BreakerSlide` | `templates.tsx` | A section divider, left aligned. |
-| `MinimalBreakerSlide` | `templates.tsx` | A rule and a title, centered. Nothing else. |
+| `MinimalBreakerSlide` | `templates.tsx` | A rule and a title, centered, with no index. |
 | `StatementSlide` | `templates.tsx` | One sentence at display size. |
 | `CodeSplitSlide` | `templates.tsx` | A block one side, numbered notes the other. |
 | `ContentSlideCard` | `templates.tsx` | Intro copy above a bordered panel. |
 | `OpenContentSlide` | `templates.tsx` | The same intro, no panel. |
-| `FocusSlide` | `templates.tsx` | One block and no heading at all. |
+| `FocusSlide` | `templates.tsx` | One block, no heading. |
 | `BulletList` | `collections.tsx` | Four to six numbered points. |
 | `ContentsList` | `collections.tsx` | An agenda: numeral, section, folio. |
 | `ColumnGrid` | `collections.tsx` | Parallel points as ruled, numbered columns. |
@@ -47,17 +47,17 @@ The blocks install into `app/slides/blocks/` as source you own. Compose from the
 | `FullscreenMediaSlide` | `media.tsx` | Image or video bleeding to every canvas edge. |
 | `Eyebrow`, `SlideHeading` | `typography.tsx` | Your own layout, with the deck's type rhythm. |
 
-Every one of them is left aligned and fills the padded frame, which is what the source templates do. `HeroCenteredSlide` and `MinimalBreakerSlide` are the two exceptions, and they are separate components rather than a `centered` prop.
+Every one of them is left aligned and fills the padded frame. `HeroCenteredSlide` and `MinimalBreakerSlide` are the two that centre.
 
 Counts are yours. `FeatureGrid` is three across, but `CardGrid`, `ColumnGrid`, `Timeline`, `ContentsList`, `MediaGallery`, and `DataTable` all take as many items as you give them. Two blocks say no in the type: `StatGrid` takes two to four, and `MediaPair` takes exactly two.
 
-`ContentSlideCard`, `OpenContentSlide`, and `FocusSlide` are three components rather than one with a `variant` prop, on purpose. Picking between them is picking what the slide is.
+Pick between `ContentSlideCard`, `OpenContentSlide`, and `FocusSlide` by what the content brings. Flat content takes the panel. Content with its own border takes the open frame. A single block that should fill the frame at the normal type scale takes `FocusSlide`.
 
 ### One surface per slide
 
 A slide is either a framed panel holding flat content, or an open frame holding content that brings its own border. Never a bordered panel full of bordered cards.
 
-Blocks that paint their own surface carry `data-slide-surface`. `ContentSlideCard`'s panel carries `data-slide-panel` and always paints its card, so putting a surfaced block inside one gives you a frame inside a frame plus a development console warning naming `OpenContentSlide` and `FocusSlide`. Nothing rewrites the slide for you.
+Blocks that paint their own surface carry `data-slide-surface`. `ContentSlideCard`'s panel carries `data-slide-panel` and always paints its card, so putting a surfaced block inside one gives you a frame inside a frame plus a development console warning naming `OpenContentSlide` and `FocusSlide`. Switch to one of those.
 
 If you write a block that paints a border or a background, put `data-slide-surface` on its outer element so a card wrapped around it says so.
 
@@ -79,7 +79,7 @@ export default async function PricingSlide() {
 ```
 
 :::note
-Extraction buys editing room, never loading speed. The discovery glob is eager, so both forms ship identical bundles. A deck that never adds a file loses nothing.
+Extraction buys editing room, not loading speed. The discovery glob is eager, so both forms ship identical bundles.
 :::
 
 ## Server components

@@ -8,7 +8,7 @@ sidebar:
 
 `@deckard/core/styles.css` declares every `--slide-*` token with a neutral default, inside `@layer base`. A theme redefines them on the canvas and wins, because it ships unlayered CSS and everything in the contract sits in the base layer.
 
-That is the whole arrangement. The runtime depends on these names and never on a preset, so a deck with no theme still renders: neutral sizes, app surfaces, no decoration.
+The runtime depends on these names and never on a preset, so a deck with no theme still renders: neutral sizes, app surfaces, no decoration.
 
 ```css app/globals.css
 @import "tailwindcss";

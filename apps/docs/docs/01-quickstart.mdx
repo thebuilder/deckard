@@ -33,7 +33,7 @@ sidebar:
 
   </Step>
   <Step title="Edit a slide">
-    Open `deck/slides.tsx`. Change the `title` of the first entry and save. That is the whole loop.
+    Open `deck/slides.tsx`. Change the `title` of the first entry and save. The open slide updates.
   </Step>
 </Steps>
 
@@ -100,7 +100,7 @@ node packages/cli/bin/deckard.mjs init ~/code/my-talk \
 
 The generated app is identical either way. When the packages publish, `npx @deckard/cli init` becomes the whole install and nothing in the app changes.
 
-The blocks are not affected by any of this. `init` ships them inside the CLI package and copies them in, because a brand-new app has no shadcn config yet. Adding a block later fetches from the registry the docs site serves. See [Blocks and the registry](/guides/blocks-and-the-registry).
+The blocks come in either way. `init` ships them inside the CLI package and copies them into `app/slides/blocks/`. Adding a block later fetches from the registry the docs site serves. See [Blocks and the registry](/guides/blocks-and-the-registry).
 
 ## Adding a deck to an app you already have
 

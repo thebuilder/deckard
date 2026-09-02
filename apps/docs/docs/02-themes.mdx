@@ -7,7 +7,7 @@ sidebar:
   order: 2
 ---
 
-Every preview below is a slide, not a picture of one. Each is a `[data-slide-canvas]` element carrying the theme class, with the header, body, footer, and progress bar the runtime renders, scaled down to fit the card. The stylesheet painting it is `packages/themes/src/<name>/theme.css`, the same file a deck loads, so a preview cannot drift from the theme it shows.
+Each preview below is a `[data-slide-canvas]` element carrying the theme class, with the header, body, footer, and progress bar the runtime renders, scaled down to fit the card. The stylesheet painting it is `packages/themes/src/<name>/theme.css`, the same file a deck loads.
 
 Switch a card between light and dark, or enlarge it to take the full row. Every one of them carries both color modes; `defaultColorMode` decides which one a browser opens on.
 
@@ -49,7 +49,7 @@ A bound report. Nothing is rounded and nothing is raised; rules carry the struct
 
 `defaultColorMode: "system"`, both modes.
 
-The quietest theme here, and that is the entire brief. A near-white blue-gray in light mode and a cool near-black in dark, flat surfaces with a hairline border and softly rounded corners, no shadow in either mode. A white card on a white sheet with no shadow asks a lot of its border. If a deck of yours reads flat rather than calm, that is the thing to put back.
+The quietest theme here. A near-white blue-gray in light mode and a cool near-black in dark, flat surfaces with a hairline border and softly rounded corners, no shadow in either mode. A white card on a white sheet with no shadow asks a lot of its border. If a deck of yours reads flat rather than calm, that is the thing to put back.
 
 <ThemePalette theme="meridian" />
 
@@ -57,7 +57,7 @@ The quietest theme here, and that is the entire brief. A near-white blue-gray in
 
 `defaultColorMode: "dark"`, both modes.
 
-A flight console. Dark is home. Every heading is capitalised with a hair of positive tracking, and `h1`, `h2`, and the `StatGrid` figure carry an accent halo through `--slide-halo`. The halo is `none` in light mode, because a glow on paper looks like a printing fault, and light mode reads as the printed version of the same document rather than as a second theme.
+A flight console. Dark is home. Every heading is capitalised with a hair of positive tracking, and `h1`, `h2`, and the `StatGrid` figure carry an accent halo through `--slide-halo`. The halo is `none` in light mode, so light mode reads as the printed version of the same document rather than as a second theme.
 
 <ThemePalette theme="nexus" />
 
@@ -71,4 +71,4 @@ A green CRT. One monospace family for every word on the slide, scanlines painted
 
 ## About the swatches
 
-Each palette above is read out of the theme's stylesheet when this page builds: the sheet, the card, the muted surface, the border, the accent, and the text. A theme is a hundred-odd declarations and its own `THEME.md` explaining them, so this is a small slice on purpose. The preview shows you what the theme looks like; the swatches tell you what to type when you want that green.
+Each palette above is read out of the theme's stylesheet when this page builds: the sheet, the card, the muted surface, the border, the accent, and the text. A theme is a hundred-odd declarations and its own `THEME.md` explaining them, so this is a small slice. The preview shows you what the theme looks like; the swatches tell you what to type when you want that green.
