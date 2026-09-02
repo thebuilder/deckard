@@ -2,5 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "cd ../.. && pnpm registry:build && pnpm turbo run build --filter=docs...",
   "framework": null,
-  "outputDirectory": "dist"
+  "outputDirectory": "dist",
+  "ignoreCommand": "npx --yes turbo-ignore docs --fallback=origin/main"
 }
