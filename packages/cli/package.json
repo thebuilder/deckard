@@ -35,7 +35,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@deckard/themes": "workspace:*",
     "pdf-lib": "^1.17.1",
     "playwright": "^1.62.1",
     "shadcn": "^4.19.1",
@@ -43,6 +42,7 @@
   },
   "devDependencies": {
     "@deckard/core": "workspace:*",
+    "@deckard/themes": "workspace:*",
     "@types/node": "^26.4.0",
     "typescript": "^7.0.2",
     "vitest": "^4.1.11"

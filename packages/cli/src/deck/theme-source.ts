@@ -1,7 +1,7 @@
 import fs from "node:fs"
 import path from "node:path"
 
-import { type BuiltInThemeId, themeIds } from "@deckard/themes/ids"
+import type { BuiltInThemeId } from "@deckard/themes/ids"
 
 import { projectPath, resolveFromProject } from "../project.ts"
 import {
@@ -10,9 +10,20 @@ import {
   type ThemeImportKind,
 } from "./deck-source.ts"
 
-// The names come from @deckard/themes, off the subpath that carries no
-// stylesheet, so the CLI never lists a theme the package stopped shipping.
-export const builtInThemes = themeIds
+// @deckard/themes/ids is where these names are decided. They are written out
+// again here, and only here, because the CLI installs on its own: nothing it
+// ships imports the theme package at runtime. The type below is the real one,
+// so dropping a theme from the package stops this compiling, and
+// theme-source.test.ts fails on a theme the package added that this list has
+// not caught up with.
+export const builtInThemes = [
+  "broadsheet",
+  "deckard",
+  "ledger",
+  "meridian",
+  "nexus",
+  "phosphor",
+] as const satisfies readonly BuiltInThemeId[]
 
 export type BuiltInTheme = BuiltInThemeId
 
