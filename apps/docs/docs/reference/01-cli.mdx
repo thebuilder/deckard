@@ -155,11 +155,9 @@ deckard contact-sheet --columns 5
 | --- | --- | --- |
 | `--columns <n>` | positive integer | `4` |
 
-Reads `out/screenshots/manifest.json` and composes `out/contact-sheet.png`. It builds and serves nothing, so run `deckard screenshots` first.
+Reads `out/screenshots/manifest.json` and composes `out/contact-sheet.png`. It builds and serves nothing, so run `deckard screenshots` first, and the sheet comes out in whichever color mode those were captured in.
 
-:::note
-`contact-sheet` also accepts `--light`, but never reads it: the color mode comes from the manifest. It does not accept `--port` or `--skip-build`, despite what the built-in help text implies about "the four checks above".
-:::
+`--port`, `--skip-build` and `--light` belong to the commands that build and serve. This one takes none of them and rejects them by name.
 
 ## deckard export pdf
 
