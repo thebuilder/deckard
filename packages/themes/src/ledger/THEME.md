@@ -17,10 +17,9 @@ warm ink in dark mode, and rules carry the structure that a shadow would carry
 in a product theme. `--slide-radius` and `--slide-radius-lg` are both `0rem`,
 and `--slide-surface-shadow` is `none`. A content card here is a ruled panel.
 
-The split between families is the point. Headings are serif, body copy is sans,
-and small labels are mono. That is three families on one slide, which usually
-goes wrong, and it works because each one owns exactly one job: the serif says
-what the section is, the sans argues it, the mono numbers it.
+Headings are serif, body copy is sans, and small labels are mono. Each family
+owns one job: the serif says what the section is, the sans argues it, the mono
+numbers it.
 
 The accent is oxblood on paper and a warmer rust after dark. It appears on
 eyebrows, folio numbers, the primary button, focus rings, and the margin rule in
@@ -56,9 +55,7 @@ latin-ext sits behind its own `unicode-range` and is only fetched by a deck that
 sets a character in it.
 
 Every size below is set against the 1920x1080 canvas at a 16px root, so 1rem is
-16 canvas pixels and the scale reads the way it does on a projector rather than
-the way it does in a browser window. The px column is what the source template
-declares.
+16 canvas pixels. The px column is what the source template declares.
 
 | Token                      | Size              | Used by                               |
 | -------------------------- | ----------------- | ------------------------------------- |
@@ -73,10 +70,9 @@ declares.
 | `--slide-figure-size`      | `8.75rem`, 140px  | the figure in a metrics block         |
 | `--slide-figure-unit-size` | `3.5rem`, 56px    | the unit suffix beside that figure    |
 
-A metrics figure is display type without being a heading, so it takes
-`--slide-figure-size` instead of borrowing the title size. The contract also
-carries `--slide-meter-size`, the height of the proportion bar under that
-figure, and this theme takes the default.
+A metrics figure takes `--slide-figure-size` instead of borrowing the title
+size. The contract also carries `--slide-meter-size`, the height of the
+proportion bar under that figure, and this theme takes the default.
 
 The scale drops hard between title and heading, 124px to 78px, because the
 design opens a chapter at half again the size of the slide it introduces. Keep
@@ -84,10 +80,10 @@ that gap if you retune. Closing it makes every slide look like a cover.
 
 Headings carry `-0.012em` of tracking and weight 600, and so does
 `[data-stat-value]`, the figure the metrics block renders. That figure is
-display type inside a description list rather than a heading element, so it
-needs the selector to reach it. `--slide-label-tracking`
-is `0.18em`, which suits the mono labels this theme leans on. Mono capitals
-already sit wide, so the `0.3em` of the default theme reads as broken.
+display type inside a description list rather than a heading element, so it needs
+the selector to reach it. `--slide-label-tracking` is `0.18em`, which suits the
+mono labels this theme leans on. Mono capitals already sit wide, so the `0.3em`
+of the default theme reads as broken.
 
 `--slide-support-size` is `1.75rem`, 28px on the canvas. Captions here are mono,
 and mono a step under that stops resolving from the back of a room.
@@ -110,16 +106,16 @@ off the edge of the frame.
 `--slide-content-gap` is `2.75rem`, the vertical rhythm between the intro block
 and the body of a slide. `--slide-item-gap` is `1.625rem`, the smaller gap
 between rows inside one block: bullets in a list, cards in a grid. Both radius
-tokens are zero on purpose. Raising one without the other leaves media frames
-rounded against square content cards.
+tokens are zero. Raising one without the other leaves media frames rounded
+against square content cards.
 
 ## Background variants
 
 `SlideBackground` renders one empty `div` with `data-slide-background` and no
 styling of its own. This file decides what each variant paints, using the canvas
 variables `--canvas-width` and `--canvas-height` for anything sized against the
-slide. No variant paints a wash or a corner glow. None of the source templates
-has one, and on a pale sheet a bloom behind the copy reads as a stain.
+slide. On a pale sheet a bloom behind the copy reads as a stain, so no variant
+paints a wash or a corner glow.
 
 - `default` is bare paper under the 2px rule that closes every page in the
   source design. The rule is inset 20% of the canvas width from each side, so it
@@ -127,7 +123,6 @@ has one, and on a pale sheet a bloom behind the copy reads as a stain.
   canvas height up from the floor, clear of the footer.
 - `grid` is ledger paper. One horizontal rule every `--slide-grid-size`, `2.5rem`
   here, plus one accent margin rule down the left at 11% of the canvas width.
-  That rule is the whole reason this variant exists.
 - `spotlight` is the plate a printed report reserves a figure with: the 135
   degree hatch of `--slide-hatch`, under the same closing rule as `default`.
 - `accent` is the inverted statement slide. The canvas floods with the theme
@@ -138,9 +133,9 @@ The colors come from `--slide-grid-color`, `--slide-grid-size`, `--slide-rule`,
 `--slide-hatch`, and `--slide-margin-rule`.
 
 `accent` is painted by two unlayered rules at the bottom of this file. A
-base-layer fallback ships in `@deckard/core/styles.css`, but a theme's unlayered
-CSS always wins over the base layer, which is why every theme in the registry
-restates the pair. The field colour is read on the canvas, where `--background`
+base-layer fallback ships in `@deckard/core/styles.css`, and a theme's unlayered
+CSS always wins over the base layer, so every theme in the registry restates the
+pair. The field colour is read on the canvas, where `--background`
 is remapped to `--primary`. The ink is remapped one level down, on
 `[data-slide-frame]`, `[data-slide-header]`, and `[data-slide-footer]`, because
 a custom property resolves against the element that uses it: moving `--primary`
@@ -157,9 +152,9 @@ depends on, so a block is free to change its markup and its class names as long
 as the attributes stay where they are. The full list is in the "Block part
 contract" comment at the bottom of `@deckard/core/styles.css`.
 
-What does not belong in a theme is anything that is new content rather than a
-treatment of existing content. A boot log, a status table, a cursor line with
-words in it are all slide copy, so they go in a block the deck composes.
+A theme treats existing content and never adds new content. A boot log, a status
+table, a cursor line with words in it are all slide copy, so they go in a block
+the deck composes.
 
 Ledger reaches five parts.
 
@@ -181,14 +176,13 @@ a UI label.
 above reach it by name, because the metrics figure sits inside a description
 list rather than in a heading element.
 
-The catalogue layouts added since then reach six more.
+Six more come from the catalogue layouts.
 
 `[data-slide-contents-index]` uses the same `font-size: 0` swap as the list
 marker, but for a counter rather than a rule. `[data-slide-contents]` resets
 `ledger-contents`, and the `::before` increments it and prints
 `counter(ledger-contents, upper-roman)`, so a contents list numbered 01, 02, 03
-in the block reads I, II, III on the sheet. That is a treatment of a number the
-block already put there, not a number the theme invented.
+in the block reads I, II, III on the sheet.
 
 `[data-slide-rail-term]`, `[data-slide-statement-source]`,
 `[data-slide-table-heading]`, `[data-slide-column-label]`,
@@ -197,27 +191,25 @@ block already put there, not a number the theme invented.
 
 `[data-slide-quote-text]` is set in the heading face, italic, with an opening
 quotation mark hung `-0.45em` into the margin. The block writes no quotation
-marks of its own, so a theme that does not want them is not fighting one.
+marks of its own.
 
 `[data-slide-timeline-marker]` is a 1px rule and 2px when it carries
-`[data-slide-timeline-done]`, because this theme has no pills. Same for
-`[data-slide-accent-rule]`, which is a `9rem` by 2px rule rather than a bar.
+`[data-slide-timeline-done]`; this theme draws rules rather than pills. Same for
+`[data-slide-accent-rule]`, a `9rem` by 2px rule rather than a bar.
 
 `[data-slide-contents-folio]` and `[data-slide-note-index]` take the mono face,
-which is where every number in this deck belongs.
+which is where this theme sets numbers.
 
 ## Theme-private tokens
 
-`--slide-rule` and `--slide-halo` are no longer private. They were promoted into
-the contract in `@deckard/core/styles.css`, alongside `--slide-scanline` and the
-new `--slide-hatch`, because flat, ruled, scanned, and hatched are the four
-things the source designs do to a background and every theme was declaring the
-same names. `--slide-hatch` is the 135 degree fill the templates put behind a
-reserved plate, drawn here in this theme's own `--slide-grid-color` so it stays
-quiet under body copy.
+`--slide-rule`, `--slide-halo`, `--slide-scanline`, and `--slide-hatch` are part
+of the contract in `@deckard/core/styles.css` rather than private to this theme.
+`--slide-hatch` is the 135 degree fill the templates put behind a reserved
+plate, drawn here in this theme's own `--slide-grid-color` so it stays quiet
+under body copy.
 
-One private token is left. `--slide-margin-rule` is the accent line down the
-left of the `grid` variant. It is defined in the light block and overridden in
+This theme has one private token. `--slide-margin-rule` is the accent line down
+the left of the `grid` variant. It is defined in the light block and overridden in
 dark, like every other token here. Nothing outside this file reads it, so
 renaming it is safe as long as you rename every use.
 
@@ -237,9 +229,8 @@ heavy 2px rule this theme uses everywhere, the slide title in the italic of the
 heading face, and the date on the right in mono capitals. The foot centers the
 page numbers in mono, where a printed page carries them, under a lighter rule.
 
-There is no progress bar: `--slide-progress-fill` is `transparent`, because a
-page does not tell you how far into the book you are. Set it to `--primary` if
-your talk wants one.
+`--slide-progress-fill` is `transparent`, so there is no progress bar. Set it to
+`--primary` if your talk wants one.
 
 ## Safe to change
 

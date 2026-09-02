@@ -1,6 +1,6 @@
 ---
 title: Exporting
-description: PDF handouts, per-slide screenshots, and the contact sheet. All three run the deck in a real browser at canvas scale.
+description: PDF handouts, per-slide screenshots, and the contact sheet. All three run the deck in a browser at canvas scale.
 sidebar:
   icon: image-down
 ---
@@ -14,7 +14,7 @@ pnpm exec playwright install chromium
 deckard export pdf
 ```
 
-One page per slide at the deck's canvas size, captured from the canvas element. `1920x1080` becomes `1440x810pt`, which is the same thing at 96dpi. The page size comes from the `canvas` config in `deck/deck.ts`, so the export cannot drift from what the audience saw.
+One page per slide at the deck's canvas size, captured from the canvas element. `1920x1080` becomes `1440x810pt`, which is the same thing at 96dpi. The page size comes from the `canvas` config in `deck/deck.ts`, the same config the deck renders with.
 
 Output lands at `out/slides.pdf` in the deck's own directory.
 
@@ -24,7 +24,7 @@ Output lands at `out/slides.pdf` in the deck's own directory.
 | `--skip-build` | off | Reuse whatever is in `.next`. |
 | `--port <n>` | `3410`, or `PDF_EXPORT_PORT` | Move the temporary server off a busy port. |
 
-The light default is deliberate: a handout gets printed.
+Pass `--dark` when the PDF is for a screen rather than for print.
 
 In export mode the build runs with `NEXT_PUBLIC_PDF_EXPORT=1`, which:
 
@@ -35,7 +35,7 @@ In export mode the build runs with `NEXT_PUBLIC_PDF_EXPORT=1`, which:
 Set `PDF_EXPORT_OUTPUT` to write somewhere other than `out/slides.pdf`. It resolves against the deck directory.
 
 :::note
-The export uses its own build profile, separate from the one the screenshot and overflow commands share, because it needs the export environment variables compiled in. Expect a build the first time even if you just ran `deckard screenshots`.
+The export uses its own build profile, separate from the one the screenshot and overflow commands share, because it needs the export environment variables compiled in. Expect a build the first time even after running `deckard screenshots`.
 :::
 
 ## Screenshots
@@ -69,7 +69,7 @@ Composes the existing screenshots into `out/contact-sheet.png`, a labelled grid 
 
 `--columns <n>` sets the grid width and defaults to `4`.
 
-This is the check that catches what no linter can. Three slides in a row that all end above the halfway line, or the same numbered list twice back to back, are invisible one slide at a time and obvious in a grid.
+Three slides in a row that all end above the halfway line, or the same numbered list twice back to back, are invisible one slide at a time and obvious in a grid.
 
 ## Build reuse
 

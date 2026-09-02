@@ -102,7 +102,7 @@ Set `stepCount` on the slide and wrap each phase in `SlideStep`:
 `step` is zero-based. A step is visible once the current step reaches it, so step `0` shows immediately.
 
 :::note
-Hidden steps stay in the layout, so a stepped slide takes its full height from the first step. That is deliberate, since content that reflows as it reveals is worse than content that fades in, but it does mean [`check-overflow`](/reference/cli#deckard-check-overflow) measures the fully revealed slide.
+Hidden steps stay in the layout, so a stepped slide takes its full height from the first step and nothing reflows as it reveals. [`check-overflow`](/reference/cli#deckard-check-overflow) therefore measures the fully revealed slide.
 :::
 
 | Prop | Default | What it does |

@@ -15,8 +15,8 @@ apply there, against their own `deck/` directory.
   builds it before an app builds, and `pnpm dev` runs its `tsc --watch`
   alongside the app.
 - `apps/playground` is the reference deck and the app every visual check runs
-  against. It exercises every feature on purpose, so it is a test surface, not a
-  template and not anyone's presentation.
+  against. It exercises every feature, so it is a test surface rather than a
+  template.
 - `apps/demo` is a 19-slide talk shaped like a consumer project, and the proof
   that the framework works outside the playground. `docs/MIGRATION-NOTES.md`
   records what that migration surfaced.
@@ -136,7 +136,7 @@ is what generates it, so a change to that shape belongs in
 - The slide route is static. Nothing in it may read the request: `presenterPreview` and `step` are read on the client, so the whole deck prerenders.
 - Nothing heavy or async belongs in the components barrel. `CodeBlock` sits behind its own entry point because shiki loads WebAssembly, and a discovered slide module that reaches it through the barrel would throw.
 - Adding a dependency to the runtime means adding it to `packages/core/package.json`, not the app's. `pnpm smoke:package` catches the ones that only work because the workspace hoisted them.
-- Each of the three packages has a `prepack` that builds itself and nothing else: `tsc` for core, `tsc` plus the asset copy for themes, the template sync for the CLI. A package cannot build its dependencies, so ordering the three is `pnpm release:pack`'s job. That command cleans every `dist`, the CLI template, and the build info beside them, builds the three through turbo with `--force`, packs them into `dist-tarballs/`, checks each tarball carries what an installer needs, and runs the CLI smoke against those exact files. It is the release path, so it is the one CI runs.
+- Each of the three packages has a `prepack` that builds only itself: `tsc` for core, `tsc` plus the asset copy for themes, the template sync for the CLI. A package cannot build its dependencies, so ordering the three is `pnpm release:pack`'s job. That command cleans every `dist`, the CLI template, and the build info beside them, builds the three through turbo with `--force`, packs them into `dist-tarballs/`, checks each tarball carries what an installer needs, and runs the CLI smoke against those exact files. It is the release path, so it is the one CI runs.
 
 ## Change discipline
 

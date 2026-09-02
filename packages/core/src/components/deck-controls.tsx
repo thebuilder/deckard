@@ -35,7 +35,7 @@ const touchQuery = "(any-pointer: coarse)"
 const finePointerQuery = "(any-pointer: fine)"
 const hoverQuery = "(hover: hover)"
 
-// Module scope on purpose: the cluster remounts on every slide navigation.
+// Kept at module scope because the cluster remounts on every slide navigation.
 // Without the last pointer position a reveal earned by proximity would drop
 // until the hand moves again, and without the last reveal state the cluster
 // would mount hidden and blink back in one frame later.

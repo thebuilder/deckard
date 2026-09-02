@@ -28,7 +28,7 @@ const scripts = [
     when: "Before calling it done",
   },
   {
-    body: "Reuses the same harness with the chrome hidden and writes one page per slide at canvas size, so the handout cannot drift from the talk.",
+    body: "Reuses the same harness with the chrome hidden and writes one page per slide at canvas size, so the handout is the canvas the talk renders.",
     name: "export:pdf",
     when: "When someone asks for it",
   },

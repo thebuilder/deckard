@@ -8,7 +8,7 @@ sidebar:
 
 `@deckard/core/styles.css` declares every `--slide-*` token with a neutral default, inside `@layer base`. A theme redefines them on the canvas and wins, because it ships unlayered CSS and everything in the contract sits in the base layer.
 
-That is the whole arrangement. The runtime depends on these names and never on a preset, so a deck with no theme still renders: neutral sizes, app surfaces, no decoration.
+The runtime depends on these names and never on a preset, so a deck with no theme still renders: neutral sizes, app surfaces, no decoration.
 
 ```css app/globals.css
 @import "tailwindcss";
@@ -32,7 +32,7 @@ That is the whole arrangement. The runtime depends on these names and never on a
 | `--slide-label-size` | `1.5rem` | Eyebrows and other uppercase labels |
 | `--slide-label-tracking` | `0.25em` | Letter spacing on those labels |
 
-Every size is set against the 1920x1080 canvas at a 16px root, so `1rem` is 16 canvas pixels and the scale reads the way it does on a projector rather than the way it does in a browser window. A 6rem title is 96 canvas pixels, which is about a fifth of the canvas height.
+Every size is set against the 1920x1080 canvas at a 16px root, so `1rem` is 16 canvas pixels. A 6rem title is 96 canvas pixels, about a fifth of the canvas height.
 
 Line height rides along as a unitless multiplier in the blocks, so changing a size token keeps its leading proportional. Never pair a size token with a fixed `leading-7`.
 
@@ -81,7 +81,7 @@ The frame those gutters leave is the whole slide, left aligned and uncapped: con
 | `--slide-hatch` | `none` | A diagonal fill, which the `spotlight` variant uses |
 | `--slide-halo` | `none` | The `text-shadow` a theme puts behind display type |
 
-There is no radial wash, veil, glow or spotlight token. A theme has four textures to work with, flat colour, a rule, a grid, and a hatch, because a radial gradient reads as a smudge on a projector and as grey on paper.
+A theme has four textures to work with: flat colour, a rule, a grid, and a hatch. A radial gradient reads as a smudge on a projector and as grey on paper.
 
 ## Media
 

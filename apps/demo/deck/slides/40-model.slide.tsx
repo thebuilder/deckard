@@ -41,7 +41,7 @@ export default function SlideModelSlide() {
           },
           {
             description:
-              "A plain string that reaches the presenter window and nothing else. It is the only field the audience never sees.",
+              "A plain string that reaches the presenter window. It is the only field the audience never sees.",
             title: "notes",
           },
           {
