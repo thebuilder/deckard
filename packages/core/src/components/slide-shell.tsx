@@ -65,9 +65,11 @@ function resolveChrome({
 
 // Canvas coordinates, not browser viewport coordinates. Every value below is a slice of the 1080px-tall canvas.
 // How much the chrome takes is the theme's call, through --slide-header-space and --slide-footer-space.
+// The frame is the whole canvas inside the margins: no measure cap and no centring, so a slide starts at
+// the left margin and runs to the right one. Content that wants to be centred centres itself in its block.
 const canvasFrames = {
   default: {
-    base: "mx-auto max-w-6xl px-[var(--slide-padding-inline)]",
+    base: "w-full px-[var(--slide-padding-inline)] text-left",
     footer: {
       off: "pb-[var(--slide-padding-block)]",
       on: "pb-[var(--slide-footer-space)]",

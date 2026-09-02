@@ -135,4 +135,4 @@ Both pad against `--slide-chrome-top` and `--slide-chrome-bottom`, so the deck h
 
 `FeatureGrid` renders three columns. Four items give you three on one row and one alone on the next; write a local 2x2 grid instead, which is ten minutes and the right answer for one deck.
 
-`StatGrid` takes exactly three stats, typed as a tuple, so a fourth is a compile error. A fourth figure does not fit at the title size and two leave a hole. Its caption is capped at a 24-character measure, sized for "up from 2.6k" and not for a sentence. A number on a slide without the thing it is measured against is decoration.
+`StatGrid` takes two to four stats, typed as a union of tuples, so a fifth is a compile error: at five, figures stop being figures and start being a table. Each one takes an optional `unit` suffix and an optional `meter`, a proportion from 0 to 1 that draws a bar under the figure. Leave the meter out unless you can say what it is a proportion of. Captions are capped at a 26-character measure, sized for "up from 2.6k" and not for a sentence, because a number on a slide without the thing it is measured against is decoration.

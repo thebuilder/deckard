@@ -33,60 +33,131 @@ Serif headings and serif body, from a system stack. `ui-serif` picks up New York
 on Apple platforms and falls back to Georgia elsewhere. No web font loads, so
 this theme adds nothing to the page weight and works offline.
 
-Headings carry `-0.015em` of tracking. Serif display faces set loose at 5rem,
+Headings carry `-0.015em` of tracking. Serif display faces set loose at 120px,
 and pulling them in is what keeps a title from looking like body copy scaled up.
-Code and `kbd` reset tracking to zero, since the mono face is already even.
+Headings keep the browser's bold rather than the 600 ledger drops to, because
+the whole deck is serif and a heading has to separate itself from serif copy by
+weight as well as by size. Code and `kbd` reset tracking to zero, since the mono
+face is already even.
 
-| Token                     | Used by                                  |
-| ------------------------- | ---------------------------------------- |
-| `--slide-title-size`      | hero and breaker headlines               |
-| `--slide-heading-size`    | the `h1` on a content slide              |
-| `--slide-subheading-size` | an `h2` inside a slide body              |
-| `--slide-lead-size`       | the sentence under a headline            |
-| `--slide-body-size`       | bullet copy, the main text of a slide    |
-| `--slide-code-size`       | the type inside a `CodeBlock`            |
-| `--slide-support-size`    | captions, grid copy, metadata rows       |
-| `--slide-label-size`      | eyebrows and other uppercase labels      |
+Every size below is set against the 1920x1080 canvas at a 16px root, so 1rem is
+16 canvas pixels and the scale reads the way it does on a projector rather than
+the way it does in a browser window.
 
-The scale runs one step larger than the default theme at the top and one step
-smaller at the bottom. Serif copy at 1.7rem reads at the back of a room, and
-serif captions below 0.9rem stop resolving on a projector.
+| Token                      | Size              | Used by                               |
+| -------------------------- | ----------------- | ------------------------------------- |
+| `--slide-title-size`       | `7.5rem`, 120px   | hero and breaker headlines            |
+| `--slide-heading-size`     | `4.75rem`, 76px   | the `h1` on a content slide           |
+| `--slide-subheading-size`  | `2.75rem`, 44px   | an `h2` inside a slide body           |
+| `--slide-lead-size`        | `2.75rem`, 44px   | the sentence under a headline         |
+| `--slide-body-size`        | `2.0625rem`, 33px | bullet copy, the main text of a slide |
+| `--slide-code-size`        | `1.875rem`, 30px  | the type inside a `CodeBlock`         |
+| `--slide-support-size`     | `1.75rem`, 28px   | captions, grid copy, metadata rows    |
+| `--slide-label-size`       | `1.5rem`, 24px    | eyebrows and other uppercase labels   |
+| `--slide-figure-size`      | `8.5rem`, 136px   | the figure in a metrics block         |
+| `--slide-figure-unit-size` | `3.5rem`, 56px    | the unit suffix beside that figure    |
 
-`--slide-label-tracking` is `0.22em`, tighter than the default. Serif capitals
-have more width built in than sans capitals, so the same tracking value reads as
-too loose here.
+A metrics figure is display type without being a heading, so it takes
+`--slide-figure-size` instead of borrowing the title size. The contract also
+carries `--slide-meter-size`, the height of the proportion bar under that
+figure, and this theme takes the default.
+
+Broadsheet has no source template of its own, so the scale was set against
+ledger's and pulled back a notch at the top, 120px against 124px for a title and
+76px against 78px. Serif body at the same size already carries more weight than
+ledger's sans, so the deck reads as heavy at slightly less size.
+
+`--slide-label-tracking` is `0.22em`, tighter than the default theme's `0.3em`.
+Serif capitals have more width built in than sans capitals, so the same tracking
+value reads as too loose here.
+
+`--slide-chrome-size` is `1.5rem`, the same 24px as `--slide-label-size`. The
+contract defaults it to `var(--slide-label-size)` so a theme that retunes its
+labels moves the header and the footer with them; this file pins the number
+outright instead.
 
 ## Spacing
 
-`--slide-padding-inline` is `2.5rem` and `--slide-padding-block` is `3rem`, both
-wider than the default theme. Print margins are generous, and the flat surfaces
-have no shadow to hold them off the edge.
+The frame is the whole canvas inside its margins. There is no measure cap and no
+centred column, so a slide starts at the left margin and runs to the right one,
+and anything that wants to sit in the middle centres itself inside its own
+block. `--slide-padding-inline` is `8rem`, 128px, and `--slide-padding-block` is
+`6.5rem`, 104px. Print margins are generous, and the flat surfaces have no
+shadow to hold them off the edge.
 
-`--slide-content-gap` is the vertical rhythm between the intro block and the
-body of a slide. `--slide-radius` and `--slide-radius-lg` are both near zero on
-purpose. Do not raise one without the other, or media frames and content cards
-stop matching.
+`--slide-content-gap` is `2.75rem`, the vertical rhythm between the intro block
+and the body of a slide. `--slide-item-gap` is `1.625rem`, the smaller gap
+between rows inside one block: bullets in a list, cards in a grid.
+`--slide-radius` and `--slide-radius-lg` are both near zero on purpose. Do not
+raise one without the other, or media frames and content cards stop matching.
 
 ## Background variants
 
 `SlideBackground` renders one empty `div` with `data-slide-background` and no
 styling of its own. This file decides what each variant paints, using the canvas
 variables `--canvas-width` and `--canvas-height` for anything sized against the
-slide.
+slide. No variant paints a wash or a corner glow. None of the source templates
+has one, and on a pale sheet a bloom behind the copy reads as a stain.
 
-- `default` paints a warm wash down from the top edge, a soft ellipse behind the
-  headline, and a low glow along the bottom.
-- `grid` paints horizontal rules every `--slide-grid-size`, like ruled paper,
-  and fades them into the background at the top and bottom edges. There are no
-  vertical rules. A square grid fights serif copy.
+- `default` is bare stock with one 1px rule across the head, where a paper
+  carries its folio. The rule sits 5.5% of the canvas height down from the top
+  and is inset 5.5% of the canvas width from each side.
+- `grid` paints one horizontal rule every `--slide-grid-size`, `2.75rem` here,
+  like ruled paper. There are no vertical rules. A square grid fights serif copy.
 - `spotlight` paints two vertical column rules at the thirds, the way a
-  broadsheet splits a page, plus a center ellipse and a bottom fade.
+  broadsheet splits a page.
+- `accent` is the inverted statement slide. The canvas floods with the theme
+  accent and the ink flips, the way a paper sets a standfirst it wants read
+  first.
 - `none` renders nothing at all. `SlideBackground` returns `null`.
 
-The colors come from `--slide-wash`, `--slide-veil`, `--slide-glow`,
-`--slide-grid-color`, `--slide-grid-size`, and `--slide-spotlight`. Dark mode
-carries them at higher alpha, because a wash that reads on paper disappears on a
-dark sheet.
+The colors come from `--slide-grid-color`, `--slide-grid-size`, and
+`--slide-rule`. Dark mode redeclares both colors as light ink, because the same
+dark line disappears on a dark sheet.
+
+Nothing in this file is private any more. `--slide-rule` was a theme-private
+token and is now part of the contract in `@deckard/core/styles.css`, alongside
+`--slide-halo`, `--slide-scanline`, and the new `--slide-hatch`. Flat, ruled,
+scanned, and hatched are the four things the source designs do to a background,
+and every theme was declaring the same names for them. This theme sets
+`--slide-hatch`, the 135 degree fill the templates put behind a reserved plate,
+in its own `--slide-grid-color` so it stays quiet under body copy, and no
+variant here draws it yet.
+
+`accent` is painted by two unlayered rules at the bottom of this file. A
+base-layer fallback ships in `@deckard/core/styles.css`, but a theme's unlayered
+CSS always wins over the base layer, which is why every theme in the registry
+restates the pair. The field colour is read on the canvas, where `--background`
+is remapped to `--primary`. The ink is remapped one level down, on
+`[data-slide-frame]`, `[data-slide-header]`, and `[data-slide-footer]`, because
+a custom property resolves against the element that uses it: moving `--primary`
+on the same element that reads `var(--primary)` for the field would flood the
+slide with its own ink.
+
+## Block parts
+
+The contract has two halves. Tokens are values, a size or a colour or a
+gradient. Data attributes are parts: a block names the piece of itself a theme
+may reach, and the theme styles that attribute, decorative `::before` and
+`::after` content included. Between them they are the whole surface a theme
+depends on, so a block is free to change its markup and its class names as long
+as the attributes stay where they are. The full list is in the "Block part
+contract" comment at the bottom of `@deckard/core/styles.css`.
+
+What does not belong in a theme is anything that is new content rather than a
+treatment of existing content. A boot log, a status table, a cursor line with
+words in it are all slide copy, so they go in a block the deck composes.
+
+Broadsheet reaches three parts.
+
+`[data-slide-breaker-index]`, the section number a divider carries, is set in
+the heading face at `calc(var(--slide-title-size) * 1.5)`, so a chapter opens on
+a numeral larger than any headline in the deck.
+
+`[data-slide-list-marker]` and `[data-slide-hero-meta]`, the number in front of
+a bullet and the credit row along the bottom of an opener, run in small caps
+with oldstyle numerals and `text-transform` cleared. Lining figures in a serif
+list read as a table of contents; oldstyle ones sit down into the copy.
 
 ## Deck chrome
 

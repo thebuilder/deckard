@@ -103,9 +103,18 @@ The [token reference](/reference/tokens) lists all of them. The short version of
 
 - **Type**: three font families and nine size and tracking tokens.
 - **Surfaces**: two radii, a surface color, a muted surface, a border, a shadow.
-- **Backgrounds**: `--slide-wash`, `--slide-veil`, `--slide-glow`, `--slide-spotlight`, and the grid color and size, which the four `background` variants paint with.
+- **Backgrounds**: a grid color and pitch, a rule color, and the `--slide-scanline`, `--slide-hatch` and `--slide-halo` effects, which the five `background` variants paint with.
 - **Chrome**: eight tokens for the header and footer, plus `--slide-header-space` and `--slide-footer-space` for how much canvas the chrome gets.
 - **Media**: a foreground pair and three overlay gradients for text over photography.
+- **Figures**: `--slide-figure-size`, its unit size, and the height of a `StatGrid` meter.
+
+## The other half of the contract
+
+Tokens are values. Data attributes are parts, and they are the rest of the contract.
+
+Every part of a block a theme might want to reach carries one, from `data-slide-eyebrow` and `data-slide-list-marker` to `data-stat-meter`. A theme styles those attributes, decorative `::before` and `::after` content included, which is how phosphor writes `[x]` where a list number goes and ledger hangs a rule there instead, neither of them editing the block. The [full list](/reference/tokens) is also the "Block part contract" comment at the bottom of `@deckard/core/styles.css`, and a block may rewrite its markup and its class names freely as long as those attributes stay put.
+
+A theme styles parts. It does not add content. A boot log, a status table, a cursor line with words in it are slide content, so they belong in a block the deck composes, however much they look like decoration.
 
 ## Background variants
 
@@ -114,11 +123,16 @@ A slide picks one with `background`:
 | Value | What the theme paints |
 | --- | --- |
 | `"default"` | The theme's standard slide background. |
-| `"spotlight"` | A focused wash, usually behind an opener. |
+| `"spotlight"` | A second texture, usually a hatch, behind an opener. |
 | `"grid"` | A ruled or dotted field. |
+| `"accent"` | The inverted statement slide. |
 | `"none"` | Nothing painted. |
 
-`SlideBackground` renders one empty element carrying `data-slide-background`. What each variant paints lives entirely in `theme.css`, so changing the look is a theme edit. Read the theme's `THEME.md` first, and run `deckard eject theme` if it is still an import.
+`SlideBackground` renders one empty element carrying `data-slide-background`, and the canvas carries the variant name too, so a theme can restyle the chrome along with the sheet. What each variant paints lives entirely in `theme.css`, so changing the look is a theme edit. Read the theme's `THEME.md` first, and run `deckard eject theme` if it is still an import.
+
+`"accent"` floods the canvas with the theme accent and flips the ink, chrome included. Use it once or twice in a deck, for the one sentence that has to land, and never on two slides in a row.
+
+No variant paints a radial wash or a corner glow. The four textures a theme has are flat colour, a rule, a grid, and a diagonal hatch.
 
 ## Writing your own
 

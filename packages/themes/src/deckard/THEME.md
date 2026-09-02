@@ -22,47 +22,79 @@ on a white sheet has nothing else to separate it.
 
 The accent is teal in both modes, at the lightness each mode can carry: a deep
 teal on paper, a bright cyan-teal on the dark sheet. It appears on eyebrows, the
-primary button, focus rings, and the background washes. One accent, used in few
-places, is the whole palette.
+primary button, focus rings, the progress bar, and the whole field of the
+`accent` background. One accent, used in few places, is the whole palette.
 
-The washes carry a supporting blue alongside it. `--slide-wash` and
-`--slide-glow` sit on the accent hue, while `--slide-veil` and
-`--slide-spotlight` fall back toward blue so the layers separate without
-introducing a second color.
+The decoration carries a supporting blue alongside it. `--slide-grid-color` and
+`--slide-rule` both sit near hue 220 rather than on the teal, so a grid or a
+hairline separates from the sheet without introducing a second colour.
 
 ## Typography
 
 Geist for everything. The hierarchy is size, not family.
 
-| Token                      | Used by                                  |
-| -------------------------- | ---------------------------------------- |
-| `--slide-title-size`       | hero and breaker headlines               |
-| `--slide-heading-size`     | the `h1` on a content slide              |
-| `--slide-subheading-size`  | an `h2` inside a slide body              |
-| `--slide-lead-size`        | the sentence under a headline            |
-| `--slide-body-size`        | bullet copy, the main text of a slide    |
-| `--slide-code-size`        | the type inside a `CodeBlock`            |
-| `--slide-support-size`     | captions, grid copy, metadata rows       |
-| `--slide-label-size`       | eyebrows and other uppercase labels      |
+| Token                      | Used by                               |
+| -------------------------- | ------------------------------------- |
+| `--slide-title-size`       | hero and breaker headlines            |
+| `--slide-heading-size`     | the `h1` on a content slide           |
+| `--slide-subheading-size`  | an `h2` inside a slide body           |
+| `--slide-lead-size`        | the sentence under a headline         |
+| `--slide-body-size`        | bullet copy, the main text of a slide |
+| `--slide-code-size`        | the type inside a `CodeBlock`         |
+| `--slide-support-size`     | captions, grid copy, metadata rows    |
+| `--slide-label-size`       | eyebrows and other uppercase labels   |
+| `--slide-figure-size`      | the figure in a stat column           |
+| `--slide-figure-unit-size` | the unit suffix beside it             |
+
+Every size is set against the 1920x1080 canvas at a 16px root, so `1rem` is 16
+canvas pixels and the scale reads the way it does on a projector rather than the
+way it does in a browser window. Deckard has no source template of its own, so
+it sits on the contract defaults in `@deckard/core/styles.css` and restates
+them: `--slide-title-size` `6rem`, `--slide-heading-size` `4.25rem`,
+`--slide-subheading-size` and `--slide-lead-size` `2.625rem`, `--slide-body-size`
+`2rem`, `--slide-code-size` and `--slide-support-size` `1.75rem`, and
+`--slide-label-size` `1.5rem`. That is the house scale the other themes are read
+against, and a theme that departs from it is making a point.
+
+A metrics figure is display type without being a heading, so it sizes itself
+rather than borrowing the title size: `--slide-figure-size` is `7.5rem` and
+`--slide-figure-unit-size` is `3.5rem`, both the contract values.
+
+`--slide-chrome-size` is `1.5rem`. The contract sizes chrome off
+`--slide-label-size`, and since this theme's labels are `1.5rem` too, the
+explicit value is the same number written down.
 
 Line height rides along as a unitless multiplier in the blocks, so changing a
 size token keeps its leading proportional. Never pair a size token with a fixed
 `leading-7`.
 
-`--slide-label-tracking` is the letter spacing on uppercase labels. It is wide on
-purpose. Lowering it below `0.2em` makes eyebrows read as ordinary small text.
+`--slide-label-tracking` is the letter spacing on uppercase labels. At `0.3em`
+it is wider than the contract's `0.25em`, on purpose. Lowering it below `0.2em`
+makes eyebrows read as ordinary small text.
 
 ## Spacing
 
-`--slide-padding-inline` is the gutter on both sides of the frame and inside the
-canvas header. `--slide-padding-block` is the top and bottom padding when that
-slide has no header or footer. The header and footer offsets themselves are
-canvas geometry and live in `slide-shell.tsx`, not here.
+The frame is the whole canvas inside `--slide-padding-inline` and
+`--slide-padding-block`, left aligned. There is no measure cap and no centred
+column, so a slide starts at the left margin and runs to the right one, and
+content that wants to be centred centres itself inside its own block. Deckard
+sets `7rem` and `6rem`, the contract values.
 
-`--slide-content-gap` is the vertical rhythm between the intro block and the body
-of a slide. `--slide-radius` is the corner on cards and code blocks;
-`--slide-radius-lg` is the larger corner on the outer content card and on media
-frames.
+`--slide-padding-inline` is the gutter on both sides of the frame and inside the
+canvas header, so the header and the body start at the same word.
+`--slide-padding-block` is the top and bottom padding when that slide has no
+header or footer. When either strip is on, `--slide-header-space` and
+`--slide-footer-space` stand in for the block padding on that edge, which is how
+a theme that redesigns the chrome moves the content with it.
+
+`--slide-content-gap` is `2.75rem`, the vertical rhythm between the intro block
+and the body of a slide. `--slide-item-gap` is `1.625rem`, the smaller rhythm
+inside a body: the gap between cards in a grid, and the padding a template
+layout holds off the frame. `--slide-meter-size` is the height of the proportion
+bar under a stat figure, left at the contract's `0.875rem`.
+
+`--slide-radius` is `1rem` on cards and code blocks; `--slide-radius-lg` is
+`1.5rem`, the larger corner on the outer content card and on media frames.
 
 ## Background variants
 
@@ -71,16 +103,63 @@ styling of its own. This file decides what each variant paints, using the
 canvas variables `--canvas-width` and `--canvas-height` for anything sized
 against the slide.
 
-- `default` paints a top wash, a downward veil over the upper 72% of the canvas,
-  and a blurred glow in the bottom right corner.
-- `grid` paints 44px rules plus the same wash on top.
-- `spotlight` paints one wide radial from the top edge and a smaller corner glow.
+- `default` paints the flat canvas colour with one 1px hairline down the left
+  margin, at half the inline padding and inset 12% of the canvas height top and
+  bottom, so the frame has an edge to start at. Nothing sits behind the copy:
+  the type is the picture.
+- `grid` paints a 44px square grid in `--slide-grid-color`, edge to edge.
+- `spotlight` paints `--slide-hatch`, the 135 degree fill a printed report
+  reserves a figure with.
+- `accent` floods the canvas with the theme accent and flips the ink, which is
+  the inverted statement slide the source templates all carry.
 - `none` renders nothing at all. `SlideBackground` returns `null`.
 
-The colors come from `--slide-wash`, `--slide-veil`, `--slide-glow`,
-`--slide-grid-color`, `--slide-grid-size`, and `--slide-spotlight`. Dark mode
-carries them at roughly double the alpha, because a wash that reads on paper
-disappears on a dark sheet.
+There is no radial wash, no veil, and no blurred corner glow anywhere in this
+file, and no `--slide-wash`, `--slide-veil`, `--slide-glow`, or
+`--slide-spotlight` token behind them. None of the source templates has one, and
+a bloom behind the copy reads as a smudge on a projector and as a stain on a
+pale sheet.
+
+`accent` is painted by two unlayered rules in this file. A base-layer fallback
+for it ships in `@deckard/core/styles.css`, but a theme's unlayered CSS always
+wins over the base layer, which is why every theme in the registry restates the
+pair and why the variant survives a theme swap. The first rule sets
+`--background` and `--foreground` on the canvas. The second remaps the ink one
+level down, on `[data-slide-frame]`, `[data-slide-header]`, and
+`[data-slide-footer]`: a custom property resolves against the element that uses
+it, so remapping `--primary` on the same element that reads `var(--primary)` for
+the field would flood the slide with its own ink.
+
+The decoration tokens are `--slide-grid-color`, `--slide-grid-size`,
+`--slide-hatch`, `--slide-rule`, `--slide-scanline`, and `--slide-halo`, and all
+six are part of the contract in `@deckard/core/styles.css`. Deckard paints with
+the first four and leaves `--slide-scanline` and `--slide-halo` at the
+contract's `none`. `--slide-hatch` is drawn in `--slide-grid-color`, this
+theme's own quiet ink, so a reserved plate stays quiet under body copy, and the
+dark block only has to move `--slide-grid-color` for the hatch to follow it.
+Dark mode sets `--slide-grid-color` and `--slide-rule` a good deal lighter and a
+touch under their light alphas, because a light line on a dark sheet carries
+further than a dark line on paper. This theme adds no private tokens of its own.
+
+## Block parts
+
+The contract has two halves. Tokens are values, and the sections above cover
+them. Data attributes are parts: a block names the piece of itself a theme might
+want to reach, and the theme styles that attribute, decorative `::before` and
+`::after` content included. A block is then free to change its class names and
+its markup as long as the attributes stay where they are. The full list lives in
+the "Block part contract" comment at the bottom of `@deckard/core/styles.css`.
+
+What does not belong in a theme is anything that is new content rather than a
+treatment of existing content. A boot log, a status table, a cursor line with
+words in it are all slide content, so they go in a block the deck composes.
+
+Deckard reaches exactly one part. `[data-slide-breaker-index]`, the section
+numeral a divider carries, is set at `calc(var(--slide-title-size) * 1.4)` in
+`--muted-foreground` with `-0.03em` of tracking, because the source layouts set
+the numeral larger than a heading and quieter than one. Nothing else in this
+file touches a block part. The house theme is the baseline the other themes are
+read against, so it leaves the blocks looking the way the blocks set them.
 
 ## Deck chrome
 
@@ -108,9 +187,10 @@ without touching the markup.
 ## Safe to change
 
 Every token in `theme.css` is meant to be edited. Change the accent by moving
-`--primary`, `--primary-foreground`, and `--ring` together. Change the mood of a
-deck by moving `--background`, `--card`, and the four background variant colors.
-Retune the type scale by editing the size tokens alone.
+`--primary`, `--primary-foreground`, and `--ring` together, and remember that
+`--primary` is also the whole field of the `accent` slide. Change the mood of a
+deck by moving `--background`, `--card`, `--slide-grid-color`, and
+`--slide-rule`. Retune the type scale by editing the size tokens alone.
 
 Two rules bound the edits. The dark block only overrides, so every token it
 defines has to exist in the light block above it; a token that appears only in
@@ -124,8 +204,9 @@ If you change the class name, change it in `index.ts` too. The class in the
 ## Media overlays
 
 `--slide-media-foreground`, `--slide-media-foreground-muted`, and the three
-`--slide-media-overlay-*` gradients sit in the base layer of `app/globals.css`
-rather than here, because a scrim over a photograph is dark in both color modes.
+`--slide-media-overlay-*` gradients sit in the base layer of
+`@deckard/core/styles.css` rather than here, because a scrim over a photograph
+is dark in both color modes.
 Override them in this file if a deck needs a different scrim.
 
 ## Common mistakes

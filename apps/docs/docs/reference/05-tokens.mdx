@@ -19,18 +19,20 @@ That is the whole arrangement. The runtime depends on these names and never on a
 
 | Token | Default | Reads it |
 | --- | --- | --- |
-| `--slide-font-heading` | `var(--font-sans)` | Headings, and `StatGrid` figures |
+| `--slide-font-heading` | `var(--font-sans)` | Headings and figures |
 | `--slide-font-body` | `var(--font-sans)` | Body copy and the chrome |
 | `--slide-font-mono` | `var(--font-mono)` | Code |
-| `--slide-title-size` | `4rem` | Hero and breaker headlines, `StatGrid` figures |
-| `--slide-heading-size` | `3rem` | The `h1` on a content slide |
-| `--slide-subheading-size` | `1.75rem` | An `h2` inside a body, `StatGrid` units |
-| `--slide-lead-size` | `1.25rem` | The sentence under a headline |
-| `--slide-body-size` | `1.5rem` | Bullet copy, the main text of a slide |
-| `--slide-code-size` | `1.125rem` | Type inside a `CodeBlock` |
-| `--slide-support-size` | `0.875rem` | Captions, grid copy, metadata rows |
-| `--slide-label-size` | `0.875rem` | Eyebrows and other uppercase labels |
+| `--slide-title-size` | `6rem` | Hero and breaker headlines |
+| `--slide-heading-size` | `4.25rem` | The `h1` on a content slide |
+| `--slide-subheading-size` | `2.625rem` | An `h2` inside a body |
+| `--slide-lead-size` | `2.625rem` | The sentence under a headline |
+| `--slide-body-size` | `2rem` | Bullet copy, the main text of a slide |
+| `--slide-code-size` | `1.75rem` | Type inside a `CodeBlock` |
+| `--slide-support-size` | `1.75rem` | Captions, grid copy, metadata rows |
+| `--slide-label-size` | `1.5rem` | Eyebrows and other uppercase labels |
 | `--slide-label-tracking` | `0.25em` | Letter spacing on those labels |
+
+Every size is set against the 1920x1080 canvas at a 16px root, so `1rem` is 16 canvas pixels and the scale reads the way it does on a projector rather than the way it does in a browser window. A 6rem title is 96 canvas pixels, which is about a fifth of the canvas height.
 
 Line height rides along as a unitless multiplier in the blocks, so changing a size token keeps its leading proportional. Never pair a size token with a fixed `leading-7`.
 
@@ -38,9 +40,20 @@ Line height rides along as a unitless multiplier in the blocks, so changing a si
 
 | Token | Default | What it controls |
 | --- | --- | --- |
-| `--slide-padding-inline` | `1.5rem` | The gutter on both sides of the frame, and inside the canvas header |
-| `--slide-padding-block` | `2rem` | Top and bottom padding when the slide has no header or footer |
-| `--slide-content-gap` | `1.5rem` | The rhythm between blocks inside a slide |
+| `--slide-padding-inline` | `7rem` | The gutter on both sides of the frame, and inside the canvas header |
+| `--slide-padding-block` | `6rem` | Top and bottom padding when the slide has no header or footer |
+| `--slide-content-gap` | `2.75rem` | The rhythm between blocks inside a slide |
+| `--slide-item-gap` | `1.625rem` | The rhythm between rows inside one block |
+
+The frame those gutters leave is the whole slide, left aligned and uncapped: content starts at the left margin and runs to the right one. Blocks cap their own measure where prose needs it, and anything that wants to be centred centres itself.
+
+## Figures
+
+| Token | Default | What it controls |
+| --- | --- | --- |
+| `--slide-figure-size` | `7.5rem` | A `StatGrid` figure |
+| `--slide-figure-unit-size` | `3.5rem` | The unit suffix on it |
+| `--slide-meter-size` | `0.875rem` | The height of the proportion bar under it |
 
 ## Surfaces
 
@@ -59,12 +72,14 @@ Line height rides along as a unitless multiplier in the blocks, so changing a si
 
 | Token | Default | What it controls |
 | --- | --- | --- |
-| `--slide-wash` | `transparent` | The broad tint over the sheet |
-| `--slide-veil` | `transparent` | A second layer that separates from the wash |
-| `--slide-glow` | `transparent` | A concentrated highlight |
 | `--slide-grid-color` | `transparent` | The rule color for the `grid` variant |
 | `--slide-grid-size` | `44px` | The grid pitch |
-| `--slide-spotlight` | `transparent` | The `spotlight` variant's focus |
+| `--slide-rule` | `var(--border)` | Hairlines a theme draws on the sheet, such as corner brackets |
+| `--slide-scanline` | `none` | A repeating line mask over the canvas |
+| `--slide-hatch` | `none` | A diagonal fill, which the `spotlight` variant uses |
+| `--slide-halo` | `none` | The `text-shadow` a theme puts behind display type |
+
+There is no radial wash, veil, glow or spotlight token. A theme has four textures to work with, flat colour, a rule, a grid, and a hatch, because a radial gradient reads as a smudge on a projector and as grey on paper.
 
 ## Media
 
@@ -128,6 +143,19 @@ The runtime renders these and the theme styles them. They are as much a part of 
 | `data-slide-progress` | The progress element, absent entirely when `footer.progress` is `false` |
 | `data-slide-surface` | A block that paints its own border or background |
 | `data-slide-panel` | The `ContentSlideCard` panel |
-| `data-stat-value` | A `StatGrid` figure, which is not a heading element but wants heading treatment |
+| `data-slide-intro` | The eyebrow and heading block above a body |
+| `data-slide-eyebrow` | The uppercase label above a title |
+| `data-slide-title`, `data-slide-lead` | A slide's own headline and the sentence under it |
+| `data-slide-kicker` | The label under a `FocusSlide` body |
+| `data-slide-hero`, `data-slide-hero-meta` | The opener and its credit row |
+| `data-slide-breaker`, `data-slide-breaker-index` | The section divider and the number it carries |
+| `data-slide-list`, `-item`, `-marker`, `-text` | A `BulletList` and its three parts |
+| `data-slide-grid`, `data-slide-card`, `-title`, `-body` | A `FeatureGrid` and its cards |
+| `data-slide-media`, `-overlay`, `-caption`, `-credit` | A media layout and its parts |
+| `data-stat-grid`, `-item`, `-value`, `-unit`, `-meter`, `-caption` | A `StatGrid`, down to the proportion bar |
+
+These are the other half of the theme contract. Tokens are values; attributes are parts. A theme styles them, decorative `::before` and `::after` content included, which is how phosphor writes `[x]` where a list marker goes and ledger hangs a rule there instead, neither of them touching the block. A block may rewrite its markup and its class names freely as long as the attributes stay where they are.
+
+A theme styles parts. It does not add content. A boot log, a status table, a cursor line with words in it are slide content, so they belong in a block the deck composes.
 
 Code blocks are scoped too: `[data-slide-canvas] .shiki` has its shiki-painted background forced transparent, so a deck never restyles code the surrounding app renders.

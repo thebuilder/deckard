@@ -31,18 +31,23 @@
     ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
   --slide-font-mono: var(--font-mono);
 
-  --slide-padding-inline: 2rem;
-  --slide-padding-block: 2.75rem;
-  --slide-content-gap: 1.5rem;
+  --slide-padding-inline: 7.5rem;
+  --slide-padding-block: 6.25rem;
+  --slide-content-gap: 3rem;
+  --slide-item-gap: 1.625rem;
 
-  --slide-title-size: 4.5rem;
-  --slide-heading-size: 3rem;
-  --slide-subheading-size: 1.8125rem;
-  --slide-lead-size: 1.375rem;
-  --slide-body-size: 1.625rem;
-  --slide-support-size: 0.9375rem;
-  --slide-label-size: 0.8125rem;
+  --slide-title-size: 6.5rem;
+  --slide-heading-size: 4.25rem;
+  --slide-subheading-size: 2.625rem;
+  --slide-lead-size: 2.625rem;
+  --slide-body-size: 2rem;
+  --slide-code-size: 2rem;
+  --slide-support-size: 1.75rem;
+  --slide-label-size: 1.5rem;
   --slide-label-tracking: 0.16em;
+
+  --slide-figure-size: 7.5rem;
+  --slide-figure-unit-size: 3.5rem;
 
   --slide-radius: 0.625rem;
   --slide-radius-lg: 0.875rem;
@@ -50,18 +55,19 @@
   --slide-surface-muted: oklch(1 0 0 / 94%);
   --slide-surface-border: oklch(0.885 0.005 250);
   --slide-surface-shadow: none;
-
-  --slide-wash: oklch(0.6 0.11 258 / 7%);
-  --slide-veil: oklch(0.5 0.04 250 / 5%);
-  --slide-glow: oklch(0.505 0.145 258 / 5%);
   --slide-grid-color: oklch(0.5 0.012 250 / 8%);
+  --slide-hatch: repeating-linear-gradient(
+    135deg,
+    var(--slide-grid-color) 0 22px,
+    transparent 22px 44px
+  );
+  --slide-rule: oklch(0.885 0.005 250);
   --slide-grid-size: 3.5rem;
-  --slide-spotlight: oklch(0.55 0.09 258 / 9%);
 
   --slide-chrome-foreground: var(--muted-foreground);
   --slide-chrome-emphasis: var(--foreground);
   --slide-chrome-border: transparent;
-  --slide-chrome-size: 0.8125rem;
+  --slide-chrome-size: 1.375rem;
   --slide-chrome-tracking: 0.02em;
   --slide-progress-track: transparent;
   --slide-progress-fill: var(--border);
@@ -95,12 +101,8 @@
   --slide-surface-muted: oklch(0.28 0.012 250 / 62%);
   --slide-surface-border: oklch(0.325 0.012 250);
   --slide-surface-shadow: none;
-
-  --slide-wash: oklch(0.735 0.135 258 / 12%);
-  --slide-veil: oklch(0.7 0.05 250 / 6%);
-  --slide-glow: oklch(0.735 0.135 258 / 8%);
   --slide-grid-color: oklch(0.85 0.01 250 / 9%);
-  --slide-spotlight: oklch(0.75 0.1 258 / 12%);
+  --slide-rule: oklch(0.325 0.012 250);
   color-scheme: dark;
 }
 
@@ -133,32 +135,11 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
+  background-color: var(--background);
 }
 
-.meridian-theme .slide-background::before,
-.meridian-theme .slide-background::after {
-  position: absolute;
-  pointer-events: none;
-  content: "";
-}
-
-/* One wash from the head, one lift off the floor, and nothing else. */
-
-.meridian-theme .slide-background[data-slide-background="default"] {
-  background-image: linear-gradient(
-    to bottom,
-    var(--slide-wash),
-    transparent 38%
-  );
-}
-
-.meridian-theme .slide-background[data-slide-background="default"]::before {
-  inset: auto 0 0;
-  height: calc(var(--canvas-height) * 0.3);
-  background-image: linear-gradient(to top, var(--slide-glow), transparent);
-}
-
-/* A drafting grid, held far enough back that copy never fights it. */
+/* Flat. The source design paints one colour behind a slide and lets the type
+ * carry it, and a wash on a pale sheet only ever reads as a printing fault. */
 
 .meridian-theme .slide-background[data-slide-background="grid"] {
   background-image:
@@ -167,34 +148,84 @@
   background-size: var(--slide-grid-size) var(--slide-grid-size);
 }
 
-.meridian-theme .slide-background[data-slide-background="grid"]::before {
-  inset: 0;
-  background-image: radial-gradient(
-    ellipse at 50% 44%,
-    transparent 36%,
-    var(--background) 90%
-  );
+/* The placeholder hatch, promoted to a whole background. */
+
+.meridian-theme .slide-background[data-slide-background="spotlight"] {
+  background-image: var(--slide-hatch);
 }
 
-/* The scrim from the media slide, promoted to a whole background. */
+/* Block parts. Quiet throughout: a numeral no louder than a heading, and a dot
+ * where the source design puts one. */
 
-.meridian-theme .slide-background[data-slide-background="spotlight"]::before {
-  top: 0;
-  left: 50%;
-  width: calc(var(--canvas-width) * 0.86);
-  height: calc(var(--canvas-height) * 0.7);
-  background-image: radial-gradient(
-    ellipse at top,
-    var(--slide-spotlight),
-    transparent 64%
-  );
-  transform: translateX(-50%);
+.meridian-theme [data-slide-breaker-index] {
+  font-size: var(--slide-title-size);
+  color: var(--muted-foreground);
+  letter-spacing: -0.03em;
 }
 
-.meridian-theme .slide-background[data-slide-background="spotlight"]::after {
-  inset: auto 0 0;
-  height: calc(var(--canvas-height) * 0.34);
-  background-image: linear-gradient(to top, var(--slide-glow), transparent);
+.meridian-theme [data-slide-list-marker] {
+  font-size: 0;
+}
+
+.meridian-theme [data-slide-list-marker]::before {
+  display: block;
+  width: 0.75rem;
+  height: 0.75rem;
+  margin-block-start: 0.7em;
+  content: "";
+  background-color: var(--primary);
+  border-radius: 999px;
+}
+
+.meridian-theme [data-stat-meter] {
+  border-radius: 999px;
+}
+
+/* The statement slide: one flat field of the accent with the type in the page
+ * colour. No border, no card, nothing else on it.
+ * The field colour is read on the canvas and the ink is remapped one level
+ * down: a custom property resolves against the element that uses it, so
+ * remapping --primary here would flood the slide with its own ink. */
+
+.meridian-theme[data-slide-background="accent"] {
+  --background: var(--primary);
+  --foreground: var(--primary-foreground);
+  --slide-halo: none;
+  --slide-scanline: none;
+  --slide-hatch: none;
+}
+
+.meridian-theme[data-slide-background="accent"]
+  :is([data-slide-frame], [data-slide-header], [data-slide-footer]) {
+  --primary: var(--primary-foreground);
+  --muted-foreground: color-mix(
+    in oklab,
+    var(--primary-foreground) 74%,
+    transparent
+  );
+  --slide-surface: transparent;
+  --slide-surface-muted: color-mix(
+    in oklab,
+    var(--primary-foreground) 12%,
+    transparent
+  );
+  --slide-surface-border: color-mix(
+    in oklab,
+    var(--primary-foreground) 38%,
+    transparent
+  );
+  --slide-chrome-foreground: color-mix(
+    in oklab,
+    var(--primary-foreground) 72%,
+    transparent
+  );
+  --slide-chrome-emphasis: var(--primary-foreground);
+  --slide-chrome-border: color-mix(
+    in oklab,
+    var(--primary-foreground) 32%,
+    transparent
+  );
+  --slide-progress-fill: var(--primary-foreground);
 }
 
 /* Deck chrome. Quiet to the point of nearly not being there: no rules, no

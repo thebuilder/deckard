@@ -41,21 +41,37 @@ line than what ships here. Load it in `app/layout.tsx` and put it at the front
 of `--slide-font-heading` and `--slide-font-body` if you want the original
 measure back.
 
-| Token                     | Used by                                  |
-| ------------------------- | ---------------------------------------- |
-| `--slide-title-size`      | hero and breaker headlines               |
-| `--slide-heading-size`    | the `h1` on a content slide              |
-| `--slide-subheading-size` | an `h2` inside a slide body              |
-| `--slide-lead-size`       | the sentence under a headline            |
-| `--slide-body-size`       | bullet copy, the main text of a slide    |
-| `--slide-code-size`       | the type inside a `CodeBlock`            |
-| `--slide-support-size`    | captions, grid copy, metadata rows       |
-| `--slide-label-size`      | eyebrows and other uppercase labels      |
+| Token                      | Used by                               |
+| -------------------------- | ------------------------------------- |
+| `--slide-title-size`       | hero and breaker headlines            |
+| `--slide-heading-size`     | the `h1` on a content slide           |
+| `--slide-subheading-size`  | an `h2` inside a slide body           |
+| `--slide-lead-size`        | the sentence under a headline         |
+| `--slide-body-size`        | bullet copy, the main text of a slide |
+| `--slide-code-size`        | the type inside a `CodeBlock`         |
+| `--slide-support-size`     | captions, grid copy, metadata rows    |
+| `--slide-label-size`       | eyebrows and other uppercase labels   |
+| `--slide-figure-size`      | the figure in a stat column           |
+| `--slide-figure-unit-size` | the unit suffix beside it             |
 
-The scale is the tightest of the four themes in this registry, and every size is
-a step under the default theme. That is deliberate. With no decoration on the
-slide, the type is the only thing setting hierarchy, and a compressed scale
-reads as composed where a wide one reads as loud.
+Every size is set against the 1920x1080 canvas at a 16px root, so `1rem` is 16
+canvas pixels and the scale reads the way it does from the back of a room rather
+than the way it does in a browser window. The numbers are the source template's
+own: `--slide-title-size` is `6.5rem`, the template's 104px display line;
+`--slide-heading-size` is `4.25rem` for its 68px title; `--slide-subheading-size`
+and `--slide-lead-size` are both `2.625rem` for its 42px sub; `--slide-body-size`
+is `2rem` for 32px of body copy; `--slide-support-size` is `1.75rem` for 28px of
+small text; and `--slide-label-size` is `1.5rem` for its 24px micro line.
+`--slide-code-size` is `2rem` rather than the contract's `1.75rem`, because a
+mono face at the body size sets visibly smaller than the sans beside it.
+
+Six sizes and nothing else set the hierarchy on a slide with no decoration on
+it, so the intervals between them are the whole structure. Retune them together
+or a slide loses its order.
+
+A metrics figure is display type without being a heading, so it sizes itself:
+`--slide-figure-size` is `7.5rem` and `--slide-figure-unit-size` is `3.5rem`. A
+stat slide keeps its proportion when the title scale moves.
 
 `h1` and `h2` carry `-0.03em` of tracking. `h3` through `h6` carry `-0.02em` and
 drop to weight 500. That negative tracking is the single most identifiable thing
@@ -63,19 +79,32 @@ about this theme. Set the same headline at `0` and it stops looking like
 Meridian and starts looking like a default Tailwind page.
 
 `--slide-label-tracking` is `0.16em`, tighter than every other theme here,
-because the labels are short and set in mono.
+because the labels are short and the theme has no capitals to open up anywhere
+else.
 
 ## Spacing
 
-`--slide-padding-inline` is `2rem` and `--slide-padding-block` is `2.75rem`,
-both modest. The negative space in this theme comes from the empty regions of
-the layout rather than from the frame.
+The frame is the whole canvas inside `--slide-padding-inline` and
+`--slide-padding-block`, left aligned. There is no measure cap and no centred
+column, so a slide starts at the left margin and runs to the right one, and
+content that wants to be centred centres itself inside its own block. Meridian
+sets `--slide-padding-inline` to `7.5rem` and `--slide-padding-block` to
+`6.25rem`, the 120px and 100px margins the source template draws. When the
+header or the footer is on, `--slide-header-space` and `--slide-footer-space`
+stand in for the block padding on that edge, so a theme that redesigns either
+strip moves the content with it.
 
-`--slide-content-gap` is the vertical rhythm between the intro block and the
-body of a slide. `--slide-radius` is `0.625rem` on cards and code blocks and
+`--slide-content-gap` is `3rem`, the vertical rhythm between the intro block and
+the body of a slide. `--slide-item-gap` is `1.625rem`, the smaller rhythm
+between rows inside a body: cards in a grid, and the padding a template layout
+holds off the frame. `--slide-radius` is `0.625rem` on cards and code blocks and
 `--slide-radius-lg` is `0.875rem` on the outer content card and media frames.
 The source design offers a square and a round variant at 0px and 22px; both work
 here if you move the two tokens together.
+
+`--slide-meter-size` is the height of the proportion bar under a stat figure.
+Meridian leaves it at the contract's `0.875rem` and only rounds it off, which is
+in the block parts below.
 
 ## Background variants
 
@@ -84,22 +113,65 @@ styling of its own. This file decides what each variant paints, using the canvas
 variables `--canvas-width` and `--canvas-height` for anything sized against the
 slide.
 
-- `default` paints one wash down from the head of the canvas and one faint lift
-  along the floor. There is no corner glow and no second layer.
-- `grid` paints a `3.5rem` square grid at low alpha and fades it to the
-  background outside a center ellipse, so the grid is visible at the margins and
-  gone behind the copy.
-- `spotlight` paints one wide radial off the top edge plus the bottom scrim the
-  source design puts under full-bleed media.
+- `default` paints the flat canvas colour and nothing else. The source design
+  puts one colour behind a slide and lets the type carry it.
+- `grid` paints a `3.5rem` square grid in `--slide-grid-color`, edge to edge and
+  at the same alpha everywhere.
+- `spotlight` paints `--slide-hatch`, the 135 degree fill a printed report
+  reserves a figure with, promoted here to a whole background.
+- `accent` floods the canvas with the theme accent and flips the ink. It is the
+  statement slide: one flat field, no border, no card, nothing else on it.
 - `none` renders nothing at all. `SlideBackground` returns `null`.
 
-The alphas here are half what the other themes use. If a variant is invisible on
-your projector, raise `--slide-wash` and `--slide-spotlight` rather than adding
-a layer.
+There is no radial wash, no veil, and no blurred corner glow anywhere in this
+file, and no `--slide-wash`, `--slide-veil`, `--slide-glow`, or
+`--slide-spotlight` token behind them. None of the source templates has one, and
+on a pale sheet a bloom behind the copy reads as a stain rather than as light.
+If a variant is invisible on your projector, raise the alpha on
+`--slide-grid-color` rather than adding a layer.
 
-The colors come from `--slide-wash`, `--slide-veil`, `--slide-glow`,
-`--slide-grid-color`, `--slide-grid-size`, and `--slide-spotlight`. This theme
-adds no private tokens of its own.
+`accent` is painted by two unlayered rules in this file. A base-layer fallback
+for it ships in `@deckard/core/styles.css`, but a theme's unlayered CSS always
+wins over the base layer, which is why every theme in the registry restates the
+pair and why the variant survives a theme swap. The first rule sets
+`--background` and `--foreground` on the canvas. The second remaps the ink one
+level down, on `[data-slide-frame]`, `[data-slide-header]`, and
+`[data-slide-footer]`: a custom property resolves against the element that uses
+it, so remapping `--primary` on the same element that reads `var(--primary)` for
+the field would flood the slide with its own ink.
+
+The decoration tokens are `--slide-grid-color`, `--slide-grid-size`,
+`--slide-hatch`, `--slide-rule`, `--slide-scanline`, and `--slide-halo`, and all
+six are part of the contract in `@deckard/core/styles.css`. Meridian paints with
+the first three, publishes `--slide-rule` as the hairline colour for anything
+that wants one, and leaves `--slide-scanline` and `--slide-halo` at the
+contract's `none`. This theme adds no private tokens of its own.
+
+## Block parts
+
+The contract has two halves. Tokens are values, and the sections above cover
+them. Data attributes are parts: a block names the piece of itself a theme might
+want to reach, and the theme styles that attribute, decorative `::before` and
+`::after` content included. A block is then free to change its class names and
+its markup as long as the attributes stay where they are. The full list lives in
+the "Block part contract" comment at the bottom of `@deckard/core/styles.css`.
+
+What does not belong in a theme is anything that is new content rather than a
+treatment of existing content. A boot log, a status table, a cursor line with
+words in it are all slide content, so they go in a block the deck composes.
+
+Meridian is quiet here too, and reaches three parts:
+
+- `[data-slide-breaker-index]`, the section numeral a divider carries, is held
+  at the plain `--slide-title-size` in `--muted-foreground` with the theme's
+  `-0.03em` of tracking. Other themes set the numeral larger than a heading;
+  this one refuses to let it outrank the section it introduces.
+- `[data-slide-list-marker]` drops to `font-size: 0` and its `::before` draws a
+  `0.75rem` round dot in `--primary`, which is the marker the source design puts
+  in front of a bullet. Blanking the marker rather than hiding it keeps the row
+  in the layout the block set.
+- `[data-stat-meter]` takes a `999px` radius, so the proportion bar under a
+  figure reads as a pill rather than as a bar chart.
 
 ## Deck chrome
 
@@ -112,8 +184,10 @@ into `[data-slide-counter-current]`, `[data-slide-counter-separator]`, and
 `[data-slide-counter-total]`, and `[data-slide-progress]`, which carries the
 position in the deck as a fraction on `--slide-progress`.
 
-Meridian keeps both nearly silent. No rules, no capitals, one step below the body
-size, and the whole strip held at three quarters opacity. A middle dot separates
+Meridian keeps both nearly silent. No rules, no capitals, and the whole strip
+held at three quarters opacity. The contract sizes chrome off
+`--slide-label-size`; this theme sets `--slide-chrome-size` to `1.375rem`
+instead, a step under even the labels. A middle dot separates
 the deck name from the slide title, the counter runs in tabular figures, and the
 progress is a 1px hairline on the bottom edge of the canvas in `--border`.
 

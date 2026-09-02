@@ -31,18 +31,23 @@
     ui-serif, Georgia, "Iowan Old Style", "Times New Roman", serif;
   --slide-font-mono: var(--font-mono);
 
-  --slide-padding-inline: 2.5rem;
-  --slide-padding-block: 3rem;
-  --slide-content-gap: 1.75rem;
+  --slide-padding-inline: 8rem;
+  --slide-padding-block: 6.5rem;
+  --slide-content-gap: 2.75rem;
+  --slide-item-gap: 1.625rem;
 
-  --slide-title-size: 5rem;
-  --slide-heading-size: 3.75rem;
-  --slide-subheading-size: 2rem;
-  --slide-lead-size: 1.375rem;
-  --slide-body-size: 1.7rem;
-  --slide-support-size: 0.9375rem;
-  --slide-label-size: 0.8125rem;
+  --slide-title-size: 7.5rem;
+  --slide-heading-size: 4.75rem;
+  --slide-subheading-size: 2.75rem;
+  --slide-lead-size: 2.75rem;
+  --slide-body-size: 2.0625rem;
+  --slide-code-size: 1.875rem;
+  --slide-support-size: 1.75rem;
+  --slide-label-size: 1.5rem;
   --slide-label-tracking: 0.22em;
+
+  --slide-figure-size: 8.5rem;
+  --slide-figure-unit-size: 3.5rem;
 
   --slide-radius: 0.125rem;
   --slide-radius-lg: 0.125rem;
@@ -50,19 +55,19 @@
   --slide-surface-muted: oklch(0.955 0.012 84 / 68%);
   --slide-surface-border: oklch(0.78 0.02 72);
   --slide-surface-shadow: none;
-
-  --slide-wash: oklch(0.62 0.09 46 / 10%);
-  --slide-veil: oklch(0.55 0.05 60 / 6%);
-  --slide-glow: oklch(0.47 0.15 31 / 7%);
   --slide-grid-color: oklch(0.45 0.02 60 / 16%);
+  --slide-hatch: repeating-linear-gradient(
+    135deg,
+    var(--slide-grid-color) 0 22px,
+    transparent 22px 44px
+  );
   --slide-grid-size: 2.75rem;
-  --slide-spotlight: oklch(0.5 0.04 60 / 12%);
   --slide-rule: oklch(0.3 0.02 58 / 55%);
 
   --slide-chrome-foreground: var(--muted-foreground);
   --slide-chrome-emphasis: var(--foreground);
   --slide-chrome-border: var(--slide-rule);
-  --slide-chrome-size: 0.875rem;
+  --slide-chrome-size: 1.5rem;
   --slide-chrome-tracking: 0.14em;
   --slide-progress-track: transparent;
   --slide-progress-fill: transparent;
@@ -96,12 +101,7 @@
   --slide-surface-muted: oklch(0.275 0.014 58 / 55%);
   --slide-surface-border: oklch(0.94 0.013 84 / 22%);
   --slide-surface-shadow: none;
-
-  --slide-wash: oklch(0.7 0.1 52 / 14%);
-  --slide-veil: oklch(0.5 0.05 50 / 12%);
-  --slide-glow: oklch(0.75 0.13 48 / 10%);
   --slide-grid-color: oklch(0.9 0.02 80 / 13%);
-  --slide-spotlight: oklch(0.85 0.06 70 / 12%);
   --slide-rule: oklch(0.94 0.013 84 / 60%);
   color-scheme: dark;
 }
@@ -132,6 +132,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
+  background-color: var(--background);
 }
 
 .broadsheet-theme .slide-background::before,
@@ -141,28 +142,13 @@
   content: "";
 }
 
-.broadsheet-theme .slide-background[data-slide-background="default"] {
-  background-image: linear-gradient(
-    to bottom,
-    var(--slide-wash),
-    transparent 42%
-  );
-}
+/* Bare stock with one rule across the head, where a paper carries its folio. */
 
 .broadsheet-theme .slide-background[data-slide-background="default"]::before {
-  inset: 0 0 auto;
-  height: calc(var(--canvas-height) * 0.55);
-  background-image: radial-gradient(
-    ellipse at 50% -20%,
-    var(--slide-veil),
-    transparent 70%
-  );
-}
-
-.broadsheet-theme .slide-background[data-slide-background="default"]::after {
-  inset: auto 0 0;
-  height: calc(var(--canvas-height) * 0.34);
-  background-image: linear-gradient(to top, var(--slide-glow), transparent);
+  inset: calc(var(--canvas-height) * 0.055) calc(var(--canvas-width) * 0.055)
+    auto;
+  height: 1px;
+  background-color: var(--slide-rule);
 }
 
 /* Ruled paper. Horizontal rules only, so serif copy sits on a baseline. */
@@ -174,17 +160,6 @@
     transparent 1px
   );
   background-size: 100% var(--slide-grid-size);
-}
-
-.broadsheet-theme .slide-background[data-slide-background="grid"]::before {
-  inset: 0;
-  background-image: linear-gradient(
-    to bottom,
-    var(--background) 0%,
-    transparent 18%,
-    transparent 82%,
-    var(--background) 100%
-  );
 }
 
 /* Column rules at the thirds, the way a broadsheet splits a page. */
@@ -207,19 +182,67 @@
     );
 }
 
-.broadsheet-theme .slide-background[data-slide-background="spotlight"]::before {
-  inset: 0;
-  background-image: radial-gradient(
-    ellipse at 50% 30%,
-    var(--slide-spotlight),
-    transparent 62%
-  );
+/* Block parts. A chapter numeral in the text face, and list markers in the
+ * masthead voice rather than as figures. */
+
+.broadsheet-theme [data-slide-breaker-index] {
+  font-family: var(--slide-font-heading);
+  font-size: calc(var(--slide-title-size) * 1.5);
+  line-height: 0.8;
+  letter-spacing: -0.02em;
 }
 
-.broadsheet-theme .slide-background[data-slide-background="spotlight"]::after {
-  inset: auto 0 0;
-  height: calc(var(--canvas-height) * 0.28);
-  background-image: linear-gradient(to top, var(--background), transparent);
+.broadsheet-theme :is([data-slide-list-marker], [data-slide-hero-meta]) {
+  font-variant-caps: small-caps;
+  font-variant-numeric: oldstyle-nums;
+  text-transform: none;
+}
+
+/* The section plate: ink and stock swapped, which is what a paper does with a
+ * standfirst it wants read first.
+ * The field colour is read on the canvas and the ink is remapped one level
+ * down: a custom property resolves against the element that uses it, so
+ * remapping --primary here would flood the slide with its own ink. */
+
+.broadsheet-theme[data-slide-background="accent"] {
+  --background: var(--primary);
+  --foreground: var(--primary-foreground);
+  --slide-halo: none;
+  --slide-scanline: none;
+  --slide-hatch: none;
+}
+
+.broadsheet-theme[data-slide-background="accent"]
+  :is([data-slide-frame], [data-slide-header], [data-slide-footer]) {
+  --primary: var(--primary-foreground);
+  --muted-foreground: color-mix(
+    in oklab,
+    var(--primary-foreground) 74%,
+    transparent
+  );
+  --slide-surface: transparent;
+  --slide-surface-muted: color-mix(
+    in oklab,
+    var(--primary-foreground) 12%,
+    transparent
+  );
+  --slide-surface-border: color-mix(
+    in oklab,
+    var(--primary-foreground) 38%,
+    transparent
+  );
+  --slide-chrome-foreground: color-mix(
+    in oklab,
+    var(--primary-foreground) 72%,
+    transparent
+  );
+  --slide-chrome-emphasis: var(--primary-foreground);
+  --slide-chrome-border: color-mix(
+    in oklab,
+    var(--primary-foreground) 32%,
+    transparent
+  );
+  --slide-progress-fill: var(--primary-foreground);
 }
 
 /* Deck chrome. A running head across the top of the page and a centred folio at

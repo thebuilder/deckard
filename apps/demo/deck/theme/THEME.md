@@ -20,8 +20,21 @@ bearing for slides that already exist.
 Warm newsprint in light, warm ink in dark. Flat surfaces: `--slide-radius` is
 `0.125rem` and `--slide-surface-shadow` is `none`, so a content card is a panel
 with a hairline rule around it rather than a floating object. Serif headings with
-`-0.015em` of tracking. Generous print margins. The `default` background wash and
-the ruled-paper `grid` variant.
+`-0.015em` of tracking. The `default` background, which is bare stock with one
+hairline across the head where a paper carries its folio, and the ruled-paper
+`grid` variant.
+
+The `accent` variant stayed word for word. It is the inverted statement slide:
+the canvas floods with `--primary` and the ink flips to `--primary-foreground`.
+Two unlayered rules paint it here, the same two every registry theme carries. A
+base-layer fallback ships in `@deckard/core/styles.css`, but a theme's unlayered
+CSS always wins over the base layer, so each theme restates the pair and the
+variant survives an eject. The field colour is read on the canvas and the ink is
+remapped one level down, on `[data-slide-frame]`, `[data-slide-header]`, and
+`[data-slide-footer]`, because a custom property resolves against the element
+that uses it: remapping `--primary` on the element that reads `var(--primary)`
+for the field would flood the slide with its own ink. Leave both rules alone
+unless the deck is changing what a statement slide means.
 
 ## What changed
 
@@ -57,30 +70,48 @@ inside running sentences. Georgia sets `deck:check-overflow` next to "builds,
 serves, and measures" at visibly different weights, and the sentence comes apart.
 The headings stay serif, so the editorial voice survives where it does the work.
 
-### The scale came down at the top and up at the bottom
+### The scale sits one step under broadsheet's
+
+Broadsheet sets its type and its margins to the numbers the source templates
+draw on a 1920x1080 canvas. This deck follows it up to a point and then stops
+one step short, because broadsheet's title is sized for a headline of three or
+four words and every headline here is a full sentence.
 
 ```
-- --slide-title-size:      5rem       + 4.5rem
-- --slide-heading-size:    3.75rem    + 3.25rem
-- --slide-subheading-size: 2rem       + 1.875rem
-- --slide-body-size:       1.7rem     + 1.5rem
-- --slide-support-size:    0.9375rem  + 1.0625rem
+- --slide-padding-inline:  8rem       + 7rem
+- --slide-padding-block:   6.5rem     + 5.75rem
+- --slide-content-gap:     2.75rem    + 2.5rem
+- --slide-item-gap:        1.625rem   + 1.5rem
+- --slide-title-size:      7.5rem     + 6.5rem
+- --slide-heading-size:    4.75rem    + 4.25rem
+- --slide-subheading-size: 2.75rem    + 2.5rem
+- --slide-lead-size:       2.75rem    + 2.5rem
+- --slide-body-size:       2.0625rem  + 1.9375rem
+- --slide-code-size:       1.875rem   + 1.75rem
+- --slide-support-size:    1.75rem    + 1.625rem
+- --slide-label-size:      1.5rem     + 1.4375rem
 - --slide-label-tracking:  0.22em     + 0.2em
+- --slide-figure-size:     8.5rem     + 7.5rem
+- --slide-figure-unit-size: 3.5rem    + 3.25rem
+- --slide-chrome-size:     1.5rem     + 1.375rem
 ```
 
-A sans body at `1.5rem` carries about a fifth more words per line than serif at
-`1.7rem`, so the body size came down without losing a word. The headings came
-down with it to keep the intervals.
+Every number is set against the canvas at a 16px root, so `1rem` is 16 canvas
+pixels: this deck's `1.9375rem` body line is 31 of them and broadsheet's
+`2.0625rem` is 33. The frame is the whole canvas inside
+`--slide-padding-inline` and `--slide-padding-block`, left aligned, with no
+measure cap and no centred column, so those two margins are the only thing
+holding a slide off the edge.
 
-`--slide-support-size` is the one that went up, and it is the one that cost
-something. Broadsheet uses `0.9375rem` for captions and labels. This deck uses
-the same token for whole sentences inside feature cards, and at `0.9375rem` those
-sentences did not read from the back of a room. Raising it three pixels clipped
-two slides, `deck:check-overflow` named both, and both lost a sentence. If you
-lower it again, those slides will look thin rather than break.
+`pnpm demo:check-overflow` is the check that matters when any of these move.
+Raising one of them is what pushes a slide past the frame, and the deck already
+sits close to it: four slides had to lose a clause when the scale went up.
 
 `--slide-label-tracking` came down because sans capitals are narrower than serif
 capitals, and broadsheet's `0.22em` reads as gappy on them.
+
+`--slide-meter-size`, the height of the proportion bar under a stat figure, is
+the contract's `0.875rem` in both themes.
 
 ### Nested panels recede instead of rising
 
@@ -95,19 +126,26 @@ once it sits inside a content card that is also lighter than the paper. With no
 shadow to separate them, a feature card read as a border and nothing else. Going
 one step darker than the sheet gives the nesting a direction.
 
-### `spotlight` is a horizon, not columns
+### `spotlight` is a plate, not columns
 
 Broadsheet paints two vertical rules at the thirds, the way a broadsheet splits a
-page, plus a centre ellipse and a bottom fade. This deck paints one wide glow
-high on the canvas, a lit band across the bottom third, and a hairline along the
-top edge of that band.
+page. This deck paints `--slide-hatch`, the 135 degree fill a printed report
+reserves a figure with, under a 2px rule set low in the canvas at 14% of the
+canvas height and inset 5.5% on each side.
 
 The column rules are newspaper furniture, and the only slide here that uses
 `spotlight` is a left-aligned section breaker. The rule at 33% landed inside the
-headline. The horizon reads as a stage instead, which is what a section break in
-a talk is.
+headline. The plate reads as a reserved space instead, which is what a section
+break in a talk is.
 
-This adds `--slide-horizon` and drops `--slide-rule`.
+`--slide-hatch` is drawn in `--slide-grid-color`, this theme's own quiet ink, so
+the fill stays under body copy rather than competing with it. Broadsheet defines
+`--slide-hatch` to the same gradient and paints nothing with it.
+
+There is no wash, no veil, and no blurred glow in this file, and no
+`--slide-wash`, `--slide-veil`, `--slide-glow`, `--slide-spotlight`, or
+`--slide-horizon` token behind them. None of the source templates has one, and
+on warm stock a bloom behind the copy reads as a stain rather than as light.
 
 ### Ruled paper, spaced for the sans body
 
@@ -115,8 +153,8 @@ This adds `--slide-horizon` and drops `--slide-rule`.
 - --slide-grid-size: 2.75rem   + 3.5rem
 ```
 
-Rules spaced for a `1.7rem` serif line sit too close under a `1.5rem` sans line
-and start to look like a texture rather than a baseline.
+Rules spaced for a `2.0625rem` serif line sit too close under a `1.9375rem` sans
+line and start to look like a texture rather than a baseline.
 
 ### Inline code is a chip
 
@@ -152,15 +190,42 @@ title italic in the middle of the line, the date right, and the folio centered a
 the foot in small caps. Both strips are set in `--slide-font-heading`, which is
 the serif, while the slide body is sans.
 
-It differs from broadsheet in one place. Broadsheet has no progress bar, and this
-deck keeps a 2px rule along the bottom edge of the canvas in `--primary`, because
-a talk has a length and a page does not.
+It differs from broadsheet in two places. Broadsheet has no progress bar, and
+this deck keeps a 2px rule along the bottom edge of the canvas in `--primary`,
+because a talk has a length and a page does not. And the footer rule is drawn in
+`--slide-chrome-border`, which is `--border` here and `--slide-rule` in
+broadsheet, so the line under the folio is a hairline rather than a printed rule.
+
+## Block parts
+
+The contract has two halves. Tokens are values, and every diff above moves one
+of them. Data attributes are parts: a block names the piece of itself a theme
+might want to reach, and the theme styles that attribute, decorative `::before`
+and `::after` content included. A block is then free to change its class names
+and its markup as long as the attributes stay where they are. The full list
+lives in the "Block part contract" comment at the bottom of
+`@deckard/core/styles.css`.
+
+What does not belong in a theme is anything that is new content rather than a
+treatment of existing content. A boot log, a status table, a cursor line with
+words in it are all slide content, so they go in a block this deck composes
+under `app/slides/blocks/`, not in `theme.css`.
+
+This file styles no block parts at all. Beyond the `accent` variant and the deck
+chrome, every named part renders the way the block sets it: the section numeral
+comes out at `--slide-title-size` in `--primary` because `templates.tsx` puts it
+there, and a list marker is a plain figure. A change to how numerals or markers
+look on every slide belongs here; a change to what one slide says does not.
 
 ## Removed
 
-`--slide-rule` is gone. Broadsheet defines it in both color blocks and no rule in
-that stylesheet, no block, and no runtime component reads it. If you reinstall
-broadsheet over this file, it comes back unused.
+Broadsheet's block-part rules are gone. It sets `[data-slide-breaker-index]` in
+the heading face at `calc(var(--slide-title-size) * 1.5)` on `0.8` leading, and
+puts `[data-slide-list-marker]` and `[data-slide-hero-meta]` into small caps
+with oldstyle figures. Neither rule was carried over, which is why the section
+numeral here is the block's own and not an oversized chapter number.
+Broadsheet's oldstyle figures on `[data-slide-header-meta]` went with them. If
+you reinstall broadsheet over this file, all four come back.
 
 ## The rules that still bind
 

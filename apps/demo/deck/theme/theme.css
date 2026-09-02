@@ -31,18 +31,23 @@
   --slide-font-body: var(--font-sans);
   --slide-font-mono: var(--font-mono);
 
-  --slide-padding-inline: 2.75rem;
-  --slide-padding-block: 3rem;
-  --slide-content-gap: 1.75rem;
+  --slide-padding-inline: 7rem;
+  --slide-padding-block: 5.75rem;
+  --slide-content-gap: 2.5rem;
+  --slide-item-gap: 1.5rem;
 
-  --slide-title-size: 4.5rem;
-  --slide-heading-size: 3.25rem;
-  --slide-subheading-size: 1.875rem;
-  --slide-lead-size: 1.375rem;
-  --slide-body-size: 1.5rem;
-  --slide-support-size: 1.0625rem;
-  --slide-label-size: 0.8125rem;
+  --slide-title-size: 6.5rem;
+  --slide-heading-size: 4.25rem;
+  --slide-subheading-size: 2.5rem;
+  --slide-lead-size: 2.5rem;
+  --slide-body-size: 1.9375rem;
+  --slide-code-size: 1.75rem;
+  --slide-support-size: 1.625rem;
+  --slide-label-size: 1.4375rem;
   --slide-label-tracking: 0.2em;
+
+  --slide-figure-size: 7.5rem;
+  --slide-figure-unit-size: 3.25rem;
 
   --slide-radius: 0.125rem;
   --slide-radius-lg: 0.125rem;
@@ -50,19 +55,19 @@
   --slide-surface-muted: oklch(0.925 0.014 84 / 62%);
   --slide-surface-border: oklch(0.78 0.02 72);
   --slide-surface-shadow: none;
-
-  --slide-wash: oklch(0.55 0.07 205 / 9%);
-  --slide-veil: oklch(0.5 0.04 210 / 6%);
-  --slide-glow: oklch(0.44 0.088 205 / 8%);
   --slide-grid-color: oklch(0.45 0.02 60 / 15%);
+  --slide-hatch: repeating-linear-gradient(
+    135deg,
+    var(--slide-grid-color) 0 22px,
+    transparent 22px 44px
+  );
+  --slide-rule: oklch(0.3 0.02 58 / 55%);
   --slide-grid-size: 3.5rem;
-  --slide-spotlight: oklch(0.48 0.06 205 / 14%);
-  --slide-horizon: oklch(0.44 0.088 205 / 13%);
 
   --slide-chrome-foreground: var(--muted-foreground);
   --slide-chrome-emphasis: var(--foreground);
   --slide-chrome-border: var(--border);
-  --slide-chrome-size: 0.875rem;
+  --slide-chrome-size: 1.375rem;
   --slide-chrome-tracking: 0.14em;
   --slide-progress-track: transparent;
   --slide-progress-fill: var(--primary);
@@ -94,13 +99,8 @@
   --slide-surface-muted: oklch(0.17 0.012 58 / 55%);
   --slide-surface-border: oklch(0.94 0.013 84 / 22%);
   --slide-surface-shadow: none;
-
-  --slide-wash: oklch(0.7 0.08 200 / 13%);
-  --slide-veil: oklch(0.5 0.05 205 / 12%);
-  --slide-glow: oklch(0.81 0.098 197 / 10%);
   --slide-grid-color: oklch(0.9 0.02 80 / 12%);
-  --slide-spotlight: oklch(0.8 0.06 200 / 12%);
-  --slide-horizon: oklch(0.81 0.098 197 / 16%);
+  --slide-rule: oklch(0.94 0.013 84 / 55%);
   color-scheme: dark;
 }
 
@@ -144,37 +144,22 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
+  background-color: var(--background);
 }
 
-.demo-theme .slide-background::before,
-.demo-theme .slide-background::after {
+.demo-theme .slide-background::before {
   position: absolute;
   pointer-events: none;
   content: "";
 }
 
-.demo-theme .slide-background[data-slide-background="default"] {
-  background-image: linear-gradient(
-    to bottom,
-    var(--slide-wash),
-    transparent 42%
-  );
-}
+/* Bare stock with a rule across the head, the way a paper carries its folio. */
 
 .demo-theme .slide-background[data-slide-background="default"]::before {
-  inset: 0 0 auto;
-  height: calc(var(--canvas-height) * 0.55);
-  background-image: radial-gradient(
-    ellipse at 50% -20%,
-    var(--slide-veil),
-    transparent 70%
-  );
-}
-
-.demo-theme .slide-background[data-slide-background="default"]::after {
-  inset: auto 0 0;
-  height: calc(var(--canvas-height) * 0.34);
-  background-image: linear-gradient(to top, var(--slide-glow), transparent);
+  inset: calc(var(--canvas-height) * 0.055) calc(var(--canvas-width) * 0.055)
+    auto;
+  height: 1px;
+  background-color: var(--slide-rule);
 }
 
 /* Ruled paper, one step wider than broadsheet to match the sans body. */
@@ -188,41 +173,66 @@
   background-size: 100% var(--slide-grid-size);
 }
 
-.demo-theme .slide-background[data-slide-background="grid"]::before {
-  inset: 0;
-  background-image: linear-gradient(
-    to bottom,
-    var(--background) 0%,
-    transparent 18%,
-    transparent 82%,
-    var(--background) 100%
-  );
-}
-
 /*
- * Horizon, not columns. A section break in this deck is a stage: one lit band
- * low in the canvas with a hairline along its top edge, and a wide glow above.
+ * A section break in this deck is a plate: the hatch a printed report reserves
+ * a figure with, under a heavy rule low in the canvas.
  */
 
 .demo-theme .slide-background[data-slide-background="spotlight"] {
-  background-image: radial-gradient(
-    ellipse at 50% 4%,
-    var(--slide-spotlight),
-    transparent 58%
-  );
+  background-image: var(--slide-hatch);
 }
 
 .demo-theme .slide-background[data-slide-background="spotlight"]::before {
-  inset: auto 0 0;
-  height: calc(var(--canvas-height) * 0.32);
-  background-image: linear-gradient(to top, var(--slide-horizon), transparent);
-  border-top: 1px solid var(--slide-grid-color);
+  inset: auto calc(var(--canvas-width) * 0.055)
+    calc(var(--canvas-height) * 0.14);
+  height: 2px;
+  background-color: var(--slide-rule);
 }
 
-.demo-theme .slide-background[data-slide-background="spotlight"]::after {
-  inset: auto 0 0;
-  height: calc(var(--canvas-height) * 0.12);
-  background-image: linear-gradient(to top, var(--background), transparent);
+/* The section plate: ink and stock swapped, the way a paper opens a feature.
+ * The field colour is read on the canvas and the ink is remapped one level
+ * down: a custom property resolves against the element that uses it, so
+ * remapping --primary here would flood the slide with its own ink. */
+
+.demo-theme[data-slide-background="accent"] {
+  --background: var(--primary);
+  --foreground: var(--primary-foreground);
+  --slide-halo: none;
+  --slide-scanline: none;
+  --slide-hatch: none;
+}
+
+.demo-theme[data-slide-background="accent"]
+  :is([data-slide-frame], [data-slide-header], [data-slide-footer]) {
+  --primary: var(--primary-foreground);
+  --muted-foreground: color-mix(
+    in oklab,
+    var(--primary-foreground) 74%,
+    transparent
+  );
+  --slide-surface: transparent;
+  --slide-surface-muted: color-mix(
+    in oklab,
+    var(--primary-foreground) 12%,
+    transparent
+  );
+  --slide-surface-border: color-mix(
+    in oklab,
+    var(--primary-foreground) 38%,
+    transparent
+  );
+  --slide-chrome-foreground: color-mix(
+    in oklab,
+    var(--primary-foreground) 72%,
+    transparent
+  );
+  --slide-chrome-emphasis: var(--primary-foreground);
+  --slide-chrome-border: color-mix(
+    in oklab,
+    var(--primary-foreground) 32%,
+    transparent
+  );
+  --slide-progress-fill: var(--primary-foreground);
 }
 
 /* Deck chrome. Broadsheet's running head, kept for a talk rather than a page:

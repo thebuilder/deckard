@@ -172,15 +172,21 @@ describe("DeckControls", () => {
   })
 
   it("reveals the cluster when the pointer comes near it", async () => {
-    mountControls()
+    const restore = stubMediaQueries({ "(any-pointer: fine)": true })
 
-    const box = controls().getBoundingClientRect()
+    try {
+      mountControls()
 
-    movePointerTo(box.left + box.width / 2, box.top + box.height / 2)
-    await vi.waitUntil(isRevealed)
+      const box = controls().getBoundingClientRect()
 
-    movePointerTo(box.right + 900, box.bottom + 900)
-    await vi.waitUntil(() => !isRevealed())
+      movePointerTo(box.left + box.width / 2, box.top + box.height / 2)
+      await vi.waitUntil(isRevealed)
+
+      movePointerTo(box.right + 900, box.bottom + 900)
+      await vi.waitUntil(() => !isRevealed())
+    } finally {
+      restore()
+    }
   })
 
   it("still answers the command shortcut while it is hidden", async () => {

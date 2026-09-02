@@ -8,6 +8,20 @@
  * Presentation token contract. A deck theme redefines these on the canvas and wins,
  * because it ships unlayered CSS and everything here sits in the base layer.
  * A deck without a theme still renders: neutral sizes, app surfaces, no decoration.
+ *
+ * The contract has two halves, and a theme is free to use both.
+ *
+ * Tokens are values: a size, a colour, a gradient, a shadow. Every number below
+ * is set against the 1920x1080 canvas at a 16px root, so 1rem is 16 canvas
+ * pixels and the scale reads the way it does on a projector rather than the way
+ * it does in a browser window.
+ *
+ * Data attributes are parts. A block names the piece of itself a theme might
+ * want to reach, and the theme styles that attribute, decorative ::before
+ * content included. The full list is documented under "Block part contract"
+ * below. Between them they are the whole surface a theme is allowed to depend
+ * on, so a block is free to change its class names and its markup as long as
+ * the attributes stay where they are.
  */
 @layer base {
   :root {
@@ -15,19 +29,31 @@
     --slide-font-body: var(--font-sans);
     --slide-font-mono: var(--font-mono);
 
-    --slide-padding-inline: 1.5rem;
-    --slide-padding-block: 2rem;
-    --slide-content-gap: 1.5rem;
+    /*
+     * The frame is left aligned and runs the full canvas, so these are the
+     * margins a slide's first word starts at rather than the gutter around a
+     * centred column.
+     */
+    --slide-padding-inline: 7rem;
+    --slide-padding-block: 6rem;
+    --slide-content-gap: 2.75rem;
+    --slide-item-gap: 1.625rem;
 
-    --slide-title-size: 4rem;
-    --slide-heading-size: 3rem;
-    --slide-subheading-size: 1.75rem;
-    --slide-lead-size: 1.25rem;
-    --slide-body-size: 1.5rem;
-    --slide-code-size: 1.125rem;
-    --slide-support-size: 0.875rem;
-    --slide-label-size: 0.875rem;
+    --slide-title-size: 6rem;
+    --slide-heading-size: 4.25rem;
+    --slide-subheading-size: 2.625rem;
+    --slide-lead-size: 2.625rem;
+    --slide-body-size: 2rem;
+    --slide-code-size: 1.75rem;
+    --slide-support-size: 1.75rem;
+    --slide-label-size: 1.5rem;
     --slide-label-tracking: 0.25em;
+
+    /* A metrics figure is display type without being a heading, so it sizes
+     * itself rather than borrowing the title size. */
+    --slide-figure-size: 7.5rem;
+    --slide-figure-unit-size: 3.5rem;
+    --slide-meter-size: 0.875rem;
 
     --slide-radius: 0.75rem;
     --slide-radius-lg: 1.25rem;
@@ -57,17 +83,23 @@
       transparent
     );
 
-    --slide-wash: transparent;
-    --slide-veil: transparent;
-    --slide-glow: transparent;
+    /*
+     * Background decoration. Flat, ruled, scanned, or hatched: the four things
+     * the source designs do, and the whole list. There is no radial wash and no
+     * corner glow token, because a bloom behind the copy reads as a smudge on a
+     * projector and as dirty paper in light mode.
+     */
     --slide-grid-color: transparent;
     --slide-grid-size: 44px;
-    --slide-spotlight: transparent;
+    --slide-rule: var(--border);
+    --slide-scanline: none;
+    --slide-hatch: none;
+    --slide-halo: none;
 
     --slide-chrome-foreground: var(--muted-foreground);
     --slide-chrome-emphasis: var(--foreground);
     --slide-chrome-border: var(--border);
-    --slide-chrome-size: var(--slide-support-size);
+    --slide-chrome-size: var(--slide-label-size);
     --slide-chrome-tracking: 0.08em;
     --slide-chrome-gap: 1rem;
     --slide-progress-track: transparent;
@@ -144,6 +176,61 @@
     letter-spacing: var(--slide-chrome-tracking);
   }
 
+  /*
+   * The inverted statement slide. Redefining tokens rather than painting a
+   * colour, because the canvas already carries bg-background and a utility
+   * beats this layer.
+   *
+   * The field colour is read on the canvas and the ink is remapped one level
+   * down, on purpose. A custom property resolves against the element that uses
+   * it, so remapping --primary on the same element that reads var(--primary)
+   * for the field would flood the slide with its own ink.
+   *
+   * A theme ships unlayered CSS and so overrides everything here. Every theme
+   * in this registry restates these two rules, which is what keeps the variant
+   * working after a theme swap.
+   */
+  [data-slide-canvas][data-slide-background="accent"] {
+    --background: var(--primary);
+    --foreground: var(--primary-foreground);
+    --slide-halo: none;
+    --slide-scanline: none;
+    --slide-hatch: none;
+  }
+
+  [data-slide-canvas][data-slide-background="accent"]
+    :is([data-slide-frame], [data-slide-header], [data-slide-footer]) {
+    --primary: var(--primary-foreground);
+    --muted-foreground: color-mix(
+      in oklab,
+      var(--primary-foreground) 72%,
+      transparent
+    );
+    --slide-surface: transparent;
+    --slide-surface-muted: color-mix(
+      in oklab,
+      var(--primary-foreground) 12%,
+      transparent
+    );
+    --slide-surface-border: color-mix(
+      in oklab,
+      var(--primary-foreground) 35%,
+      transparent
+    );
+    --slide-chrome-foreground: color-mix(
+      in oklab,
+      var(--primary-foreground) 70%,
+      transparent
+    );
+    --slide-chrome-emphasis: var(--primary-foreground);
+    --slide-chrome-border: color-mix(
+      in oklab,
+      var(--primary-foreground) 30%,
+      transparent
+    );
+    --slide-progress-fill: var(--primary-foreground);
+  }
+
   /* --slide-progress is the position in the deck as a fraction, set by the runtime. */
   [data-slide-canvas] [data-slide-progress] {
     position: absolute;
@@ -162,6 +249,79 @@
     background-color: var(--slide-progress-fill);
   }
 }
+
+/*
+ * Block part contract.
+ *
+ * Nothing below is styled here. This is the list of parts a block names so a
+ * theme can reach them, and it is the other half of the contract alongside the
+ * tokens above. A theme styles these attributes, decorative ::before and
+ * ::after content included, which is how phosphor writes a "[x]" in front of a
+ * list marker and ledger swaps one for a hanging rule. A block may rewrite its
+ * markup and its class names freely as long as these stay where they are.
+ *
+ * Painted by the runtime, so every deck has them:
+ *
+ *   [data-slide-canvas]            the 1920x1080 stage, carrying the theme
+ *                                  class, the color mode, and the background
+ *                                  variant name
+ *   [data-slide-frame]             the padded region a slide body renders in
+ *   [data-slide-background]        the background layer, and the variant name
+ *                                  on the canvas itself
+ *   [data-slide-header]            the header row
+ *   [data-slide-header-brand]      the deck name, as a link
+ *   [data-slide-header-title]      the current slide's own title
+ *   [data-slide-header-meta]       one line of standing deck detail
+ *   [data-slide-footer]            the footer row
+ *   [data-slide-counter]           the position, wrapping
+ *   [data-slide-counter-current]   the current number
+ *   [data-slide-counter-separator] the word between the two numbers
+ *   [data-slide-counter-total]     the deck length
+ *   [data-slide-progress]          the progress bar, with the fraction on
+ *                                  --slide-progress
+ *
+ * Painted by the blocks in the registry. A deck that installs its own blocks
+ * keeps these names to keep the themes:
+ *
+ *   [data-slide-surface]           anything that paints its own frame, which is
+ *                                  what makes a panel around it warn
+ *   [data-slide-panel]             the ContentSlideCard panel
+ *   [data-slide-intro]             the eyebrow and heading block above a body
+ *   [data-slide-eyebrow]           the uppercase label above a title
+ *   [data-slide-title]             a slide's own headline, which is an h1 on
+ *                                  most layouts and never a document title
+ *   [data-slide-lead]              the sentence under a headline
+ *   [data-slide-kicker]            the label under a FocusSlide body
+ *   [data-slide-hero]              the opener layout
+ *   [data-slide-hero-meta]         the credit row along the bottom of an opener
+ *   [data-slide-breaker]           the section divider layout
+ *   [data-slide-breaker-index]     the section number a divider carries
+ *   [data-slide-list]              a BulletList
+ *   [data-slide-list-item]         one row of it
+ *   [data-slide-list-marker]       the row's number, which a theme may blank
+ *                                  and replace with its own marker
+ *   [data-slide-list-text]         the row's copy
+ *   [data-slide-grid]              a FeatureGrid
+ *   [data-slide-card]              one card in it
+ *   [data-slide-card-title]        the card's heading
+ *   [data-slide-card-body]         the card's copy
+ *   [data-slide-media]             a media layout
+ *   [data-slide-media-overlay]     the scrim over full bleed media
+ *   [data-slide-media-caption]     the caption under or beside it
+ *   [data-slide-media-credit]      the credit line
+ *   [data-stat-grid]               a StatGrid
+ *   [data-stat-item]               one column of it
+ *   [data-stat-value]              the figure, which is display type without
+ *                                  being a heading element
+ *   [data-stat-unit]               the unit suffix on the figure
+ *   [data-stat-meter]              the proportion bar under it
+ *   [data-stat-caption]            what the figure is measured against
+ *
+ * What does not belong here: anything that is new content rather than a
+ * treatment of existing content. A boot log, a status table, a cursor line with
+ * words in it are all slide content, so they go in a block the deck composes,
+ * not in a theme.
+ */
 
 /* CodeBlock renders shiki markup, which paints its own background. Scoped to the
  * canvas so a deck never restyles code the surrounding app renders. */

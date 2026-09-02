@@ -55,14 +55,14 @@ function Phase({
 export default function ClippingSlide() {
   return (
     <OpenContentSlide
-      description="A slide that overflows is clipped, so overflow has to be loud in both places you would notice it."
+      description="Overflow is clipped, so it has to be loud in both places you would notice it."
       eyebrow="Clipping"
       title="The canvas clips, and CI fails on it"
     >
       <div className="grid gap-3">
         <SlideStep step={0}>
           <Phase
-            body="An amber outline around the frame and one console line naming the slide and the overflow in pixels. Development only, so nothing ships with a debug border."
+            body="An amber outline and one console line naming the slide and the overflow in pixels. Development only."
             label="While you write"
             title="The dev server draws the overflow"
           />
@@ -70,7 +70,7 @@ export default function ClippingSlide() {
 
         <SlideStep step={1}>
           <Phase
-            body="deck:check-overflow builds the app, opens every slide, and measures the same element with the same arithmetic as the dev warning. It exits nonzero listing each clipped slide."
+            body="deck:check-overflow measures the same element with the same arithmetic, and exits nonzero listing each clipped slide."
             label="On the way in"
             title="The same measurement, as a gate"
           />
@@ -78,7 +78,7 @@ export default function ClippingSlide() {
 
         <SlideStep step={2}>
           <Phase
-            body="Cut a bullet, or wrap the part that has to scroll in SlideScrollArea, which keeps wheel and keys inside itself so scrolling never steps the deck. Shrinking the type is not a fix."
+            body="Cut a bullet, or wrap the scrolling part in SlideScrollArea. Shrinking the type is not a fix."
             isFinal
             label="The fix"
             title="Change the content, not the checker"

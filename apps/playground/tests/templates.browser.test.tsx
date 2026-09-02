@@ -72,7 +72,7 @@ describe("ContentSlideCard", () => {
       renderCard(<p>Body copy with no frame of its own.</p>)
     )
 
-    expect(painted.padding).toBe("20px")
+    expect(painted.padding).toBe("44px")
     expect(painted.border).toBe("1px")
     expect(painted.background).not.toBe("rgba(0, 0, 0, 0)")
     expect(warnings).toEqual([])
@@ -87,7 +87,7 @@ describe("ContentSlideCard", () => {
       )
     )
 
-    expect(painted.padding).toBe("20px")
+    expect(painted.padding).toBe("44px")
     expect(painted.border).toBe("1px")
     expect(
       warnings.filter(
@@ -114,7 +114,7 @@ describe("ContentSlideCard", () => {
 
     const { border, padding } = paints(panel)
 
-    expect(padding).toBe("20px")
+    expect(padding).toBe("44px")
     expect(
       flat.getBoundingClientRect().left - panel.getBoundingClientRect().left
     ).toBeCloseTo(Number.parseFloat(padding) + Number.parseFloat(border), 1)

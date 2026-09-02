@@ -13,7 +13,7 @@ If you get a question about titles becoming slugs: they never do. A title is dis
 export default function SlideModelSlide() {
   return (
     <OpenContentSlide
-      description="One required field and five optional ones. If you can hold the model in your head, you can rearrange a deck without opening the docs."
+      description="One required field and five optional ones, small enough to hold in your head."
       eyebrow="The model"
       title="A slide is an object with a body"
     >
@@ -26,7 +26,7 @@ export default function SlideModelSlide() {
           },
           {
             description:
-              "A slug fixes the URL at /slides/<slug>. Without one a slide is served at its 1-based position, so a reorder moves the link.",
+              "A slug fixes the URL at /slides/<slug>. Without one a slide is served at its position, so a reorder moves the link.",
             title: "slug and title",
           },
           {

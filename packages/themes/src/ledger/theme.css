@@ -31,18 +31,23 @@
     ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
   --slide-font-mono: var(--font-mono);
 
-  --slide-padding-inline: 2.75rem;
-  --slide-padding-block: 3rem;
-  --slide-content-gap: 1.75rem;
+  --slide-padding-inline: 8rem;
+  --slide-padding-block: 6.5rem;
+  --slide-content-gap: 2.75rem;
+  --slide-item-gap: 1.625rem;
 
-  --slide-title-size: 5rem;
-  --slide-heading-size: 3.25rem;
-  --slide-subheading-size: 1.875rem;
-  --slide-lead-size: 1.5rem;
-  --slide-body-size: 1.75rem;
-  --slide-support-size: 1rem;
-  --slide-label-size: 0.875rem;
+  --slide-title-size: 7.75rem;
+  --slide-heading-size: 4.875rem;
+  --slide-subheading-size: 2.75rem;
+  --slide-lead-size: 2.75rem;
+  --slide-body-size: 2.0625rem;
+  --slide-code-size: 1.9375rem;
+  --slide-support-size: 1.75rem;
+  --slide-label-size: 1.5rem;
   --slide-label-tracking: 0.18em;
+
+  --slide-figure-size: 8.75rem;
+  --slide-figure-unit-size: 3.5rem;
 
   --slide-radius: 0rem;
   --slide-radius-lg: 0rem;
@@ -50,20 +55,20 @@
   --slide-surface-muted: oklch(0.915 0.016 85 / 55%);
   --slide-surface-border: oklch(0.755 0.016 78);
   --slide-surface-shadow: none;
-
-  --slide-wash: oklch(0.6 0.1 30 / 8%);
-  --slide-veil: oklch(0.4 0.03 60 / 11%);
-  --slide-glow: oklch(0.475 0.145 28 / 6%);
   --slide-grid-color: oklch(0.42 0.02 60 / 15%);
+  --slide-hatch: repeating-linear-gradient(
+    135deg,
+    var(--slide-grid-color) 0 22px,
+    transparent 22px 44px
+  );
   --slide-grid-size: 2.5rem;
-  --slide-spotlight: oklch(0.55 0.05 55 / 14%);
   --slide-rule: oklch(0.225 0.018 60 / 70%);
   --slide-margin-rule: oklch(0.475 0.145 28 / 32%);
 
   --slide-chrome-foreground: var(--muted-foreground);
   --slide-chrome-emphasis: var(--foreground);
   --slide-chrome-border: var(--slide-rule);
-  --slide-chrome-size: 0.9375rem;
+  --slide-chrome-size: 1.5rem;
   --slide-chrome-tracking: 0.12em;
   --slide-progress-track: transparent;
   --slide-progress-fill: transparent;
@@ -97,12 +102,7 @@
   --slide-surface-muted: oklch(0.285 0.016 60 / 52%);
   --slide-surface-border: oklch(0.415 0.016 70);
   --slide-surface-shadow: none;
-
-  --slide-wash: oklch(0.735 0.125 42 / 12%);
-  --slide-veil: oklch(0.12 0.01 60 / 34%);
-  --slide-glow: oklch(0.735 0.125 42 / 9%);
   --slide-grid-color: oklch(0.88 0.02 84 / 12%);
-  --slide-spotlight: oklch(0.85 0.05 70 / 10%);
   --slide-rule: oklch(0.955 0.012 88 / 62%);
   --slide-margin-rule: oklch(0.735 0.125 42 / 38%);
   color-scheme: dark;
@@ -143,6 +143,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
+  background-color: var(--background);
 }
 
 .ledger-theme .slide-background::before,
@@ -152,24 +153,9 @@
   content: "";
 }
 
-/* The folio: a warm head wash and the heavy rule this deck sets under everything. */
-
-.ledger-theme .slide-background[data-slide-background="default"] {
-  background-image: linear-gradient(
-    to bottom,
-    var(--slide-wash),
-    transparent 34%
-  );
-}
-
-.ledger-theme .slide-background[data-slide-background="default"]::before {
-  inset: auto 0 0;
-  height: calc(var(--canvas-height) * 0.24);
-  background-image: linear-gradient(to top, var(--slide-glow), transparent);
-}
-
-/* The rule runs to the content measure, not to the bleed, and sits clear of the
- * footer. 20% of the canvas is the gutter the slide frame already reserves. */
+/* The folio: bare paper and the heavy rule this deck sets under everything.
+ * The rule runs to the content measure, not to the bleed, and sits clear of
+ * the footer. 20% of the canvas is the gutter the slide frame already reserves. */
 
 .ledger-theme .slide-background[data-slide-background="default"]::after {
   inset: auto calc(var(--canvas-width) * 0.2) calc(var(--canvas-height) * 0.075);
@@ -196,40 +182,95 @@
   background-color: var(--slide-margin-rule);
 }
 
-.ledger-theme .slide-background[data-slide-background="grid"]::after {
-  inset: 0;
-  background-image: linear-gradient(
-    to bottom,
-    var(--background) 0%,
-    transparent 15%,
-    transparent 85%,
-    var(--background) 100%
-  );
-}
-
-/* A page under a lamp: light at the headline, falling off at every edge. */
+/* Plate: the hatch a printed report reserves a figure with, under the same rule. */
 
 .ledger-theme .slide-background[data-slide-background="spotlight"] {
-  background-image: radial-gradient(
-    ellipse at 50% 24%,
-    var(--slide-spotlight),
-    transparent 58%
-  );
-}
-
-.ledger-theme .slide-background[data-slide-background="spotlight"]::before {
-  inset: 0;
-  background-image: radial-gradient(
-    ellipse at 50% 48%,
-    transparent 52%,
-    var(--slide-veil)
-  );
+  background-image: var(--slide-hatch);
 }
 
 .ledger-theme .slide-background[data-slide-background="spotlight"]::after {
   inset: auto calc(var(--canvas-width) * 0.2) calc(var(--canvas-height) * 0.075);
   height: 2px;
   background-color: var(--slide-rule);
+}
+
+/* Block parts. A chapter opens on a numeral set in the text face, and a list
+ * hangs a rule where a lesser deck would put a bullet. */
+
+.ledger-theme [data-slide-breaker-index] {
+  font-family: var(--slide-font-heading);
+  font-size: calc(var(--slide-title-size) * 1.6);
+  font-weight: 600;
+  line-height: 0.8;
+  letter-spacing: -0.02em;
+}
+
+/* The number goes to zero rather than display:none so the rail keeps its width
+ * and every list in the deck starts its copy on the same column. */
+
+.ledger-theme [data-slide-list-marker] {
+  font-size: 0;
+}
+
+.ledger-theme [data-slide-list-marker]::before {
+  display: block;
+  width: 3.5rem;
+  height: 2px;
+  margin-block-start: 0.9em;
+  content: "";
+  background-color: var(--primary);
+}
+
+.ledger-theme :is([data-slide-hero-meta], [data-slide-kicker]) {
+  font-variant-caps: small-caps;
+  text-transform: none;
+}
+
+/* The chapter plate: the accent flooded to every edge and the serif set in the
+ * paper colour, the way a printed report opens a section.
+ * The field colour is read on the canvas and the ink is remapped one level
+ * down: a custom property resolves against the element that uses it, so
+ * remapping --primary here would flood the slide with its own ink. */
+
+.ledger-theme[data-slide-background="accent"] {
+  --background: var(--primary);
+  --foreground: var(--primary-foreground);
+  --slide-halo: none;
+  --slide-scanline: none;
+  --slide-hatch: none;
+}
+
+.ledger-theme[data-slide-background="accent"]
+  :is([data-slide-frame], [data-slide-header], [data-slide-footer]) {
+  --primary: var(--primary-foreground);
+  --muted-foreground: color-mix(
+    in oklab,
+    var(--primary-foreground) 74%,
+    transparent
+  );
+  --slide-surface: transparent;
+  --slide-surface-muted: color-mix(
+    in oklab,
+    var(--primary-foreground) 12%,
+    transparent
+  );
+  --slide-surface-border: color-mix(
+    in oklab,
+    var(--primary-foreground) 38%,
+    transparent
+  );
+  --slide-chrome-foreground: color-mix(
+    in oklab,
+    var(--primary-foreground) 72%,
+    transparent
+  );
+  --slide-chrome-emphasis: var(--primary-foreground);
+  --slide-chrome-border: color-mix(
+    in oklab,
+    var(--primary-foreground) 32%,
+    transparent
+  );
+  --slide-progress-fill: var(--primary-foreground);
 }
 
 /* Deck chrome. A folio line at the head of the page and page numbers at the
@@ -253,7 +294,7 @@
 
 .ledger-theme [data-slide-header-meta] {
   font-family: var(--slide-font-mono);
-  font-size: 0.8125rem;
+  font-size: 1.25rem;
   text-transform: uppercase;
 }
 

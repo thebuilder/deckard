@@ -31,18 +31,23 @@
     ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
   --slide-font-mono: var(--font-mono);
 
-  --slide-padding-inline: 2.25rem;
-  --slide-padding-block: 2.75rem;
-  --slide-content-gap: 1.75rem;
+  --slide-padding-inline: 6.875rem;
+  --slide-padding-block: 6rem;
+  --slide-content-gap: 2.75rem;
+  --slide-item-gap: 1.625rem;
 
-  --slide-title-size: 4.75rem;
-  --slide-heading-size: 3.125rem;
-  --slide-subheading-size: 1.875rem;
-  --slide-lead-size: 1.4375rem;
-  --slide-body-size: 1.6875rem;
-  --slide-support-size: 1rem;
-  --slide-label-size: 0.875rem;
+  --slide-title-size: 7rem;
+  --slide-heading-size: 4.5rem;
+  --slide-subheading-size: 2.75rem;
+  --slide-lead-size: 2.75rem;
+  --slide-body-size: 2.125rem;
+  --slide-code-size: 2rem;
+  --slide-support-size: 1.75rem;
+  --slide-label-size: 1.5rem;
   --slide-label-tracking: 0.3em;
+
+  --slide-figure-size: 8.25rem;
+  --slide-figure-unit-size: 3.25rem;
 
   --slide-radius: 0.125rem;
   --slide-radius-lg: 0.125rem;
@@ -50,20 +55,21 @@
   --slide-surface-muted: oklch(0.9 0.012 258 / 58%);
   --slide-surface-border: oklch(0.835 0.012 258);
   --slide-surface-shadow: none;
-
-  --slide-wash: oklch(0.6 0.12 48 / 9%);
-  --slide-veil: oklch(0.45 0.03 258 / 7%);
-  --slide-glow: oklch(0.535 0.155 48 / 7%);
   --slide-grid-color: oklch(0.45 0.03 258 / 9%);
+  --slide-hatch: repeating-linear-gradient(
+    135deg,
+    var(--slide-grid-color) 0 22px,
+    transparent 22px 44px
+  );
+  --slide-rule: oklch(0.535 0.155 48 / 45%);
   --slide-grid-size: 1.75rem;
-  --slide-spotlight: oklch(0.6 0.1 48 / 11%);
   --slide-grid-major: oklch(0.45 0.05 258 / 16%);
   --slide-halo: none;
 
   --slide-chrome-foreground: var(--muted-foreground);
   --slide-chrome-emphasis: var(--foreground);
   --slide-chrome-border: var(--slide-grid-major);
-  --slide-chrome-size: 0.875rem;
+  --slide-chrome-size: 1.5rem;
   --slide-chrome-tracking: 0.28em;
   --slide-progress-track: var(--slide-grid-major);
   --slide-progress-fill: var(--primary);
@@ -95,14 +101,10 @@
   --slide-surface-muted: oklch(0.255 0.03 258 / 58%);
   --slide-surface-border: oklch(0.335 0.03 258);
   --slide-surface-shadow: none;
-
-  --slide-wash: oklch(0.79 0.155 68 / 14%);
-  --slide-veil: oklch(0.08 0.02 258 / 42%);
-  --slide-glow: oklch(0.79 0.155 68 / 12%);
   --slide-grid-color: oklch(0.75 0.05 258 / 9%);
-  --slide-spotlight: oklch(0.79 0.13 68 / 13%);
+  --slide-rule: oklch(0.79 0.155 68 / 45%);
   --slide-grid-major: oklch(0.79 0.09 68 / 15%);
-  --slide-halo: 0 0 0.5em oklch(0.79 0.155 68 / 32%);
+  --slide-halo: 0 0 34px oklch(0.79 0.155 68 / 32%);
   color-scheme: dark;
 }
 
@@ -146,6 +148,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
+  background-color: var(--background);
 }
 
 .nexus-theme .slide-background::before,
@@ -155,30 +158,26 @@
   content: "";
 }
 
-/* Deep field: a wash off the top edge, a horizon band, one running light. */
-
-.nexus-theme .slide-background[data-slide-background="default"] {
-  background-image: radial-gradient(
-    ellipse at 50% -10%,
-    var(--slide-wash),
-    transparent 62%
-  );
-}
+/* Deep field: flat, with a hairline bracket in each opposite corner. The
+ * brackets are the frame the source design rules its panels with, pulled out
+ * to the canvas edge. */
 
 .nexus-theme .slide-background[data-slide-background="default"]::before {
-  inset: auto 0 0;
-  height: calc(var(--canvas-height) * 0.32);
-  background-image: linear-gradient(to top, var(--slide-veil), transparent);
+  top: 2.5rem;
+  left: 2.5rem;
+  width: 7rem;
+  height: 7rem;
+  border-top: 1px solid var(--slide-rule);
+  border-left: 1px solid var(--slide-rule);
 }
 
 .nexus-theme .slide-background[data-slide-background="default"]::after {
-  right: 0;
-  bottom: 0;
-  width: 26rem;
-  height: 26rem;
-  background-color: var(--slide-glow);
-  border-radius: 9999px;
-  filter: blur(72px);
+  right: 2.5rem;
+  bottom: 2.5rem;
+  width: 7rem;
+  height: 7rem;
+  border-right: 1px solid var(--slide-rule);
+  border-bottom: 1px solid var(--slide-rule);
 }
 
 /* Blueprint: a fine cell grid with every fifth line drawn heavier. */
@@ -196,48 +195,83 @@
     calc(var(--slide-grid-size) * 5) calc(var(--slide-grid-size) * 5);
 }
 
-.nexus-theme .slide-background[data-slide-background="grid"]::before {
-  inset: 0;
-  background-image: radial-gradient(
-    ellipse at 50% 42%,
-    transparent 44%,
-    var(--background) 100%
-  );
-}
-
-.nexus-theme .slide-background[data-slide-background="grid"]::after {
-  inset: 0 0 auto;
-  height: calc(var(--canvas-height) * 0.5);
-  background-image: linear-gradient(to bottom, var(--slide-wash), transparent);
-}
-
-/* Approach light: one wide beam off the top edge and a tube vignette under it. */
+/* Hazard hatch, the fill the source design puts behind a missing plate. */
 
 .nexus-theme .slide-background[data-slide-background="spotlight"] {
-  background-image: radial-gradient(
-    ellipse at 50% -6%,
-    var(--slide-spotlight),
-    transparent 60%
-  );
+  background-image: var(--slide-hatch);
 }
 
-.nexus-theme .slide-background[data-slide-background="spotlight"]::before {
-  inset: 0;
-  background-image: radial-gradient(
-    ellipse at 50% 46%,
-    transparent 44%,
-    var(--slide-veil)
-  );
+/* Block parts. The section number is the loudest thing in the source design,
+ * set far past any heading and lit from behind. */
+
+.nexus-theme [data-slide-breaker-index] {
+  font-family: var(--slide-font-heading);
+  font-size: calc(var(--slide-title-size) * 2.5);
+  font-weight: 900;
+  line-height: 0.8;
+  letter-spacing: -0.02em;
+  text-shadow: var(--slide-halo);
 }
 
-.nexus-theme .slide-background[data-slide-background="spotlight"]::after {
-  right: 0;
-  bottom: 0;
-  width: 22rem;
-  height: 22rem;
-  background-color: var(--slide-glow);
-  border-radius: 9999px;
-  filter: blur(72px);
+.nexus-theme [data-slide-hero-meta] {
+  font-family: var(--slide-font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+}
+
+.nexus-theme :is([data-slide-list-marker], [data-stat-unit]) {
+  font-family: var(--slide-font-mono);
+}
+
+.nexus-theme [data-stat-meter] {
+  border-color: color-mix(in oklab, var(--primary) 55%, transparent);
+}
+
+/* The statement slide: the whole console lit in the accent, halo off, because
+ * a glow on a field of the same hue is invisible.
+ * The field colour is read on the canvas and the ink is remapped one level
+ * down: a custom property resolves against the element that uses it, so
+ * remapping --primary here would flood the slide with its own ink. */
+
+.nexus-theme[data-slide-background="accent"] {
+  --background: var(--primary);
+  --foreground: var(--primary-foreground);
+  --slide-halo: none;
+  --slide-scanline: none;
+  --slide-hatch: none;
+}
+
+.nexus-theme[data-slide-background="accent"]
+  :is([data-slide-frame], [data-slide-header], [data-slide-footer]) {
+  --primary: var(--primary-foreground);
+  --muted-foreground: color-mix(
+    in oklab,
+    var(--primary-foreground) 74%,
+    transparent
+  );
+  --slide-surface: transparent;
+  --slide-surface-muted: color-mix(
+    in oklab,
+    var(--primary-foreground) 12%,
+    transparent
+  );
+  --slide-surface-border: color-mix(
+    in oklab,
+    var(--primary-foreground) 38%,
+    transparent
+  );
+  --slide-chrome-foreground: color-mix(
+    in oklab,
+    var(--primary-foreground) 72%,
+    transparent
+  );
+  --slide-chrome-emphasis: var(--primary-foreground);
+  --slide-chrome-border: color-mix(
+    in oklab,
+    var(--primary-foreground) 32%,
+    transparent
+  );
+  --slide-progress-fill: var(--primary-foreground);
 }
 
 /* Deck chrome. Console strips: everything set in capitals, spaced out, and
