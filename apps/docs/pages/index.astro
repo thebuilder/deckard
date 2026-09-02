@@ -1,21 +1,28 @@
 ---
+import { Image } from "astro:assets"
 import { Code } from "astro:components"
 import data from "blume:data"
 import PageLayout from "blume/components/layout/PageLayout.astro"
+import presenterImage from "../assets/presenter.png"
 import DeckPreview from "../components/DeckPreview.astro"
 import { galleryTheme, themeCountWord, themeNames } from "../lib/deck-preview"
 import {
+  canvas,
   cliCode,
   demoBackgrounds,
   demoCode,
   demoSteps,
   heroSlide,
-  notesCode,
-  serverSlideCode,
 } from "../lib/landing"
 import "../styles/landing.css"
 
 const { config } = data
+
+const playgroundUrl = "https://deckard-playground.thebuilder.dk"
+const canvasSize = `${canvas.width}x${canvas.height}`
+
+const presenterAlt =
+  "The presenter window: a timer and a clock, a preview of the next step, the deck listed by title with the current slide picked out, the slide itself, and the speaker notes under it."
 
 const codeThemes = {
   dark: "github-dark-high-contrast",
@@ -63,7 +70,7 @@ const motionRules = demoSteps
 const themeRules = themeNames
   .map(
     (name) =>
-      `.hero-stage:has(#hero-theme-${name}:checked) .hero-frame[data-theme-name="${name}"] { display: block }`
+      `.theme-stage:has(#pick-theme-${name}:checked) .theme-frame[data-theme-name="${name}"] { display: block }`
   )
   .join("\n")
 
@@ -81,8 +88,8 @@ ${motionRules}
   navigation={data.navigation}
   ogEnabled={config.og.enabled}
   page={{
-    description: `Deckard builds presentations out of React components on a fixed 1920x1080 canvas, with ${themeCountWord} themes, presenter mode, and a PDF export built from the same canvas.`,
-    title: "Deckard, presentations built out of React components",
+    description: `Deckard builds presentations out of React components: a fixed ${canvasSize} canvas, keyboard navigation, speaker notes, ${themeCountWord} themes, and a PDF export.`,
+    title: "Deckard, presentations built with React",
   }}
   searchEnabled={config.search.enabled}
   site={{ description: config.description, title: config.title }}
@@ -93,91 +100,33 @@ ${motionRules}
 
   <div class="landing">
     <section class="hero">
-      <div class="hero-copy">
-        <p class="hero-eyebrow">A presentation framework for Next.js</p>
-        <h1 class="hero-title">Slides are React components</h1>
-        <p class="hero-lead">
-          A slide is an object with a body, and the body is a component.
-          Everything paints inside one fixed 1920x1080 canvas, so the deck looks
-          the same on your laptop, the venue projector, a phone, and in the
-          exported PDF. Only the scale changes.
-        </p>
+      <h1 class="hero-title">Slides are React components</h1>
+      <p class="hero-lead">
+        Build a presentation in Next.js with the components, the data, and the
+        tools you already use. Deckard adds what a deck needs and an app does
+        not: a fixed 16:9 canvas, keyboard navigation, presenter notes, themes,
+        and a PDF export.
+      </p>
 
-        <div class="hero-actions">
-          <a class="button button-primary" href="/quickstart">
-            Read the quickstart
-          </a>
-          <a class="button button-quiet" href="/themes">
-            See the {themeCountWord} themes
-          </a>
-        </div>
-
-        <div class="hero-install">
-          <span class="hero-install-prompt">$</span>
-          <code>npx @deckard/cli init my-talk</code>
-        </div>
-        <p class="hero-note">
-          None of the packages are on npm yet. <a
-            href="/quickstart#installing-before-the-packages-publish"
-          >
-            Pack them from a checkout
-          </a> and point <code>init</code> at the tarballs until they land.
-        </p>
+      <div class="hero-actions">
+        <a class="button button-primary" href="/quickstart"> Get started </a>
+        <a class="button button-quiet" href={playgroundUrl}>
+          View the example deck
+        </a>
       </div>
 
-      <div class="hero-stage">
-        <div class="hero-frames">
-          {
-            themeNames.map((name) => (
-              <div class="hero-frame" data-theme-name={name}>
-                <DeckPreview
-                  background={galleryTheme[name].background}
-                  mode={
-                    galleryTheme[name].defaultColorMode === "dark"
-                      ? "dark"
-                      : "light"
-                  }
-                  scale={0.17}
-                  slide={heroSlide}
-                  theme={name}
-                />
-              </div>
-            ))
-          }
-        </div>
-
-        <fieldset class="hero-themes">
-          <legend class="sr-only">Deck theme</legend>
-          {
-            themeNames.map((name, index) => (
-              <label>
-                <input
-                  checked={index === 0}
-                  class="switch-input"
-                  id={`hero-theme-${name}`}
-                  name="hero-theme"
-                  type="radio"
-                  value={name}
-                />
-                {name}
-              </label>
-            ))
-          }
-        </fieldset>
-
-        <p class="hero-caption">
-          One deck, {themeCountWord} themes. Every frame above is a real slide canvas
-          with the theme's own stylesheet on it.
-        </p>
-      </div>
+      <p class="hero-status">
+        Deckard is in preview. The packages are not on npm yet.
+      </p>
     </section>
 
-    <section class="section" id="demo">
+    <section class="section section-lead" id="write">
       <div class="section-head">
-        <h2>A slide is an object with a body</h2>
+        <h2>Write slides in React</h2>
         <p>
-          On the left is a deck. Step through it, and the object that lights up
-          is the slide on the right.
+          Your own components, or the layouts Deckard ships. A chart, a table, a
+          code sample, a video, a running demo, data Next.js loaded for you.
+          Pick a slide to see the code behind it.
         </p>
       </div>
 
@@ -238,60 +187,20 @@ ${motionRules}
           </div>
         </div>
       </div>
+
+      <p class="section-footnote">
+        Server and client components are both supported.
+      </p>
     </section>
 
-    <section class="section">
+    <section class="section" id="canvas">
       <div class="section-head">
-        <h2>The body is a component, so it does what a component does</h2>
+        <h2>One layout everywhere</h2>
         <p>
-          A chart, a table pulled from an API, a running demo. If you can render
-          it in React you can put it on a slide, and it awaits its own data
-          before the slide renders.
-        </p>
-      </div>
-
-      <div class="split">
-        <figure class="code-figure">
-          <figcaption>deck/slides/vitals.slide.tsx</figcaption>
-          <Code
-            code={serverSlideCode}
-            defaultColor={false}
-            lang="tsx"
-            themes={codeThemes}
-          />
-        </figure>
-
-        <div class="notes">
-          <h3>Server Components</h3>
-          <p>
-            That slide is async. It reads its own data and the deck prerenders
-            with the answer already in the HTML, so nothing loads in front of
-            the room.
-          </p>
-          <h3>Client widgets</h3>
-          <p>
-            Put <code>"use client"</code> at the top of a block and it is interactive
-            during the talk. The slide route stays static either way: <code>
-              presenterPreview
-            </code> and <code>step</code> are read on the client, so the whole deck
-            prerenders.
-          </p>
-          <h3>Blocks you own</h3>
-          <p>
-            The block families install into your app as source through a shadcn
-            registry. You own the files and edit them.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="section-head">
-        <h2>One canvas, and only the scale changes</h2>
-        <p>
-          <code>SlideViewport</code> measures the window, scales the 1920x1080 canvas
-          to fit, and centers it. The two frames below are the same slide in two
-          boxes of different width. Nothing inside them reflows.
+          Every slide is drawn on one fixed {canvasSize} canvas that scales to fit
+          the screen. Nothing inside it reflows, so the two frames below are the
+          same slide at two widths. Present, screenshot, and export a PDF from
+          that layout.
         </p>
       </div>
 
@@ -317,62 +226,99 @@ ${motionRules}
       </div>
 
       <p class="section-footnote">
-        <code>deckard export pdf</code> prints the same canvas at 1440x810pt, which
-        is 1920x1080 at 96dpi. The page size comes from the same <code>
-          canvas
-        </code> config the deck renders with.
+        <code>deckard export pdf</code> prints that canvas through the same slide
+        routes the deck runs on, one page per slide.
       </p>
     </section>
 
-    <section class="section">
+    <section class="section" id="present">
       <div class="section-head">
-        <h2>Press P for the presenter window</h2>
+        <h2>Present from the browser</h2>
         <p>
-          A second window opens at <code>/presenter</code> and syncs with the deck
-          over a <code>BroadcastChannel</code>, so the two stay in step without a
-          server. Arrow keys in either window drive both.
+          Arrow keys walk the reveal steps on a slide and then move to the next
+          one. <code>P</code> opens presenter mode in a second window: your notes,
+          a timer, the slide you are on, and what comes next.
         </p>
       </div>
 
-      <div class="split">
-        <div class="notes">
-          <ul class="facts">
-            <li>
-              The current slide, and a preview of what comes next that advances
-              with reveal steps
-            </li>
-            <li>Speaker notes, with font-size controls</li>
-            <li>A timer you start, and a 24-hour clock</li>
-            <li>
-              The current slide with a little of the deck behind it and more of
-              it ahead, by title, each one a jump
-            </li>
-          </ul>
-          <p>
-            <code>Cmd/Ctrl + K</code> opens a searchable list of every slide by number
-            and title.
-          </p>
-        </div>
-
-        <figure class="code-figure">
-          <figcaption>deck/slides.tsx</figcaption>
-          <Code
-            code={notesCode}
-            defaultColor={false}
-            lang="tsx"
-            themes={codeThemes}
-          />
-        </figure>
-      </div>
+      <figure class="shot">
+        <Image
+          alt={presenterAlt}
+          class="shot-image"
+          loading="lazy"
+          sizes="(min-width: 66rem) 62rem, 100vw"
+          src={presenterImage}
+          widths={[500, 750, 1000, 1500, presenterImage.width]}
+        />
+        <figcaption>Presenter mode, on the second screen.</figcaption>
+      </figure>
     </section>
 
-    <section class="section">
+    <section class="section" id="themes">
       <div class="section-head">
-        <h2>One binary does the rest</h2>
+        <h2>Start with a theme</h2>
         <p>
-          <code>deckard</code> scaffolds the app, checks the deck, and turns it into
-          files. Every command except <code>init</code> treats the current directory
-          as the deck.
+          Pick a built-in and switch with one import. Eject it when you want to
+          edit the CSS. Blocks install into your app as source, so their markup
+          is yours to change.
+        </p>
+      </div>
+
+      <div class="theme-stage">
+        <div class="theme-frames">
+          {
+            themeNames.map((name) => (
+              <div class="theme-frame" data-theme-name={name}>
+                <DeckPreview
+                  background={galleryTheme[name].background}
+                  mode={
+                    galleryTheme[name].defaultColorMode === "dark"
+                      ? "dark"
+                      : "light"
+                  }
+                  scale={0.24}
+                  slide={heroSlide}
+                  theme={name}
+                />
+              </div>
+            ))
+          }
+        </div>
+
+        <fieldset class="theme-picker">
+          <legend class="sr-only">Deck theme</legend>
+          {
+            themeNames.map((name, index) => (
+              <label>
+                <input
+                  checked={index === 0}
+                  class="switch-input"
+                  id={`pick-theme-${name}`}
+                  name="pick-theme"
+                  type="radio"
+                  value={name}
+                />
+                {name}
+              </label>
+            ))
+          }
+        </fieldset>
+      </div>
+
+      <p class="section-footnote">
+        One deck, {themeCountWord} themes. <a href="/themes">
+          Open the gallery
+        </a> for each of them in light and dark.
+      </p>
+    </section>
+
+    <section class="section" id="export">
+      <div class="section-head">
+        <h2>Check and export</h2>
+        <p>
+          A fixed canvas does not scroll, so content that does not fit is
+          clipped. Find those slides, review the whole deck as a contact sheet,
+          and produce the PDF.
         </p>
       </div>
 
@@ -385,28 +331,13 @@ ${motionRules}
           themes={codeThemes}
         />
       </figure>
-
-      <p class="section-footnote">
-        <code>check-overflow</code> is the one to run after writing a slide. A fixed
-        canvas cannot scroll, so content that does not fit is clipped, and this fails
-        the build listing exactly which slides.
-      </p>
     </section>
 
     <section class="closing">
       <h2>Write the first slide</h2>
-      <p>
-        <code>deckard init</code> writes a Next.js app with a sample deck in it,
-        installs it, commits it, and typechecks the result. Then you change a
-        title and save.
-      </p>
       <div class="hero-actions">
-        <a class="button button-primary" href="/quickstart">
-          Read the quickstart
-        </a>
-        <a class="button button-quiet" href="/introduction">
-          What a deck looks like
-        </a>
+        <a class="button button-primary" href="/quickstart"> Get started </a>
+        <a class="button button-quiet" href="/introduction"> Read the docs </a>
       </div>
     </section>
   </div>

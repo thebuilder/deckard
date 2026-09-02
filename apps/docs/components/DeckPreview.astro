@@ -51,10 +51,23 @@ const progress = slide.total > 0 ? slide.number / slide.total : 0
 const label = `A ${theme} slide in ${mode} mode, headed "${slide.heading}"`
 ---
 
+{/*
+ * The sample deck copy inside a preview is a demonstration, not documentation,
+ * and it must not answer a search or land in llms-full.txt as though it were.
+ * Blume's Orama index and its Markdown and llms output are built from each
+ * page's source MDX, where this whole component is one self-closing tag, so
+ * today they carry none of it. data-pagefind-ignore is the guard for the one
+ * path that reads rendered HTML instead: Pagefind, which search.provider can be
+ * switched to, honours the attribute on any element.
+ *
+ * role="img" with aria-label is what keeps the frame named for a screen reader
+ * while taking its inner markup out of the accessibility tree.
+ */}
 <div
   aria-label={label}
   class:list={["deck-preview", className]}
   data-mode={mode}
+  data-pagefind-ignore="all"
   data-theme-preview={theme}
   hidden={hidden}
   id={id}
