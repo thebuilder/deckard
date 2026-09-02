@@ -111,14 +111,16 @@ Takes exactly one positional, the target directory, and refuses one that already
 | `--package-manager <name>` | `bun`, `npm`, `pnpm`, `yarn` | detected |
 | `--no-install` | boolean | install runs |
 | `--no-git` | boolean | git runs |
-| `--registry <url>` | a URL with a `{name}` placeholder | `http://localhost:3001/r/{name}.json` |
+| `--registry <url>` | a URL with a `{name}` placeholder | `https://deckard.thebuilder.dk/r/{name}.json` |
 | `--core-tarball <path>` | a local `.tgz` | `^<cli version>` from npm |
 | `--themes-tarball <path>` | a local `.tgz` | `^<cli version>` from npm |
 | `--cli-tarball <path>` | a local `.tgz` | `^<cli version>` from npm |
 
 The package name comes from the directory basename, lowercased with anything outside `[a-z0-9-]` collapsed to a hyphen.
 
-Package manager precedence: the `--package-manager` flag, then `npm_config_user_agent`, then the first lockfile found walking up from the target's parent (`pnpm-lock.yaml`, `bun.lock`, `bun.lockb`, `yarn.lock`, `package-lock.json`), then `npm`. Whichever wins is written into the generated `package.json` as `packageManager`, it is what the install runs with, and every later `deckard` command reads that field. Through `npx` it is npm:
+Package manager precedence for `init`: the `--package-manager` flag, then `npm_config_user_agent`, then the first lockfile found walking up from the target's parent (`pnpm-lock.yaml`, `bun.lock`, `bun.lockb`, `yarn.lock`, `package-lock.json`), then `npm`. Whichever wins is what the install runs with. Through `npx` it is npm:
+
+No `packageManager` field is written into the generated `package.json`. Corepack reads that field as an enforcement lock, so recording the manager that happened to run `init` would refuse every other manager afterwards. Later `deckard` commands resolve the deck's manager from a `packageManager` field if you add one yourself, then the lockfile, then `npm_config_user_agent`, then `npm`.
 
 ```bash ~
 npx @deckard/cli init my-talk
@@ -403,7 +405,7 @@ Builds the item id as `block-<name>`, probes the registry with a 5-second timeou
 ```bash ~/my-talk
 deckard add block metrics
 
-Installing @deckard/block-metrics from http://localhost:3001/r/block-metrics.json
+Installing @deckard/block-metrics from https://deckard.thebuilder.dk/r/block-metrics.json
 ✔ Checking registry.
 ✔ Created 1 file:
   - app/slides/blocks/metrics.tsx
@@ -415,10 +417,10 @@ With no `--registry` and no `registries["@deckard"]` in `components.json`, it er
 deckard add block metrics
 
 No @deckard registry in components.json and no --registry flag.
-Add one: { "registries": { "@deckard": "http://localhost:3001/r/{name}.json" } }
+Add one: { "registries": { "@deckard": "https://deckard.thebuilder.dk/r/{name}.json" } }
 ```
 
-Deckard has no public registry host yet, so the URL `init` writes points at the docs site on port 3001. When the registry does not answer, the command tells you to start that site.
+The URL `init` writes points at the Deckard docs site, which serves every registry item at `/r/{name}.json`. Point `--registry` at another URL with a `{name}` placeholder to install from your own.
 
 ## deckard eject theme
 
