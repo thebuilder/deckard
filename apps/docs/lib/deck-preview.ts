@@ -54,6 +54,7 @@ const galleryCopy = {
     background: "hero",
     summary:
       "A live field behind the openers and the close, frozen to capture.",
+  },
   blueprint: {
     background: "grid",
     summary:
