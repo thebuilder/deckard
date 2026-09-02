@@ -1,6 +1,11 @@
+import { themeIds } from "@deckard/themes/ids"
 import { describe, expect, it } from "vitest"
 
-import { themeStylesheetKind } from "./theme-source.ts"
+import {
+  builtInThemes,
+  defaultTheme,
+  themeStylesheetKind,
+} from "./theme-source.ts"
 
 const builtInDeck = `import { defineDeck } from "@deckard/core"
 import { phosphor } from "@deckard/themes"
@@ -25,6 +30,19 @@ export const deck = defineDeck({
   title: "A deck",
 })
 `
+
+// built-in-themes.ts is generated, and committed so that typecheck and these
+// tests can read it without a build. This is what catches it left behind: the
+// checks job never regenerates it before running them.
+describe("builtInThemes", () => {
+  it("names every theme @deckard/themes ships, and no other", () => {
+    expect([...builtInThemes]).toEqual([...themeIds])
+  })
+
+  it("defaults to a theme it lists", () => {
+    expect(builtInThemes).toContain(defaultTheme)
+  })
+})
 
 describe("themeStylesheetKind", () => {
   it("reads the built-in a deck imports even with a local theme left on disk", () => {

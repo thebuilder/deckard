@@ -192,6 +192,9 @@ importers:
       '@deckard/core':
         specifier: workspace:*
         version: link:../core
+      '@deckard/themes':
+        specifier: workspace:*
+        version: link:../themes
       '@types/node':
         specifier: ^26.4.0
         version: 26.4.0

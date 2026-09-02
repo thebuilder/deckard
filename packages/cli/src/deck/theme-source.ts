@@ -1,23 +1,25 @@
 import fs from "node:fs"
 import path from "node:path"
 
+import type { BuiltInThemeId } from "@deckard/themes/ids"
+
 import { projectPath, resolveFromProject } from "../project.ts"
+import { themeIds } from "./built-in-themes.ts"
 import {
   deckSourcePath,
   findThemeImport,
   type ThemeImportKind,
 } from "./deck-source.ts"
 
-export const builtInThemes = [
-  "broadsheet",
-  "deckard",
-  "ledger",
-  "meridian",
-  "nexus",
-  "phosphor",
-] as const
+// The names are decided in @deckard/themes/ids and copied into
+// ./built-in-themes.ts by the build. Nothing the CLI ships imports the theme
+// package at runtime, so it installs on its own; the copy is generated rather
+// than kept by hand.
+export const builtInThemes = themeIds
 
-export type BuiltInTheme = (typeof builtInThemes)[number]
+export type BuiltInTheme = BuiltInThemeId
+
+export const defaultTheme: BuiltInTheme = "deckard"
 
 export const localThemeDirectory = "deck/theme"
 
