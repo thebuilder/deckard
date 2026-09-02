@@ -4,14 +4,14 @@ import path from "node:path"
 import type { BuiltInThemeId } from "@deckard/themes/ids"
 
 import { projectPath, resolveFromProject } from "../project.ts"
-import { themeIds } from "./built-in-themes.ts"
+import { defaultThemeId, themeIds } from "./built-in-themes.ts"
 import {
   deckSourcePath,
   findThemeImport,
   type ThemeImportKind,
 } from "./deck-source.ts"
 
-// The names are decided in @deckard/themes/ids and copied into
+// The names and the default are decided in @deckard/themes/ids and copied into
 // ./built-in-themes.ts by the build. Nothing the CLI ships imports the theme
 // package at runtime, so it installs on its own; the copy is generated rather
 // than kept by hand.
@@ -19,7 +19,7 @@ export const builtInThemes = themeIds
 
 export type BuiltInTheme = BuiltInThemeId
 
-export const defaultTheme: BuiltInTheme = "deckard"
+export const defaultTheme: BuiltInTheme = defaultThemeId
 
 export const localThemeDirectory = "deck/theme"
 

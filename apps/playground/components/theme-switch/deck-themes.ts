@@ -10,8 +10,8 @@ import { themes } from "@deckard/themes"
  *
  * The list is @deckard/themes' own, so a built-in that ships reaches the picker
  * with nothing here to edit. Importing it is also what puts every built-in
- * stylesheet in the bundle: a theme's rules are scoped to its class, so the five
- * a reader is not looking at cost their CSS and paint nothing.
+ * stylesheet in the bundle: a theme's rules are scoped to its class, so the
+ * ones a reader is not looking at cost their CSS and paint nothing.
  *
  * The color mode is the reader's and a theme change leaves it alone. Comparing
  * themes means moving one thing at a time, and every theme and mode stays

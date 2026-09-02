@@ -1,4 +1,8 @@
-import { themes } from "@deckard/themes"
+import fs from "node:fs"
+
+import { defaultThemeId, themes } from "@deckard/themes"
+
+import { resolveRepoFile } from "./repo-file"
 
 export type ColorMode = "light" | "dark"
 export type BackgroundVariant = "default" | "grid" | "spotlight" | "none"
@@ -37,15 +41,6 @@ export interface GalleryCopy {
 }
 
 const galleryCopy = {
-  broadsheet: {
-    background: "default",
-    summary:
-      "Print, not screen. Serif throughout, flat panels, hairline rules.",
-  },
-  deckard: {
-    background: "default",
-    summary: "Quiet paper and one teal accent. Raised cards, a soft shadow.",
-  },
   ledger: {
     background: "grid",
     summary: "A bound report. Serif, sans, and mono, each with one job.",
@@ -66,6 +61,14 @@ const galleryCopy = {
 
 export type ThemeName = keyof typeof galleryCopy
 
+/*
+ * The theme a new deck opens in, for a page that has to render one rather than
+ * all of them. Typed as a described theme, so a built-in that becomes the
+ * default without a gallery entry is a type error here as well as a build
+ * failure below.
+ */
+export const defaultTheme: ThemeName = defaultThemeId
+
 export interface GalleryEntry extends GalleryCopy {
   defaultColorMode: ColorMode | "system"
 }
@@ -73,7 +76,7 @@ export interface GalleryEntry extends GalleryCopy {
 // The theme a deck starts on leads, then the rest alphabetically. A rule rather
 // than a list, so the order is not a second place the built-ins are written
 // down.
-const leadTheme = "deckard"
+const leadTheme = defaultThemeId
 
 function compareThemes(left: string, right: string) {
   if (left === leadTheme || right === leadTheme) {
@@ -83,11 +86,33 @@ function compareThemes(left: string, right: string) {
   return left.localeCompare(right)
 }
 
+// The theme gallery page carries a section per theme, and every card links into
+// it by anchor. The heading lives in MDX rather than in a loop over this list,
+// because Astro builds the table of contents and the search index out of the
+// page's own headings and a component's headings reach neither.
+const galleryPage = "apps/docs/docs/02-themes.mdx"
+
+function sectionedThemes(): string[] {
+  const file = resolveRepoFile(galleryPage)
+
+  if (file === null) {
+    throw new Error(
+      `[deck-preview] cannot find ${galleryPage} from this build, so the sections behind the gallery links go unchecked.`
+    )
+  }
+
+  return [...fs.readFileSync(file, "utf8").matchAll(/^## (\S+)$/gm)].map(
+    (match) => match[1] as string
+  )
+}
+
 /*
- * @deckard/themes decides which themes exist. This page decides how to
- * describe them, and DeckPreview.astro imports each stylesheet by name, so a
- * built-in that reaches the package without reaching either one would render
- * as an unstyled card with an empty caption. Fail the build instead.
+ * @deckard/themes decides which themes exist. The docs decide how to describe
+ * them, in three places that each go wrong quietly: a missing gallery entry
+ * renders an empty caption, a missing stylesheet import in DeckPreview.astro
+ * renders an unstyled card, and a missing section leaves every "read the notes"
+ * link pointing at an anchor that is not there. Fail the build on the two this
+ * module can see, and name the third.
  */
 function readThemeNames(): ThemeName[] {
   const described = Object.keys(galleryCopy)
@@ -97,13 +122,22 @@ function readThemeNames(): ThemeName[] {
 
   if (missing.length > 0) {
     throw new Error(
-      `[deck-preview] @deckard/themes ships ${missing.join(", ")}, which apps/docs/lib/deck-preview.ts does not describe. Add a gallery entry, a stylesheet import in components/DeckPreview.astro, and a section on the theme gallery page.`
+      `[deck-preview] @deckard/themes ships ${missing.join(", ")}, which apps/docs/lib/deck-preview.ts does not describe. Add a gallery entry here and a stylesheet import in components/DeckPreview.astro.`
     )
   }
 
   if (stale.length > 0) {
     throw new Error(
       `[deck-preview] apps/docs/lib/deck-preview.ts describes ${stale.join(", ")}, which @deckard/themes no longer ships.`
+    )
+  }
+
+  const sections = sectionedThemes()
+  const unwritten = shipped.filter((id) => !sections.includes(id))
+
+  if (unwritten.length > 0) {
+    throw new Error(
+      `[deck-preview] ${galleryPage} has no "## ${unwritten[0]}" section, so the gallery card for ${unwritten.join(", ")} links to an anchor that is not on the page. Add a section with a <ThemePalette /> under it.`
     )
   }
 

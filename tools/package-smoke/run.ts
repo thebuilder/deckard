@@ -6,6 +6,8 @@ import path from "node:path"
 import process from "node:process"
 import { fileURLToPath } from "node:url"
 
+import { themeIds } from "../../packages/themes/src/ids.ts"
+
 const toolDirectory = path.dirname(fileURLToPath(import.meta.url))
 const repoRoot = path.resolve(toolDirectory, "../..")
 const fixtureSource = path.join(toolDirectory, "fixture")
@@ -20,9 +22,10 @@ const runtimeUtilities = ["min-h-16", "backdrop-blur-sm", "data-slide-chrome"]
 const faceVariant = /-(?:italic|\d{3})$/
 
 // The fixture deck imports one built-in theme. Its stylesheet has to reach the
-// build with no wiring, and the other five have to stay out of it, because the
-// barrel re-exports all six from one module.
-const importedTheme = ".phosphor-theme"
+// build with no wiring, and every other one has to stay out of it, because the
+// barrel re-exports them all from one module.
+const importedThemeId = "phosphor"
+const importedTheme = `.${importedThemeId}-theme`
 
 // phosphor self-hosts JetBrains Mono, so the fixture is also the proof that a
 // theme carries its typeface with no wiring in the consuming app. The woff2 has
@@ -37,13 +40,11 @@ const unimportedFaces = [
   "schibsted-grotesk",
   "source-serif-4",
 ]
-const unimportedThemes = [
-  ".broadsheet-theme",
-  ".deckard-theme",
-  ".ledger-theme",
-  ".meridian-theme",
-  ".nexus-theme",
-]
+// Read off the shipped ids, so a theme added to the package is checked for
+// here without an edit.
+const unimportedThemes = themeIds
+  .filter((id) => id !== importedThemeId)
+  .map((id) => `.${id}-theme`)
 
 function run(command: string, args: string[], cwd: string) {
   const result = spawnSync(command, args, {

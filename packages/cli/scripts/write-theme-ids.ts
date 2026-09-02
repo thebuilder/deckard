@@ -4,7 +4,7 @@ import path from "node:path"
 import process from "node:process"
 import { fileURLToPath } from "node:url"
 
-import { themeIds } from "../../themes/src/ids.ts"
+import { defaultThemeId, themeIds } from "../../themes/src/ids.ts"
 
 const packageRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -25,6 +25,8 @@ import type { BuiltInThemeId } from "@deckard/themes/ids"
 export const themeIds = [
 ${themeIds.map((id) => `  "${id}",`).join("\n")}
 ] as const satisfies readonly BuiltInThemeId[]
+
+export const defaultThemeId: BuiltInThemeId = "${defaultThemeId}"
 `
 }
 

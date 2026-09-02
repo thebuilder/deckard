@@ -1,5 +1,5 @@
 import { defineDeck } from "@deckard/core"
-import { broadsheet } from "@deckard/themes"
+import { ledger } from "@deckard/themes"
 
 import { slides } from "@/deck/slides"
 
@@ -9,6 +9,6 @@ export const deck = defineDeck({
   footer: { mode: "visible" },
   header: { brand: "Registry smoke", href: "/", mode: "auto" },
   slides,
-  theme: broadsheet,
+  theme: ledger,
   title: "Registry smoke",
 })

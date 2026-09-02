@@ -1,5 +1,5 @@
 import { defineDeck } from "@deckard/core"
-import { deckard } from "@deckard/themes"
+import { meridian } from "@deckard/themes"
 import { canvas } from "@/deck/canvas"
 import { slides } from "@/deck/slides"
 
@@ -16,6 +16,6 @@ export const deck = defineDeck({
     mode: "auto",
   },
   slides,
-  theme: deckard,
+  theme: meridian,
   title: "Deckard",
 })

@@ -29,11 +29,11 @@ npm run dev
 That writes a Next.js app, installs it, commits it, and typechecks it. Open
 `deck/slides.tsx`, where the sample deck is yours to delete.
 
-`init` takes `--theme <name>` for one of deckard, broadsheet, ledger, meridian,
-nexus, or phosphor, `--empty` to skip the sample deck, and `--no-install` or
-`--no-git`. It asks no questions. It installs with whichever package manager ran
-it, and writes no `packageManager` field, so nobody who clones your deck is
-locked to your choice.
+`init` takes `--theme <name>` for any built-in, `--empty` to skip the sample
+deck, and `--no-install` or `--no-git`. Run `deckard --help` for the names, or
+read the [theme gallery](https://deckard.thebuilder.dk/themes). It asks no
+questions. It installs with whichever package manager ran it, and writes no
+`packageManager` field, so nobody who clones your deck is locked to your choice.
 
 The packages are built for npm and are not published yet, so that first
 command does not work from a clean machine today. Until it does, pack them here
@@ -77,13 +77,12 @@ flight console; run `deckard add theme phosphor` and it is a green CRT.
 `deckard eject theme` copies the source into `deck/theme/` and it is yours from
 then on.
 
-Four of the six carry their own typefaces, because the designs they come from
-are set in a real face: Source Serif 4 and Public Sans for ledger, Schibsted
-Grotesk for meridian, Orbitron and IBM Plex for nexus, JetBrains Mono for
-phosphor. Every one is SIL Open Font License 1.1 and ships inside the package,
-subset and self-hosted, so a deck renders offline and never calls a font host.
-The two remaining themes stay on system stacks and download nothing, and a deck
-only pays for the theme it uses.
+A theme that comes from a design set in a real face carries that face: Source
+Serif 4 and Public Sans for ledger, Schibsted Grotesk for meridian, Orbitron and
+IBM Plex for nexus, JetBrains Mono for phosphor. Every one is SIL Open Font
+License 1.1 and ships inside the package, subset and self-hosted, so a deck
+renders offline and never calls a font host. A theme on a system stack downloads
+nothing, and a deck only pays for the theme it uses.
 
 Slide blocks are the other half, and they work the other way around. Those
 install as source through the shadcn registry, because a layout is something

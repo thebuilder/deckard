@@ -59,8 +59,8 @@ deckard --help
 deckard 0.0.1
 
   deckard init <dir>          create a deck: a Next.js app with slides, a theme, and the checks
-    --theme <name>               deckard, broadsheet, ledger, meridian, nexus,
-                                 or phosphor (default deckard)
+    --theme <name>               meridian, ledger, nexus, or phosphor (default
+                                 meridian)
     --empty                      two slides instead of the sample deck
     --package-manager <name>     npm, pnpm, yarn, or bun (default: the one that ran init)
     --no-install                 write the files and stop
@@ -106,7 +106,7 @@ Takes exactly one positional, the target directory, and refuses one that already
 
 | Flag | Value | Default |
 | --- | --- | --- |
-| `--theme <name>` | `broadsheet`, `deckard`, `ledger`, `meridian`, `nexus`, `phosphor` | `deckard` |
+| `--theme <name>` | any built-in, from the [theme gallery](/themes) | `meridian` |
 | `--empty` | boolean | off, so the sample deck |
 | `--package-manager <name>` | `bun`, `npm`, `pnpm`, `yarn` | detected |
 | `--no-install` | boolean | install runs |
@@ -126,7 +126,7 @@ No `packageManager` field is written into the generated `package.json`. Corepack
 npx @deckard/cli init my-talk
 
 Created my-talk in ~/my-talk
-  deckard theme, sample deck
+  meridian theme, sample deck
   npm is the package manager for this deck
 
 Installing dependencies with npm
@@ -174,8 +174,8 @@ deckard validate
 deck   6 slides: 4 inline, 2 discovered
        3 slugs, 3 numbered
        canvas 1920x1080, margin 0
-theme  deckard (.deckard-theme): light and dark, default system
-       56 tokens in the light block, 24 dark overrides, from @deckard/themes/deckard
+theme  meridian (.meridian-theme): light and dark, default system
+       57 tokens in the light block, 25 dark overrides, from @deckard/themes/meridian
 
 deckard validate passed
 ```
@@ -197,12 +197,12 @@ Only a repository that publishes blocks needs `--registry`. It is how this repos
 ```bash apps/playground
 deckard validate --registry=../../registry.json
 
-deck      14 slides: 10 inline, 4 discovered
-          7 slugs, 7 numbered
+deck      32 slides: 28 inline, 4 discovered
+          32 slugs, 0 numbered
           canvas 1920x1080, margin 0
-theme     deckard (.deckard-theme): light and dark, default system
-          56 tokens in the light block, 24 dark overrides, from @deckard/themes/deckard
-registry  6 items, 5 files
+theme     meridian (.meridian-theme): light and dark, default system
+          57 tokens in the light block, 25 dark overrides, from @deckard/themes/meridian
+registry  8 items, 7 files
 
 deckard validate passed
 ```
@@ -372,15 +372,15 @@ PDF written to ~/my-talk/out/slides.pdf
 ## deckard add theme
 
 ```bash
-deckard add theme broadsheet
+deckard add theme ledger
 ```
 
 A pure source edit, with no install. Rewrites the `@deckard/themes` import and the `theme` property in `defineDeck`, keeping import order (package imports, then `@/` imports, alphabetical within each). It no-ops when the deck is already on that theme, rejects a name that is not a built-in, and warns when a stale `deck/theme` directory is still sitting there.
 
 ```bash ~/my-talk
-deckard add theme broadsheet
+deckard add theme ledger
 
-deck/deck.ts now uses the broadsheet theme.
+deck/deck.ts now uses the ledger theme.
 ```
 
 A name that is not a built-in comes back with the ones that are:
@@ -388,7 +388,7 @@ A name that is not a built-in comes back with the ones that are:
 ```bash ~/my-talk
 deckard add theme brutalist
 
-"brutalist" is not a Deckard theme. The built-ins are broadsheet, deckard, ledger, meridian, nexus, phosphor.
+"brutalist" is not a Deckard theme. The built-ins are ledger, meridian, nexus, phosphor.
 ```
 
 `--registry` and `--yes` are accepted on this path and do nothing.
@@ -443,7 +443,7 @@ Creates `deck/theme/` with `theme.css` and `THEME.md` copied out of the installe
 ```bash ~/my-talk
 deckard eject theme
 
-Ejected the broadsheet theme into deck/theme/
+Ejected the ledger theme into deck/theme/
   deck/theme/theme.css
   deck/theme/index.ts
   deck/theme/THEME.md
@@ -459,8 +459,8 @@ deckard validate
 deck   5 slides: 4 inline, 1 discovered
        2 slugs, 3 numbered
        canvas 1920x1080, margin 0
-theme  broadsheet (.broadsheet-theme): light and dark, default system
-       56 tokens in the light block, 24 dark overrides, from deck/theme/theme.css
+theme  ledger (.ledger-theme): light and dark, default system
+       57 tokens in the light block, 25 dark overrides, from deck/theme/theme.css
 
 deckard validate passed
 ```
