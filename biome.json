@@ -31,7 +31,6 @@
         "packages/core/src/index.ts",
         "packages/core/src/components/index.ts",
         "packages/core/src/ui/index.ts",
-        "apps/demo/lib/utils.ts",
         "packages/themes/src/index.ts"
       ],
       "linter": {

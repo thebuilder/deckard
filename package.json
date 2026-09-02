@@ -13,13 +13,6 @@
     "deck:doctor": "pnpm cli:build && pnpm --filter playground deck:doctor",
     "deck:screenshots": "pnpm cli:build && pnpm --filter playground deck:screenshots",
     "deck:validate": "pnpm cli:build && pnpm --filter playground deck:validate",
-    "demo": "turbo run dev --filter=demo...",
-    "demo:check-overflow": "pnpm cli:build && pnpm --filter demo deck:check-overflow",
-    "demo:contact-sheet": "pnpm cli:build && pnpm --filter demo deck:contact-sheet",
-    "demo:doctor": "pnpm cli:build && pnpm --filter demo deck:doctor",
-    "demo:export:pdf": "pnpm cli:build && pnpm --filter demo export:pdf",
-    "demo:screenshots": "pnpm cli:build && pnpm --filter demo deck:screenshots",
-    "demo:validate": "pnpm cli:build && pnpm --filter demo deck:validate",
     "dev": "turbo run dev --filter=playground...",
     "export:pdf": "pnpm cli:build && pnpm --filter playground export:pdf",
     "lint": "ultracite fix --error-on-warnings",
@@ -35,7 +28,7 @@
     "test:browser:install": "pnpm --filter @deckard/core exec playwright install --with-deps chromium firefox webkit",
     "test:unit": "turbo run test:unit",
     "typecheck": "turbo run typecheck",
-    "validate": "pnpm deck:validate && pnpm demo:validate"
+    "validate": "pnpm deck:validate"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.11",

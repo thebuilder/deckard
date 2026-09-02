@@ -11,7 +11,6 @@
     "packages/themes/src/index.ts",
     "apps/playground/components/ui/**",
     "apps/playground/app/slides/blocks/**",
-    "apps/demo/app/slides/blocks/**",
     "packages/cli/src/index.ts"
   ],
   "ignorePatterns": [
@@ -24,14 +23,7 @@
     {
       "file": "apps/playground/deck/slides/**/*.slide.tsx",
       "exports": ["meta", "notes"]
-    },
-    {
-      "file": "apps/demo/deck/slides/**/*.slide.tsx",
-      "exports": ["meta", "notes"]
     }
   ],
-  "ignoreDependencies": ["react-dom", "tailwindcss"],
-  "duplicates": {
-    "ignore": ["apps/demo/app/**", "apps/demo/deck/theme/**"]
-  }
+  "ignoreDependencies": ["react-dom", "tailwindcss"]
 }

@@ -74,7 +74,7 @@ the order.
 A theme is one import. Write `theme: nexus` in `deck/deck.ts` and the deck is a
 flight console; run `deckard add theme phosphor` and it is a green CRT.
 `deckard eject theme` copies the source into `deck/theme/` and it is yours from
-then on, which is how the demo deck grew its own.
+then on.
 
 Four of the six carry their own typefaces, because the designs they come from
 are set in a real face: Source Serif 4 and Public Sans for ledger, Schibsted
@@ -110,15 +110,13 @@ declare in `engines` and `deckard doctor` checks. CI runs Node 24.
 | Path | What it is |
 | --- | --- |
 | `packages/core`, `packages/themes`, `packages/cli` | the published packages |
-| `apps/playground` | the reference deck. It exercises every feature, so it is a test surface rather than a template |
-| `apps/demo` | a talk shaped like a real consumer app, with its own ejected theme |
+| `apps/playground` | the deck. It exercises every feature, so it is a test surface rather than a template |
 | `apps/docs` | the documentation site, which also serves the block registry |
 | `tools/*` | smoke tests that pack the packages and build scratch apps against them |
 
 ```bash
 pnpm install
 pnpm dev                 # the playground on :3000
-pnpm demo                # the demo talk on :3002
 pnpm --filter docs dev   # docs and the registry on :3001
 ```
 
@@ -129,15 +127,14 @@ pnpm lint
 pnpm typecheck
 pnpm test                # node and browser projects, on chromium, firefox, and webkit
 pnpm build
-pnpm validate            # both decks resolve, themes are coherent, registry paths exist
+pnpm validate            # the deck resolves, the theme is coherent, registry paths exist
 pnpm check-overflow      # fails naming any slide the canvas clips
 pnpm release:pack        # build, pack, inspect, then scaffold a deck from the tarballs
 ```
 
 `pnpm deck:contact-sheet` puts every slide in one image, which is the fastest
 way to see what a change did to a deck. `pnpm deck:screenshots` and
-`pnpm export:pdf` do the obvious things, and each has a `demo:` twin that runs
-against `apps/demo`.
+`pnpm export:pdf` do the obvious things.
 
 Slides added to the playground demonstrate the framework. They are nobody's
 presentation and they ship to nobody.
