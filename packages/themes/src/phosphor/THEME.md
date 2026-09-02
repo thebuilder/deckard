@@ -185,6 +185,20 @@ What this theme does with the parts it reaches:
 - `[data-stat-meter]` takes its border in `--primary`.
 - `[data-slide-breaker-index]` is set at 1.6 times `--slide-title-size`, with
   the halo on it.
+- `[data-slide-statement-text]` and `[data-slide-quote-text]` take the halo, for
+  the same reason `[data-stat-value]` does: both are display type without being
+  heading elements.
+- `[data-slide-log-status]` is wrapped in square brackets by a `::before` and an
+  `::after`, the way the checklist marker is. The status word itself is a prop
+  on the block, because it is content: a log that says `pass` in one deck says
+  `ok` in another.
+- `[data-slide-badge]` is bracketed the same way and takes the halo.
+- `[data-slide-accent-rule]` and a `[data-slide-timeline-marker]` carrying
+  `[data-slide-timeline-done]` take the halo as a `box-shadow`, which is the
+  status light the source design puts on a module card.
+- `[data-slide-log-row][data-slide-log-tone="alert"]` takes `--destructive` for
+  the whole row. The tone is a value on the row rather than a class, so the
+  block names the level and the theme decides what a fault looks like.
 
 ## Theme-private tokens
 

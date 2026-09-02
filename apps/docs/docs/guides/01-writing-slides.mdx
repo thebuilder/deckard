@@ -21,16 +21,35 @@ The blocks install into `app/slides/blocks/` as source you own. Compose from the
 | Block | File | Reach for it when |
 | --- | --- | --- |
 | `HeroSlide` | `templates.tsx` | The opener. One headline, oversized. |
+| `HeroSplitSlide` | `templates.tsx` | The opener with its facts in a side rail. |
+| `HeroCenteredSlide` | `templates.tsx` | The centered opener, with an optional pill badge. |
 | `BreakerSlide` | `templates.tsx` | A section divider, left aligned. |
+| `MinimalBreakerSlide` | `templates.tsx` | A rule and a title, centered. Nothing else. |
+| `StatementSlide` | `templates.tsx` | One sentence at display size. |
+| `CodeSplitSlide` | `templates.tsx` | A block one side, numbered notes the other. |
 | `ContentSlideCard` | `templates.tsx` | Intro copy above a bordered panel. |
 | `OpenContentSlide` | `templates.tsx` | The same intro, no panel. |
 | `FocusSlide` | `templates.tsx` | One block and no heading at all. |
 | `BulletList` | `collections.tsx` | Four to six numbered points. |
+| `ContentsList` | `collections.tsx` | An agenda: numeral, section, folio. |
+| `ColumnGrid` | `collections.tsx` | Parallel points as ruled, numbered columns. |
 | `FeatureGrid` | `collections.tsx` | Three parallel cards. |
+| `CardGrid` | `collections.tsx` | Cards on two or three columns, one of them tinted. |
 | `StatGrid` | `metrics.tsx` | Two to four figures with their comparisons. |
-| `ImageShowcaseSlide` | `media.tsx` | An image beside a caption panel. |
+| `QuoteSlide` | `prose.tsx` | Someone else's sentence, attributed on a rule. |
+| `ProseSlide` | `prose.tsx` | A label rail beside running copy. |
+| `DataTable` | `tables.tsx` | Columns of figures, one row highlighted. |
+| `Timeline` | `tables.tsx` | Milestones as columns on one rule. |
+| `LogList` | `tables.tsx` | Timestamped rows with a status. |
+| `ImageShowcaseSlide` | `media.tsx` | Copy left, one image right, caption under it. |
+| `MediaPair` | `media.tsx` | Two captioned frames side by side. |
+| `MediaGallery` | `media.tsx` | Captioned frames on a grid. |
 | `FullscreenMediaSlide` | `media.tsx` | Image or video bleeding to every canvas edge. |
 | `Eyebrow`, `SlideHeading` | `typography.tsx` | Your own layout, with the deck's type rhythm. |
+
+Every one of them is left aligned and fills the padded frame, which is what the source templates do. `HeroCenteredSlide` and `MinimalBreakerSlide` are the two exceptions, and they are separate components rather than a `centered` prop.
+
+Counts are yours. `FeatureGrid` is three across, but `CardGrid`, `ColumnGrid`, `Timeline`, `ContentsList`, `MediaGallery`, and `DataTable` all take as many items as you give them. Two blocks say no in the type: `StatGrid` takes two to four, and `MediaPair` takes exactly two.
 
 `ContentSlideCard`, `OpenContentSlide`, and `FocusSlide` are three components rather than one with a `variant` prop, on purpose. Picking between them is picking what the slide is.
 

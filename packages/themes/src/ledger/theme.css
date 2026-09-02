@@ -366,6 +366,76 @@
   text-transform: none;
 }
 
+/* The contents runs on roman numerals, which is what a printed report sets a
+ * section number in. The block writes 01, so this counts the rows and swaps the
+ * numeral, the same trade the list marker above makes. */
+
+.ledger-theme [data-slide-contents] {
+  counter-reset: ledger-contents;
+}
+
+.ledger-theme [data-slide-contents-index] {
+  font-size: 0;
+}
+
+.ledger-theme [data-slide-contents-index]::before {
+  font-family: var(--slide-font-heading);
+  font-size: var(--slide-body-size);
+  font-weight: 600;
+  content: counter(ledger-contents, upper-roman);
+  counter-increment: ledger-contents;
+}
+
+/* Every label in the sans face is set in small caps rather than capitals, which
+ * is the difference between a report and a sign. */
+
+.ledger-theme
+:is(
+  [data-slide-rail-term],
+  [data-slide-statement-source],
+  [data-slide-table-heading],
+  [data-slide-column-label],
+  [data-slide-card-label],
+  [data-slide-badge]
+) {
+  font-variant-caps: small-caps;
+  text-transform: none;
+  letter-spacing: 0.06em;
+}
+
+.ledger-theme :is([data-slide-contents-folio], [data-slide-note-index]) {
+  font-family: var(--slide-font-mono);
+}
+
+/* A pull quote is set in the text face, italic, with the opening mark hung into
+ * the margin the way a printed page hangs it. */
+
+.ledger-theme [data-slide-quote-text] {
+  font-family: var(--slide-font-heading);
+  font-style: italic;
+}
+
+.ledger-theme [data-slide-quote-text]::before {
+  margin-inline-start: -0.45em;
+  content: "\201C";
+}
+
+/* No pills and no bars. A milestone is a rule, like everything else here, and a
+ * milestone that has landed is the heavier of the two weights this deck sets. */
+
+.ledger-theme [data-slide-timeline-marker] {
+  height: 1px;
+}
+
+.ledger-theme [data-slide-timeline-marker][data-slide-timeline-done] {
+  height: 2px;
+}
+
+.ledger-theme [data-slide-accent-rule] {
+  width: 9rem;
+  height: 2px;
+}
+
 /* The chapter plate: the accent flooded to every edge and the serif set in the
  * paper colour, the way a printed report opens a section.
  * The field colour is read on the canvas and the ink is remapped one level

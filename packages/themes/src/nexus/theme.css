@@ -331,6 +331,62 @@
   border-color: color-mix(in oklab, var(--primary) 55%, transparent);
 }
 
+/* Display type without a heading element around it. Both take the bloom the
+ * headings carry. */
+
+.nexus-theme :is([data-slide-statement-text], [data-slide-quote-text]) {
+  text-shadow: var(--slide-halo);
+}
+
+/* Everything in the chrome is uppercase and spaced out, and in this deck a
+ * numeral, a folio, and a status count as chrome. */
+
+.nexus-theme
+:is(
+  [data-slide-contents-index],
+  [data-slide-column-index],
+  [data-slide-note-index],
+  [data-slide-rail-term],
+  [data-slide-statement-source],
+  [data-slide-table-heading],
+  [data-slide-log-status]
+) {
+  font-family: var(--slide-font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+/* The accent rule the source design opens a panel with, on every block that
+ * rules a group off at the top. */
+
+.nexus-theme
+:is(
+  [data-slide-column],
+  [data-slide-contents],
+  [data-slide-log],
+  [data-slide-rail]
+) {
+  border-block-start-color: color-mix(
+    in oklab,
+    var(--primary) 55%,
+    transparent
+  );
+}
+
+.nexus-theme
+  :is(
+    [data-slide-accent-rule],
+    [data-slide-timeline-marker][data-slide-timeline-done]
+  ) {
+  box-shadow: var(--slide-halo);
+}
+
+.nexus-theme [data-slide-badge] {
+  font-family: var(--slide-font-heading);
+  text-shadow: var(--slide-halo);
+  border-color: color-mix(in oklab, var(--primary) 55%, transparent);
+}
+
 /* The statement slide: the whole console lit in the accent, halo off, because
  * a glow on a field of the same hue is invisible.
  * The field colour is read on the canvas and the ink is remapped one level

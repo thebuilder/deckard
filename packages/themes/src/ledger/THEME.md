@@ -181,6 +181,31 @@ a UI label.
 above reach it by name, because the metrics figure sits inside a description
 list rather than in a heading element.
 
+The catalogue layouts added since then reach six more.
+
+`[data-slide-contents-index]` uses the same `font-size: 0` swap as the list
+marker, but for a counter rather than a rule. `[data-slide-contents]` resets
+`ledger-contents`, and the `::before` increments it and prints
+`counter(ledger-contents, upper-roman)`, so a contents list numbered 01, 02, 03
+in the block reads I, II, III on the sheet. That is a treatment of a number the
+block already put there, not a number the theme invented.
+
+`[data-slide-rail-term]`, `[data-slide-statement-source]`,
+`[data-slide-table-heading]`, `[data-slide-column-label]`,
+`[data-slide-card-label]`, and `[data-slide-badge]` all run in small caps with
+`text-transform` cleared, for the same reason the credit row does.
+
+`[data-slide-quote-text]` is set in the heading face, italic, with an opening
+quotation mark hung `-0.45em` into the margin. The block writes no quotation
+marks of its own, so a theme that does not want them is not fighting one.
+
+`[data-slide-timeline-marker]` is a 1px rule and 2px when it carries
+`[data-slide-timeline-done]`, because this theme has no pills. Same for
+`[data-slide-accent-rule]`, which is a `9rem` by 2px rule rather than a bar.
+
+`[data-slide-contents-folio]` and `[data-slide-note-index]` take the mono face,
+which is where every number in this deck belongs.
+
 ## Theme-private tokens
 
 `--slide-rule` and `--slide-halo` are no longer private. They were promoted into

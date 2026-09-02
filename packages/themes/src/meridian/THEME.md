@@ -168,7 +168,7 @@ What does not belong in a theme is anything that is new content rather than a
 treatment of existing content. A boot log, a status table, a cursor line with
 words in it are all slide content, so they go in a block the deck composes.
 
-Meridian is quiet here too, and reaches three parts:
+Meridian is quiet here too, and reaches six parts:
 
 - `[data-slide-breaker-index]`, the section numeral a divider carries, is held
   at the plain `--slide-title-size` in `--muted-foreground` with the theme's
@@ -180,6 +180,21 @@ Meridian is quiet here too, and reaches three parts:
   in the layout the block set.
 - `[data-stat-meter]` takes a `999px` radius, so the proportion bar under a
   figure reads as a pill rather than as a bar chart.
+- `[data-slide-badge]`, `[data-slide-quote-portrait]`,
+  `[data-slide-timeline-marker]`, and `[data-slide-accent-rule]` take the same
+  `999px`. The pill is this theme's one shape note, and this is the only one of
+  the six that draws one; every other theme leaves those four at
+  `--slide-radius`, which is how ledger keeps a portrait square.
+- `[data-slide-quote-text]` takes the `-0.025em` of tracking the headings
+  already carry. A pull quote is display type without being a heading element,
+  so the `h1, h2` rule does not reach it.
+
+`--slide-accent-soft` is set here rather than left at the contract default. The
+default mixes `--primary` to 10%, and the source design picks a lighter chroma
+than that mix lands on, so the theme states `oklch(0.945 0.03 258)` in light and
+`oklch(0.315 0.055 258)` in dark. It is the tint on the one recommended card in
+a `CardGrid` and on a highlighted `DataTable` row, and this is the only theme
+that uses cards at all.
 
 ## Deck chrome
 
