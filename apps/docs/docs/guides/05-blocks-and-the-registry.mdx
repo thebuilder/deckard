@@ -1,28 +1,32 @@
 ---
 title: Blocks and the registry
-description: Slide blocks install into your app as source through a shadcn registry. What the six items contain, how to install them, and where they are served from today.
+description: Slide blocks install into your app as source through a shadcn registry. What the eight items contain, how to install them, and where they are served from today.
 sidebar:
   icon: blocks
 ---
 
-Slide blocks are deliberately not in `@deckard/core`. They install into your app as source files through shadcn, into `app/slides/blocks/`, and you edit them from then on.
+Slide blocks are not in `@deckard/core`. They install into your app as source files through shadcn, into `app/slides/blocks/`, and you edit them from then on.
 
-That is the point. A block that assumed your theme would be a block you fight. `HeroSlide` caps its headline with `text-balance` tuned for a sans display face; on a 4.5rem serif you will want to change it, and you can, because it is your file.
+Expect to edit them. `HeroSlide` caps its headline with `text-balance` tuned for a sans display face; on a 4.5rem serif you will want to change that, and you can, because it is your file.
 
 ## The items
 
 | Item | Installs | Contains |
 | --- | --- | --- |
 | `block-typography` | `typography.tsx` | `Eyebrow`, `SlideHeading`. Every other block depends on it. |
-| `block-slide-layouts` | `templates.tsx` | `HeroSlide`, `BreakerSlide`, `ContentSlideCard`, `OpenContentSlide`, `FocusSlide`. |
-| `block-collections` | `collections.tsx` | `BulletList`, `FeatureGrid`. |
-| `block-media` | `media.tsx` | `ImageShowcaseSlide`, `FullscreenMediaSlide`. |
+| `block-slide-layouts` | `templates.tsx` | `HeroSlide`, `HeroSplitSlide`, `HeroCenteredSlide`, `BreakerSlide`, `MinimalBreakerSlide`, `StatementSlide`, `CodeSplitSlide`, `ContentSlideCard`, `OpenContentSlide`, `FocusSlide`. |
+| `block-collections` | `collections.tsx` | `BulletList`, `ContentsList`, `ColumnGrid`, `FeatureGrid`, `CardGrid`. |
+| `block-prose` | `prose.tsx` | `QuoteSlide`, `ProseSlide`. |
+| `block-tables` | `tables.tsx` | `DataTable`, `Timeline`, `LogList`. |
+| `block-media` | `media.tsx` | `ImageShowcaseSlide`, `MediaPair`, `MediaGallery`, `FullscreenMediaSlide`. |
 | `block-metrics` | `metrics.tsx` | `StatGrid`. |
-| `preset-blocks` | all five | Plus the one stylesheet line a consumer cannot guess. |
+| `preset-blocks` | all seven | Plus the one stylesheet line a consumer cannot guess. |
 
-`preset-blocks` is the one to run. Alongside the five block files it adds `@import "@deckard/core/styles.css"` to your app stylesheet, which carries the token contract and registers the package's own compiled output as a Tailwind source. That import is the entire build wiring. There is no `transpilePackages` entry and no `@source` line for you to add.
+`preset-blocks` is the one to run. Alongside the seven block files it adds `@import "@deckard/core/styles.css"` to your app stylesheet, which carries the token contract and registers the package's own compiled output as a Tailwind source. That import is the whole build wiring: no `transpilePackages` entry to add, no `@source` line.
 
-Themes used to be registry items and are not any more. They ship as `@deckard/themes`, so a deck gets one by importing it rather than by installing six files it did not ask to own.
+Every block is left aligned and fills the padded frame. `HeroCenteredSlide` and `MinimalBreakerSlide` are the two that centre. A measure is capped in one place, `ProseSlide`, where running copy needs it, and the cap is in canvas pixels rather than `ch`.
+
+Themes are not registry items. They ship as `@deckard/themes`, and a deck gets one by importing it.
 
 ## Installing
 
@@ -38,10 +42,10 @@ pnpm dlx shadcn@latest add @deckard/preset-blocks
 
 `deckard add block` reads the registry URL from `components.json` under `registries["@deckard"]`, or takes `--registry <url>` with a `{name}` placeholder. It probes the host before doing anything and tells you what to start when the probe fails. `--yes` passes shadcn `-y -o`, overwriting the files it installs without asking.
 
-shadcn is a dependency of `@deckard/cli`, pinned to the version the registry is built with, and `deckard add` runs that installed binary. There is no `dlx` and no download, so the same version runs on every package manager and on every day.
+shadcn is a dependency of `@deckard/cli`, pinned to the version the registry is built with, and `deckard add` runs that installed binary. There is no `dlx` and no download, so the same version runs on every package manager.
 
 :::warning
-There is no public host for the registry yet. `deckard init` writes `http://localhost:3001/r/{name}.json` into `components.json`, which is this documentation site running locally. Start it with `pnpm --filter docs dev` from a checkout of the Deckard repository before you run `deckard add block`.
+`deckard init` writes `https://deckard.thebuilder.dk/r/{name}.json` into `components.json`, which is this documentation site. Nothing to run locally: `deckard add block` fetches from it directly. Point `--registry` at another URL with a `{name}` placeholder to install from your own.
 :::
 
 ## Building it
@@ -62,7 +66,7 @@ Two rules cover almost every slide.
 
 **One surface per slide.** A framed panel holds flat content, an open frame holds content that brings its own border. Blocks with a surface carry `data-slide-surface`; `ContentSlideCard`'s panel carries `data-slide-panel` and always paints its card. Nest them and you get a frame inside a frame, plus a development console warning naming `OpenContentSlide` and `FocusSlide`.
 
-**Prefer a component over a prop.** `ContentSlideCard`, `OpenContentSlide`, and `FocusSlide` are three components rather than one with a `variant` boolean, because choosing between them is choosing what the slide is.
+**Prefer an explicit variant component over a boolean prop.** `ContentSlideCard` takes flat content, `OpenContentSlide` takes content that brings its own border, and `FocusSlide` hands one block the whole frame.
 
 ### The layout blocks
 
@@ -89,10 +93,9 @@ Two rules cover almost every slide.
 
   </Tab>
   <Tab title="FocusSlide">
-    One block and nothing else. No heading, no lead, no panel. It hands the
-    block the whole frame at the normal type scale, so a code sample shows more
-    lines rather than bigger ones, and takes one optional `kicker` for
-    orientation.
+    One block, with no heading, lead, or panel. It hands the block the whole
+    frame at the normal type scale, so a code sample shows more lines rather
+    than bigger ones, and takes one optional `kicker` for orientation.
 
     ```tsx
     <FocusSlide kicker="deck/slides.tsx">
@@ -133,6 +136,12 @@ Both pad against `--slide-chrome-top` and `--slide-chrome-bottom`, so the deck h
 
 ### Known edges
 
-`FeatureGrid` renders three columns. Four items give you three on one row and one alone on the next; write a local 2x2 grid instead, which is ten minutes and the right answer for one deck.
+`FeatureGrid` renders three columns. Four items give you three on one row and one alone on the next; reach for `CardGrid` with `columns={2}` instead.
 
-`StatGrid` takes two to four stats, typed as a union of tuples, so a fifth is a compile error: at five, figures stop being figures and start being a table. Each one takes an optional `unit` suffix and an optional `meter`, a proportion from 0 to 1 that draws a bar under the figure. Leave the meter out unless you can say what it is a proportion of. Captions are capped at a 26-character measure, sized for "up from 2.6k" and not for a sentence, because a number on a slide without the thing it is measured against is decoration.
+`MediaPair` takes a tuple of exactly two panels, so a third is a compile error. Two frames side by side is the layout; three is `MediaGallery`, which puts them on a grid rather than squeezing the row until none of them reads.
+
+`DataTable` caps nothing. How many rows fit depends on the theme's type scale, so `deck:check-overflow` is the thing that tells you, not the type. Four or five rows and four columns is what the source templates show.
+
+`CardGrid` marks one card with `accent`, which takes `--slide-accent-soft`. Marking two marks neither.
+
+`StatGrid` takes two to four stats, typed as a union of tuples, so a fifth is a compile error. At five, reach for `DataTable`. Each stat takes an optional `unit` suffix and an optional `meter`, a proportion from 0 to 1 that draws a bar under the figure. Leave the meter out unless you can say what it is a proportion of. Captions are capped at a 26-character measure, sized for "up from 2.6k" and not for a sentence, so give the figure something to be measured against.

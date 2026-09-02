@@ -8,7 +8,7 @@ sidebar:
 
 `@deckard/core/styles.css` declares every `--slide-*` token with a neutral default, inside `@layer base`. A theme redefines them on the canvas and wins, because it ships unlayered CSS and everything in the contract sits in the base layer.
 
-That is the whole arrangement. The runtime depends on these names and never on a preset, so a deck with no theme still renders: neutral sizes, app surfaces, no decoration.
+The runtime depends on these names and never on a preset, so a deck with no theme still renders: neutral sizes, app surfaces, no decoration.
 
 ```css app/globals.css
 @import "tailwindcss";
@@ -32,7 +32,7 @@ That is the whole arrangement. The runtime depends on these names and never on a
 | `--slide-label-size` | `1.5rem` | Eyebrows and other uppercase labels |
 | `--slide-label-tracking` | `0.25em` | Letter spacing on those labels |
 
-Every size is set against the 1920x1080 canvas at a 16px root, so `1rem` is 16 canvas pixels and the scale reads the way it does on a projector rather than the way it does in a browser window. A 6rem title is 96 canvas pixels, which is about a fifth of the canvas height.
+Every size is set against the 1920x1080 canvas at a 16px root, so `1rem` is 16 canvas pixels. A 6rem title is 96 canvas pixels, about a fifth of the canvas height.
 
 Line height rides along as a unitless multiplier in the blocks, so changing a size token keeps its leading proportional. Never pair a size token with a fixed `leading-7`.
 
@@ -44,6 +44,7 @@ Line height rides along as a unitless multiplier in the blocks, so changing a si
 | `--slide-padding-block` | `6rem` | Top and bottom padding when the slide has no header or footer |
 | `--slide-content-gap` | `2.75rem` | The rhythm between blocks inside a slide |
 | `--slide-item-gap` | `1.625rem` | The rhythm between rows inside one block |
+| `--slide-rail-size` | `24rem` | The fixed side column on `HeroSplitSlide` and `ProseSlide` |
 
 The frame those gutters leave is the whole slide, left aligned and uncapped: content starts at the left margin and runs to the right one. Blocks cap their own measure where prose needs it, and anything that wants to be centred centres itself.
 
@@ -65,6 +66,7 @@ The frame those gutters leave is the whole slide, left aligned and uncapped: con
 | `--slide-surface-muted` | `var(--muted)` | `FeatureGrid` cards, secondary panels |
 | `--slide-surface-border` | `var(--border)` | Panel borders, the `StatGrid` rule |
 | `--slide-surface-shadow` | `none` | Depth under a panel, where the theme wants it |
+| `--slide-accent-soft` | `--primary` mixed to 10% | The tint on a `CardGrid` accent card and a highlighted `DataTable` row |
 
 ## Backgrounds
 
@@ -79,7 +81,7 @@ The frame those gutters leave is the whole slide, left aligned and uncapped: con
 | `--slide-hatch` | `none` | A diagonal fill, which the `spotlight` variant uses |
 | `--slide-halo` | `none` | The `text-shadow` a theme puts behind display type |
 
-There is no radial wash, veil, glow or spotlight token. A theme has four textures to work with, flat colour, a rule, a grid, and a hatch, because a radial gradient reads as a smudge on a projector and as grey on paper.
+A theme has four textures to work with: flat colour, a rule, a grid, and a hatch. A radial gradient reads as a smudge on a projector and as grey on paper.
 
 ## Media
 
@@ -100,7 +102,7 @@ The eight tokens every built-in theme overrides, plus the two that decide how mu
 | `--slide-chrome-foreground` | `var(--muted-foreground)` | Header and footer text |
 | `--slide-chrome-emphasis` | `var(--foreground)` | The brand |
 | `--slide-chrome-border` | `var(--border)` | The rules above the footer and below the header |
-| `--slide-chrome-size` | `var(--slide-support-size)` | Chrome type size |
+| `--slide-chrome-size` | `var(--slide-label-size)` | Chrome type size |
 | `--slide-chrome-tracking` | `0.08em` | Letter spacing on the counter |
 | `--slide-chrome-gap` | `1rem` | Column gap inside header and footer |
 | `--slide-progress-track` | `transparent` | The progress element's own background |
@@ -148,10 +150,23 @@ The runtime renders these and the theme styles them. They are as much a part of 
 | `data-slide-title`, `data-slide-lead` | A slide's own headline and the sentence under it |
 | `data-slide-kicker` | The label under a `FocusSlide` body |
 | `data-slide-hero`, `data-slide-hero-meta` | The opener and its credit row |
+| `data-slide-badge` | The pill above a centered opener's title |
+| `data-slide-rail`, `-term`, `-detail` | The side column on `HeroSplitSlide` and `ProseSlide` |
 | `data-slide-breaker`, `data-slide-breaker-index` | The section divider and the number it carries |
+| `data-slide-accent-rule` | The short rule a minimal breaker or a statement opens on |
+| `data-slide-statement`, `-text`, `-source` | The one-sentence layout, its sentence, its attribution |
+| `data-slide-split`, `-main`, `-aside` | A `CodeSplitSlide` and its two sides |
+| `data-slide-note`, `-index`, `-text` | One numbered note in that rail |
+| `data-slide-prose`, `-body`, `-paragraph` | The label rail layout and its copy |
+| `data-slide-quote`, `-text`, `-attribution`, `-portrait`, `-name`, `-source` | A pull quote, down to the portrait |
 | `data-slide-list`, `-item`, `-marker`, `-text` | A `BulletList` and its three parts |
-| `data-slide-grid`, `data-slide-card`, `-title`, `-body` | A `FeatureGrid` and its cards |
-| `data-slide-media`, `-overlay`, `-caption`, `-credit` | A media layout and its parts |
+| `data-slide-contents`, `-item`, `-index`, `-title`, `-folio` | A `ContentsList` row by row |
+| `data-slide-columns`, `data-slide-column`, `-index`, `-label`, `-title`, `-text` | A `ColumnGrid` and one column of it |
+| `data-slide-grid`, `data-slide-card`, `-accent`, `-label`, `-title`, `-body` | A `FeatureGrid` or `CardGrid` and its cards |
+| `data-slide-media`, `-item`, `-frame`, `-overlay`, `-caption`, `-credit` | A media layout and its parts |
+| `data-slide-table`, `-head`, `-heading`, `-row`, `-highlight`, `-cell` | A `DataTable` |
+| `data-slide-timeline`, `-item`, `-marker`, `-done`, `-date`, `-label`, `-detail` | A `Timeline` and one milestone |
+| `data-slide-log`, `-row`, `-tone`, `-time`, `-message`, `-status` | A `LogList`; `-tone` is valued `ok`, `note`, or `alert` |
 | `data-stat-grid`, `-item`, `-value`, `-unit`, `-meter`, `-caption` | A `StatGrid`, down to the proportion bar |
 
 These are the other half of the theme contract. Tokens are values; attributes are parts. A theme styles them, decorative `::before` and `::after` content included, which is how phosphor writes `[x]` where a list marker goes and ledger hangs a rule there instead, neither of them touching the block. A block may rewrite its markup and its class names freely as long as the attributes stay where they are.

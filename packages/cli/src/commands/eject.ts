@@ -16,6 +16,7 @@ import {
   isBuiltInTheme,
   localThemeDirectory,
   moveLocalThemeAdvice,
+  themesPackage,
 } from "../deck/theme-source.ts"
 import { write } from "../output.ts"
 import { projectPath } from "../project.ts"
@@ -84,16 +85,83 @@ export const theme = {
 `
 }
 
-function copyAsset(name: string, asset: string): void {
+function readAsset(name: string, asset: string): string {
   const from = builtInThemePath(name, asset)
 
   if (!fs.existsSync(from)) {
     throw new Error(
-      `The installed @deckard/core has no ${asset} for the ${name} theme. Reinstall the deck's dependencies.`
+      `The installed ${themesPackage} has no ${asset} for the ${name} theme. Reinstall the deck's dependencies.`
     )
   }
 
-  fs.copyFileSync(from, projectPath(localThemeDirectory, asset))
+  return fs.readFileSync(from, "utf8")
+}
+
+function copyAsset(name: string, asset: string): void {
+  fs.writeFileSync(
+    projectPath(localThemeDirectory, asset),
+    readAsset(name, asset)
+  )
+}
+
+// A face is named <family>[-<weight>][-italic]-<subset>.woff2 and its licence is
+// <family>.OFL.txt, so the family is whatever stands before the subset once the
+// weight, when it is a three digit one, and the slope are taken off.
+const faceUrl = /url\("\.\.\/fonts\/([\w.-]+\.woff2)"\)/g
+const faceVariant = /-(?:italic|\d{3})$/
+
+function licenceFor(file: string): string {
+  const family = file.slice(0, file.indexOf("-latin"))
+
+  return `${family.replace(faceVariant, "")}.OFL.txt`
+}
+
+export interface FontPlan {
+  css: string
+  files: string[]
+}
+
+// The built-in themes share one fonts directory, so a stylesheet reaches its
+// faces at ../fonts. An ejected theme is a directory the deck owns and moves
+// around, so it takes a copy of only the faces it names, at ./fonts, and the
+// stylesheet is repointed to match. The licence travels with the binaries.
+export function planFonts(css: string): FontPlan {
+  const named = [...css.matchAll(faceUrl)].map((match) => match[1])
+
+  if (named.length === 0) {
+    return { css, files: [] }
+  }
+
+  return {
+    css: css.replaceAll('url("../fonts/', 'url("./fonts/'),
+    files: [...new Set([...named, ...named.map(licenceFor)])].sort(),
+  }
+}
+
+function copyFonts(css: string): FontPlan {
+  const plan = planFonts(css)
+
+  if (plan.files.length === 0) {
+    return plan
+  }
+
+  const to = projectPath(localThemeDirectory, "fonts")
+
+  fs.mkdirSync(to, { recursive: true })
+
+  for (const file of plan.files) {
+    const from = builtInThemePath("fonts", file)
+
+    if (!fs.existsSync(from)) {
+      throw new Error(
+        `The installed ${themesPackage} has no fonts/${file}. Reinstall the deck's dependencies.`
+      )
+    }
+
+    fs.copyFileSync(from, path.join(to, file))
+  }
+
+  return { css: plan.css, files: plan.files.map((file) => `fonts/${file}`) }
 }
 
 async function ejectTheme(args: ParsedArgs): Promise<void> {
@@ -111,8 +179,11 @@ async function ejectTheme(args: ParsedArgs): Promise<void> {
   }
 
   fs.mkdirSync(projectPath(localThemeDirectory), { recursive: true })
-  copyAsset(name, "theme.css")
   copyAsset(name, "THEME.md")
+
+  const fonts = copyFonts(readAsset(name, "theme.css"))
+
+  fs.writeFileSync(projectPath(localThemeDirectory, "theme.css"), fonts.css)
   fs.writeFileSync(
     projectPath(localThemeDirectory, "index.ts"),
     themeEntry(deck.theme)
@@ -121,12 +192,12 @@ async function ejectTheme(args: ParsedArgs): Promise<void> {
 
   write(`Ejected the ${name} theme into ${localThemeDirectory}/`)
 
-  for (const asset of ["theme.css", "index.ts", "THEME.md"]) {
+  for (const asset of ["theme.css", "index.ts", "THEME.md", ...fonts.files]) {
     write(`  ${path.join(localThemeDirectory, asset)}`)
   }
 
   write(
-    `\n${deckSourcePath} now imports it from "@/deck/theme". The three files are yours: read THEME.md, then edit theme.css.`
+    `\n${deckSourcePath} now imports it from "@/deck/theme". The directory is yours: read THEME.md, then edit theme.css.`
   )
 }
 

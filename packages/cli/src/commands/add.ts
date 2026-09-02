@@ -175,7 +175,7 @@ export async function runAdd(args: ParsedArgs): Promise<void> {
     throw new Error(
       [
         "No @deckard registry in components.json and no --registry flag.",
-        'Add one: { "registries": { "@deckard": "http://localhost:3001/r/{name}.json" } }',
+        'Add one: { "registries": { "@deckard": "https://deckard.thebuilder.dk/r/{name}.json" } }',
       ].join("\n")
     )
   }
@@ -184,7 +184,7 @@ export async function runAdd(args: ParsedArgs): Promise<void> {
 
   if (!url) {
     throw new Error(
-      `The @deckard registry entry "${template}" is not a URL. It should look like http://localhost:3001/r/{name}.json`
+      `The @deckard registry entry "${template}" is not a URL. It should look like https://deckard.thebuilder.dk/r/{name}.json`
     )
   }
 

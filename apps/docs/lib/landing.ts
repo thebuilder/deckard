@@ -46,7 +46,7 @@ export const demoSteps: DemoStep[] = [
     label: "The opener",
     slide: demoOpener,
     summary:
-      "A slide is an object with a title and a body. The heading on the canvas is the slide's own title, read from context, which is why the block is not told it twice.",
+      "A slide is an object with a title and a body. The heading on the canvas is the slide's own title, read from context, so the block takes no title prop.",
     to: 15,
   },
   {
@@ -94,7 +94,7 @@ export const demoSteps: DemoStep[] = [
       total,
     },
     summary:
-      "The same shell with a different block in it. Nothing about the slide changed except what went in the body.",
+      "The same shell with a different block in it. Only the body changed.",
     to: 32,
   },
   {

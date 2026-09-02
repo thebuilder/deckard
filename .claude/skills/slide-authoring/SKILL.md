@@ -31,19 +31,47 @@ new markup only when none of these fits.
 | Block                                     | Use it for                                        |
 | ----------------------------------------- | ------------------------------------------------- |
 | `HeroSlide` (templates.tsx)               | the opener, one headline and a credit row         |
+| `HeroSplitSlide` (templates.tsx)          | the opener with its facts stood up in a rail      |
+| `HeroCenteredSlide` (templates.tsx)       | the centered opener, with an optional pill badge  |
 | `BreakerSlide` (templates.tsx)            | a section divider, with an optional index         |
+| `MinimalBreakerSlide` (templates.tsx)     | a rule and a title, centered, with no index       |
+| `StatementSlide` (templates.tsx)          | one sentence at display size                      |
+| `CodeSplitSlide` (templates.tsx)          | a block one side, numbered notes the other        |
 | `ContentSlideCard` (templates.tsx)        | intro copy above a bordered panel                 |
 | `OpenContentSlide` (templates.tsx)        | the same intro with no panel                      |
-| `FocusSlide` (templates.tsx)              | one block and no heading at all                   |
+| `FocusSlide` (templates.tsx)              | one block, no heading                             |
 | `BulletList` (collections.tsx)            | four to six numbered points                       |
+| `ContentsList` (collections.tsx)          | an agenda: numeral, section, folio                |
+| `ColumnGrid` (collections.tsx)            | parallel points as ruled, numbered columns        |
 | `FeatureGrid` (collections.tsx)           | three parallel cards                              |
+| `CardGrid` (collections.tsx)              | cards on two or three columns, one of them tinted |
 | `StatGrid` (metrics.tsx)                  | two to four figures with their comparisons        |
-| `ImageShowcaseSlide` (media.tsx)          | an image beside a caption panel                   |
+| `QuoteSlide` (prose.tsx)                  | someone else's sentence, attributed on a rule     |
+| `ProseSlide` (prose.tsx)                  | a label rail beside running copy                  |
+| `DataTable` (tables.tsx)                  | columns of figures, one row highlighted           |
+| `Timeline` (tables.tsx)                   | milestones as columns on one rule                 |
+| `LogList` (tables.tsx)                    | timestamped rows with a status                    |
+| `ImageShowcaseSlide` (media.tsx)          | copy left, one image right, caption under it      |
+| `MediaPair` (media.tsx)                   | two captioned frames side by side                 |
+| `MediaGallery` (media.tsx)                | captioned frames on a grid                        |
 | `FullscreenMediaSlide` (media.tsx)        | an image or video bleeding to every canvas edge   |
 | `Eyebrow`, `SlideHeading` (typography.tsx)| your own layout, with the deck's type rhythm      |
 
 Prefer an explicit variant component over a boolean prop. `ContentSlideCard`,
-`OpenContentSlide`, and `FocusSlide` are three components on purpose.
+`OpenContentSlide`, and `FocusSlide` are three components rather than one with a
+`variant` prop, and so are `HeroSlide`, `HeroSplitSlide`, and
+`HeroCenteredSlide`. Which one to reach for is under "Card, open, or focus".
+
+Every block is left aligned and fills the padded frame. `HeroCenteredSlide` and
+`MinimalBreakerSlide` are the only two that centre anything. No `mx-auto` on a
+block's outer element, and cap a measure only where prose needs it, in canvas
+pixels the way `typography.tsx` does.
+
+Counts are yours. `FeatureGrid` is three across, but `ContentsList`,
+`ColumnGrid`, `CardGrid`, `Timeline`, `MediaGallery`, and `DataTable` take as
+many items as you give them, and the overflow check is what tells you when that
+is too many. Two blocks say no in the type: `StatGrid` takes two to four, and
+`MediaPair` takes exactly two.
 
 ## Card, open, or focus
 
@@ -62,12 +90,12 @@ panel full of bordered cards.
   orientation. No heading, no lead, no panel. Do not reach for it when the
   slide needs a sentence to make sense.
 
-The rule is a convention with a warning behind it, not a stylesheet trick. A
-block with its own surface carries `data-slide-surface`, `ContentSlideCard`'s
-panel carries `data-slide-panel`, and the panel always paints its card. Put a
-surfaced block inside one and you get a frame inside a frame on the slide, plus
-a console warning in development naming `OpenContentSlide` and `FocusSlide`.
-Nothing hides the mistake for you.
+The rule is a convention with a warning behind it. A block with its own surface
+carries `data-slide-surface`, `ContentSlideCard`'s panel carries
+`data-slide-panel`, and the panel always paints its card. Put a surfaced block
+inside one and you get a frame inside a frame on the slide, plus a console
+warning in development naming `OpenContentSlide` and `FocusSlide`. Switch to one
+of those.
 
 A new block that paints a border or a background needs `data-slide-surface` on
 its outer element, so a card wrapped around it says so.
@@ -105,8 +133,8 @@ export default async function PricingSlide() {
 }
 ```
 
-Discovery is an editing convenience, nothing more. The glob is eager, so both
-forms ship identical bundles.
+Discovery is an editing convenience. The glob is eager, so both forms ship
+identical bundles.
 
 ## Server components
 

@@ -15,6 +15,19 @@ export interface ImageShowcaseConfig {
   unoptimized?: boolean
 }
 
+export interface MediaPanel {
+  alt?: string
+  blurDataURL?: string
+  caption?: React.ReactNode
+  credit?: React.ReactNode
+  fit?: "cover" | "contain"
+  placeholder?: ImageProps["placeholder"]
+  priority?: boolean
+  sizes?: string
+  src: ImageProps["src"]
+  unoptimized?: boolean
+}
+
 interface FullscreenImageMedia {
   alt?: string
   blurDataURL?: string
@@ -97,6 +110,15 @@ function resolvePlaceholder(
   return media.placeholder
 }
 
+/*
+ * A slide is one screen, so nothing on it is below the fold and lazy loading it
+ * only means the room watches the picture arrive. next/image warns when
+ * priority and loading are both set, so priority wins where a deck asked for it.
+ */
+function eagerLoading(priority: boolean | undefined) {
+  return priority ? undefined : ("eager" as const)
+}
+
 const overlayClassNames: Record<FullscreenMediaOverlay, string> = {
   medium: "bg-[image:var(--slide-media-overlay-medium)]",
   none: "",
@@ -137,6 +159,7 @@ export function FullscreenMediaSlide({
             media.fit === "contain" ? "object-contain" : "object-cover"
           }
           fill
+          loading={eagerLoading(media.priority)}
           placeholder={resolvedPlaceholder}
           priority={media.priority}
           sizes={media.sizes}
@@ -172,6 +195,127 @@ export function FullscreenMediaSlide({
   )
 }
 
+function MediaFigure({ panel }: { panel: MediaPanel }) {
+  const resolvedBlurDataURL =
+    panel.blurDataURL ?? resolveSourceBlurDataURL(panel.src)
+  const resolvedPlaceholder =
+    panel.placeholder === "blur" && !resolvedBlurDataURL
+      ? undefined
+      : panel.placeholder
+
+  return (
+    <figure
+      className="flex min-h-0 flex-col justify-center gap-5"
+      data-slide-media-item=""
+    >
+      {/* The frame keeps its own shape and shrinks into the cell rather than
+          filling it. A row of three filling a 1080 canvas would hand each
+          picture a portrait box, which is not a shape a screenshot fits. */}
+      <div
+        className="relative aspect-[16/10] max-h-full w-full overflow-hidden rounded-[var(--slide-radius)] border border-[var(--slide-surface-border)] bg-[var(--slide-surface-muted)]"
+        data-slide-media-frame=""
+      >
+        <Image
+          alt={panel.alt ?? ""}
+          blurDataURL={resolvedBlurDataURL}
+          className={
+            panel.fit === "contain" ? "object-contain" : "object-cover"
+          }
+          fill
+          loading={eagerLoading(panel.priority)}
+          placeholder={resolvedPlaceholder}
+          priority={panel.priority}
+          sizes={panel.sizes ?? "50vw"}
+          src={panel.src}
+          unoptimized={panel.unoptimized}
+        />
+      </div>
+      {panel.caption ? (
+        <figcaption
+          className="text-pretty text-[length:var(--slide-support-size)] text-muted-foreground leading-[1.4]"
+          data-slide-media-caption=""
+        >
+          {panel.caption}
+        </figcaption>
+      ) : null}
+      {panel.credit ? (
+        <p
+          className="text-[length:var(--slide-label-size)] text-muted-foreground uppercase tracking-[var(--slide-label-tracking)]"
+          data-slide-media-credit=""
+        >
+          {panel.credit}
+        </p>
+      ) : null}
+    </figure>
+  )
+}
+
+/*
+ * Two framed images side by side, each captioned under itself. The pair is a
+ * tuple rather than an array because two is the layout: a third frame on this
+ * row is a gallery, and MediaGallery puts it on a grid instead of squeezing the
+ * row until none of the three reads.
+ */
+export function MediaPair({
+  items,
+}: {
+  items: readonly [MediaPanel, MediaPanel]
+}) {
+  return (
+    <section
+      className="grid h-full grid-cols-2 gap-[var(--slide-content-gap)] pt-[calc(var(--slide-item-gap)+var(--slide-chrome-top,0px))] pb-[calc(var(--slide-item-gap)+var(--slide-chrome-bottom,0px))]"
+      data-slide-media=""
+      data-slide-surface=""
+    >
+      {items.map((panel, index) => (
+        <MediaFigure
+          // biome-ignore lint/suspicious/noArrayIndexKey: a next/image source is a module object with no identity of its own, and the row never reorders
+          key={index}
+          panel={panel}
+        />
+      ))}
+    </section>
+  )
+}
+
+/*
+ * Captioned frames on a grid, two across by default. The count is the deck's
+ * call: four frames is the 2x2 the source templates show, six still reads, and
+ * the overflow check is what tells you when it has stopped reading.
+ */
+export function MediaGallery({
+  columns = 2,
+  items,
+}: {
+  columns?: 2 | 3
+  items: readonly MediaPanel[]
+}) {
+  return (
+    <section
+      className="grid h-full auto-rows-fr gap-[var(--slide-content-gap)] pt-[calc(var(--slide-item-gap)+var(--slide-chrome-top,0px))] pb-[calc(var(--slide-item-gap)+var(--slide-chrome-bottom,0px))]"
+      data-slide-media=""
+      data-slide-surface=""
+      style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
+    >
+      {items.map((panel, index) => (
+        <MediaFigure
+          // biome-ignore lint/suspicious/noArrayIndexKey: a next/image source is a module object with no identity of its own, and the row never reorders
+          key={index}
+          panel={panel}
+        />
+      ))}
+    </section>
+  )
+}
+
+/*
+ * Copy left, media right, caption under the media, centred inside the ordinary
+ * frame padding. It is a padded grid rather than a fullscreen layout on
+ * purpose: fullscreen strips the frame's gutters, which leaves the image flush
+ * to the canvas edge and the copy hanging off the bottom of a taller frame.
+ *
+ * The copy carries no panel, so the media frame is the slide's one surface.
+ */
 export function ImageShowcaseSlide({
   image,
   children,
@@ -197,32 +341,38 @@ export function ImageShowcaseSlide({
 
   return (
     <section
-      className="grid h-full grid-cols-[1.2fr_0.8fr] gap-12 pt-[calc(var(--slide-item-gap)+var(--slide-chrome-top,0px))] pb-[calc(var(--slide-item-gap)+var(--slide-chrome-bottom,0px))]"
+      className="grid h-full grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] items-center gap-24 py-[var(--slide-item-gap)]"
       data-slide-media=""
     >
-      <div className="relative overflow-hidden rounded-[var(--slide-radius-lg)] border border-[var(--slide-surface-border)] bg-[var(--slide-surface-muted)]">
-        <Image
-          alt={alt ?? ""}
-          blurDataURL={resolvedBlurDataURL}
-          className={fit === "contain" ? "object-contain" : "object-cover"}
-          fill
-          placeholder={resolvedPlaceholder}
-          priority={priority}
-          sizes={sizes}
-          src={src}
-          unoptimized={unoptimized}
-        />
-      </div>
+      <div className="flex min-w-0 flex-col gap-6">{children}</div>
 
-      <div className="flex flex-col justify-end gap-6 rounded-[var(--slide-radius-lg)] border border-[var(--slide-surface-border)] bg-[var(--slide-surface)] p-11 shadow-[var(--slide-surface-shadow)] backdrop-blur-sm">
-        {children}
+      <figure className="flex min-h-0 flex-col gap-6 self-stretch py-[var(--slide-content-gap)]">
+        <div
+          className="relative min-h-0 flex-1 overflow-hidden rounded-[var(--slide-radius-lg)] border border-[var(--slide-surface-border)] bg-[var(--slide-surface-muted)]"
+          data-slide-media-frame=""
+        >
+          <Image
+            alt={alt ?? ""}
+            blurDataURL={resolvedBlurDataURL}
+            className={fit === "contain" ? "object-contain" : "object-cover"}
+            fill
+            loading={eagerLoading(priority)}
+            placeholder={resolvedPlaceholder}
+            priority={priority}
+            /* The media column is a little over half the canvas, and without a
+             * hint next/image asks the optimizer for the 3840 variant. */
+            sizes={sizes ?? "55vw"}
+            src={src}
+            unoptimized={unoptimized}
+          />
+        </div>
         {caption ? (
-          <p
+          <figcaption
             className="text-pretty text-[length:var(--slide-support-size)] text-muted-foreground leading-[1.5]"
             data-slide-media-caption=""
           >
             {caption}
-          </p>
+          </figcaption>
         ) : null}
         {credit ? (
           <p
@@ -232,7 +382,7 @@ export function ImageShowcaseSlide({
             {credit}
           </p>
         ) : null}
-      </div>
+      </figure>
     </section>
   )
 }

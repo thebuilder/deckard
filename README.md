@@ -2,7 +2,7 @@
 
 Beautiful React presentations with shadcn-native theming.
 
-A slide is a React component. That is the whole idea. A chart, a live demo, a
+A slide is a React component. A chart, a live demo, a
 form, or an awaited database query goes on a slide the same way it goes in an
 app, because a deck is a Next.js app: routes, Server Components, your
 components, your styles.
@@ -76,13 +76,22 @@ flight console; run `deckard add theme phosphor` and it is a green CRT.
 `deckard eject theme` copies the source into `deck/theme/` and it is yours from
 then on, which is how the demo deck grew its own.
 
+Four of the six carry their own typefaces, because the designs they come from
+are set in a real face: Source Serif 4 and Public Sans for ledger, Schibsted
+Grotesk for meridian, Orbitron and IBM Plex for nexus, JetBrains Mono for
+phosphor. Every one is SIL Open Font License 1.1 and ships inside the package,
+subset and self-hosted, so a deck renders offline and never calls a font host.
+The two remaining themes stay on system stacks and download nothing, and a deck
+only pays for the theme it uses.
+
 Slide blocks are the other half, and they work the other way around. Those
 install as source through the shadcn registry, because a layout is something
 you edit.
 
 ## Documentation
 
-The docs site is `apps/docs`. It is not deployed yet, so run it locally:
+The docs site is [deckard.thebuilder.dk](https://deckard.thebuilder.dk), built from
+`apps/docs`. To run it locally:
 
 ```bash
 pnpm --filter docs dev
@@ -95,12 +104,13 @@ coding agents.
 
 ## Working on Deckard
 
-A pnpm workspace on Turborepo. Node 22.12 or newer.
+A pnpm workspace on Turborepo. The packages declare Node 20.9 or newer, and CI
+runs Node 24.
 
 | Path | What it is |
 | --- | --- |
 | `packages/core`, `packages/themes`, `packages/cli` | the three published packages |
-| `apps/playground` | the reference deck. It exercises every feature on purpose, so it is a test surface, not a template |
+| `apps/playground` | the reference deck. It exercises every feature, so it is a test surface rather than a template |
 | `apps/demo` | a 19-slide talk shaped like a real consumer app, with its own ejected theme |
 | `apps/docs` | the documentation site, which also serves the block registry |
 | `tools/*` | smoke tests that pack the packages and build scratch apps against them |

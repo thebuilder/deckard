@@ -39,6 +39,11 @@
     --slide-content-gap: 2.75rem;
     --slide-item-gap: 1.625rem;
 
+    /* The fixed side column on a split layout: an opener's meta rail, a prose
+     * slide's label rail. It is a token rather than a width on the part because
+     * the grid that positions the rail needs the number before the rail exists. */
+    --slide-rail-size: 24rem;
+
     --slide-title-size: 6rem;
     --slide-heading-size: 4.25rem;
     --slide-subheading-size: 2.625rem;
@@ -61,6 +66,11 @@
     --slide-surface-muted: var(--muted);
     --slide-surface-border: var(--border);
     --slide-surface-shadow: none;
+
+    /* The tint that marks one item in a set: the recommended card in a grid,
+     * the total row in a table. A mix off --primary rather than a flat colour,
+     * so it lands on whatever the theme's accent is. */
+    --slide-accent-soft: color-mix(in oklab, var(--primary) 10%, transparent);
 
     --slide-media-foreground: oklch(1 0 0);
     --slide-media-foreground-muted: oklch(1 0 0 / 85%);
@@ -182,7 +192,7 @@
    * beats this layer.
    *
    * The field colour is read on the canvas and the ink is remapped one level
-   * down, on purpose. A custom property resolves against the element that uses
+   * down. A custom property resolves against the element that uses
    * it, so remapping --primary on the same element that reads var(--primary)
    * for the field would flood the slide with its own ink.
    *
@@ -297,21 +307,85 @@
  *   [data-slide-kicker]            the label under a FocusSlide body
  *   [data-slide-hero]              the opener layout
  *   [data-slide-hero-meta]         the credit row along the bottom of an opener
+ *   [data-slide-badge]             the pill above a centred opener's title
+ *   [data-slide-rail]              the fixed side column on a split layout,
+ *                                  which is an opener's facts or a prose
+ *                                  slide's label
+ *   [data-slide-rail-term]         the label on one rail row
+ *   [data-slide-rail-detail]       the value under it
  *   [data-slide-breaker]           the section divider layout
  *   [data-slide-breaker-index]     the section number a divider carries
+ *   [data-slide-accent-rule]       the short rule a minimal breaker or a
+ *                                  statement opens on
+ *   [data-slide-statement]         the one-sentence layout
+ *   [data-slide-statement-text]    the sentence, which is display type and not
+ *                                  a heading element
+ *   [data-slide-statement-source]  the attribution under it
+ *   [data-slide-split]             the layout with a block one side and notes
+ *                                  the other
+ *   [data-slide-split-main]        the block side
+ *   [data-slide-split-aside]       the notes side
+ *   [data-slide-note]              one numbered note in it
+ *   [data-slide-note-index]        the note's number
+ *   [data-slide-note-text]         the note's copy
+ *   [data-slide-prose]             the label rail plus running copy layout
+ *   [data-slide-prose-body]        the copy column
+ *   [data-slide-prose-paragraph]   one paragraph of it
+ *   [data-slide-quote]             a pull quote layout
+ *   [data-slide-quote-text]        the quotation, which a theme may hang its
+ *                                  own quotation marks off
+ *   [data-slide-quote-attribution] the row under the rule
+ *   [data-slide-quote-portrait]    the optional portrait in it
+ *   [data-slide-quote-name]        who said it
+ *   [data-slide-quote-source]      where they said it
  *   [data-slide-list]              a BulletList
  *   [data-slide-list-item]         one row of it
  *   [data-slide-list-marker]       the row's number, which a theme may blank
  *                                  and replace with its own marker
  *   [data-slide-list-text]         the row's copy
- *   [data-slide-grid]              a FeatureGrid
+ *   [data-slide-contents]          a ContentsList
+ *   [data-slide-contents-item]     one row of it
+ *   [data-slide-contents-index]    the row's numeral, which a theme may swap
+ *                                  for a roman one with a counter
+ *   [data-slide-contents-title]    the section name
+ *   [data-slide-contents-folio]    the slide it starts on
+ *   [data-slide-columns]           a ColumnGrid
+ *   [data-slide-column]            one ruled column of it
+ *   [data-slide-column-index]      the column's number
+ *   [data-slide-column-label]      the label over its heading
+ *   [data-slide-column-title]      the heading
+ *   [data-slide-column-text]       the paragraph under it
+ *   [data-slide-grid]              a FeatureGrid or a CardGrid
  *   [data-slide-card]              one card in it
+ *   [data-slide-card-accent]       the one card in a set that carries the tint
+ *   [data-slide-card-label]        the label over the card's heading
  *   [data-slide-card-title]        the card's heading
  *   [data-slide-card-body]         the card's copy
  *   [data-slide-media]             a media layout
+ *   [data-slide-media-item]        one captioned figure in a pair or a gallery
+ *   [data-slide-media-frame]       the framed box the image fills
  *   [data-slide-media-overlay]     the scrim over full bleed media
  *   [data-slide-media-caption]     the caption under or beside it
  *   [data-slide-media-credit]      the credit line
+ *   [data-slide-table]             a DataTable
+ *   [data-slide-table-head]        its header row group
+ *   [data-slide-table-heading]     one column heading
+ *   [data-slide-table-row]         one body row
+ *   [data-slide-table-highlight]   the row a deck singled out, on that row
+ *   [data-slide-table-cell]        one cell
+ *   [data-slide-timeline]          a Timeline
+ *   [data-slide-timeline-item]     one milestone column
+ *   [data-slide-timeline-marker]   the bar on the rule above it
+ *   [data-slide-timeline-done]     on the marker of a milestone that landed
+ *   [data-slide-timeline-date]     when
+ *   [data-slide-timeline-label]    what
+ *   [data-slide-timeline-detail]   the line under it
+ *   [data-slide-log]               a LogList
+ *   [data-slide-log-row]           one row
+ *   [data-slide-log-tone]          the row's level, valued ok, note, or alert
+ *   [data-slide-log-time]          the timestamp
+ *   [data-slide-log-message]       the line
+ *   [data-slide-log-status]        the status on the right of it
  *   [data-stat-grid]               a StatGrid
  *   [data-stat-item]               one column of it
  *   [data-stat-value]              the figure, which is display type without

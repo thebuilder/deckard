@@ -22,32 +22,33 @@ Three things carry the theme. One family, monospace, for every word on the
 slide. Scanlines painted across every background variant. A phosphor bloom on
 display headings through `--slide-halo`.
 
-The scanlines are the part worth understanding before you edit anything. They
-are not decoration layered on top of a background; they are the first layer of
-every variant's `background-image`, so `default`, `grid`, and `spotlight` all
-carry them. `none` paints nothing at all, and `accent` sets `--slide-scanline`
-to `none` because scanlines over a lit field read as a fault rather than as a
-tube. If you want any other slide without them, set that slide's background to
-`none`.
+The scanlines are the first layer of every variant's `background-image` rather
+than a layer on top of it, so `default`, `grid`, and `spotlight` all carry them.
+`none` paints nothing at all, and `accent` sets `--slide-scanline` to `none`. To
+take the scanlines off any other slide, set that slide's background to `none`.
 
 Every corner is square. `--slide-radius`, `--slide-radius-lg`, and `--radius`
-are all `0rem`, and `--slide-surface-shadow` is `none`. A terminal has no
-rounded windows.
+are all `0rem`, and `--slide-surface-shadow` is `none`.
 
 ## Typography
 
-`ui-monospace` for headings, body, and code. That is the whole type system.
+JetBrains Mono for headings, body, and code.
 
-The original design used JetBrains Mono at weights 400 through 800. What ships
-here is the system mono, which is SF Mono on Apple platforms, Cascadia on
-Windows, and whatever the browser picks elsewhere. If you want JetBrains Mono,
-load it in `app/layout.tsx` and put it at the front of all three font tokens
-together. It is the one font swap in this registry that changes the theme
-rather than refining it, since the letterforms are the theme.
+The face ships with the theme. `theme.css` declares it from
+`../fonts/jetbrains-mono-latin.woff2`, one variable file covering weights 400
+through 800, which is the range the source design uses. Nothing to wire up in
+`app/layout.tsx`, and no font host is called at render time. The licence is SIL
+Open Font License 1.1 and travels with the file as
+`fonts/jetbrains-mono.OFL.txt`; `deckard eject theme` copies both.
+
+The system mono stack stays behind it in all three tokens, so a build that loses
+the file falls back to SF Mono on Apple platforms and Cascadia on Windows rather
+than to nothing. `font-display: swap` paints that stack while the woff2 lands.
+An English deck downloads 31KB; latin-ext sits behind its own `unicode-range`
+and is only fetched by a deck that sets a character in it.
 
 Every size below is set against the 1920x1080 canvas at a 16px root, so `1rem`
-is 16 canvas pixels and the numbers read the way they do on a projector rather
-than the way they do in a browser window.
+is 16 canvas pixels.
 
 | Token                     | Value      | Used by                               |
 | ------------------------- | ---------- | ------------------------------------- |
@@ -61,46 +62,42 @@ than the way they do in a browser window.
 | `--slide-label-size`      | `1.5rem`   | eyebrows and other uppercase labels   |
 
 `--slide-code-size` sits at `--slide-body-size` rather than at
-`--slide-support-size`, where the contract puts it. This is the one theme where
-code is not a supporting element: the slide is already set in the same family,
-so a code block below the body size reads as a footnote instead of as the thing
-being shown.
+`--slide-support-size`, where the contract puts it. The slide is already set in
+the same family, so a code block below the body size reads as a footnote.
 
-The scale is a step under nexus, and the reason is the family. Monospace runs
+The scale is a step under nexus because of the family. Monospace runs
 roughly 20% wider than a proportional sans at the same point size, so the same
 headline reaches the same margin from a smaller size. `--slide-title-size` is
 `5.5rem`, 88 canvas pixels, where nexus sits at `7rem`, and both fill the same
 canvas.
 
 Four sizes sit outside that ladder. `--slide-figure-size` is `7rem` and
-`--slide-figure-unit-size` is `3rem`: the figure a metrics block renders is
-display type without being a heading, so it sizes itself rather than borrowing
-the title size, and the unit suffix takes its own size so it hangs off the
-figure instead of matching it. `--slide-meter-size` is the height of the
-proportion bar under that figure and comes from the contract at `0.875rem`.
-`--slide-chrome-size` is `1.5rem` here; the contract now writes that token as
-`var(--slide-label-size)`, so header and footer type reads at the size of an
-eyebrow unless a theme says otherwise.
+`--slide-figure-unit-size` is `3rem`: the figure a metrics block renders sizes
+itself rather than borrowing the title size, and the unit suffix takes its own
+size so it hangs off the figure instead of matching it. `--slide-meter-size` is
+the height of the proportion bar under that figure and comes from the contract
+at `0.875rem`. `--slide-chrome-size` is `1.5rem` here; the contract writes that
+token as `var(--slide-label-size)`, so header and footer type reads at the size
+of an eyebrow unless a theme says otherwise.
 
 Headings are uppercase at weight 700 with `-0.015em` of tracking. Monospace
 capitals sit wide by construction, and pulling them in is what keeps a headline
 from reading as a filename.
 
 `--slide-label-tracking` is `0.2em`. The source design writes its eyebrows as
-source comments, `// CONTEXT` and `/* FEEDBACK */`. Nothing in the theme enforces
-that, but it is a two-character change to the slide copy and it is the detail
-that sells the whole thing.
+source comments, so this theme puts `//` in front of every
+`[data-slide-eyebrow]`. Write the label on its own in the slide copy and the
+theme adds the marker.
 
 ## Spacing
 
-The frame is not a centred column. It is the whole canvas inside
-`--slide-padding-inline` and `--slide-padding-block`, left aligned, with no cap
-on the measure, so a slide starts at the left margin and runs to the right one.
-A slide that wants its content centred centres it inside that frame.
+The frame is the whole canvas inside `--slide-padding-inline` and
+`--slide-padding-block`, left aligned, with no measure cap and no centred
+column, so a slide starts at the left margin and runs to the right one. A slide
+that wants its content centred centres it inside that frame.
 
 `--slide-padding-inline` is `6rem` and `--slide-padding-block` is `5.25rem`, 96
 and 84 canvas pixels, a step tighter than the `7rem` and `6rem` in the contract.
-A terminal fills its window.
 
 `--slide-content-gap` is `2.75rem`, the vertical rhythm between the intro block
 and the body of a slide. `--slide-item-gap` is `1.5rem`, the gap between the
@@ -112,13 +109,12 @@ keeps above and below itself.
 `SlideBackground` renders one empty `div` with `data-slide-background` and no
 styling of its own. This file decides what each variant paints.
 
-The sheet under the scanlines is flat in all of them. There is no radial wash
-and no blurred corner glow left anywhere in the registry, and `--slide-wash`,
-`--slide-veil`, `--slide-glow`, and `--slide-spotlight` went out of the contract
-with them. None of the source templates has a bloom, and on a pale sheet one
-reads as a stain.
+The sheet under the scanlines is flat in all of them. On a pale sheet a bloom
+behind the copy reads as a stain, so no variant paints a radial wash or a corner
+glow, and the contract carries no `--slide-wash`, `--slide-veil`,
+`--slide-glow`, or `--slide-spotlight`.
 
-- `default` is the scanlines over that flat sheet, and nothing else.
+- `default` is the scanlines over that flat sheet.
 - `grid` is the character cell: vertical rules every `--slide-cell` and
   horizontal rules every `--slide-grid-size`, which together draw the shape of
   the text buffer behind the picture, with the scanlines riding on top.
@@ -132,9 +128,9 @@ reads as a stain.
   `null`.
 
 `accent` is painted by two unlayered rules near the bottom of this file. A base
-layer fallback ships in `@deckard/core/styles.css`, but a theme's unlayered CSS
-always wins over the base layer, which is why every theme in the registry
-restates the pair. The first rule reads the field colour on the canvas, moving
+layer fallback ships in `@deckard/core/styles.css`, and a theme's unlayered CSS
+always wins over the base layer, so every theme in the registry restates the
+pair. The first rule reads the field colour on the canvas, moving
 `--primary` into `--background` and `--primary-foreground` into `--foreground`.
 The second remaps the ink one level down, on `[data-slide-frame]`,
 `[data-slide-header]`, and `[data-slide-footer]`, because a custom property
@@ -155,10 +151,9 @@ included. The full list lives in the "Block part contract" comment at the bottom
 of `@deckard/core/styles.css`. A block is free to rewrite its markup and its
 class names as long as those attributes stay where they are.
 
-Anything that is new content rather than a treatment of existing content belongs
-in a block the deck composes, not here. A boot log, a status table, a cursor line
-with words in it are all slide copy, and copy in a stylesheet cannot be edited,
-translated, or read by a screen reader.
+A theme treats existing content and never adds new content. A boot log, a status
+table, a cursor line with words in it are all slide copy, and copy in a
+stylesheet cannot be edited, translated, or read by a screen reader.
 
 What this theme does with the parts it reaches:
 
@@ -178,17 +173,32 @@ What this theme does with the parts it reaches:
 - `[data-stat-meter]` takes its border in `--primary`.
 - `[data-slide-breaker-index]` is set at 1.6 times `--slide-title-size`, with
   the halo on it.
+- `[data-slide-statement-text]` and `[data-slide-quote-text]` take the halo, for
+  the same reason `[data-stat-value]` does: both are display type without being
+  heading elements.
+- `[data-slide-log-status]` is wrapped in square brackets by a `::before` and an
+  `::after`, the way the checklist marker is. The status word itself is a prop
+  on the block, because it is content: a log that says `pass` in one deck says
+  `ok` in another.
+- `[data-slide-badge]` is bracketed the same way and takes the halo.
+- `[data-slide-accent-rule]` and a `[data-slide-timeline-marker]` carrying
+  `[data-slide-timeline-done]` take the halo as a `box-shadow`, which is the
+  status light the source design puts on a module card.
+- `[data-slide-log-row][data-slide-log-tone="alert"]` takes `--destructive` for
+  the whole row. The tone is a value on the row rather than a class, so the
+  block names the level and the theme decides what a fault looks like.
 
 ## Theme-private tokens
 
 `--slide-scanline`, `--slide-halo`, `--slide-rule`, and `--slide-hatch` are in
-the token contract in `@deckard/core/styles.css` now rather than private here,
-so a theme that wants a scanned sheet or a hatched plate sets a value instead of
-inventing a name. `--slide-scanline` is the repeating gradient, two dark pixels
-every five, and it is `none` in light mode, which is why every variant renders
-flat on paper without a second rule. Set it to `none` in dark to keep the
-palette and drop the tube. `--slide-hatch` is the 135 degree fill behind a
-reserved plate, drawn in `--slide-grid-color` so it stays quiet under body copy.
+the token contract in `@deckard/core/styles.css` rather than private to this
+theme, so a theme that wants a scanned sheet or a hatched plate sets a value
+instead of inventing a name. `--slide-scanline` is the repeating gradient, two
+dark pixels every five, and it is `none` in light mode, which is why every
+variant renders flat on paper without a second rule. Set it to `none` in dark to
+keep the palette and drop the tube. `--slide-hatch` is the 135 degree fill
+behind a reserved plate, drawn in `--slide-grid-color` so it stays quiet under
+body copy.
 `--slide-rule` is the hairline colour, the border green here. `--slide-halo` is
 the bloom on `h1`, `h2`, and the parts listed above, `none` in light mode.
 
@@ -218,14 +228,12 @@ before the slide title. The foot is the status bar, held in reverse video on
 `--primary`, with the counter in brackets and the separator swapped for a slash
 through `[data-slide-counter-separator]`.
 
-A status bar is one line of cells, not a band, so it holds itself a line thinner
-than the base footer and gives that line back to the slide:
-`--slide-footer-space` is `5.5rem` here rather than the `6rem` in the token
-contract.
+The status bar is one line of cells, so it runs a line thinner than the base
+footer and gives that line back to the slide: `--slide-footer-space` is `5.5rem`
+here rather than the `6rem` in the token contract.
 
 The progress bar sits along the bottom of that bar, a solid 3px fill in
-`currentcolor` so it reads as one lit run rather than a row of cells cut
-wherever the deck happens to be.
+`currentcolor`, so it reads as one lit run rather than a row of cut cells.
 
 ## Safe to change
 
