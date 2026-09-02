@@ -103,10 +103,12 @@ styling of its own. This file decides what each variant paints, using the
 canvas variables `--canvas-width` and `--canvas-height` for anything sized
 against the slide.
 
-- `default` paints the flat canvas colour with one 1px hairline down the left
-  margin, at half the inline padding and inset 12% of the canvas height top and
-  bottom, so the frame has an edge to start at. Nothing sits behind the copy:
-  the type is the picture.
+- `default` paints the flat canvas colour and nothing else. It used to draw a
+  1px hairline down the left margin, at half the inline padding and inset 12% of
+  the canvas height top and bottom. That put it at 56 canvas pixels while
+  content starts at 112, and the fractional stops meant it began and ended level
+  with nothing, so it read as a rendering artifact rather than as a margin rule.
+  Nothing sits behind the copy: the type is the picture.
 - `grid` paints a 44px square grid in `--slide-grid-color`, edge to edge.
 - `spotlight` paints `--slide-hatch`, the 135 degree fill a printed report
   reserves a figure with.
@@ -158,8 +160,11 @@ Deckard reaches exactly one part. `[data-slide-breaker-index]`, the section
 numeral a divider carries, is set at `calc(var(--slide-title-size) * 1.4)` in
 `--muted-foreground` with `-0.03em` of tracking, because the source layouts set
 the numeral larger than a heading and quieter than one. Nothing else in this
-file touches a block part. The house theme is the baseline the other themes are
-read against, so it leaves the blocks looking the way the blocks set them.
+file touches a block part, and none of the layouts added since changed that. The
+house theme is the baseline the other themes are read against, so it leaves the
+blocks looking the way the blocks set them, including the new ones. If a
+`ProseSlide` rail or a `LogList` status looks wrong here, the block is wrong,
+not this file.
 
 ## Deck chrome
 

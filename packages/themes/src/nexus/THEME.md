@@ -183,6 +183,23 @@ What this theme does with the parts it reaches:
   than as prose.
 - `[data-stat-meter]` takes its border in `--primary` at 55%, which keeps the
   empty part of the bar quieter than the fill.
+- `[data-slide-statement-text]` and `[data-slide-quote-text]` take the halo. Both
+  are display type without being heading elements, so the `h1, h2` rule does not
+  reach them.
+- `[data-slide-contents-index]`, `[data-slide-column-index]`,
+  `[data-slide-note-index]`, `[data-slide-rail-term]`,
+  `[data-slide-statement-source]`, `[data-slide-table-heading]`, and
+  `[data-slide-log-status]` run in the mono face, uppercase, at `0.14em`.
+  Everything in this deck's chrome is spaced out, and a numeral, a folio, and a
+  status all count as chrome.
+- `[data-slide-column]`, `[data-slide-contents]`, `[data-slide-log]`, and
+  `[data-slide-rail]` take their top rule in `--primary` at 55%, which is the
+  accent border the source design opens a panel with.
+- `[data-slide-accent-rule]` and a `[data-slide-timeline-marker]` carrying
+  `[data-slide-timeline-done]` take the halo as a `box-shadow`, so a milestone
+  that landed is lit and one that has not is not.
+- `[data-slide-badge]` takes the display face, the accent border at 55%, and the
+  halo.
 
 ## Theme-private tokens
 

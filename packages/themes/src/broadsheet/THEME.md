@@ -148,16 +148,26 @@ What does not belong in a theme is anything that is new content rather than a
 treatment of existing content. A boot log, a status table, a cursor line with
 words in it are all slide copy, so they go in a block the deck composes.
 
-Broadsheet reaches three parts.
+Broadsheet has no source design behind it, so it stays quiet here on purpose.
+Everything below is the same two moves applied to more parts, not new
+decoration.
 
 `[data-slide-breaker-index]`, the section number a divider carries, is set in
 the heading face at `calc(var(--slide-title-size) * 1.5)`, so a chapter opens on
 a numeral larger than any headline in the deck.
 
-`[data-slide-list-marker]` and `[data-slide-hero-meta]`, the number in front of
-a bullet and the credit row along the bottom of an opener, run in small caps
-with oldstyle numerals and `text-transform` cleared. Lining figures in a serif
-list read as a table of contents; oldstyle ones sit down into the copy.
+Every label and numeral in the deck runs in small caps with oldstyle numerals
+and `text-transform` cleared: `[data-slide-list-marker]`,
+`[data-slide-hero-meta]`, `[data-slide-contents-index]`,
+`[data-slide-contents-folio]`, `[data-slide-column-index]`,
+`[data-slide-note-index]`, `[data-slide-rail-term]`,
+`[data-slide-statement-source]`, `[data-slide-table-heading]`, and
+`[data-slide-badge]`. Lining figures in a serif list read as a table of
+contents; oldstyle ones sit down into the copy.
+
+`[data-slide-quote-text]` is set in the masthead face, italic, which is where a
+paper puts a pull quote. No hanging quotation mark: that is ledger's move, and
+this theme is not imitating a plate.
 
 ## Deck chrome
 

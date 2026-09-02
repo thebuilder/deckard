@@ -123,6 +123,11 @@
   --slide-surface-muted: oklch(1 0 0 / 94%);
   --slide-surface-border: oklch(0.885 0.005 250);
   --slide-surface-shadow: none;
+
+  /* The soft tint the source design marks a recommendation with. It is stated
+   * rather than mixed off --primary, because the design picks a lighter chroma
+   * than a straight mix lands on. */
+  --slide-accent-soft: oklch(0.945 0.03 258);
   --slide-grid-color: oklch(0.5 0.012 250 / 8%);
   --slide-hatch: repeating-linear-gradient(
     135deg,
@@ -169,6 +174,7 @@
   --slide-surface-muted: oklch(0.28 0.012 250 / 62%);
   --slide-surface-border: oklch(0.325 0.012 250);
   --slide-surface-shadow: none;
+  --slide-accent-soft: oklch(0.315 0.055 258);
   --slide-grid-color: oklch(0.85 0.01 250 / 9%);
   --slide-rule: oklch(0.325 0.012 250);
   color-scheme: dark;
@@ -247,6 +253,26 @@
 
 .meridian-theme [data-stat-meter] {
   border-radius: 999px;
+}
+
+/* The pill is this theme's one shape note, and it is the only template that
+ * draws one. Everything the source design rounds all the way is listed here. */
+
+.meridian-theme
+:is(
+  [data-slide-badge],
+  [data-slide-quote-portrait],
+  [data-slide-timeline-marker],
+  [data-slide-accent-rule]
+) {
+  border-radius: 999px;
+}
+
+/* The headings carry this already. A quote is display type without being a
+ * heading element, so it picks it up here. */
+
+.meridian-theme [data-slide-quote-text] {
+  letter-spacing: -0.025em;
 }
 
 /* The statement slide: one flat field of the accent with the type in the page

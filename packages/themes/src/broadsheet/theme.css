@@ -192,10 +192,30 @@
   letter-spacing: -0.02em;
 }
 
-.broadsheet-theme :is([data-slide-list-marker], [data-slide-hero-meta]) {
+.broadsheet-theme
+  :is(
+    [data-slide-list-marker],
+    [data-slide-hero-meta],
+    [data-slide-contents-index],
+    [data-slide-contents-folio],
+    [data-slide-column-index],
+    [data-slide-note-index],
+    [data-slide-rail-term],
+    [data-slide-statement-source],
+    [data-slide-table-heading],
+    [data-slide-badge]
+  ) {
   font-variant-caps: small-caps;
   font-variant-numeric: oldstyle-nums;
   text-transform: none;
+}
+
+/* A pull quote is set in the masthead face, italic, which is where a paper puts
+ * one. Nothing else changes: this theme has no source design to imitate. */
+
+.broadsheet-theme [data-slide-quote-text] {
+  font-family: var(--slide-font-heading);
+  font-style: italic;
 }
 
 /* The section plate: ink and stock swapped, which is what a paper does with a
