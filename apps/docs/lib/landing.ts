@@ -42,7 +42,8 @@ export interface DemoStep {
 
 /*
  * from and to are 1-based line numbers into demoCode. The shiki transformer in
- * the page tags every line with its number, and the script lights the range.
+ * the page tags every line with its number, and the rules the page generates
+ * light the range.
  * Editing the sample means re-counting these four pairs.
  */
 export const demoSteps: DemoStep[] = [
@@ -75,8 +76,7 @@ export const demoSteps: DemoStep[] = [
       title: "The three numbers that moved",
       total,
     },
-    summary:
-      "Three figures in a stat grid. The line of notes beside them is for the speaker and never reaches the canvas.",
+    summary: "A stat grid of three figures. The notes stay off the canvas.",
     to: 24,
   },
   {
