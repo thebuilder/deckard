@@ -41,6 +41,14 @@ export interface GalleryCopy {
 }
 
 const galleryCopy = {
+  atelier: {
+    background: "spotlight",
+    summary: "A print poster. Hard rules, flat colour blocks, no radius.",
+  },
+  cotton: {
+    background: "default",
+    summary: "Large radii, one soft shadow, and tints instead of lines.",
+  },
   ledger: {
     background: "grid",
     summary: "A bound report. Serif, sans, and mono, each with one job.",
@@ -52,6 +60,10 @@ const galleryCopy = {
   nexus: {
     background: "grid",
     summary: "A flight console. Capitalised headings with an accent halo.",
+  },
+  noir: {
+    background: "default",
+    summary: "A lookbook. Hairlines, centred layouts, and no mono face.",
   },
   phosphor: {
     background: "spotlight",

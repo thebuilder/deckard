@@ -1,0 +1,561 @@
+/*
+ * Noir theme.
+ * Every rule is scoped to .noir-theme, which lives on the slide canvas.
+ * Nothing here reaches the utility bar, the command center, or the presenter console.
+ */
+
+/*
+ * The typefaces the source design asks for, self-hosted in this package under
+ * SIL Open Font License 1.1. ../fonts holds the files and one <family>.OFL.txt
+ * per family, and both the packed tarball and `deckard eject theme` carry the
+ * licence wherever the binaries go.
+ *
+ * Every url is relative to this stylesheet, so a theme resolves its own fonts
+ * from node_modules, from a tarball, and from deck/theme after an eject,
+ * without the deck wiring anything up. Every family stays at the front of the
+ * system stack it replaces, so a missing file degrades rather than fails, and
+ * font-display: swap paints that stack first so a slide is never blank.
+ *
+ * latin is what an English deck downloads. latin-ext carries its own
+ * unicode-range, so a deck that sets no character in it never asks for the file.
+ *
+ * Two families, no third. The design has no monospace face, and the tracked
+ * capitals further down are what stands where another theme would set mono.
+ */
+
+@font-face {
+  font-family: "Cormorant Garamond";
+  font-style: normal;
+  font-weight: 300 500;
+  font-display: swap;
+  src: url("../fonts/cormorant-garamond-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Cormorant Garamond";
+  font-style: normal;
+  font-weight: 300 500;
+  font-display: swap;
+  src: url("../fonts/cormorant-garamond-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Cormorant Garamond";
+  font-style: italic;
+  font-weight: 300 400;
+  font-display: swap;
+  src: url("../fonts/cormorant-garamond-italic-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Cormorant Garamond";
+  font-style: italic;
+  font-weight: 300 400;
+  font-display: swap;
+  src: url("../fonts/cormorant-garamond-italic-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Jost";
+  font-style: normal;
+  font-weight: 200 500;
+  font-display: swap;
+  src: url("../fonts/jost-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Jost";
+  font-style: normal;
+  font-weight: 200 500;
+  font-display: swap;
+  src: url("../fonts/jost-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+.noir-theme {
+  --background: oklch(0.975 0.006 80);
+  --foreground: oklch(0.185 0.008 60);
+  --card: oklch(0.945 0.008 80);
+  --card-foreground: oklch(0.185 0.008 60);
+  --popover: oklch(0.945 0.008 80);
+  --popover-foreground: oklch(0.185 0.008 60);
+  --primary: oklch(0.545 0.075 68);
+  --primary-foreground: oklch(0.975 0.006 80);
+  --secondary: oklch(0.895 0.01 78);
+  --secondary-foreground: oklch(0.185 0.008 60);
+  --muted: oklch(0.945 0.008 80);
+  --muted-foreground: oklch(0.475 0.01 70);
+  --accent: oklch(0.895 0.01 78);
+  --accent-foreground: oklch(0.415 0.065 68);
+  --destructive: oklch(0.505 0.16 27);
+  --border: oklch(0.855 0.008 78);
+  --input: oklch(0.855 0.008 78);
+  --ring: oklch(0.545 0.075 68);
+  --radius: 0rem;
+
+  --slide-font-heading:
+    "Cormorant Garamond", ui-serif, Georgia, "Iowan Old Style",
+    "Times New Roman", serif;
+  --slide-font-body:
+    "Jost", ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue",
+    sans-serif;
+
+  /*
+   * The design has no third face. Every part the blocks set in the mono face is
+   * metadata rather than code, so the token carries the body sans and the
+   * tracked capitals further down do the work mono would have done. Code keeps
+   * a monospaced stack of its own, further down, because a code sample set in a
+   * proportional face stops lining up.
+   */
+  --slide-font-mono:
+    "Jost", ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue",
+    sans-serif;
+
+  --slide-padding-inline: 8.5rem;
+  --slide-padding-block: 6.5rem;
+  --slide-content-gap: 3rem;
+  --slide-item-gap: 1.625rem;
+  --slide-rail-size: 15rem;
+
+  --slide-title-size: 8.75rem;
+  --slide-heading-size: 5.5rem;
+  --slide-subheading-size: 2.75rem;
+  --slide-lead-size: 2.75rem;
+  --slide-body-size: 1.875rem;
+  --slide-code-size: 1.625rem;
+  --slide-support-size: 1.625rem;
+  --slide-label-size: 1.5rem;
+  --slide-label-tracking: 0.18em;
+
+  --slide-figure-size: 7.5rem;
+  --slide-figure-unit-size: 3rem;
+  --slide-meter-size: 0.375rem;
+
+  --slide-radius: 0rem;
+  --slide-radius-lg: 0rem;
+  --slide-surface: oklch(0.945 0.008 80);
+  --slide-surface-muted: oklch(0.895 0.01 78);
+  --slide-surface-border: oklch(0.855 0.008 78);
+  --slide-surface-shadow: none;
+  --slide-accent-soft: oklch(0.945 0.008 80);
+
+  --slide-grid-color: oklch(0.185 0.008 60 / 9%);
+  --slide-grid-size: 5rem;
+  --slide-rule: oklch(0.855 0.008 78);
+  --slide-hatch: repeating-linear-gradient(
+    135deg,
+    var(--slide-grid-color) 0 24px,
+    transparent 24px 48px
+  );
+
+  /* The widest setting in the theme, kept for the standing house lines: the
+   * brand in the header and the credit row on an opener. Labels and eyebrows
+   * run narrower, off --slide-label-tracking and the rule below it. */
+  --slide-track: 0.36em;
+
+  --slide-chrome-foreground: var(--muted-foreground);
+  --slide-chrome-emphasis: var(--foreground);
+  --slide-chrome-border: var(--slide-rule);
+  --slide-chrome-size: 1.25rem;
+  --slide-chrome-tracking: var(--slide-track);
+  --slide-progress-track: transparent;
+  --slide-progress-fill: var(--primary);
+  color-scheme: light;
+}
+
+.noir-theme:where(.dark, .dark *):where(:not([data-slide-color-mode="light"])),
+.noir-theme:where([data-slide-color-mode="dark"]) {
+  --background: oklch(0.155 0.006 60);
+  --foreground: oklch(0.955 0.008 80);
+  --card: oklch(0.205 0.008 60);
+  --card-foreground: oklch(0.955 0.008 80);
+  --popover: oklch(0.205 0.008 60);
+  --popover-foreground: oklch(0.955 0.008 80);
+  --primary: oklch(0.815 0.075 82);
+  --primary-foreground: oklch(0.155 0.006 60);
+  --secondary: oklch(0.265 0.01 60);
+  --secondary-foreground: oklch(0.955 0.008 80);
+  --muted: oklch(0.205 0.008 60);
+  --muted-foreground: oklch(0.715 0.012 80);
+  --accent: oklch(0.265 0.01 60);
+  --accent-foreground: oklch(0.865 0.065 82);
+  --destructive: oklch(0.665 0.17 27);
+  --border: oklch(0.345 0.01 70);
+  --input: oklch(0.345 0.01 70);
+  --ring: oklch(0.815 0.075 82);
+
+  --slide-surface: oklch(0.205 0.008 60);
+  --slide-surface-muted: oklch(0.265 0.01 60);
+  --slide-surface-border: oklch(0.345 0.01 70);
+  --slide-surface-shadow: none;
+  --slide-accent-soft: oklch(0.265 0.01 60);
+  --slide-grid-color: oklch(0.955 0.008 80 / 8%);
+  --slide-rule: oklch(0.345 0.01 70);
+  color-scheme: dark;
+}
+
+/* Body copy is the sans at its lightest, set long. Nothing in this theme is
+ * bold, so every part that arrives carrying a weight has it taken back. */
+
+.noir-theme {
+  font-family: var(--slide-font-body);
+  font-weight: 200;
+  line-height: 1.65;
+}
+
+.noir-theme :is(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--slide-font-heading);
+  font-weight: 300;
+  line-height: 1.08;
+  letter-spacing: -0.005em;
+}
+
+.noir-theme :is(h3, h4, h5, h6) {
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+/* Display type without a heading element around it. The statement and the
+ * quotation are the only italics in the theme. */
+
+.noir-theme :is([data-slide-statement-text], [data-slide-quote-text]) {
+  font-family: var(--slide-font-heading);
+  font-style: italic;
+  font-weight: 300;
+  line-height: 1.12;
+  letter-spacing: -0.005em;
+}
+
+.noir-theme [data-stat-value] {
+  font-family: var(--slide-font-heading);
+  font-weight: 300;
+  letter-spacing: -0.005em;
+}
+
+.noir-theme :is([data-slide-lead], [data-slide-prose-paragraph]) {
+  font-weight: 200;
+  line-height: 1.72;
+}
+
+/*
+ * The one place a monospaced face is kept. --slide-font-mono carries the sans
+ * for every metadata part the blocks set in it, so code names its own stack
+ * here rather than reading that token.
+ */
+
+.noir-theme :is(code, kbd, pre, samp) {
+  font-family:
+    var(--font-mono, ui-monospace), ui-monospace, SFMono-Regular, Menlo,
+    Consolas, monospace;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* Background variants. The runtime only renders the hook element and the variant name. */
+
+.noir-theme .slide-background {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-color: var(--background);
+}
+
+.noir-theme .slide-background[data-slide-background="grid"] {
+  background-image: linear-gradient(
+    to right,
+    var(--slide-grid-color) 1px,
+    transparent 1px
+  );
+  background-size: var(--slide-grid-size) 100%;
+}
+
+.noir-theme .slide-background[data-slide-background="spotlight"] {
+  background-image: var(--slide-hatch);
+}
+
+/*
+ * Block parts. Every rule the blocks draw at two pixels comes back to one,
+ * because a hairline is the only line this theme draws.
+ */
+
+.noir-theme
+:is(
+  [data-slide-rail],
+  [data-slide-contents],
+  [data-slide-column],
+  [data-slide-log],
+  [data-slide-quote-attribution],
+  [data-stat-item]
+) {
+  border-block-start-width: 1px;
+}
+
+.noir-theme [data-slide-table-heading] {
+  border-block-end: 1px solid var(--slide-surface-border);
+}
+
+.noir-theme [data-slide-panel] {
+  background-color: var(--slide-surface);
+  border-color: transparent;
+}
+
+/* Panels are blocks of the second sheet colour with nothing drawn around them. */
+
+.noir-theme [data-slide-card] {
+  border-color: transparent;
+}
+
+.noir-theme [data-slide-card-accent] {
+  border-color: var(--primary);
+}
+
+/* The centred layouts. The split opener keeps its columns, so it is the one
+ * hero this does not reach. */
+
+.noir-theme
+:is(
+  [data-slide-hero]:not(:has([data-slide-rail])),
+  [data-slide-breaker],
+  [data-slide-statement],
+  [data-slide-quote]
+) {
+  align-items: center;
+  text-align: center;
+}
+
+.noir-theme [data-slide-hero-meta] {
+  justify-content: center;
+}
+
+.noir-theme [data-slide-quote-attribution] {
+  justify-content: center;
+}
+
+/* The recurring ornament: a hairline of accent under a centred title and beside
+ * an attribution, rather than a bar. */
+
+.noir-theme [data-slide-accent-rule] {
+  width: 6rem;
+  height: 1px;
+}
+
+.noir-theme [data-slide-timeline-marker] {
+  height: 1px;
+}
+
+.noir-theme [data-slide-timeline-marker][data-slide-timeline-done] {
+  height: 2px;
+}
+
+/* Roman numerals, which is what the source design counts an index and a set of
+ * columns in. The block writes 01, 02, so this counts the rows and swaps the
+ * numeral; the number goes to zero rather than display:none so the row keeps
+ * its column. */
+
+.noir-theme :is([data-slide-contents], [data-slide-columns]) {
+  counter-reset: noir-numeral;
+}
+
+.noir-theme :is([data-slide-contents-index], [data-slide-column-index]) {
+  font-size: 0;
+}
+
+.noir-theme
+  :is([data-slide-contents-index], [data-slide-column-index])::before {
+  font-family: var(--slide-font-heading);
+  font-weight: 300;
+  line-height: 1;
+  content: counter(noir-numeral, upper-roman);
+  counter-increment: noir-numeral;
+}
+
+/* A column heading stands over its own paragraph and takes the larger numeral.
+ * An index row sits beside its section name and takes the smaller one, because
+ * the numeral sets the row height and the body line is what has to lead. */
+
+.noir-theme [data-slide-column-index]::before {
+  font-size: var(--slide-subheading-size);
+}
+
+.noir-theme [data-slide-contents-index]::before {
+  font-size: var(--slide-body-size);
+}
+
+/* A dash where another theme puts a number or a dot. */
+
+.noir-theme [data-slide-list-marker] {
+  font-size: 0;
+}
+
+.noir-theme [data-slide-list-marker]::before {
+  display: block;
+  width: 2.5rem;
+  height: 1px;
+  margin-block-start: 1.1rem;
+  content: "";
+  background-color: var(--primary);
+}
+
+.noir-theme [data-slide-breaker-index] {
+  font-family: var(--slide-font-heading);
+  font-size: calc(var(--slide-title-size) * 1.3);
+  font-weight: 300;
+  line-height: 0.9;
+  letter-spacing: -0.005em;
+}
+
+/*
+ * Tracked capitals stand where every other theme sets mono. Labels run at
+ * --slide-label-tracking, eyebrows a step wider, and the standing house lines
+ * at --slide-track, the widest setting here.
+ */
+
+.noir-theme
+:is(
+  [data-slide-eyebrow],
+  [data-slide-badge],
+  [data-slide-kicker],
+  [data-slide-rail-term],
+  [data-slide-column-label],
+  [data-slide-card-label],
+  [data-slide-statement-source],
+  [data-slide-table-heading],
+  [data-slide-timeline-date],
+  [data-slide-media-credit],
+  [data-slide-log-status]
+) {
+  font-family: var(--slide-font-body);
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.noir-theme :is([data-slide-eyebrow], [data-slide-badge]) {
+  letter-spacing: 0.28em;
+}
+
+.noir-theme :is([data-slide-hero-meta], [data-slide-media-credit]) {
+  text-transform: uppercase;
+  letter-spacing: var(--slide-track);
+}
+
+.noir-theme
+  :is(
+    [data-slide-contents-folio],
+    [data-slide-note-index],
+    [data-slide-quote-source],
+    [data-slide-quote-name],
+    [data-slide-log-time]
+  ) {
+  font-family: var(--slide-font-body);
+  font-weight: 300;
+  letter-spacing: 0.12em;
+}
+
+.noir-theme [data-slide-badge] {
+  border-width: 1px;
+}
+
+/* Media sits in a hairline frame with nothing behind it. */
+
+.noir-theme [data-slide-media-frame] {
+  border-width: 1px;
+}
+
+/* The chapter plate: the accent flooded to every edge.
+ * The field colour is read on the canvas and the ink is remapped one level
+ * down: a custom property resolves against the element that uses it, so
+ * remapping --primary here would flood the slide with its own ink. */
+
+.noir-theme[data-slide-background="accent"] {
+  --background: var(--primary);
+  --foreground: var(--primary-foreground);
+  --slide-halo: none;
+  --slide-scanline: none;
+  --slide-hatch: none;
+}
+
+.noir-theme[data-slide-background="accent"]
+  :is([data-slide-frame], [data-slide-header], [data-slide-footer]) {
+  --primary: var(--primary-foreground);
+  --muted-foreground: color-mix(
+    in oklab,
+    var(--primary-foreground) 76%,
+    transparent
+  );
+  --slide-surface: transparent;
+  --slide-surface-muted: color-mix(
+    in oklab,
+    var(--primary-foreground) 10%,
+    transparent
+  );
+  --slide-surface-border: color-mix(
+    in oklab,
+    var(--primary-foreground) 34%,
+    transparent
+  );
+  --slide-chrome-foreground: color-mix(
+    in oklab,
+    var(--primary-foreground) 74%,
+    transparent
+  );
+  --slide-chrome-emphasis: var(--primary-foreground);
+  --slide-chrome-border: color-mix(
+    in oklab,
+    var(--primary-foreground) 28%,
+    transparent
+  );
+  --slide-progress-fill: var(--primary-foreground);
+}
+
+/* Deck chrome. A masthead: the brand tracked to --slide-track, the slide title
+ * in the serif italic, and a hairline under both. */
+
+.noir-theme :is([data-slide-header], [data-slide-footer]) {
+  text-transform: uppercase;
+  letter-spacing: var(--slide-chrome-tracking);
+}
+
+.noir-theme [data-slide-header-brand] {
+  font-weight: 400;
+}
+
+.noir-theme [data-slide-header-title] {
+  font-family: var(--slide-font-heading);
+  font-size: var(--slide-support-size);
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.noir-theme [data-slide-counter] {
+  font-variant-numeric: tabular-nums;
+}
+
+.noir-theme [data-slide-progress] {
+  inset-block: auto 0;
+  height: 1px;
+}
