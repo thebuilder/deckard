@@ -1,7 +1,7 @@
 {
   "name": "@deckard/themes",
   "version": "0.0.1",
-  "description": "The six deck themes behind Deckard, a React presentation framework for Next.js. Each one is a SlideTheme that carries its own stylesheet.",
+  "description": "The deck themes behind Deckard, a React presentation framework for Next.js. Each one is a SlideTheme that carries its own stylesheet.",
   "keywords": [
     "deck",
     "presentation",

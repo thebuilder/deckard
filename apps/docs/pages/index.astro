@@ -3,7 +3,7 @@ import { Code } from "astro:components"
 import data from "blume:data"
 import PageLayout from "blume/components/layout/PageLayout.astro"
 import DeckPreview from "../components/DeckPreview.astro"
-import { galleryTheme, themeNames } from "../lib/deck-preview"
+import { galleryTheme, themeCountWord, themeNames } from "../lib/deck-preview"
 import {
   cliCode,
   demoBackgrounds,
@@ -81,8 +81,7 @@ ${motionRules}
   navigation={data.navigation}
   ogEnabled={config.og.enabled}
   page={{
-    description:
-      "Deckard builds presentations out of React components on a fixed 1920x1080 canvas, with six themes, presenter mode, and a PDF export at canvas size.",
+    description: `Deckard builds presentations out of React components on a fixed 1920x1080 canvas, with ${themeCountWord} themes, presenter mode, and a PDF export built from the same canvas.`,
     title: "Deckard, presentations built out of React components",
   }}
   searchEnabled={config.search.enabled}
@@ -108,7 +107,9 @@ ${motionRules}
           <a class="button button-primary" href="/quickstart">
             Read the quickstart
           </a>
-          <a class="button button-quiet" href="/themes">See the six themes</a>
+          <a class="button button-quiet" href="/themes">
+            See the {themeCountWord} themes
+          </a>
         </div>
 
         <div class="hero-install">
@@ -165,8 +166,8 @@ ${motionRules}
         </fieldset>
 
         <p class="hero-caption">
-          One deck, six themes. Each frame is a slide canvas with the theme's
-          own stylesheet on it.
+          One deck, {themeCountWord} themes. Every frame above is a real slide canvas
+          with the theme's own stylesheet on it.
         </p>
       </div>
     </section>
@@ -277,8 +278,8 @@ ${motionRules}
           </p>
           <h3>Blocks you own</h3>
           <p>
-            The seven block families install into your app as source through a
-            shadcn registry. You own the files and edit them.
+            The block families install into your app as source through a shadcn
+            registry. You own the files and edit them.
           </p>
         </div>
       </div>
@@ -343,8 +344,8 @@ ${motionRules}
             <li>Speaker notes, with font-size controls</li>
             <li>A timer you start, and a 24-hour clock</li>
             <li>
-              The previous two slides and the next five, by title, each one a
-              jump
+              The current slide with a little of the deck behind it and more of
+              it ahead, by title, each one a jump
             </li>
           </ul>
           <p>
@@ -395,9 +396,9 @@ ${motionRules}
     <section class="closing">
       <h2>Write the first slide</h2>
       <p>
-        <code>deckard init</code> writes a Next.js app with a five-slide deck in
-        it, installs it, commits it, and typechecks the result. Then you change
-        a title and save.
+        <code>deckard init</code> writes a Next.js app with a sample deck in it,
+        installs it, commits it, and typechecks the result. Then you change a
+        title and save.
       </p>
       <div class="hero-actions">
         <a class="button button-primary" href="/quickstart">

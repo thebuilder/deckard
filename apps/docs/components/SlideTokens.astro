@@ -1,0 +1,47 @@
+---
+import type { TokenGroup } from "../lib/slide-token-notes"
+import { slideTokenRows, splitNote } from "../lib/slide-tokens"
+
+interface Props {
+  /* The heading over the third column. "Reads it" for the type scale, where
+     the answer is a part of the runtime; "What it controls" everywhere else. */
+  column?: string
+  group: TokenGroup
+}
+
+const { column = "What it controls", group } = Astro.props
+
+/* Read out of packages/core/styles.css when this page builds. A token the
+   stylesheet drops, or one it adds that nothing describes, fails the build
+   here rather than shipping a wrong default. */
+const rows = slideTokenRows(group)
+---
+
+<table>
+  <thead>
+    <tr>
+      <th>Token</th>
+      <th>Default</th>
+      <th>{column}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {
+      rows.map((row) => (
+        <tr>
+          <td>
+            <code>--{row.name}</code>
+          </td>
+          <td>
+            <code>{row.value}</code>
+          </td>
+          <td>
+            {splitNote(row.note).map((part) =>
+              part.code ? <code>{part.text}</code> : part.text
+            )}
+          </td>
+        </tr>
+      ))
+    }
+  </tbody>
+</table>

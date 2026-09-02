@@ -11,7 +11,7 @@ Deckard supplies the parts a presentation needs and an app does not. A fixed
 1920x1080 canvas that scales to whatever screen it lands on, so a slide looks
 the same on a laptop, a projector, and in the exported PDF. Keyboard
 navigation, step reveals, a command menu, and a presenter window carrying your
-notes. Six themes you can take ownership of the moment you want to.
+notes. Themes you can take ownership of the moment you want to.
 
 ![A slide from the reference deck](assets/deck.png)
 
@@ -26,7 +26,7 @@ npm run dev
 ```
 
 That writes a Next.js app, installs it, commits it, and typechecks it. Open
-`deck/slides.tsx`, where the sample deck is five slides you delete.
+`deck/slides.tsx`, where the sample deck is yours to delete.
 
 `init` takes `--theme <name>` for one of deckard, broadsheet, ledger, meridian,
 nexus, or phosphor, `--empty` to skip the sample deck, and `--no-install` or
@@ -34,7 +34,7 @@ nexus, or phosphor, `--empty` to skip the sample deck, and `--no-install` or
 it, and writes no `packageManager` field, so nobody who clones your deck is
 locked to your choice.
 
-The three packages are built for npm and are not published yet, so that first
+The packages are built for npm and are not published yet, so that first
 command does not work from a clean machine today. Until it does, pack them here
 and point `init` at the tarballs. `pnpm release:pack` does exactly that, and it
 runs on every CI build, so it is the path with a test behind it.
@@ -68,7 +68,7 @@ the order.
 | Package | What it holds |
 | --- | --- |
 | `@deckard/core` | the deck contract, the canvas, the shell, navigation, presenter mode, the route adapters |
-| `@deckard/themes` | six themes, imported rather than installed, ejected into your repo when you want to edit one |
+| `@deckard/themes` | the built-in themes, imported rather than installed, ejected into your repo when you want to edit one |
 | `@deckard/cli` | the `deckard` binary: scaffold, validate, screenshot, export |
 
 A theme is one import. Write `theme: nexus` in `deck/deck.ts` and the deck is a
@@ -104,14 +104,14 @@ coding agents.
 
 ## Working on Deckard
 
-A pnpm workspace on Turborepo. The packages declare Node 20.9 or newer, and CI
-runs Node 24.
+A pnpm workspace on Turborepo. Node 20.9 or newer, the floor the packages
+declare in `engines` and `deckard doctor` checks. CI runs Node 24.
 
 | Path | What it is |
 | --- | --- |
-| `packages/core`, `packages/themes`, `packages/cli` | the three published packages |
+| `packages/core`, `packages/themes`, `packages/cli` | the published packages |
 | `apps/playground` | the reference deck. It exercises every feature, so it is a test surface rather than a template |
-| `apps/demo` | a 19-slide talk shaped like a real consumer app, with its own ejected theme |
+| `apps/demo` | a talk shaped like a real consumer app, with its own ejected theme |
 | `apps/docs` | the documentation site, which also serves the block registry |
 | `tools/*` | smoke tests that pack the packages and build scratch apps against them |
 

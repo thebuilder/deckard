@@ -8,7 +8,7 @@ export const meta: SlideMeta = {
   title: "Discovery",
 }
 
-export const notes = `Show the file tree next to this slide. The three slides after the spread are files in deck/slides, and the array never names them.
+export const notes = `Show the file tree next to this slide. Every slide after the spread is a file in deck/slides, and the array never names any of them.
 
 The glob is eager, so every module is in the bundle either way. Moving a slide into its own file changes where you edit it, not what ships.
 

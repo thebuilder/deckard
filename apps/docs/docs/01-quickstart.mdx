@@ -6,7 +6,7 @@ sidebar:
   order: 1
 ---
 
-`deckard init` writes a Next.js app with a five-slide deck in it, installs the dependencies, makes the first commit, and typechecks the result.
+`deckard init` writes a Next.js app with a sample deck in it, installs the dependencies, makes the first commit, and typechecks the result.
 
 :::warning
 `@deckard/core`, `@deckard/themes`, and `@deckard/cli` are built for npm but not published there yet, so the `npx` line below does not work from a clean machine. [Install from tarballs](#installing-before-the-packages-publish) until they land.
@@ -44,7 +44,7 @@ sidebar:
 - my-talk/
   - app/
     - slides/
-      - blocks/ (the seven block families, yours to edit)
+      - blocks/ (the block families, yours to edit)
       - [id]/page.tsx
     - presenter/page.tsx
     - page.tsx
@@ -71,7 +71,7 @@ The theme is not a file. `init` writes it as an import from `@deckard/themes` in
 | Flag | Default | What it does |
 | --- | --- | --- |
 | `--theme <name>` | `deckard` | One of `broadsheet`, `deckard`, `ledger`, `meridian`, `nexus`, `phosphor`. |
-| `--empty` | off | Two slides instead of the five-slide sample deck. |
+| `--empty` | off | A bare deck instead of the sample one. |
 | `--package-manager <name>` | detected | `bun`, `npm`, `pnpm`, or `yarn`. |
 | `--no-install` | install runs | Write the files and stop. Skips the typecheck too. |
 | `--no-git` | git runs | Skip `git init` and the first commit. |
