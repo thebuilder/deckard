@@ -128,22 +128,10 @@
   background-color: var(--background);
 }
 
-.deckard-theme .slide-background::after {
-  position: absolute;
-  pointer-events: none;
-  content: "";
-}
-
-/* Flat, with one hairline down the left margin so the frame has an edge to
- * start at. Nothing behind the copy: the type is the picture. */
-
-.deckard-theme .slide-background[data-slide-background="default"]::after {
-  top: calc(var(--canvas-height) * 0.12);
-  bottom: calc(var(--canvas-height) * 0.12);
-  left: calc(var(--slide-padding-inline) / 2);
-  width: 1px;
-  background-color: var(--slide-rule);
-}
+/* Flat. The hairline that used to run down this margin sat at half the frame
+ * padding and stopped at arbitrary fractions of the canvas height, so it lined
+ * up with nothing a slide puts on the sheet. Nothing behind the copy: the type
+ * is the picture. */
 
 .deckard-theme .slide-background[data-slide-background="grid"] {
   background-image:

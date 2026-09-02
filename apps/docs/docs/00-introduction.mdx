@@ -56,7 +56,7 @@ export const deck = defineDeck({
 
 The array is the deck order. `defineDeck` resolves it: every slide gets an id, a number, a URL, and its chrome defaults filled in. Nothing reorders your array, so moving a slide in it is the only way to move it in the deck.
 
-## Three packages
+## The packages
 
 <CardGroup cols={3}>
   <Card title="@deckard/core" icon="box">
@@ -64,8 +64,8 @@ The array is the deck order. `defineDeck` resolves it: every slide gets an id, a
     shell, presenter mode, and the Next.js route adapters.
   </Card>
   <Card title="@deckard/themes" icon="palette">
-    Six presets. A deck imports one and hands it to `defineDeck`, and can eject
-    it into its own files later.
+    The built-in presets. A deck imports one and hands it to `defineDeck`, and
+    can eject it into its own files later.
   </Card>
   <Card title="@deckard/cli" icon="terminal">
     The `deckard` binary: scaffold a deck, check that it fits, screenshot it,
@@ -73,10 +73,10 @@ The array is the deck order. `defineDeck` resolves it: every slide gets an id, a
   </Card>
 </CardGroup>
 
-Slide blocks are the fourth piece and deliberately not a package. They install into your app as source through a shadcn registry, and you edit them from then on.
+Slide blocks are the other piece, and not a package. They install into your app as source through a shadcn registry, and you edit them from then on.
 
 :::warning
-None of the three packages are published to npm yet. The [Quickstart](/quickstart) has the tarball path that works today.
+None of the packages are published to npm yet. The [Quickstart](/quickstart) has the tarball path that works today.
 :::
 
 ## Where to go next
@@ -89,9 +89,9 @@ None of the three packages are published to npm yet. The [Quickstart](/quickstar
     Blocks, inline slides, file-per-slide modules, discovery.
   </Card>
   <Card title="The canvas" href="/guides/the-canvas" icon="frame">
-    Why 1920x1080 is fixed and what that means for your CSS.
+    What a fixed 1920x1080 means for the CSS inside a slide.
   </Card>
   <Card title="Theme gallery" href="/themes" icon="swatch-book">
-    Six live slide canvases, each painted by that theme's own stylesheet.
+    Every built-in as a live slide canvas, painted by its own stylesheet.
   </Card>
 </CardGroup>

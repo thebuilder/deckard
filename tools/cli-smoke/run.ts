@@ -330,9 +330,12 @@ try {
   })
   assertStaticSlides(pnpmApp, ["intro", "keyboard", "2"])
 
-  time("pnpm: validate, doctor, one screenshot", () => {
+  // check-overflow loads its measurement out of the deck's own @deckard/core, so
+  // it is the one command that only proves itself against an installed deck.
+  time("pnpm: validate, doctor, check-overflow, one screenshot", () => {
     run(deckard, ["validate"], pnpmApp)
     run(deckard, ["doctor"], pnpmApp)
+    run(deckard, ["check-overflow", "--skip-build", "--port", "3415"], pnpmApp)
     run(
       deckard,
       ["screenshots", "--max", "1", "--skip-build", "--port", "3414"],

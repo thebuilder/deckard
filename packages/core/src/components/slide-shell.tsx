@@ -180,6 +180,7 @@ export function SlideShell({
               />
             ) : null
           }
+          layout={layout}
           theme={deck.theme}
         >
           <SlideStepAdvanceArea className="h-full w-full">

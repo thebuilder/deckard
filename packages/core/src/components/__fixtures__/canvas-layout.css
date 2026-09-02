@@ -1,0 +1,40 @@
+/*
+ * Stands in for the utility classes SlideShell puts on the canvas, the chrome,
+ * and the frame. The browser project mounts components with no Tailwind around
+ * them, and the layout measurement is all geometry, so the geometry has to come
+ * from somewhere. These rules are the ones SlideShell composes: the chrome is
+ * pinned to the top and the bottom of the canvas, the frame fills it, and a
+ * default slide reserves the chrome space the theme asks for. The two rows are
+ * given the fixed heights a theme gives them, comfortably inside that reserved
+ * space, so the measurement is read against the same geometry in every browser.
+ */
+[data-slide-canvas] {
+  position: relative;
+  overflow: hidden;
+}
+
+[data-slide-canvas] [data-slide-header] {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 4rem;
+}
+
+[data-slide-canvas] [data-slide-footer] {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 3.75rem;
+}
+
+[data-slide-canvas] [data-slide-frame] {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: stretch;
+}
+
+[data-slide-canvas][data-slide-layout="default"] [data-slide-frame] {
+  padding-block: var(--slide-header-space) var(--slide-footer-space);
+  padding-inline: var(--slide-padding-inline);
+}

@@ -11,9 +11,9 @@ A slide looks the same on a laptop, a projector, a phone, and in the PDF. Only t
 
 ## Why fixed
 
-A presentation is not a website. It is shown once, at one size, to a room, and the thing you are optimising for is that the version you rehearsed is the version they see. Responsive layout inside a slide means every venue is a new layout you did not test.
+A presentation is shown once, at one size, to a room. Responsive layout inside a slide makes every venue a layout you did not rehearse.
 
-The fit is measured in the browser and published as `--deckard-scale`, because CSS cannot divide a length by a length in every engine Deckard targets. Slide content stays server rendered, and the canvas stays hidden until the first measurement lands so it never flashes at the wrong size.
+The fit is measured in the browser and published as `--deckard-scale`. Slide content stays server rendered, and the canvas stays hidden until the first measurement lands, so it never flashes at the wrong size.
 
 ## Configuring it
 
@@ -47,25 +47,27 @@ Outside the canvas the rules invert: the deck controls, command center, presente
 
 ## Overflow
 
-The canvas clips what does not fit. Three things tell you about it:
+A slide loses content three ways, and only one of them reaches the canvas edge. Content can run past the canvas, it can sit inside the canvas and run under the header or the footer, and it can be cut off inside a box that hides its own overflow. All three are silent, and all three are measured:
 
 <Steps>
   <Step title="Development">
-    `next dev` draws an amber outline around an overflowing slide and logs a
-    warning.
+    `next dev` draws an amber outline around the slide and logs a warning
+    naming the part, what it ran into, and by how many canvas pixels.
   </Step>
   <Step title="The overflow check">
     `deckard check-overflow` builds the deck, opens every slide, and exits
-    non-zero listing each one the canvas clips and by how much. It measures the
-    slide frame, the header, and the footer, with a 1px tolerance.
+    non-zero with the same findings. It runs the same measurement the amber
+    ring does, so the gate and the browser cannot disagree.
   </Step>
   <Step title="The contact sheet">
     `deckard screenshots` then `deckard contact-sheet` puts the whole deck in
-    one grid. Nothing else catches a slide that fits but looks unfinished.
+    one grid. It catches the slide that fits but looks unfinished.
   </Step>
 </Steps>
 
-The usual fix is deleting a sentence, and the slide is usually better for it.
+Two things are exempt, because in both the content is meant to leave its box: anything inside a [`SlideScrollArea`](#slidescrollarea), and a slide whose `layout` is `"fullscreen"`, which is handed the whole canvas with the chrome out of the way.
+
+The usual fix is deleting a sentence.
 
 ## SlideScrollArea
 
@@ -90,10 +92,10 @@ import { SlideScrollArea } from "@deckard/core/components"
 
 ## Where the chrome lives
 
-Chrome splits in two, and the split is the whole design.
+Chrome splits in two.
 
 **Inside the canvas** sit the deck header and footer. They scale with the deck, print into the PDF export, show up in a presenter preview, and belong to the theme.
 
 **Outside the canvas** sit the deck controls: the command center trigger, the presenter popout, the color mode toggle, and compact previous and next buttons. They keep their own size and hit targets at any scale, down to a phone.
 
-Two tokens decide how much of the canvas the chrome gets: `--slide-header-space` (`8rem`) and `--slide-footer-space` (`6rem`). The frame reserves them as padding, and a fullscreen slide republishes them as `--slide-chrome-top` and `--slide-chrome-bottom`, the inset a bleeding layout has to clear. A theme that redesigns the chrome to a different height sets those two and the slide content moves with it. `phosphor` does exactly that, taking `--slide-footer-space` down to `5rem` for its thinner status bar.
+`--slide-header-space` and `--slide-footer-space` decide how much of the canvas the chrome gets; the [token reference](/reference/tokens#chrome) carries their defaults. The frame reserves them as padding, and a fullscreen slide republishes them as `--slide-chrome-top` and `--slide-chrome-bottom`, the inset a bleeding layout has to clear. A theme that redesigns the chrome to a different height sets those two and the slide content moves with it. `phosphor` does exactly that for its thinner status bar.

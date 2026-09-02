@@ -25,6 +25,10 @@ const controlsHiddenClass = "group-data-[slide-chrome=hidden]/shell:hidden"
 // hand, so it stays the same size whatever the deck is scaled to.
 const revealDistance = 160
 
+// Two frames at 60Hz. Long enough that a painting page always measures on its
+// frame callback instead, short enough that a hand does not outrun it.
+const frameFallbackMs = 32
+
 // A hybrid laptop has a trackpad and a touchscreen, and (pointer: coarse) names
 // only the primary one. any-pointer asks per capability: a coarse pointer
 // anywhere earns the handle, a fine pointer anywhere earns the proximity
@@ -35,7 +39,7 @@ const touchQuery = "(any-pointer: coarse)"
 const finePointerQuery = "(any-pointer: fine)"
 const hoverQuery = "(hover: hover)"
 
-// Module scope on purpose: the cluster remounts on every slide navigation.
+// Kept at module scope because the cluster remounts on every slide navigation.
 // Without the last pointer position a reveal earned by proximity would drop
 // until the hand moves again, and without the last reveal state the cluster
 // would mount hidden and blink back in one frame later.
@@ -87,10 +91,23 @@ function usePointerProximity(
     }
 
     let frame = 0
+    let timer = 0
     let point = lastPointerPosition
 
+    function clearPending() {
+      if (frame !== 0) {
+        cancelAnimationFrame(frame)
+        frame = 0
+      }
+
+      if (timer !== 0) {
+        clearTimeout(timer)
+        timer = 0
+      }
+    }
+
     function measure() {
-      frame = 0
+      clearPending()
 
       const node = anchor.current
 
@@ -104,27 +121,34 @@ function usePointerProximity(
       )
     }
 
+    // A frame callback coalesces the moves, since measuring reads layout. An
+    // engine that is not compositing never runs one, so a timer races it and
+    // whichever lands first measures. On a page that paints, the frame always
+    // wins and the timer is cancelled unused.
+    function schedule() {
+      if (frame !== 0 || timer !== 0) {
+        return
+      }
+
+      frame = requestAnimationFrame(measure)
+      timer = window.setTimeout(measure, frameFallbackMs)
+    }
+
     function handlePointerMove(event: PointerEvent) {
       point = { x: event.clientX, y: event.clientY }
       lastPointerPosition = point
-
-      if (frame === 0) {
-        frame = requestAnimationFrame(measure)
-      }
+      schedule()
     }
 
     window.addEventListener("pointermove", handlePointerMove, { passive: true })
 
     if (point) {
-      frame = requestAnimationFrame(measure)
+      schedule()
     }
 
     return () => {
       window.removeEventListener("pointermove", handlePointerMove)
-
-      if (frame !== 0) {
-        cancelAnimationFrame(frame)
-      }
+      clearPending()
     }
   }, [anchor, enabled])
 

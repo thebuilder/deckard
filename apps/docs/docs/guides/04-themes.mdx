@@ -1,6 +1,6 @@
 ---
 title: Themes
-description: The six built-in presets, how a deck imports one, what ejecting gives you, and what it takes to write your own.
+description: The built-in presets, how a deck imports one, what ejecting gives you, and what it takes to write your own.
 sidebar:
   icon: palette
 ---
@@ -13,13 +13,13 @@ A theme is three files:
 | --- | --- |
 | `theme.css` | Every token and every selector, scoped to the theme class. |
 | `index.ts` | One `SlideTheme` object. |
-| `THEME.md` | What each token controls, and why the theme is the way it is. |
+| `THEME.md` | What each token controls and what this theme sets it to. |
 
-## The six built-ins
+## The built-ins
 
 <ThemeStrip />
 
-Each frame is a slide canvas, not a picture of one, painted by that theme's own stylesheet in the color mode the theme opens on. Follow one into the [theme gallery](/themes) for the same six at a size you can read, with a light and dark switch on every card and the palette behind it.
+Each frame is a slide canvas, not a picture of one, painted by that theme's own stylesheet in the color mode the theme opens on. Follow one into the [theme gallery](/themes) for the same frames at a size you can read, with a light and dark switch on every card and the palette behind it.
 
 | Theme | `defaultColorMode` | The idea |
 | --- | --- | --- |
@@ -32,7 +32,7 @@ Each frame is a slide canvas, not a picture of one, painted by that theme's own 
 
 ## Picking one
 
-Import it and hand it to `defineDeck`. Importing the module pulls in its stylesheet, so there is nothing else to wire:
+Import it and hand it to `defineDeck`. Importing the module pulls in its stylesheet:
 
 ```ts deck/deck.ts
 import { defineDeck } from "@deckard/core"
@@ -44,7 +44,7 @@ export const deck = defineDeck({ slides, theme: phosphor, /* ... */ })
 
 `deckard add theme <name>` makes that edit for you, rewriting both the import and the `theme` property.
 
-Only the theme a deck imports reaches the bundle. The barrel re-exports all six and the bundler drops the modules nothing uses, stylesheets included.
+Only the theme a deck imports reaches the bundle. The barrel re-exports every built-in and the bundler drops the modules nothing uses, stylesheets included.
 
 ### The stylesheet on its own
 
@@ -54,7 +54,7 @@ Only the theme a deck imports reaches the bundle. The barrel re-exports all six 
 import "@deckard/themes/ledger/theme.css"
 ```
 
-A deck never needs this. It exists for a page that renders a slide outside the runtime, such as the [theme gallery](/themes) on this site, which builds a scaled-down canvas out of the real markup and lets the six stylesheets paint it.
+A deck never needs this. It exists for a page that renders a slide outside the runtime, such as the [theme gallery](/themes) on this site, which builds a scaled-down canvas out of the real markup and lets each theme's own stylesheet paint it.
 
 ## Ejecting
 
@@ -65,10 +65,10 @@ deckard eject theme
 deckard eject theme --theme broadsheet   # eject a different built-in instead
 ```
 
-It refuses when `deck/theme/` already exists, because a deck has exactly one theme.
+It refuses when `deck/theme/` already exists.
 
 :::warning
-A fork inherits nothing. If the built-in you started from gains a token or fixes a contrast bug, your copy never hears about it, and no check can tell the two files have drifted. Owning the file is the right default and this is its real cost.
+An ejected theme no longer receives updates from `@deckard/themes`. If the built-in you started from gains a token or fixes a contrast bug, your copy does not, and no check compares the two files.
 :::
 
 ## The SlideTheme object
@@ -97,15 +97,15 @@ export const theme = {
 
 ## The token contract
 
-`@deckard/core/styles.css` declares every `--slide-*` token with a neutral default, in the `base` layer. A theme redefines them on the canvas and wins, because it ships unlayered CSS. That is the whole contract: the runtime depends on the tokens, never on a preset, and a deck with no theme at all still renders in neutral sizes with no decoration.
+`@deckard/core/styles.css` declares every `--slide-*` token with a neutral default, in the `base` layer. A theme redefines them on the canvas and wins, because it ships unlayered CSS. The runtime depends on the tokens, never on a preset, so a deck with no theme still renders in neutral sizes with no decoration.
 
 The [token reference](/reference/tokens) lists all of them. The short version of what a theme sets:
 
-- **Type**: three font families and nine size and tracking tokens.
-- **Surfaces**: two radii, a surface color, a muted surface, a border, a shadow.
-- **Backgrounds**: a grid color and pitch, a rule color, and the `--slide-scanline`, `--slide-hatch` and `--slide-halo` effects, which the five `background` variants paint with.
-- **Chrome**: eight tokens for the header and footer, plus `--slide-header-space` and `--slide-footer-space` for how much canvas the chrome gets.
-- **Media**: a foreground pair and three overlay gradients for text over photography.
+- **Type**: the font families, the size scale, and the label tracking.
+- **Surfaces**: the two radii, a surface color, a muted surface, a border, a shadow.
+- **Backgrounds**: a grid color and pitch, a rule color, and the `--slide-scanline`, `--slide-hatch` and `--slide-halo` effects, which the `background` variants paint with.
+- **Chrome**: the colours and type of the header and footer, plus `--slide-header-space` and `--slide-footer-space` for how much canvas each gets.
+- **Media**: a foreground pair and the overlay gradients for text over photography.
 - **Figures**: `--slide-figure-size`, its unit size, and the height of a `StatGrid` meter.
 
 ## The other half of the contract
@@ -132,7 +132,7 @@ A slide picks one with `background`:
 
 `"accent"` floods the canvas with the theme accent and flips the ink, chrome included. Use it once or twice in a deck, for the one sentence that has to land, and never on two slides in a row.
 
-No variant paints a radial wash or a corner glow. The four textures a theme has are flat colour, a rule, a grid, and a diagonal hatch.
+No variant paints a radial wash or a corner glow. The textures a theme has are flat colour, a rule, a grid, and a diagonal hatch.
 
 ## Writing your own
 
@@ -143,8 +143,8 @@ Then:
 <Steps>
   <Step title="Rename the class and the id">
     Change `className` and `id` in `index.ts`, and the selector prefix
-    throughout `theme.css`. They do not have to match, but every built-in uses
-    `<id>-theme` as the class and it reads well in devtools.
+    throughout `theme.css`. They do not have to match; every built-in uses
+    `<id>-theme` as the class.
   </Step>
   <Step title="Set the tokens">
     Work top-down: the shadcn color variables first (`--background`, `--card`,
@@ -153,10 +153,9 @@ Then:
     one line.
   </Step>
   <Step title="Do both color modes">
-    Or declare only one in `colorModes` and pin the deck to it. What you cannot
-    do is claim two and ship one: `deckard validate` checks that the dark block
-    defines nothing the light block does not, and that `colorModes` matches the
-    blocks the stylesheet actually carries.
+    Or declare only one in `colorModes` and pin the deck to it. `deckard
+    validate` checks that the dark block defines nothing the light block does
+    not, and that `colorModes` matches the blocks the stylesheet carries.
   </Step>
   <Step title="Style the chrome">
     The header and footer are yours. Core renders `[data-slide-header]` and

@@ -15,8 +15,8 @@ apply there, against their own `deck/` directory.
   builds it before an app builds, and `pnpm dev` runs its `tsc --watch`
   alongside the app.
 - `apps/playground` is the reference deck and the app every visual check runs
-  against. It exercises every feature on purpose, so it is a test surface, not a
-  template and not anyone's presentation.
+  against. It exercises every feature, so it is a test surface rather than a
+  template.
 - `apps/demo` is a 19-slide talk shaped like a consumer project, and the proof
   that the framework works outside the playground. `docs/MIGRATION-NOTES.md`
   records what that migration surfaced.
@@ -62,7 +62,7 @@ All of these run from the root.
 | `pnpm cli:build`           | builds `@deckard/core`, `@deckard/themes`, and `@deckard/cli` |
 | `pnpm deck:validate`       | deck resolves, theme is coherent, registry paths exist       |
 | `pnpm deck:doctor`         | node, package resolution, stylesheet import, deck, routes    |
-| `pnpm deck:check-overflow` | fails listing slides whose content the canvas clips          |
+| `pnpm deck:check-overflow` | fails listing slides that lose content to the canvas edge, the chrome, or a clipped box |
 | `pnpm deck:screenshots`    | one PNG per slide at canvas size, `--light` for light mode   |
 | `pnpm deck:contact-sheet`  | every screenshot in one grid image for review                |
 | `pnpm export:pdf`          | one PDF page per slide at canvas size                        |
@@ -77,6 +77,14 @@ All of these run from the root.
 slug, a moved slide module, a theme edit, a registry path. Run
 `deck:check-overflow` after changing slide content, and read a fresh
 `deck:contact-sheet` before calling a deck done.
+
+`deck:check-overflow` and the amber ring `next dev` draws share one measurement,
+`measureSlideLayout` in `packages/core/src/lib/slide-layout.ts`, exported as
+`@deckard/core/layout`. It reads the canvas edge, the header and footer bands,
+and any box inside the frame that hides its own overflow. The CLI evaluates it in
+the page from the deck's own installed `@deckard/core`, so the gate and the
+warning are literally the same code. Keep it in one place: a second copy is how
+the two start disagreeing.
 
 ## Authoring slides
 
@@ -128,7 +136,7 @@ is what generates it, so a change to that shape belongs in
 
 ## The package boundary
 
-- Apps import the runtime through the package exports only: `@deckard/core`, `/components`, `/code-block`, `/discovery`, `/next`, `/slide-from-module`, `/ui`, `/utils`, `/styles.css`, and `@deckard/themes` for the presets. Never a deep path into `packages/core/src` or `packages/themes/src`.
+- Apps import the runtime through the package exports only: `@deckard/core`, `/components`, `/code-block`, `/discovery`, `/layout`, `/next`, `/slide-from-module`, `/ui`, `/utils`, `/styles.css`, and `@deckard/themes` for the presets. Never a deep path into `packages/core/src` or `packages/themes/src`.
 - The runtime depends on the token contract, never on a preset. Presets live in `@deckard/themes`, a theme is data the deck chooses, and `packages/core` must not reference it: the dependency runs one way, `@deckard/themes` takes `SlideTheme` from `@deckard/core` as a type-only import and names it a peer, so nothing crosses at runtime. A theme's stylesheet is copied into `dist` next to its compiled module by `scripts/copy-theme-assets.ts`, which is why importing the module carries its CSS.
 - New runtime code goes in `packages/core` and gets an export. New deck content goes in `apps/playground`. If a component names the deck, a color, or a slide, it is deck content.
 - A new export means adding it to the matching index file, and a new subpath means adding it to the `exports` map in `packages/core/package.json`, where every entry points at `dist`. `packages/core/src/index.ts`, `src/components/index.ts`, and `src/ui/index.ts` are the only barrels, and biome allows barrels only there.
@@ -136,7 +144,7 @@ is what generates it, so a change to that shape belongs in
 - The slide route is static. Nothing in it may read the request: `presenterPreview` and `step` are read on the client, so the whole deck prerenders.
 - Nothing heavy or async belongs in the components barrel. `CodeBlock` sits behind its own entry point because shiki loads WebAssembly, and a discovered slide module that reaches it through the barrel would throw.
 - Adding a dependency to the runtime means adding it to `packages/core/package.json`, not the app's. `pnpm smoke:package` catches the ones that only work because the workspace hoisted them.
-- Each of the three packages has a `prepack` that builds itself and nothing else: `tsc` for core, `tsc` plus the asset copy for themes, the template sync for the CLI. A package cannot build its dependencies, so ordering the three is `pnpm release:pack`'s job. That command cleans every `dist`, the CLI template, and the build info beside them, builds the three through turbo with `--force`, packs them into `dist-tarballs/`, checks each tarball carries what an installer needs, and runs the CLI smoke against those exact files. It is the release path, so it is the one CI runs.
+- Each of the three packages has a `prepack` that builds only itself: `tsc` for core, `tsc` plus the asset copy for themes, the template sync for the CLI. A package cannot build its dependencies, so ordering the three is `pnpm release:pack`'s job. That command cleans every `dist`, the CLI template, and the build info beside them, builds the three through turbo with `--force`, packs them into `dist-tarballs/`, checks each tarball carries what an installer needs, and runs the CLI smoke against those exact files. It is the release path, so it is the one CI runs.
 
 ## Change discipline
 
@@ -158,3 +166,59 @@ is what generates it, so a change to that shape belongs in
   before writing App Router code. The APIs move fast, and `next dev` is
   configured not to inject its own agent-rules block into this file
   (`agentRules: false` in each app's `next.config.ts`).
+
+## Writing
+
+These rules cover prose: docs pages, registry descriptions, `THEME.md`, README,
+slide copy, and CLI output. They exist because a review found the same habits
+across all of them.
+
+**State the behaviour, the consequence, and the next action. Give the rationale
+only where it changes what the reader does.** A reader deciding between two
+options needs the tradeoff. A reader who has already decided does not need the
+argument for the decision.
+
+- Write for one audience per page. A landing page sells, a guide gets a task
+  done, a reference documents the whole contract. Do not mix them.
+- Do not defend the design. Explaining that a choice was intentional persuades
+  nobody and reads as an argument with an imagined critic. Cut every "on
+  purpose", "deliberately", "that is the whole idea", "that is the point",
+  "nothing else", "the entire brief", and "never" that is carrying that job.
+- Do not claim what you cannot demonstrate. "Cannot drift" is a guarantee; "uses
+  the same canvas and the same routes" is the fact behind it. Ship the fact.
+- Let a demo prove itself. Do not tell the reader the live preview is really
+  live.
+- Say what a thing is for, not what it is not. "Use `FocusSlide` when the block
+  is the whole slide" beats a paragraph on why it is not a prop on another
+  component.
+- History belongs in a changelog. A deprecated field's entry says
+  `"counter" is a deprecated alias for "visible"`, not the story of the rename.
+- No em dashes. Commas or hyphens.
+- No "powerful", "seamless", "simply", "just", "elegant", "blazing", or
+  "out of the box".
+
+Reference entries carry, in this order: import path, signature, props or
+arguments with types and defaults, return value, behaviour, errors, an example,
+and related APIs. A sentence of description is not a reference entry.
+
+Generated behaviour has one source of truth. Before documenting what a command
+writes or what a package requires, read the code that does it. Three separate
+contradictions between the README, the quickstart, and the CLI reference reached
+the deployed site because each was written from memory.
+
+**Do not type a number that already exists in code.** Counts and measurements
+drift the moment anything changes, and every one of them has: the deck slide
+count, the registry item count, the block family count, a theme's footer space,
+the node floor, a token default. Each was correct when written.
+
+- Counts. Write "every built-in theme", not "six themes"; "the block families
+  the registry ships", not "five block families". A count earns its place only
+  when the number itself is the point, and then it comes from the source.
+- Concrete values from a theme. A reader who needs phosphor's footer space reads
+  `phosphor/theme.css`. Prose that repeats it is a second copy that nothing
+  checks.
+- The core token defaults are a contract, so the reference does list them, and
+  that table is generated from `packages/core/styles.css` rather than typed.
+
+Where a number has to appear in prose and cannot be generated, cite where it
+comes from so the next person can check it in one step.

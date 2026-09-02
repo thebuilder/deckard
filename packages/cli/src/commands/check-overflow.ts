@@ -1,3 +1,6 @@
+import { pathToFileURL } from "node:url"
+
+import type { SlideLayoutFinding } from "@deckard/core/layout"
 import type { Page } from "playwright"
 
 import { booleanFlag, numberFlag, type ParsedArgs } from "../args.ts"
@@ -8,81 +11,50 @@ import {
   withCanvasSession,
 } from "../deck/preview.ts"
 import { type ColorMode, write } from "../output.ts"
+import { resolveFromProject } from "../project.ts"
 
-interface Overflow {
+interface SlideFinding extends SlideLayoutFinding {
   id: string
-  region: string
-  x: number
-  y: number
 }
 
-// Same elements and same arithmetic as SlideOverflowGuard, so CI fails on exactly what the dev warning draws.
-const tolerance = 1
+type LayoutModule = typeof import("@deckard/core/layout")
 
-function measure(page: Page) {
-  return page.evaluate(() => {
-    const regions = [
-      { label: "slide content", selector: "[data-slide-frame]" },
-      { label: "the header", selector: "[data-slide-header]" },
-      { label: "the footer", selector: "[data-slide-footer]" },
-    ]
+// Resolved against the deck rather than bundled here. The measurement this gate
+// runs is the deck's own copy of @deckard/core, which is the same file
+// SlideOverflowGuard draws its amber ring from, so CI fails on exactly what an
+// author sees in next dev and neither can drift from the other.
+async function loadLayout(): Promise<LayoutModule> {
+  const resolved = resolveFromProject("@deckard/core/layout")
 
-    return regions.flatMap((region) => {
-      const element = document.querySelector<HTMLElement>(region.selector)
-
-      if (!element) {
-        return []
-      }
-
-      return [
-        {
-          label: region.label,
-          x: element.scrollWidth - element.clientWidth,
-          y: element.scrollHeight - element.clientHeight,
-        },
-      ]
-    })
-  })
-}
-
-function describe(overflow: Overflow) {
-  const parts: string[] = []
-
-  if (overflow.y > tolerance) {
-    parts.push(`${Math.round(overflow.y)}px below the canvas`)
+  if (!resolved) {
+    throw new Error(
+      "This deck's @deckard/core does not export the layout measurement this check runs. Update @deckard/core, then run deckard doctor if it still does not resolve."
+    )
   }
 
-  if (overflow.x > tolerance) {
-    parts.push(`${Math.round(overflow.x)}px past its right edge`)
-  }
-
-  return `/slides/${overflow.id}  ${overflow.region} runs ${parts.join(", ")}`
+  return (await import(pathToFileURL(resolved).href)) as LayoutModule
 }
 
 async function checkSlide(
   page: Page,
   baseUrl: string,
   id: string,
-  colorMode: ColorMode
-): Promise<Overflow[]> {
+  colorMode: ColorMode,
+  layout: LayoutModule
+): Promise<SlideFinding[]> {
   await openSlide(page, baseUrl, id, colorMode)
 
-  const measured = await measure(page)
+  // No canvas handed in: the route serves one slide, so the measurement finds
+  // the canvas itself, exactly as the guard does when it runs in the page.
+  const report = await page.evaluate(layout.measureSlideLayout, null)
 
-  if (!measured.some((region) => region.label === "slide content")) {
+  if (!report.framed) {
     throw new Error(
       `Slide ${id} rendered no [data-slide-frame] element. Check that the route still renders SlideShell.`
     )
   }
 
-  return measured
-    .filter((region) => region.x > tolerance || region.y > tolerance)
-    .map((region) => ({
-      id,
-      region: region.label,
-      x: Math.max(region.x, 0),
-      y: Math.max(region.y, 0),
-    }))
+  return report.findings.map((finding) => ({ ...finding, id }))
 }
 
 export function runCheckOverflow(args: ParsedArgs): Promise<void> {
@@ -91,26 +63,30 @@ export function runCheckOverflow(args: ParsedArgs): Promise<void> {
   const skipBuild = booleanFlag(args, "skip-build")
 
   async function checkSlides({ baseUrl, canvas, ids, page }: CanvasSession) {
-    const overflowing: Overflow[] = []
+    const layout = await loadLayout()
+    const found: SlideFinding[] = []
 
     for (const id of ids) {
       // biome-ignore lint/performance/noAwaitInLoops: slides are measured one at a time on a single page
-      overflowing.push(...(await checkSlide(page, baseUrl, id, colorMode)))
+      found.push(...(await checkSlide(page, baseUrl, id, colorMode, layout)))
     }
 
-    if (overflowing.length === 0) {
+    if (found.length === 0) {
       write(
-        `${ids.length} slides fit the ${canvas.width}x${canvas.height} canvas in ${colorMode} mode, chrome included.`
+        `${ids.length} slides fit the ${canvas.width}x${canvas.height} canvas in ${colorMode} mode, clear of the chrome and clipping nothing.`
       )
       return
     }
 
-    const slides = new Set(overflowing.map((overflow) => overflow.id))
+    const slides = new Set(found.map((finding) => finding.id))
 
     throw new Error(
       [
-        ...overflowing.map(describe),
-        `${slides.size} of ${ids.length} slides overflow the canvas and are clipped. Trim the content, or wrap the part that has to scroll in SlideScrollArea.`,
+        ...found.map(
+          (finding) =>
+            `/slides/${finding.id}  ${layout.describeSlideLayoutFinding(finding)}`
+        ),
+        `${slides.size} of ${ids.length} slides lose content to the canvas edge, the chrome, or a box that hides it. Trim the content, or wrap the part that has to scroll in SlideScrollArea.`,
       ].join("\n")
     )
   }

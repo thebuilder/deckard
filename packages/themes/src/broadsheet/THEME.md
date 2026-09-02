@@ -41,8 +41,7 @@ weight as well as by size. Code and `kbd` reset tracking to zero, since the mono
 face is already even.
 
 Every size below is set against the 1920x1080 canvas at a 16px root, so 1rem is
-16 canvas pixels and the scale reads the way it does on a projector rather than
-the way it does in a browser window.
+16 canvas pixels.
 
 | Token                      | Size              | Used by                               |
 | -------------------------- | ----------------- | ------------------------------------- |
@@ -57,15 +56,14 @@ the way it does in a browser window.
 | `--slide-figure-size`      | `8.5rem`, 136px   | the figure in a metrics block         |
 | `--slide-figure-unit-size` | `3.5rem`, 56px    | the unit suffix beside that figure    |
 
-A metrics figure is display type without being a heading, so it takes
-`--slide-figure-size` instead of borrowing the title size. The contract also
-carries `--slide-meter-size`, the height of the proportion bar under that
-figure, and this theme takes the default.
+A metrics figure takes `--slide-figure-size` instead of borrowing the title
+size. The contract also carries `--slide-meter-size`, the height of the
+proportion bar under that figure, and this theme takes the default.
 
 Broadsheet has no source template of its own, so the scale was set against
 ledger's and pulled back a notch at the top, 120px against 124px for a title and
-76px against 78px. Serif body at the same size already carries more weight than
-ledger's sans, so the deck reads as heavy at slightly less size.
+76px against 78px. Serif body carries more weight than ledger's sans at the same
+size, so the deck reads as heavy at slightly less.
 
 `--slide-label-tracking` is `0.22em`, tighter than the default theme's `0.3em`.
 Serif capitals have more width built in than sans capitals, so the same tracking
@@ -88,16 +86,16 @@ shadow to hold them off the edge.
 `--slide-content-gap` is `2.75rem`, the vertical rhythm between the intro block
 and the body of a slide. `--slide-item-gap` is `1.625rem`, the smaller gap
 between rows inside one block: bullets in a list, cards in a grid.
-`--slide-radius` and `--slide-radius-lg` are both near zero on purpose. Do not
-raise one without the other, or media frames and content cards stop matching.
+`--slide-radius` and `--slide-radius-lg` are both near zero. Do not raise one
+without the other, or media frames and content cards stop matching.
 
 ## Background variants
 
 `SlideBackground` renders one empty `div` with `data-slide-background` and no
 styling of its own. This file decides what each variant paints, using the canvas
 variables `--canvas-width` and `--canvas-height` for anything sized against the
-slide. No variant paints a wash or a corner glow. None of the source templates
-has one, and on a pale sheet a bloom behind the copy reads as a stain.
+slide. On a pale sheet a bloom behind the copy reads as a stain, so no variant
+paints a wash or a corner glow.
 
 - `default` is bare stock with one 1px rule across the head, where a paper
   carries its folio. The rule sits 5.5% of the canvas height down from the top
@@ -115,19 +113,16 @@ The colors come from `--slide-grid-color`, `--slide-grid-size`, and
 `--slide-rule`. Dark mode redeclares both colors as light ink, because the same
 dark line disappears on a dark sheet.
 
-Nothing in this file is private any more. `--slide-rule` was a theme-private
-token and is now part of the contract in `@deckard/core/styles.css`, alongside
-`--slide-halo`, `--slide-scanline`, and the new `--slide-hatch`. Flat, ruled,
-scanned, and hatched are the four things the source designs do to a background,
-and every theme was declaring the same names for them. This theme sets
-`--slide-hatch`, the 135 degree fill the templates put behind a reserved plate,
-in its own `--slide-grid-color` so it stays quiet under body copy, and no
-variant here draws it yet.
+This theme declares no private tokens. `--slide-rule`, `--slide-halo`,
+`--slide-scanline`, and `--slide-hatch` are all part of the contract in
+`@deckard/core/styles.css`. This theme sets `--slide-hatch`, the 135 degree fill
+the templates put behind a reserved plate, in its own `--slide-grid-color` so it
+stays quiet under body copy, and no variant here draws it yet.
 
 `accent` is painted by two unlayered rules at the bottom of this file. A
-base-layer fallback ships in `@deckard/core/styles.css`, but a theme's unlayered
-CSS always wins over the base layer, which is why every theme in the registry
-restates the pair. The field colour is read on the canvas, where `--background`
+base-layer fallback ships in `@deckard/core/styles.css`, and a theme's unlayered
+CSS always wins over the base layer, so every theme in the registry restates the
+pair. The field colour is read on the canvas, where `--background`
 is remapped to `--primary`. The ink is remapped one level down, on
 `[data-slide-frame]`, `[data-slide-header]`, and `[data-slide-footer]`, because
 a custom property resolves against the element that uses it: moving `--primary`
@@ -144,20 +139,28 @@ depends on, so a block is free to change its markup and its class names as long
 as the attributes stay where they are. The full list is in the "Block part
 contract" comment at the bottom of `@deckard/core/styles.css`.
 
-What does not belong in a theme is anything that is new content rather than a
-treatment of existing content. A boot log, a status table, a cursor line with
-words in it are all slide copy, so they go in a block the deck composes.
+A theme treats existing content and never adds new content. A boot log, a status
+table, a cursor line with words in it are all slide copy, so they go in a block
+the deck composes.
 
-Broadsheet reaches three parts.
+Broadsheet has no source design behind it, so it stays quiet here. Everything
+below is the same two moves applied to more parts.
 
 `[data-slide-breaker-index]`, the section number a divider carries, is set in
 the heading face at `calc(var(--slide-title-size) * 1.5)`, so a chapter opens on
 a numeral larger than any headline in the deck.
 
-`[data-slide-list-marker]` and `[data-slide-hero-meta]`, the number in front of
-a bullet and the credit row along the bottom of an opener, run in small caps
-with oldstyle numerals and `text-transform` cleared. Lining figures in a serif
-list read as a table of contents; oldstyle ones sit down into the copy.
+Every label and numeral in the deck runs in small caps with oldstyle numerals
+and `text-transform` cleared: `[data-slide-list-marker]`,
+`[data-slide-hero-meta]`, `[data-slide-contents-index]`,
+`[data-slide-contents-folio]`, `[data-slide-column-index]`,
+`[data-slide-note-index]`, `[data-slide-rail-term]`,
+`[data-slide-statement-source]`, `[data-slide-table-heading]`, and
+`[data-slide-badge]`. Lining figures in a serif list read as a table of
+contents; oldstyle ones sit down into the copy.
+
+`[data-slide-quote-text]` is set in the masthead face, italic, which is where a
+paper puts a pull quote. It draws no hanging quotation mark; ledger does that.
 
 ## Deck chrome
 
@@ -175,8 +178,8 @@ the slide title runs italic in the middle of the line, and the date sits right i
 old-style figures, all in the serif the deck is set in. The foot centers the
 folio in small caps under a rule.
 
-There is no progress bar. `--slide-progress-fill` is `transparent`, because a
-newspaper page has no scrollbar. A deck that wants one sets it to `--primary`.
+`--slide-progress-fill` is `transparent`, so there is no progress bar. A deck
+that wants one sets it to `--primary`.
 
 ## Safe to change
 
@@ -189,8 +192,8 @@ defined for light is also defined for dark. And keep contrast: body copy against
 `--background` and against `--slide-surface` both have to clear 4.5:1.
 
 If you change the class name, change it in `index.ts` too. The class in the
-`SlideTheme` and the selector in the stylesheet are the same string, and nothing
-checks that for you.
+`SlideTheme` and the selector in the stylesheet are the same string.
+`pnpm deck:validate` fails when they drift apart, and when a token is dark-only.
 
 ## Media overlays
 
@@ -206,7 +209,7 @@ Hardcoding a color inside the canvas. `text-white`, `bg-slate-900`, and
 `rgba(15,23,42,0.2)` all survive a theme swap and then look wrong. Reach for a
 semantic token (`text-foreground`, `bg-card`) or a slide token.
 
-Adding a shadow back. `--slide-surface-shadow` is `none` because the borders are
+Adding a shadow back. `--slide-surface-shadow` is `none`, and the borders are
 sized to carry the separation on their own. A shadow on top of them reads as a
 mistake rather than as depth.
 
