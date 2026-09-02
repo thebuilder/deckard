@@ -281,7 +281,7 @@ export const slides: SlideDefinition[] = [
       <OpenContentSlide
         eyebrow="Stepped content"
         title="Reveal an argument in order"
-        description="stepCount is 4, and each block below is a SlideStep."
+        description="Each block below is a SlideStep, revealed in order."
       >
         <div className="grid gap-3">
           <SlideStep step={0}>
@@ -298,13 +298,6 @@ export const slides: SlideDefinition[] = [
           </SlideStep>
 
           <SlideStep step={2}>
-            <RevealCard label="The options">
-              Split the shard, cache the container, or move the suite to a
-              nightly run.
-            </RevealCard>
-          </SlideStep>
-
-          <SlideStep step={3}>
             <RevealLandingCard label="The call">
               Cache the container. Two days of work, and the other two stay
               open.
@@ -313,7 +306,7 @@ export const slides: SlideDefinition[] = [
         </div>
       </OpenContentSlide>
     ),
-    stepCount: 4,
+    stepCount: 3,
   },
   {
     slug: "one-surface",
