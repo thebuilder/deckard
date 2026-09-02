@@ -606,6 +606,14 @@ Say what is missing on purpose: no heading, no lead, no panel. The slide is the 
             { label: "List marker" },
           ]}
           rows={[
+            {
+              cells: [
+                "broadsheet",
+                "System serif",
+                "2",
+                "A small-caps numeral",
+              ],
+            },
             { cells: ["ledger", "Source Serif 4", "0", "A hanging rule"] },
             {
               cells: ["meridian", "Schibsted Grotesk", "10", "An accent dot"],
