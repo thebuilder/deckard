@@ -95,7 +95,8 @@ coding agents.
 
 ## Working on Deckard
 
-A pnpm workspace on Turborepo. Node 22.12 or newer.
+A pnpm workspace on Turborepo. The packages declare Node 20.9 or newer, and CI
+runs Node 24.
 
 | Path | What it is |
 | --- | --- |

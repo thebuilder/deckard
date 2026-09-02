@@ -31,6 +31,9 @@ export default defineConfig({
     sidebar: {
       display: "flat",
     },
+    tabs: [
+      { href: "/introduction", icon: "book-open", label: "Docs", path: "/" },
+    ],
   },
   search: {
     popular: [

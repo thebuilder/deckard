@@ -1,0 +1,176 @@
+---
+title: Accessibility
+description: What the runtime handles, and the parts only the author can get right. Headings inside slides, alt text, captions, contrast in a custom theme, and motion.
+sidebar:
+  icon: accessibility
+---
+
+The runtime gives every slide landmarks, names every control, and keeps the deck driveable from the keyboard. Everything inside the canvas is yours.
+
+## What the runtime already does
+
+- The shell renders `<header>`, `<main>`, `<footer>`, and a `<nav aria-label="Deck controls">`. Your slide body lands inside `<main>`.
+- Every control in the cluster has an `aria-label`: the command center trigger, the presenter popout, the colour mode toggle, and previous and next.
+- The controls cluster is invisible at rest but stays in the accessibility tree and in tab order. Tabbing into it reveals it.
+- Unrevealed step content carries `aria-hidden` and `inert`, so a screen reader and the tab order both skip it until it appears.
+- The slide title becomes the document title, through `generateMetadata`.
+- The footer progress bar is `aria-hidden` and the slide counter next to it is plain text, so the position is read rather than inferred from a graphic.
+- A slide that throws renders an error card with `role="alert"` and the rest of the deck keeps working.
+
+## What it does not do
+
+Say these out loud before you decide a deck is done, because nothing in the toolchain will tell you:
+
+- **No live region.** Moving to the next slide or revealing a step announces nothing. A screen reader picks up the route change and the DOM mutation, and that is all.
+- **No focus management on navigation.** Nothing calls `focus()` when the slide changes.
+- **No skip link.**
+- **No accessible name on `<main>` or on the canvas.** The deck is named only by the brand text in the header.
+- **No contrast checking.** `deckard validate` reads the theme's tokens and never their values.
+
+## Keyboard
+
+Every binding is on `window`, so the deck responds wherever focus sits.
+
+| Keys | What happens |
+| --- | --- |
+| `→` `↓` `PageDown` `Space` | Next step, then next slide |
+| `←` `↑` `PageUp` | Previous step, then previous slide |
+| `Cmd/Ctrl + K` | Toggle the command center |
+| `P` | Open the presenter window |
+| `D` | Switch colour mode, when the theme carries both |
+
+Navigation keys are ignored inside links, buttons, inputs, textareas, selects, and `contenteditable`, and while a modifier is held, so browser zoom still zooms.
+
+There is no `Home` or `End` binding, no `F` for fullscreen, and no help key. Use the command center to jump.
+
+### Controls inside a slide
+
+An interactive slide is a client component like any other, and the deck does nothing special for it. Two things to get right:
+
+**Give every control a real accessible name.** An icon-only button needs `aria-label`.
+
+**Expect the arrow keys to be taken.** The deck advances on arrows unless the event target is a link, button, input, textarea, select, or `contenteditable`. A custom widget that listens for arrow keys and is none of those will fire and advance the slide at the same time. Mark it so the deck leaves it alone:
+
+```tsx
+<div data-step-ignore-click="true" onKeyDown={handleKeys}>
+  <Carousel />
+</div>
+```
+
+Calling `preventDefault()` on the event also stops the deck, since it skips anything already handled.
+
+## Headings
+
+The canvas has no heading of its own, so the heading structure inside a slide is entirely yours.
+
+`SlideHeading` renders the slide's own heading. Below it, use real heading elements in order and never skip a level to get a size, because size is a token:
+
+```tsx
+<OpenContentSlide eyebrow="Context" title="Where the time goes">
+  <h3>Build</h3>
+  <p>Eleven minutes, most of it typechecking.</p>
+</OpenContentSlide>
+```
+
+A deck is many pages rather than one document, so each slide starting its own outline is the normal shape. The failure to avoid is a slide whose only heading is a `<div>` sized to look like one.
+
+`Eyebrow` is a label above the heading, not a heading. It does not need to be one.
+
+## Images
+
+`alt` is optional on the media blocks and defaults to the empty string, which marks the image decorative and hides it from assistive technology. Nothing warns you, and `deckard validate` does not check it.
+
+So the default is silent and wrong for any image that carries meaning. Write the alt text every time:
+
+```tsx
+{
+  media: {
+    src: "/revenue.png",
+    alt: "Revenue climbing from 2 to 9 million across four quarters",
+  },
+}
+```
+
+Pass `alt=""` deliberately when the image really is decoration, so the next person can tell the difference between a decision and an omission.
+
+Captions and credits render as their own paragraphs next to the image rather than as a `<figcaption>` tied to it, so a caption does not stand in for alt text.
+
+## Video
+
+`SlideMediaVideo` shows controls unless the video autoplays, and an autoplaying video is muted and looped.
+
+It has no `<track>` support, so captions are not something the component can add for you. A video carrying speech needs either a caption track on your own `<video>` element or the content restated on the slide.
+
+## Colour and contrast
+
+The six built-in themes ship as they are. The moment you eject one and edit `theme.css`, contrast is yours.
+
+The rule each `THEME.md` states: body copy has to clear 4.5:1 against `--background` and against `--slide-surface`.
+
+Check against the composite, not the token. `--slide-surface` is translucent (`oklch(1 0 0 / 88%)` in the default theme), so text on a surface sits over whatever background variant is painted underneath. Sampling the rendered pixels is the only reliable read.
+
+Check both colour modes. A dark override that changes `--foreground` and leaves `--slide-surface` alone passes validation and fails a reader.
+
+The token pairs to check when you change a colour:
+
+| Background | Foreground |
+| --- | --- |
+| `--background` | `--foreground` |
+| `--card` | `--card-foreground` |
+| `--popover` | `--popover-foreground` |
+| `--primary` | `--primary-foreground` |
+| `--secondary` | `--secondary-foreground` |
+| `--muted` | `--muted-foreground` |
+| `--accent` | `--accent-foreground` |
+
+`--slide-chrome-foreground` sits on the canvas background and defaults to `--muted-foreground`, which is the token most likely to be too quiet once you darken a background.
+
+Do not carry meaning in colour alone. A room sees a projector, and a projector is not your monitor.
+
+## Motion
+
+The runtime honours `prefers-reduced-motion` in two places: the controls cluster stops sliding as it reveals, and the `phosphor` theme's blinking cursor stops and stays lit.
+
+It does not honour it anywhere else. `SlideStep` fades over 300ms with no reduced-motion guard, and so do the presenter preview crossfade and the command dialog.
+
+Any animation you add is yours to guard:
+
+```css app/globals.css
+@media (prefers-reduced-motion: reduce) {
+  .reveal-item {
+    animation: none;
+  }
+}
+```
+
+In Tailwind that is the `motion-reduce:` variant, `motion-reduce:transition-none`.
+
+The PDF export disables animation entirely, but it keys off the export build rather than the reader's preference, so it is not the same thing.
+
+## Scrollable regions
+
+The canvas clips what does not fit. Trim the slide first; `deckard check-overflow` tells you which ones and by how much.
+
+When content genuinely has to scroll, `SlideScrollArea` is the way, and it takes a required `label`:
+
+```tsx
+<SlideScrollArea label="Full configuration" maxHeight={360}>
+  <ConfigTable />
+</SlideScrollArea>
+```
+
+`label` becomes `aria-label` on a `<section>`, which names the region. The component is already `tabIndex={0}`, so it is reachable and scrollable from the keyboard, and it swallows `Space`, arrows, `Home`, `End`, `PageUp`, and `PageDown` so scrolling never steps the deck.
+
+The label is required because an unnamed scroll region is announced as a region and nothing else. Name what is in it, not what it does: `Full configuration` beats `Scrollable area`.
+
+`CodeBlock` wraps its own content in one, labelled `Code sample`.
+
+## HTML or PDF
+
+These are not the same artifact.
+
+The **deployed deck** is real HTML. It has landmarks, headings, alt text, a text layer, working links, keyboard navigation, and both colour modes.
+
+The **PDF export** is one PNG per page. Each slide is screenshotted and drawn into the file, so it has no text layer, no headings, no alt text, no links, and no selectable or searchable text. A screen reader gets nothing from it. It is also fixed to one colour mode, and a stepped slide collapses to a single captured state.
+
+Share the URL when the audience matters. Send the PDF as a convenience alongside it, not instead of it. [Deploying](/guides/deploying) covers getting the deck to a URL.
