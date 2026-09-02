@@ -129,9 +129,11 @@ Do not carry meaning in colour alone. A room sees a projector, and a projector i
 
 ## Motion
 
-The runtime honours `prefers-reduced-motion` in two places: the controls cluster stops sliding as it reveals, and the `phosphor` theme's blinking cursor stops and stays lit.
+The runtime honours `prefers-reduced-motion` in three places: a theme's animated background holds one still frame, the controls cluster stops sliding as it reveals, and the `phosphor` theme's blinking cursor stops and stays lit.
 
-It does not honour it anywhere else. `SlideStep` fades over 300ms with no reduced-motion guard, and so do the presenter preview crossfade and the command dialog.
+The background is the one that matters most, and it is the one a reader cannot turn off any other way. Dropping the preference mid-session starts it moving without a reload.
+
+The runtime does not honour the preference anywhere else. `SlideStep` fades over 300ms with no reduced-motion guard, and so do the presenter preview crossfade and the command dialog.
 
 Any animation you add is yours to guard:
 

@@ -8,11 +8,14 @@ import type { BuiltInThemeId } from "@deckard/themes/ids"
 export const themeIds = [
   "atelier",
   "cotton",
+  "aurora",
+  "blueprint",
   "ledger",
   "meridian",
   "nexus",
   "noir",
   "phosphor",
+  "quorum",
 ] as const satisfies readonly BuiltInThemeId[]
 
 export const defaultThemeId: BuiltInThemeId = "meridian"

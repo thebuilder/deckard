@@ -106,6 +106,19 @@
     --slide-hatch: none;
     --slide-halo: none;
 
+    /*
+     * The shader field a theme paints a background variant with, when it names
+     * that variant in its `motion` map. The three colours are read off the
+     * canvas element, so a theme sets them per variant and per color mode in
+     * CSS, the way it sets everything else it paints. They default to the deck's
+     * own palette, so a variant with no colours of its own still lands in the
+     * theme rather than on a stock blue.
+     */
+    --slide-motion-color-1: var(--background);
+    --slide-motion-color-2: var(--muted);
+    --slide-motion-color-3: var(--accent);
+    --slide-motion-speed: 1;
+
     --slide-chrome-foreground: var(--muted-foreground);
     --slide-chrome-emphasis: var(--foreground);
     --slide-chrome-border: var(--border);
@@ -241,6 +254,20 @@
     --slide-progress-fill: var(--primary-foreground);
   }
 
+  /*
+   * The canvas the motion background paints in, over whatever the theme painted
+   * on .slide-background. That layer is what a viewer sees while the runtime
+   * loads, when the browser has no WebGL, and when the context is lost, so a
+   * theme paints a variant it animates as though it never would.
+   */
+  [data-slide-canvas] [data-slide-motion] {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
   /* --slide-progress is the position in the deck as a fraction, set by the runtime. */
   [data-slide-canvas] [data-slide-progress] {
     position: absolute;
@@ -281,6 +308,12 @@
  *   [data-slide-frame]             the padded region a slide body renders in
  *   [data-slide-background]        the background layer, and the variant name
  *                                  on the canvas itself
+ *   [data-slide-motion]            the canvas a theme paints a variant in,
+ *                                  valued with the field: aurora, waves, or wash
+ *   [data-slide-motion-state]      what that canvas is doing: "running",
+ *                                  "frozen" on its one deterministic frame, or
+ *                                  "unavailable" when the browser gave the
+ *                                  runtime no WebGL to draw with
  *   [data-slide-header]            the header row
  *   [data-slide-header-brand]      the deck name, as a link
  *   [data-slide-header-title]      the current slide's own title

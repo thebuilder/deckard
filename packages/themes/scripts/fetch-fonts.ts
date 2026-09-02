@@ -59,6 +59,24 @@ const families: FontFamily[] = [
   {
     faces: [
       {
+        file: "azeret-mono-latin.woff2",
+        url: "https://fonts.gstatic.com/s/azeretmono/v21/3XFuErsiyJsY9O_Gepph-HHhZfn23vRK.woff2",
+      },
+      {
+        file: "azeret-mono-latin-ext.woff2",
+        url: "https://fonts.gstatic.com/s/azeretmono/v21/3XFuErsiyJsY9O_Gepph-HHvZfn23vRKV0U.woff2",
+      },
+    ],
+    family: "Azeret Mono",
+    licence:
+      "https://raw.githubusercontent.com/google/fonts/main/ofl/azeretmono/OFL.txt",
+    slug: "azeret-mono",
+    version: "v21",
+  },
+  ,
+  {
+    faces: [
+      {
         file: "bricolage-grotesque-latin.woff2",
         url: "https://fonts.gstatic.com/s/bricolagegrotesque/v9/3y9K6as8bTXq_nANBjzKo3IeZx8z6up5BeSl9D4dj_x9PpZBMlGIInHWVyNJ.woff2",
       },
@@ -73,6 +91,25 @@ const families: FontFamily[] = [
     slug: "bricolage-grotesque",
     version: "v9",
   },
+  ,
+  {
+    faces: [
+      {
+        file: "chivo-latin.woff2",
+        url: "https://fonts.gstatic.com/s/chivo/v21/va9I4kzIxd1KFrBoQeNVkqDO.woff2",
+      },
+      {
+        file: "chivo-latin-ext.woff2",
+        url: "https://fonts.gstatic.com/s/chivo/v21/va9I4kzIxd1KFrBmQeNVkqDOeTY.woff2",
+      },
+    ],
+    family: "Chivo",
+    licence:
+      "https://raw.githubusercontent.com/google/fonts/main/ofl/chivo/OFL.txt",
+    slug: "chivo",
+    version: "v21",
+  },
+  ,
   {
     faces: [
       {
@@ -98,6 +135,7 @@ const families: FontFamily[] = [
     slug: "cormorant-garamond",
     version: "v21",
   },
+  ,
   {
     faces: [
       {
@@ -123,6 +161,7 @@ const families: FontFamily[] = [
     slug: "dm-mono",
     version: "v16",
   },
+  ,
   {
     faces: [
       {
@@ -148,6 +187,7 @@ const families: FontFamily[] = [
     slug: "ibm-plex-mono",
     version: "v20",
   },
+  ,
   {
     faces: [
       {
@@ -165,6 +205,33 @@ const families: FontFamily[] = [
     slug: "ibm-plex-sans",
     version: "v23",
   },
+  ,
+  {
+    faces: [
+      {
+        file: "ibm-plex-serif-latin.woff2",
+        url: "https://fonts.gstatic.com/s/ibmplexserif/v20/jizDREVNn1dOx-zrZ2X3pZvkTiUf2zcZiVbJ.woff2",
+      },
+      {
+        file: "ibm-plex-serif-latin-ext.woff2",
+        url: "https://fonts.gstatic.com/s/ibmplexserif/v20/jizDREVNn1dOx-zrZ2X3pZvkTiUR2zcZiVbJsNo.woff2",
+      },
+      {
+        file: "ibm-plex-serif-600-latin.woff2",
+        url: "https://fonts.gstatic.com/s/ibmplexserif/v20/jizAREVNn1dOx-zrZ2X3pZvkTi3A_yI0q1vjitOh.woff2",
+      },
+      {
+        file: "ibm-plex-serif-600-latin-ext.woff2",
+        url: "https://fonts.gstatic.com/s/ibmplexserif/v20/jizAREVNn1dOx-zrZ2X3pZvkTi3A_yI6q1vjitOh3oc.woff2",
+      },
+    ],
+    family: "IBM Plex Serif",
+    licence:
+      "https://raw.githubusercontent.com/google/fonts/main/ofl/ibmplexserif/OFL.txt",
+    slug: "ibm-plex-serif",
+    version: "v20",
+  },
+  ,
   {
     faces: [
       {
@@ -182,6 +249,7 @@ const families: FontFamily[] = [
     slug: "jetbrains-mono",
     version: "v24",
   },
+  ,
   {
     faces: [
       {
@@ -199,6 +267,25 @@ const families: FontFamily[] = [
     slug: "jost",
     version: "v20",
   },
+  ,
+  {
+    faces: [
+      {
+        file: "manrope-latin.woff2",
+        url: "https://fonts.gstatic.com/s/manrope/v20/xn7gYHE41ni1AdIRggexSvfedN4.woff2",
+      },
+      {
+        file: "manrope-latin-ext.woff2",
+        url: "https://fonts.gstatic.com/s/manrope/v20/xn7gYHE41ni1AdIRggmxSvfedN62Zw.woff2",
+      },
+    ],
+    family: "Manrope",
+    licence:
+      "https://raw.githubusercontent.com/google/fonts/main/ofl/manrope/OFL.txt",
+    slug: "manrope",
+    version: "v20",
+  },
+  ,
   {
     faces: [
       {
@@ -212,6 +299,7 @@ const families: FontFamily[] = [
     slug: "orbitron",
     version: "v35",
   },
+  ,
   {
     faces: [
       {
@@ -229,6 +317,7 @@ const families: FontFamily[] = [
     slug: "outfit",
     version: "v15",
   },
+  ,
   {
     faces: [
       {
@@ -246,6 +335,7 @@ const families: FontFamily[] = [
     slug: "public-sans",
     version: "v21",
   },
+  ,
   {
     faces: [
       {
@@ -263,6 +353,7 @@ const families: FontFamily[] = [
     slug: "schibsted-grotesk",
     version: "v7",
   },
+  ,
   {
     faces: [
       {
@@ -288,6 +379,25 @@ const families: FontFamily[] = [
     slug: "source-serif-4",
     version: "v14",
   },
+  ,
+  {
+    faces: [
+      {
+        file: "space-grotesk-latin.woff2",
+        url: "https://fonts.gstatic.com/s/spacegrotesk/v22/V8mDoQDjQSkFtoMM3T6r8E7mPbF4C_k3HqU.woff2",
+      },
+      {
+        file: "space-grotesk-latin-ext.woff2",
+        url: "https://fonts.gstatic.com/s/spacegrotesk/v22/V8mDoQDjQSkFtoMM3T6r8E7mPb94C_k3HqUtEw.woff2",
+      },
+    ],
+    family: "Space Grotesk",
+    licence:
+      "https://raw.githubusercontent.com/google/fonts/main/ofl/spacegrotesk/OFL.txt",
+    slug: "space-grotesk",
+    version: "v22",
+  },
+  ,
   {
     faces: [
       {

@@ -61,6 +61,11 @@ export const deck = defineDeck({
       type: "SlideTheme",
       description: "The theme object. A deck without one renders in neutral defaults.",
     },
+    motion: {
+      type: '"auto" | "frozen"',
+      default: '"auto"',
+      description: "The default every slide takes. \"frozen\" holds every motion background in the deck on one fixed frame. Reduced motion, the capture commands, and the presenter preview freeze one either way.",
+    },
   }}
 />
 
@@ -149,7 +154,7 @@ See [Themes](/guides/themes) for the full object. `defineDeck` validates it: `de
 | `number` | One-based position, what the counter shows. |
 | `title` | The authored title, or the generated `Slide 4` fallback. |
 | `authoredTitle` | Set only when the author gave the slide a title. The fallback in `title` names a slide in chrome but must never render as its own heading. |
-| `header` `footer` `layout` `background` | The slide's own value, or the deck default. |
+| `header` `footer` `layout` `background` `motion` | The slide's own value, or the deck default. |
 | `stepCount` | Defaults to `0`. |
 | `notes` `slug` `sourcePath` | As authored. |
 | `body` | The slide's React node. |

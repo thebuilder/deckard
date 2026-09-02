@@ -29,6 +29,25 @@ The quietest theme here. A near-white blue-gray in light mode and a cool near-bl
 
 <ThemePalette theme="meridian" />
 
+## aurora
+
+`defaultColorMode: "dark"`, both modes.
+
+A live field behind the slides that open, break, state, and close a deck. Four background variants paint in a WebGL canvas rather than in CSS: `hero` and `breaker` take banded curtains, `closing` an undulating band, and `statement` a soft noise wash. Under every canvas the theme paints a gradient of the same three colours, and that gradient is the slide while the runtime loads, on a machine with no WebGL, and after a lost context. Reduced motion, a capture, and the presenter preview each hold the field on one fixed frame, so two screenshots of a slide are the same image.
+
+Dark is home. Light mode carries its own field colours rather than the dark ones lightened, and both sets sit in `theme.css` beside the rest of the paint. Body copy runs light in Manrope under tightly tracked Space Grotesk display type.
+
+The aurora card in the gallery is showing that painted gradient. The gallery renders slide markup and no runtime, so the card carries the `hero` variant's fallback rather than a canvas.
+
+<ThemePalette theme="aurora" />
+## blueprint
+
+`defaultColorMode: "dark"`, both modes.
+
+A drafting sheet. The background variant that carries the theme is `grid`, which draws a cell pitch and a division pitch over each other from the same corner. Nothing is rounded and nothing is tinted: a section number sits boxed in three strokes of the accent, a card grid is butted together over a field of the line colour so the gutters read as drawn divisions, and an opener's meta row becomes the title block along the foot of the sheet. Body copy runs a weight under regular in both modes, which is what keeps a slide reading as a drawing rather than as a web page.
+
+<ThemePalette theme="blueprint" />
+
 ## ledger
 
 `defaultColorMode: "system"`, both modes.
@@ -76,6 +95,13 @@ The other pole from atelier. Body copy is Outfit at weight 300, headings are Bri
 A fashion lookbook. Every rule is one pixel, the opener, the breaker, the statement and the quote all centre their content, and Cormorant Garamond sets the display at weight 300 with the italic kept for the statement and the quotation. There is no monospace family: `--slide-font-mono` carries the body sans, and tracked capitals up to `--slide-track` stand where another theme sets mono. Code keeps a monospaced stack of its own so a sample still lines up.
 
 <ThemePalette theme="noir" />
+## quorum
+
+`defaultColorMode: "light"`, both modes.
+
+A board pack. A short type scale inside a short frame, which is what lets a segment table and a five-figure band sit on one slide without shrinking. Figures and pull quotes are set in a serif and everything else in the sans, so a number being reported reads differently from a number being described. Cards hang off a stroke on their leading edge rather than sitting in a box. `background: "accent"` inverts the sheet rather than flooding it with the accent, in both colour modes.
+
+<ThemePalette theme="quorum" />
 
 ## About the swatches
 

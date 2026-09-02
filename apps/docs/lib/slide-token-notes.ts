@@ -116,6 +116,22 @@ export const slideTokenNotes: Record<string, TokenNote> = {
     group: "figures",
     note: "The height of the proportion bar under it",
   },
+  "slide-motion-color-1": {
+    group: "backgrounds",
+    note: "The ground colour of a motion background",
+  },
+  "slide-motion-color-2": {
+    group: "backgrounds",
+    note: "The colour its bands and its wash are mixed toward",
+  },
+  "slide-motion-color-3": {
+    group: "backgrounds",
+    note: "The second mix, which lands on the highlights",
+  },
+  "slide-motion-speed": {
+    group: "backgrounds",
+    note: "How fast the field moves, clamped by the runtime to a usable range",
+  },
   "slide-padding-block": {
     group: "spacing",
     note: "Top and bottom padding when the slide has no header or footer",

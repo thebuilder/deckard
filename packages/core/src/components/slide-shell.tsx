@@ -7,6 +7,7 @@ import type {
   SlideFooterMode,
   SlideHeaderMode,
   SlideLayoutMode,
+  SlideMotionMode,
 } from "../types/slides"
 import { DeckControls } from "./deck-controls"
 import { SlideCanvas } from "./slide-canvas"
@@ -28,6 +29,7 @@ interface SlideShellProps {
   headerMode?: SlideHeaderMode
   initialStep?: number
   layout?: SlideLayoutMode
+  motion?: SlideMotionMode
   next?: SlideSummary
   notes?: string
   prefetch?: SlideSummary[]
@@ -120,6 +122,7 @@ export function SlideShell({
   headerMode = "auto",
   initialStep = 0,
   layout = "default",
+  motion = "auto",
   next,
   notes,
   prefetch,
@@ -181,6 +184,7 @@ export function SlideShell({
             ) : null
           }
           layout={layout}
+          motion={motion}
           theme={deck.theme}
         >
           <SlideStepAdvanceArea className="h-full w-full">

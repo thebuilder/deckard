@@ -1,8 +1,12 @@
 import type { CSSProperties, ReactNode } from "react"
-import { forcedColorMode } from "../deck/theme"
+import { forcedColorMode, motionField } from "../deck/theme"
 import type { DeckCanvasConfig, SlideTheme } from "../deck/types"
 import { cn } from "../lib/utils"
-import type { SlideBackgroundMode, SlideLayoutMode } from "../types/slides"
+import type {
+  SlideBackgroundMode,
+  SlideLayoutMode,
+  SlideMotionMode,
+} from "../types/slides"
 import { SlideBackground } from "./slide-background"
 import { SlideOverflowGuard } from "./slide-overflow-guard"
 
@@ -15,6 +19,7 @@ interface SlideCanvasProps {
   frameClassName?: string
   header?: ReactNode
   layout?: SlideLayoutMode
+  motion?: SlideMotionMode
   theme: SlideTheme
 }
 
@@ -29,6 +34,7 @@ export function SlideCanvas({
   frameClassName,
   header,
   layout = "default",
+  motion = "auto",
   theme,
 }: SlideCanvasProps) {
   const canvasStyle = {
@@ -55,7 +61,11 @@ export function SlideCanvas({
       data-slide-theme={theme.id}
       style={canvasStyle}
     >
-      <SlideBackground variant={background} />
+      <SlideBackground
+        field={motionField(theme, background)}
+        frozen={motion === "frozen"}
+        variant={background}
+      />
       {header}
       <main
         className={cn(

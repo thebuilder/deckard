@@ -4,6 +4,7 @@ import { defineDeck } from "./define-deck"
 import {
   canSwitchColorMode,
   forcedColorMode,
+  motionField,
   resolveTheme,
   toDeckPresentation,
 } from "./theme"
@@ -17,10 +18,45 @@ const bothModes: SlideTheme = {
 }
 
 const idError = /non-empty id/
+const unknownFieldError = /The fields are aurora, waves, wash/
+const noneVariantError = /renders no background at all/
 const emptyModesError = /at least one color mode/
 const duplicateModeError = /same color mode twice/
 const systemError = /defaults to "system"/
 const unsupportedDefaultError = /defaults to "light"/
+
+describe("theme motion backgrounds", () => {
+  const withMotion: SlideTheme = {
+    ...bothModes,
+    motion: { closing: "waves", hero: "aurora" },
+  }
+
+  it("names the field a variant is painted with, and nothing for the rest", () => {
+    expect(motionField(withMotion, "hero")).toBe("aurora")
+    expect(motionField(withMotion, "closing")).toBe("waves")
+    expect(motionField(withMotion, "grid")).toBeUndefined()
+    expect(motionField(bothModes, "hero")).toBeUndefined()
+  })
+
+  it("keeps the map on the resolved theme", () => {
+    expect(resolveTheme(withMotion).motion).toEqual(withMotion.motion)
+  })
+
+  it("fails on a field the runtime cannot paint", () => {
+    expect(() =>
+      resolveTheme({
+        ...bothModes,
+        motion: { hero: "shimmer" as "aurora" },
+      })
+    ).toThrow(unknownFieldError)
+  })
+
+  it("fails on a variant that renders no background layer", () => {
+    expect(() =>
+      resolveTheme({ ...bothModes, motion: { none: "aurora" } })
+    ).toThrow(noneVariantError)
+  })
+})
 
 describe("resolveTheme", () => {
   it("falls back to the app tokens when a deck has no theme", () => {

@@ -13,6 +13,12 @@
   overflow: hidden;
 }
 
+/* Every theme positions the background layer, and the motion canvas fills it. */
+[data-slide-canvas] .slide-background {
+  position: absolute;
+  inset: 0;
+}
+
 [data-slide-canvas] [data-slide-header] {
   position: absolute;
   inset-inline: 0;

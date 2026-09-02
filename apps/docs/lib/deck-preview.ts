@@ -5,7 +5,16 @@ import { defaultThemeId, themes } from "@deckard/themes"
 import { resolveRepoFile } from "./repo-file"
 
 export type ColorMode = "light" | "dark"
-export type BackgroundVariant = "default" | "grid" | "spotlight" | "none"
+// The variants every theme paints, plus the ones a card names for itself. A
+// theme may declare its own, and aurora's "hero" is one a card asks for: the
+// gallery renders no motion canvas, so the card shows the gradient that theme
+// paints under the field.
+export type BackgroundVariant =
+  | "default"
+  | "grid"
+  | "hero"
+  | "none"
+  | "spotlight"
 export type PreviewLayout = "breaker" | "bullets" | "figures" | "hero" | "panel"
 
 export interface PreviewFigure {
@@ -45,6 +54,16 @@ const galleryCopy = {
     background: "spotlight",
     summary: "A print poster. Hard rules, flat colour blocks, no radius.",
   },
+  aurora: {
+    background: "hero",
+    summary:
+      "A live field behind the openers and the close, frozen to capture.",
+  },
+  blueprint: {
+    background: "grid",
+    summary:
+      "A drafting sheet. A ruled field, boxed numerals, hairline gutters.",
+  },
   cotton: {
     background: "default",
     summary: "Large radii, one soft shadow, and tints instead of lines.",
@@ -68,6 +87,10 @@ const galleryCopy = {
   phosphor: {
     background: "spotlight",
     summary: "A green CRT. Monospace everywhere, scanlines, a heading bloom.",
+  },
+  quorum: {
+    background: "default",
+    summary: "A board pack. A tight scale, serif figures, no boxed cards.",
   },
 } satisfies Record<string, GalleryCopy>
 

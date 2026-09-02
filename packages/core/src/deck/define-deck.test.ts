@@ -38,6 +38,22 @@ describe("defineDeck", () => {
     ).toThrow(systemError)
   })
 
+  it("leaves every slide's motion on auto by default", () => {
+    expect(defineDeck(config()).slides[0].motion).toBe("auto")
+  })
+
+  it("freezes every slide when the deck asks for a still deck", () => {
+    const frozen = defineDeck(
+      config({
+        motion: "frozen",
+        slides: [{ body: null }, { body: null, motion: "auto" }],
+      })
+    )
+
+    expect(frozen.slides[0].motion).toBe("frozen")
+    expect(frozen.slides[1].motion).toBe("auto")
+  })
+
   it("carries the optional header meta onto the deck", () => {
     const described = defineDeck(
       config({

@@ -10,6 +10,13 @@ export const themeIds = [
   "nexus",
   "noir",
   "phosphor",
+  "aurora",
+  "blueprint",
+  "ledger",
+  "meridian",
+  "nexus",
+  "phosphor",
+  "quorum",
 ] as const
 
 export type BuiltInThemeId = (typeof themeIds)[number]
