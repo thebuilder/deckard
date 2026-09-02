@@ -267,8 +267,8 @@
  * to the canvas edge. */
 
 .nexus-theme .slide-background[data-slide-background="default"]::before {
-  top: 2.5rem;
-  left: 2.5rem;
+  top: var(--slide-header-space);
+  left: calc(var(--slide-padding-inline) / 2);
   width: 7rem;
   height: 7rem;
   border-top: 1px solid var(--slide-rule);
@@ -276,8 +276,8 @@
 }
 
 .nexus-theme .slide-background[data-slide-background="default"]::after {
-  right: 2.5rem;
-  bottom: 2.5rem;
+  right: calc(var(--slide-padding-inline) / 2);
+  bottom: var(--slide-footer-space);
   width: 7rem;
   height: 7rem;
   border-right: 1px solid var(--slide-rule);
