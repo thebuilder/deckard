@@ -1,15 +1,22 @@
 import type { SlideDefinition, SlideTheme } from "@deckard/core"
-import { defineDeck } from "@deckard/core"
+import { defineDeck, slideBackgroundModes } from "@deckard/core"
 import { describe, expect, it } from "vitest"
 
-import { checkRegistry, checkSlides, checkTheme } from "./deck-checks.ts"
+import {
+  builtInBackgrounds,
+  checkRegistry,
+  checkSlides,
+  checkTheme,
+  themeBackgrounds,
+} from "./deck-checks.ts"
 
-function buildDeck(slides: SlideDefinition[]) {
+function buildDeck(slides: SlideDefinition[], deckTheme?: SlideTheme) {
   return defineDeck({
     description: "A deck under test.",
     footer: { mode: "visible" },
     header: { brand: "Test", href: "/", mode: "auto" },
     slides,
+    theme: deckTheme,
     title: "Test",
   })
 }
@@ -61,6 +68,46 @@ describe("checkSlides", () => {
     const section = checkSlides(deck, () => true)
 
     expect(section.problems[0]).toContain("has no body")
+  })
+})
+
+describe("slide backgrounds", () => {
+  it("lists what @deckard/core paints for every deck", () => {
+    expect(builtInBackgrounds).toEqual([...slideBackgroundModes])
+  })
+
+  it("passes a variant the theme paints in a canvas", () => {
+    const deck = buildDeck([{ background: "hero", body: "one" }], {
+      ...theme,
+      motion: { hero: "aurora" },
+    })
+
+    expect(checkSlides(deck, () => true).problems).toEqual([])
+  })
+
+  it("passes a variant the theme stylesheet selects", () => {
+    const deck = buildDeck([{ background: "duotone", body: "one" }], theme)
+    const painted = themeBackgrounds(
+      theme,
+      stylesheet(
+        `${themeCss}\n.test-theme .slide-background[data-slide-background="duotone"] { --background: red; }`
+      )
+    )
+
+    expect(painted).toEqual(["duotone"])
+    expect(checkSlides(deck, () => true, painted).problems).toEqual([])
+  })
+
+  it("reports a variant nothing paints", () => {
+    const deck = buildDeck([{ background: "herro", body: "one" }], {
+      ...theme,
+      motion: { hero: "aurora" },
+    })
+
+    const section = checkSlides(deck, () => true)
+
+    expect(section.problems[0]).toContain('"herro"')
+    expect(section.problems[0]).toContain("hero")
   })
 })
 

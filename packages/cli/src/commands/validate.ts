@@ -9,6 +9,7 @@ import {
   checkTheme,
   type RegistryItem,
   type Section,
+  themeBackgrounds,
 } from "../deck/deck-checks.ts"
 import { loadDeck } from "../deck/deck-module.ts"
 import { readThemeStylesheet } from "../deck/theme-source.ts"
@@ -43,10 +44,15 @@ function readRegistryItems(registryPath: string): RegistryItem[] {
 async function deckSections(): Promise<Section[]> {
   try {
     const deck = await loadDeck()
+    const stylesheet = readThemeStylesheet(deck.theme.id)
 
     return [
-      checkSlides(deck, hasSlideModule),
-      checkTheme(deck.theme, readThemeStylesheet(deck.theme.id)),
+      checkSlides(
+        deck,
+        hasSlideModule,
+        themeBackgrounds(deck.theme, stylesheet)
+      ),
+      checkTheme(deck.theme, stylesheet),
     ]
   } catch (error) {
     return [

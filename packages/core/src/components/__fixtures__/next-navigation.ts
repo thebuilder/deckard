@@ -22,8 +22,10 @@ export function useRouter() {
   return router
 }
 
+// Read off the address bar the way next/navigation does, so a test can put a
+// slide in presenter preview with history.replaceState.
 export function useSearchParams() {
-  return new URLSearchParams()
+  return new URLSearchParams(window.location.search)
 }
 
 export function usePathname() {

@@ -15,14 +15,34 @@ export interface RegistryItem {
 
 export type ReadFile = (relativePath: string) => string | null
 
+// The variants the runtime hands every deck. A theme may name more, in its
+// motion map or in its stylesheet, so a background in none of the three is a
+// misspelling and the slide renders the wrong thing quietly. Written out rather
+// than imported: the CLI reads the deck's runtime and never loads its own, and
+// deck-checks.test.ts holds this list to what @deckard/core declares.
+export const builtInBackgrounds = [
+  "accent",
+  "default",
+  "grid",
+  "none",
+  "spotlight",
+] as string[]
+
 export function checkSlides(
   deck: Deck,
-  hasSourceFile: (sourcePath: string) => boolean
+  hasSourceFile: (sourcePath: string) => boolean,
+  paintedByTheme: string[] = []
 ): Section {
   const problems: string[] = []
+  const painted = new Set([
+    ...builtInBackgrounds,
+    ...paintedByTheme,
+    ...Object.keys(deck.theme.motion ?? {}),
+  ])
 
   for (const slide of deck.slides) {
     problems.push(...checkSlide(slide, hasSourceFile))
+    problems.push(...checkBackground(slide, deck.theme.id, painted))
   }
 
   const discovered = deck.slides.filter((slide) => slide.sourcePath).length
@@ -61,6 +81,20 @@ function checkSlide(
   return problems
 }
 
+function checkBackground(
+  slide: ResolvedSlide,
+  themeId: string,
+  painted: Set<string>
+) {
+  if (painted.has(slide.background)) {
+    return []
+  }
+
+  return [
+    `Slide ${slide.number} (${slide.id}) asks for the background "${slide.background}", which theme "${themeId}" never paints. It renders as an unstyled background layer. Pick one of: ${[...painted].sort().join(", ")}.`,
+  ]
+}
+
 function checkColorModes(
   theme: SlideTheme,
   report: ReturnType<typeof inspectThemeCss>,
@@ -93,6 +127,18 @@ function checkColorModes(
 export interface ThemeStylesheet {
   css: string | null
   source: string
+}
+
+/** The background variants a theme's own stylesheet selects. */
+export function themeBackgrounds(
+  theme: SlideTheme,
+  stylesheet: ThemeStylesheet
+): string[] {
+  if (!(stylesheet.css && theme.className)) {
+    return []
+  }
+
+  return inspectThemeCss(stylesheet.css, theme.className).backgrounds
 }
 
 export function checkTheme(

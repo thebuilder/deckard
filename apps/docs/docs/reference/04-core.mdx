@@ -38,9 +38,14 @@ The package compiles to `dist/` with `tsc`: ESM, `.d.ts`, and `"use client"` dir
 | `toDeckPresentation(deck)` | The serializable slice the shell needs. |
 | `canSwitchColorMode(theme)` / `forcedColorMode(theme)` | What the color-mode toggle does for a given theme. |
 | `isPdfExport()` / `pdfExportColorMode()` | Read the export environment variables. |
+| `isCapturing()` | True while a capture tool is driving the page. |
+| `captureAttribute` | The attribute a capture tool sets on the document element. |
+| `motionField(theme, background)` | The field a theme paints a background variant with, or `undefined`. |
+| `slideBackgroundModes` | The background variants the runtime paints for every deck. |
+| `slideMotionFields` | The three fields a theme may name. |
 | `PRESENTER_CHANNEL_NAME` | The `BroadcastChannel` name presenter mode uses. |
 
-Types: `Deck`, `DeckConfig`, `DeckCanvasConfig`, `DeckHeaderConfig`, `DeckFooterConfig`, `DeckPresentation`, `ResolvedSlide`, `SlideDefinition`, `SlideMeta`, `SlideModule`, `SlideComponent`, `SlideDefaults`, `SlideSummary`, `SlideTheme`, `SlideColorMode`, `SlideHeaderMode`, `SlideFooterMode`, `SlideFooterModeInput`, `SlideLayoutMode`, `SlideBackgroundMode`, `PresenterChannelMessage`, `PresenterPreviewState`, `PresenterSlideState`.
+Types: `Deck`, `DeckConfig`, `DeckCanvasConfig`, `DeckHeaderConfig`, `DeckFooterConfig`, `DeckPresentation`, `ResolvedSlide`, `SlideDefinition`, `SlideMeta`, `SlideModule`, `SlideComponent`, `SlideDefaults`, `SlideSummary`, `SlideTheme`, `SlideColorMode`, `SlideHeaderMode`, `SlideFooterMode`, `SlideFooterModeInput`, `SlideLayoutMode`, `SlideBackgroundMode`, `BuiltInSlideBackgroundMode`, `SlideMotionMode`, `SlideMotionField`, `PresenterChannelMessage`, `PresenterPreviewState`, `PresenterSlideState`.
 
 ## @deckard/core/components
 
@@ -50,7 +55,8 @@ Types: `Deck`, `DeckConfig`, `DeckCanvasConfig`, `DeckHeaderConfig`, `DeckFooter
 | `SlideViewport` | Fits the canvas to the browser window and publishes `--deckard-scale`. |
 | `SlideCanvas` | The fixed coordinate space slides are authored in. |
 | `SlideCanvasHeader`, `SlideCanvasFooter` | The themed chrome inside the canvas. |
-| `SlideBackground` | The empty element carrying `data-slide-background`. |
+| `SlideBackground` | The element carrying `data-slide-background`, plus the motion canvas when the theme paints that variant with one. |
+| `SlideMotionBackground` | The animated canvas itself. |
 | `SlideScrollArea` | A scroll region that does not step the deck. |
 | `SlideStepper`, `SlideStep`, `SlideStepAdvanceArea`, `useSlideStepper` | Step reveals. |
 | `SlideCommandCenter` | The `Cmd/Ctrl + K` jump dialog. |
@@ -70,6 +76,46 @@ Returns the current slide's authored title, or `null`. Layout blocks call it so 
 ### useIsPresenterPreview
 
 Returns `true` inside the presenter console's preview iframe. Use it in a client component to skip autoplay, audio, canvas work, or anything else expensive.
+
+### Motion backgrounds
+
+A theme paints most background variants in CSS. It paints a variant in an animated canvas by naming it in `motion`, keyed by the name a deck writes as `background`:
+
+```ts deck/theme.ts
+export const aurora: SlideTheme = {
+  className: "aurora-theme",
+  colorModes: ["dark", "light"],
+  defaultColorMode: "dark",
+  id: "aurora",
+  motion: { closing: "waves", hero: "aurora", statement: "wash" },
+}
+```
+
+```ts deck/slides.tsx
+{ background: "hero", body: <HeroSlide … />, slug: "opening" }
+```
+
+The three fields are `aurora`, banded curtains over noise; `waves`, a horizontal band that undulates; and `wash`, a soft noise field with a dither. Their colours and their speed come from the `--slide-motion-*` tokens, so the theme sets them per variant and per color mode in its stylesheet. A variant the theme never names is a CSS background like any other, and a deck whose theme names none never loads the WebGL runtime: it is fetched by the canvas component on mount.
+
+One `requestAnimationFrame` loop drives every canvas on the page, and it skips a canvas that is off screen or has collapsed to nothing. Backing stores are half the canvas size in each axis.
+
+#### Freezing
+
+A frozen field still renders. It draws one frame at a fixed point in the animation and holds it, so two captures of the same slide are the same image. Five things freeze one:
+
+| Reason | How it is decided |
+| --- | --- |
+| `prefers-reduced-motion: reduce` | `matchMedia`, live: dropping the preference starts the field |
+| A capture is running | `isCapturing()`, which reads the PDF build flag and the `captureAttribute` marker the `deckard` capture commands set |
+| The presenter preview | The `presenterPreview` query the console's iframes carry |
+| The deck asked | `motion: "frozen"` in `defineDeck` |
+| The slide asked | `motion: "frozen"` on the slide |
+
+The canvas reports which of the two it is doing on `data-slide-motion-state`, valued `running` or `frozen`.
+
+#### When there is no WebGL
+
+The canvas paints nothing, reports `data-slide-motion-state="unavailable"`, and the background the theme painted underneath is the slide. The same holds while the runtime is loading and if the context is lost mid-presentation, so a theme paints a variant it animates as though it never would.
 
 ### useSlideStepper
 

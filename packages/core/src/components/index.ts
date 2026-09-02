@@ -14,6 +14,7 @@ export {
 } from "./slide-context"
 export { SlideErrorBoundary } from "./slide-error-boundary"
 export { SlideMediaVideo } from "./slide-media-video"
+export { SlideMotionBackground } from "./slide-motion-background"
 export { SlidePrefetch } from "./slide-prefetch"
 export { SlideScrollArea } from "./slide-scroll-area"
 export { SlideShell } from "./slide-shell"

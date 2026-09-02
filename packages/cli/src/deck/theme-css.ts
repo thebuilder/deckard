@@ -1,6 +1,8 @@
 const commentPattern = /\/\*[\s\S]*?\*\//g
 const customPropertyPattern = /(--[\w-]+)\s*:/g
 const darkPattern = /\bdark\b/
+const backgroundPattern =
+  /data-slide-background\s*[~^|*$]?=\s*["']([^"']+)["']/g
 
 interface CssRule {
   body: string
@@ -8,6 +10,8 @@ interface CssRule {
 }
 
 export interface ThemeCssReport {
+  /** Background variant names the stylesheet selects, whatever it paints them with. */
+  backgrounds: string[]
   darkOnlyTokens: string[]
   darkTokens: string[]
   hasDarkBlock: boolean
@@ -67,6 +71,7 @@ export function inspectThemeCss(
 
   const light = new Set<string>()
   const dark = new Set<string>()
+  const backgrounds = new Set<string>()
 
   for (const rule of rules) {
     const target = darkPattern.test(rule.selector) ? dark : light
@@ -74,9 +79,14 @@ export function inspectThemeCss(
     for (const property of customProperties(rule.body)) {
       target.add(property)
     }
+
+    for (const match of rule.selector.matchAll(backgroundPattern)) {
+      backgrounds.add(match[1])
+    }
   }
 
   return {
+    backgrounds: [...backgrounds].sort(),
     darkOnlyTokens: [...dark].filter((token) => !light.has(token)).sort(),
     darkTokens: [...dark],
     hasDarkBlock: rules.some((rule) => darkPattern.test(rule.selector)),

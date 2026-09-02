@@ -6,6 +6,8 @@ import type {
   SlideFooterModeInput,
   SlideHeaderMode,
   SlideLayoutMode,
+  SlideMotionField,
+  SlideMotionMode,
 } from "../types/slides"
 
 export interface SlideMeta {
@@ -13,6 +15,9 @@ export interface SlideMeta {
   footer?: SlideFooterModeInput
   header?: SlideHeaderMode
   layout?: SlideLayoutMode
+  // "frozen" holds a motion background on its still frame. A slide with no
+  // motion background is unaffected either way.
+  motion?: SlideMotionMode
   notes?: string
   order?: number
   slug?: string
@@ -38,6 +43,7 @@ export interface SlideDefaults {
   footer: SlideFooterModeInput
   header: SlideHeaderMode
   layout: SlideLayoutMode
+  motion: SlideMotionMode
 }
 
 export interface ResolvedSlide {
@@ -53,6 +59,7 @@ export interface ResolvedSlide {
   id: string
   index: number
   layout: SlideLayoutMode
+  motion: SlideMotionMode
   notes?: string
   number: number
   slug?: string
@@ -83,11 +90,16 @@ export interface DeckCanvasConfig {
 export type SlideColorMode = "light" | "dark"
 
 // Static deck styling. The class scopes the theme stylesheet to the canvas, so it never reaches the runtime UI.
+// Crosses to client components, so it stays serializable: the motion map names
+// shader fields rather than carrying one.
 export interface SlideTheme {
   className: string
   colorModes: SlideColorMode[]
   defaultColorMode: SlideColorMode | "system"
   id: string
+  // The background variants this theme paints in a canvas, keyed by the name a
+  // deck writes as `background`. Everything else the theme paints in CSS.
+  motion?: Record<string, SlideMotionField>
 }
 
 export interface DeckHeaderConfig {
@@ -112,6 +124,9 @@ export interface DeckConfig {
   description: string
   footer: DeckFooterConfig
   header: DeckHeaderConfig
+  // The deck-wide default a slide overrides. "frozen" holds every motion
+  // background in the deck on its still frame.
+  motion?: SlideMotionMode
   slides: SlideDefinition[]
   theme?: SlideTheme
   title: string

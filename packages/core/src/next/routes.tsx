@@ -66,6 +66,7 @@ export function createSlideRoute(deck: Deck) {
         footerMode={slide.footer}
         headerMode={slide.header}
         layout={slide.layout}
+        motion={slide.motion}
         next={nextSlide ? toSlideSummary(nextSlide) : undefined}
         notes={slide.notes}
         prefetch={prefetch}

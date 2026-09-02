@@ -353,6 +353,26 @@ export async function openSlide(
   )
 }
 
+// Every capture below is a still of the deck, so the page is told it is being
+// photographed before the deck loads. The runtime reads this off the document
+// element and holds anything that moves on its one deterministic frame, which is
+// what makes two runs of the same slide the same image. The name is what
+// @deckard/core exports as `captureAttribute`, written out here the way the
+// canvas and viewport selectors above are: the CLI reads the deck's DOM rather
+// than importing the deck's runtime.
+async function markAsCapture(context: BrowserContext): Promise<void> {
+  await context.addInitScript(() => {
+    const mark = () => {
+      document.documentElement?.setAttribute("data-deck-capture", "")
+    }
+
+    // The document element does not exist yet on the first call in some
+    // navigations, so the mark is retried as the document opens.
+    mark()
+    document.addEventListener("readystatechange", mark)
+  })
+}
+
 // The context color scheme only answers a theme that asks the operating system.
 // The stored choice is what a theme with a default of its own reads first.
 async function seedColorMode(
@@ -393,6 +413,7 @@ export async function withCanvasSession<T>(
       })
 
       await seedColorMode(context, options.colorMode)
+      await markAsCapture(context)
 
       const page = await context.newPage()
 

@@ -128,7 +128,9 @@ A slide picks one with `background`:
 | `"accent"` | The inverted statement slide. |
 | `"none"` | Nothing painted. |
 
-`SlideBackground` renders one empty element carrying `data-slide-background`, and the canvas carries the variant name too, so a theme can restyle the chrome along with the sheet. What each variant paints lives entirely in `theme.css`, so changing the look is a theme edit. Read the theme's `THEME.md` first, and run `deckard eject theme` if it is still an import.
+A theme may name variants of its own. A deck writes the name as `background`, the theme styles `[data-slide-background="<name>"]`, and `deckard validate` reports a name neither the runtime nor the theme paints. A theme paints one of its own variants with an animated canvas instead of CSS by naming it in `motion`, which is in the [core reference](/reference/core#motion-backgrounds).
+
+`SlideBackground` renders one element carrying `data-slide-background`, and the canvas carries the variant name too, so a theme can restyle the chrome along with the sheet. What each variant paints lives entirely in `theme.css`, so changing the look is a theme edit. Read the theme's `THEME.md` first, and run `deckard eject theme` if it is still an import.
 
 `"accent"` floods the canvas with the theme accent and flips the ink, chrome included. Use it once or twice in a deck, for the one sentence that has to land, and never on two slides in a row.
 
