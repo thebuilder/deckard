@@ -8,7 +8,8 @@ export default defineConfig({
   deployment: {
     site: "https://deckard.thebuilder.dk",
   },
-  description: "Beautiful React presentations with shadcn-native theming.",
+  description:
+    "Presentations built out of React components: fixed layouts, speaker notes, themes, and PDF export.",
   github: {
     branch: "main",
     dir: "apps/docs",

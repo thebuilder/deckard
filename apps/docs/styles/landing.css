@@ -2,7 +2,7 @@
  * The landing page. PageLayout gives the document shell, the header, and the
  * fonts. Every other rule the page needs is here.
  *
- * The theme switcher and the deck stepper are radio groups read with :checked.
+ * The deck stepper and the theme switcher are radio groups read with :checked.
  * They work with JavaScript off, and a radio group is already the right thing
  * for the keyboard: arrow keys move between the options.
  */
@@ -25,36 +25,22 @@
 /* Hero */
 
 .hero {
-  display: grid;
-  gap: 3rem;
-  align-items: center;
-  max-width: var(--landing-measure);
-  padding-block: 4rem 5rem;
+  max-width: 52rem;
+  padding-block: 5rem 3.5rem;
   padding-inline: 1.5rem;
   margin-inline: auto;
+  text-align: center;
 }
 
 @media (min-width: 64rem) {
   .hero {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
-    gap: 4rem;
-    max-width: 78rem;
-    padding-block: 6rem 7rem;
+    padding-block: 7rem 4.5rem;
   }
 }
 
-.hero-eyebrow {
-  font-family: var(--blume-font-mono);
-  font-size: 0.75rem;
-  color: var(--blume-muted-foreground);
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-}
-
 .hero-title {
-  margin-block-start: 1.25rem;
   font-family: var(--blume-font-display);
-  font-size: clamp(2rem, 3.6vw, 2.875rem);
+  font-size: clamp(2.25rem, 5.2vw, 3.5rem);
   font-weight: 500;
   line-height: 1.04;
   letter-spacing: -0.01em;
@@ -62,8 +48,9 @@
 }
 
 .hero-lead {
-  max-width: 34rem;
+  max-width: 38rem;
   margin-block-start: 1.5rem;
+  margin-inline: auto;
   font-size: 1.0625rem;
   line-height: 1.65;
   color: var(--blume-muted-foreground);
@@ -74,6 +61,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
+  justify-content: center;
   margin-block-start: 2rem;
 }
 
@@ -115,44 +103,11 @@
   background-color: var(--blume-muted);
 }
 
-.hero-install {
-  display: flex;
-  gap: 0.625rem;
-  align-items: center;
-  width: fit-content;
-  max-width: 100%;
-  padding: 0.75rem 1rem;
-  margin-block-start: 2rem;
-  overflow-x: auto;
-  background-color: var(--blume-code-background);
-  border: 1px solid var(--blume-border);
-  border-radius: var(--blume-radius);
-}
-
-.hero-install code {
-  font-family: var(--blume-font-mono);
-  font-size: 0.875rem;
-  white-space: nowrap;
-}
-
-.hero-install-prompt {
-  font-family: var(--blume-font-mono);
-  font-size: 0.875rem;
-  color: var(--blume-muted-foreground);
-  user-select: none;
-}
-
-.hero-note {
-  margin-block-start: 0.875rem;
+.hero-status {
+  margin-block-start: 1.5rem;
   font-size: 0.8125rem;
   line-height: 1.6;
   color: var(--blume-muted-foreground);
-}
-
-.hero-note a {
-  color: var(--blume-accent);
-  text-decoration-line: underline;
-  text-underline-offset: 3px;
 }
 
 .switch-input,
@@ -165,79 +120,7 @@
   clip-path: inset(50%);
 }
 
-.hero-frames {
-  display: grid;
-}
-
-.hero-frame {
-  display: none;
-  grid-area: 1 / 1;
-}
-
-.hero-frame .deck-preview {
-  box-shadow: 0 24px 60px -32px rgb(0 0 0 / 55%);
-}
-
-.hero-themes,
-.demo-steps {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.375rem;
-  padding: 0;
-  margin: 0;
-  border: 0;
-}
-
-.hero-themes {
-  margin-block-start: 1rem;
-}
-
-.hero-themes label,
-.demo-steps label {
-  font-family: var(--blume-font-mono);
-  font-size: 0.75rem;
-  line-height: 1;
-  color: var(--blume-muted-foreground);
-  cursor: pointer;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  transition:
-    background-color 140ms ease,
-    border-color 140ms ease,
-    color 140ms ease;
-}
-
-.hero-themes label {
-  padding: 0.4375rem 0.75rem;
-}
-
-.hero-themes label:hover,
-.demo-steps label:hover {
-  color: var(--blume-foreground);
-}
-
-.hero-themes label:has(:checked),
-.demo-steps label:has(:checked) {
-  color: var(--blume-foreground);
-  background-color: var(--blume-muted);
-  border-color: var(--blume-border);
-}
-
-.hero-themes label:has(:focus-visible),
-.demo-steps label:has(:focus-visible) {
-  outline: 2px solid var(--blume-accent);
-  outline-offset: 2px;
-}
-
-.hero-caption {
-  margin-block-start: 0.75rem;
-  font-size: 0.8125rem;
-  line-height: 1.6;
-  color: var(--blume-muted-foreground);
-  text-wrap: pretty;
-}
-
-.landing :not(pre, .hero-install) > code {
+.landing :not(pre) > code {
   padding: 0.1em 0.35em;
   font-family: var(--blume-font-mono);
   font-size: 0.875em;
@@ -254,6 +137,12 @@
   padding-inline: 1.5rem;
   margin-inline: auto;
   border-block-start: 1px solid var(--blume-border);
+}
+
+/* The demo carries the hero, so nothing draws a line between the two. */
+.section-lead {
+  padding-block-start: 0;
+  border-block-start: 0;
 }
 
 .section-head {
@@ -287,63 +176,10 @@
   text-wrap: pretty;
 }
 
-.split {
-  display: grid;
-  gap: 2rem;
-  align-items: start;
-}
-
-@media (min-width: 64rem) {
-  .split {
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-    gap: 3rem;
-  }
-}
-
-.notes h3 {
-  margin-block-start: 1.75rem;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-
-.notes h3:first-child {
-  margin-block-start: 0;
-}
-
-.notes p {
-  margin-block-start: 0.5rem;
-  font-size: 0.9375rem;
-  line-height: 1.7;
-  color: var(--blume-muted-foreground);
-  text-wrap: pretty;
-}
-
-.facts {
-  display: grid;
-  gap: 0.75rem;
-  padding: 0;
-  margin: 0;
-  list-style: none;
-}
-
-.facts li {
-  position: relative;
-  padding-inline-start: 1.375rem;
-  font-size: 0.9375rem;
-  line-height: 1.6;
-  color: var(--blume-muted-foreground);
-  text-wrap: pretty;
-}
-
-.facts li::before {
-  position: absolute;
-  inset-block-start: 0.7em;
-  inset-inline-start: 0;
-  width: 0.5rem;
-  height: 1px;
-  content: "";
-  background-color: var(--blume-accent);
+.section-footnote a {
+  color: var(--blume-accent);
+  text-decoration-line: underline;
+  text-underline-offset: 3px;
 }
 
 /* Code panels */
@@ -403,12 +239,53 @@
   gap: 1.25rem;
 }
 
+.demo-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
+.demo-steps label,
+.theme-picker label {
+  font-family: var(--blume-font-mono);
+  font-size: 0.75rem;
+  line-height: 1;
+  color: var(--blume-muted-foreground);
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  transition:
+    background-color 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease;
+}
+
 .demo-steps label {
   display: inline-flex;
   gap: 0.5rem;
   align-items: center;
   padding: 0.5rem 0.875rem;
-  border-color: transparent;
+}
+
+.demo-steps label:hover,
+.theme-picker label:hover {
+  color: var(--blume-foreground);
+}
+
+.demo-steps label:has(:checked),
+.theme-picker label:has(:checked) {
+  color: var(--blume-foreground);
+  background-color: var(--blume-muted);
+  border-color: var(--blume-border);
+}
+
+.demo-steps label:has(:focus-visible),
+.theme-picker label:has(:focus-visible) {
+  outline: 2px solid var(--blume-accent);
+  outline-offset: 2px;
 }
 
 .demo-step-number {
@@ -512,6 +389,60 @@
   letter-spacing: 0.12em;
 }
 
+/* The presenter screenshot */
+
+.shot {
+  max-width: 62rem;
+  margin: 0;
+}
+
+.shot-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--blume-border);
+  border-radius: calc(var(--blume-radius) + 0.25rem);
+}
+
+.shot figcaption {
+  margin-block-start: 0.875rem;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--blume-muted-foreground);
+}
+
+/* The theme switcher */
+
+.theme-stage {
+  max-width: 52rem;
+}
+
+.theme-frames {
+  display: grid;
+}
+
+.theme-frame {
+  display: none;
+  grid-area: 1 / 1;
+}
+
+.theme-frame .deck-preview {
+  box-shadow: 0 24px 60px -32px rgb(0 0 0 / 55%);
+}
+
+.theme-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  padding: 0;
+  margin-block-start: 1rem;
+  border: 0;
+}
+
+.theme-picker label {
+  padding: 0.4375rem 0.75rem;
+}
+
 /* Closing */
 
 .closing {
@@ -521,20 +452,6 @@
   margin-inline: auto;
   text-align: center;
   border-block-start: 1px solid var(--blume-border);
-}
-
-.closing p {
-  max-width: 38rem;
-  margin-block-start: 1rem;
-  margin-inline: auto;
-  font-size: 1rem;
-  line-height: 1.7;
-  color: var(--blume-muted-foreground);
-  text-wrap: pretty;
-}
-
-.closing .hero-actions {
-  justify-content: center;
 }
 
 /* Footer */

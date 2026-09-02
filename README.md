@@ -1,6 +1,7 @@
 # Deckard
 
-Beautiful React presentations with shadcn-native theming.
+Presentations built out of React components: fixed layouts, speaker notes,
+themes, and PDF export.
 
 A slide is a React component. A chart, a live demo, a
 form, or an awaited database query goes on a slide the same way it goes in an

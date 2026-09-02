@@ -1,4 +1,9 @@
+import { resolveCanvas } from "@deckard/core"
 import type { PreviewSlide } from "./deck-preview"
+
+/* The canvas a deck renders at, read from the runtime rather than typed here,
+ * so the copy and the previews move together if the default ever changes. */
+export const canvas = resolveCanvas()
 
 const brand = "Acme"
 const meta = "March 2026"
@@ -45,8 +50,7 @@ export const demoSteps: DemoStep[] = [
     from: 11,
     label: "The opener",
     slide: demoOpener,
-    summary:
-      "A slide is an object with a title and a body. The heading on the canvas is the slide's own title, read from context, so the block takes no title prop.",
+    summary: "A hero layout: an eyebrow, the title, and one line under it.",
     to: 15,
   },
   {
@@ -72,7 +76,7 @@ export const demoSteps: DemoStep[] = [
       total,
     },
     summary:
-      "Blocks go inside the body. StatGrid sets the figure size and the rule above it, and the theme sets everything else. notes is speaker-only and never renders.",
+      "Three figures in a stat grid. The line of notes beside them is for the speaker and never reaches the canvas.",
     to: 24,
   },
   {
@@ -82,7 +86,7 @@ export const demoSteps: DemoStep[] = [
       brand,
       bullets: [
         "Stop maintaining a template and make the framework the template.",
-        "Fix the canvas at 1920 by 1080 and give up responsive layout inside a slide.",
+        "Fix the canvas and give up responsive layout inside a slide.",
         "Put every color and size behind a token, so a theme is one import.",
       ],
       eyebrow: "The work",
@@ -93,8 +97,7 @@ export const demoSteps: DemoStep[] = [
       title: "How we got there",
       total,
     },
-    summary:
-      "The same shell with a different block in it. Only the body changed.",
+    summary: "The same slide with a bullet list in it instead.",
     to: 32,
   },
   {
@@ -111,8 +114,7 @@ export const demoSteps: DemoStep[] = [
       title: "The bill for all of it",
       total,
     },
-    summary:
-      "background names which of the theme's four backdrops the canvas paints behind the slide. This one is spotlight.",
+    summary: "A section break, painted on the theme's spotlight backdrop.",
     to: 39,
   },
 ]
@@ -165,32 +167,6 @@ export const slides: SlideDefinition[] = [
   },
 ]`
 
-export const serverSlideCode = `import { StatGrid } from "@/app/slides/blocks/metrics"
-import { OpenContentSlide } from "@/app/slides/blocks/templates"
-
-export default async function VitalsSlide() {
-  const vitals = await readDeployLog()
-
-  return (
-    <OpenContentSlide
-      description="Read at build time, so the HTML ships with the answer in it."
-      eyebrow="Live"
-      title="Numbers from the build we are standing in"
-    >
-      <StatGrid items={vitals} />
-    </OpenContentSlide>
-  )
-}`
-
-export const notesCode = `{
-  title: "What it costs",
-  notes: "They ask about the enterprise tier. Say 'call us'.",
-  stepCount: 3,
-  body: <PricingSlide />,
-}`
-
-export const cliCode = `deckard init my-talk --theme phosphor
-deckard validate          # the deck resolves, the theme is coherent
-deckard check-overflow    # fails, listing the slides the canvas clips
+export const cliCode = `deckard check-overflow    # fails, naming the slides the canvas clips
 deckard contact-sheet     # every slide in one grid image
-deckard export pdf        # one page per slide at 1440x810pt`
+deckard export pdf        # one page per slide`
