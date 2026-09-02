@@ -26,7 +26,7 @@ export default function NumbersSlide() {
           {
             caption: "Slide routes prerendered, from one deck definition",
             meter: 0.54,
-            value: "14",
+            value: "29",
           },
           {
             caption: "Awaited on the server before any HTML was sent",
@@ -34,9 +34,9 @@ export default function NumbersSlide() {
             value: "40",
           },
           {
-            caption: "Registry items, five block families and six themes",
+            caption: "Registry items, seven block families and a preset",
             meter: 0.46,
-            value: "12",
+            value: "8",
           },
         ]}
       />

@@ -127,7 +127,7 @@ export const deck = defineDeck({
   }}
 />
 
-`"counter"` named the footer back when a visible footer also carried previous and next buttons. Those moved into the deck controls, so `"counter"` and `"visible"` now describe the same footer, and a deck that still says `"counter"` resolves to `"visible"`.
+`"counter"` is a deprecated alias for `"visible"`. A deck that sets it resolves to `"visible"`.
 
 ```ts
 footer: { mode: "visible", progress: false }

@@ -10,9 +10,9 @@ export const meta: SlideMeta = {
 
 export const notes = `Show the file tree next to this slide. The three slides after the spread are files in deck/slides, and the array never names them.
 
-Say what discovery is not. The glob is eager, so every module is in the bundle either way. Moving a slide into its own file changes where you edit it, nothing else.
+The glob is eager, so every module is in the bundle either way. Moving a slide into its own file changes where you edit it, not what ships.
 
-Keep the manual point in the room. deck/slides.tsx is still a plain array, and a deck that never adds a file works exactly as before.`
+Keep the manual point in the room. deck/slides.tsx is still a plain array, and a deck that never adds a file needs none of it.`
 
 export default function DiscoverySlide() {
   return (

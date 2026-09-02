@@ -2,9 +2,9 @@
  * A slide canvas at 1920x1080, scaled to whatever box it is dropped into.
  *
  * The markup inside .deck-preview-canvas is the markup SlideShell renders, and
- * the theme stylesheet imported alongside this file is the one the deck ships,
- * so the preview cannot drift from the theme. Nothing here may declare a color,
- * a family, or a type size: every one of those reads a token the theme sets.
+ * the theme stylesheet imported alongside this file is the one the deck ships.
+ * Nothing here may declare a color, a family, or a type size: every one of those
+ * reads a token the theme sets.
  *
  * Everything that touches the canvas sits in the base layer, because a theme
  * ships unlayered CSS and has to win. phosphor holds its status bar thinner
@@ -100,8 +100,8 @@
     width: 100%;
   }
 
-  /* HeroSlide: the opener runs past --slide-title-size on purpose, because a
-   * theme sizes a heading for a slide that also carries body copy. */
+  /* HeroSlide: the opener runs past --slide-title-size, because a theme sizes
+   * a heading for a slide that also carries body copy. */
   .deck-preview-hero {
     display: flex;
     flex-direction: column;

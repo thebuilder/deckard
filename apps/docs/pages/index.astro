@@ -82,7 +82,7 @@ ${motionRules}
   ogEnabled={config.og.enabled}
   page={{
     description:
-      "Deckard builds presentations out of React components on a fixed 1920x1080 canvas, with six themes, presenter mode, and a PDF export that cannot drift.",
+      "Deckard builds presentations out of React components on a fixed 1920x1080 canvas, with six themes, presenter mode, and a PDF export at canvas size.",
     title: "Deckard, presentations built out of React components",
   }}
   searchEnabled={config.search.enabled}
@@ -165,8 +165,8 @@ ${motionRules}
         </fieldset>
 
         <p class="hero-caption">
-          One deck, six themes. Every frame above is a real slide canvas with
-          the theme's own stylesheet on it.
+          One deck, six themes. Each frame is a slide canvas with the theme's
+          own stylesheet on it.
         </p>
       </div>
     </section>
@@ -176,7 +176,7 @@ ${motionRules}
         <h2>A slide is an object with a body</h2>
         <p>
           On the left is a deck. Step through it, and the object that lights up
-          is the slide on the right. Nothing here is a screenshot.
+          is the slide on the right.
         </p>
       </div>
 
@@ -275,9 +275,9 @@ ${motionRules}
             </code> and <code>step</code> are read on the client, so the whole deck
             prerenders.
           </p>
-          <h3>Blocks, not a component library</h3>
+          <h3>Blocks you own</h3>
           <p>
-            The five block families install into your app as source through a
+            The seven block families install into your app as source through a
             shadcn registry. You own the files and edit them.
           </p>
         </div>
@@ -319,8 +319,7 @@ ${motionRules}
         <code>deckard export pdf</code> prints the same canvas at 1440x810pt, which
         is 1920x1080 at 96dpi. The page size comes from the same <code>
           canvas
-        </code> config the deck renders with, so a handout cannot drift from what
-        the room saw.
+        </code> config the deck renders with.
       </p>
     </section>
 

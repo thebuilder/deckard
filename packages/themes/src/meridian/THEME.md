@@ -13,16 +13,13 @@ whatever the deck looks like.
 
 ## Visual direction
 
-Restraint. This is the quietest theme in the registry and that is the whole
-brief. The canvas is a near-white blue-gray in light mode and a cool near-black
-in dark. Cards are a flat surface with a hairline border and `0.625rem` corners,
-and `--slide-surface-shadow` is `none` in both modes.
+Restraint. This is the quietest theme in the registry. The canvas is a near-white
+blue-gray in light mode and a cool near-black in dark. Cards are a flat surface
+with a hairline border and `0.625rem` corners, and `--slide-surface-shadow` is
+`none` in both modes.
 
-Dropping the shadow was the one decision worth arguing about. A white card on a
-white sheet with no shadow needs its border to carry the whole separation, which
-is a thinner line to walk than the default theme's soft drop shadow. The source
-design draws it that way on every card slide, so this theme does too. If a deck
-of yours reads flat rather than calm, put a shadow back on
+A white card on a white sheet with no shadow needs its border to carry the whole
+separation. If a deck of yours reads flat rather than calm, put a shadow back on
 `--slide-surface-shadow` and leave everything else alone.
 
 The accent is a mid blue. It appears on eyebrows, numerals, the primary button,
@@ -63,32 +60,27 @@ deck that sets a character in it.
 | `--slide-figure-unit-size` | the unit suffix beside it             |
 
 Every size is set against the 1920x1080 canvas at a 16px root, so `1rem` is 16
-canvas pixels and the scale reads the way it does from the back of a room rather
-than the way it does in a browser window. The numbers are the source template's
-own: `--slide-title-size` is `6.5rem`, the template's 104px display line;
-`--slide-heading-size` is `4.25rem` for its 68px title; `--slide-subheading-size`
+canvas pixels. The numbers are the source template's own: `--slide-title-size`
+is `6.5rem`, the template's 104px display line; `--slide-heading-size` is
+`4.25rem` for its 68px title; `--slide-subheading-size`
 and `--slide-lead-size` are both `2.625rem` for its 42px sub; `--slide-body-size`
 is `2rem` for 32px of body copy; `--slide-support-size` is `1.75rem` for 28px of
 small text; and `--slide-label-size` is `1.5rem` for its 24px micro line.
 `--slide-code-size` is `2rem` rather than the contract's `1.75rem`, because a
 mono face at the body size sets visibly smaller than the sans beside it.
 
-Six sizes and nothing else set the hierarchy on a slide with no decoration on
-it, so the intervals between them are the whole structure. Retune them together
-or a slide loses its order.
+Six sizes set the hierarchy on a slide with no decoration on it, so the intervals
+between them are the structure. Retune them together or a slide loses its order.
 
-A metrics figure is display type without being a heading, so it sizes itself:
+A metrics figure sizes itself rather than borrowing the title size:
 `--slide-figure-size` is `7.5rem` and `--slide-figure-unit-size` is `3.5rem`. A
 stat slide keeps its proportion when the title scale moves.
 
 `h1` and `h2` carry `-0.03em` of tracking. `h3` through `h6` carry `-0.02em` and
-drop to weight 500. That negative tracking is the single most identifiable thing
-about this theme. Set the same headline at `0` and it stops looking like
-Meridian and starts looking like a default Tailwind page.
+drop to weight 500. Set the same headline at `0` and it stops looking like
+Meridian.
 
-`--slide-label-tracking` is `0.16em`, tighter than every other theme here,
-because the labels are short and the theme has no capitals to open up anywhere
-else.
+`--slide-label-tracking` is `0.16em`, tighter than every other theme here.
 
 ## Spacing
 
@@ -121,32 +113,29 @@ styling of its own. This file decides what each variant paints, using the canvas
 variables `--canvas-width` and `--canvas-height` for anything sized against the
 slide.
 
-- `default` paints the flat canvas colour and nothing else. The source design
-  puts one colour behind a slide and lets the type carry it.
+- `default` paints the flat canvas colour. Nothing sits behind the copy.
 - `grid` paints a `3.5rem` square grid in `--slide-grid-color`, edge to edge and
   at the same alpha everywhere.
 - `spotlight` paints `--slide-hatch`, the 135 degree fill a printed report
   reserves a figure with, promoted here to a whole background.
 - `accent` floods the canvas with the theme accent and flips the ink. It is the
-  statement slide: one flat field, no border, no card, nothing else on it.
+  statement slide: one flat field, with no border and no card.
 - `none` renders nothing at all. `SlideBackground` returns `null`.
 
-There is no radial wash, no veil, and no blurred corner glow anywhere in this
-file, and no `--slide-wash`, `--slide-veil`, `--slide-glow`, or
-`--slide-spotlight` token behind them. None of the source templates has one, and
-on a pale sheet a bloom behind the copy reads as a stain rather than as light.
+On a pale sheet a bloom behind the copy reads as a stain rather than as light, so
+this file paints no radial wash, veil, or corner glow, and no `--slide-wash`,
+`--slide-veil`, `--slide-glow`, or `--slide-spotlight` token stands behind one.
 If a variant is invisible on your projector, raise the alpha on
 `--slide-grid-color` rather than adding a layer.
 
 `accent` is painted by two unlayered rules in this file. A base-layer fallback
-for it ships in `@deckard/core/styles.css`, but a theme's unlayered CSS always
-wins over the base layer, which is why every theme in the registry restates the
-pair and why the variant survives a theme swap. The first rule sets
-`--background` and `--foreground` on the canvas. The second remaps the ink one
-level down, on `[data-slide-frame]`, `[data-slide-header]`, and
-`[data-slide-footer]`: a custom property resolves against the element that uses
-it, so remapping `--primary` on the same element that reads `var(--primary)` for
-the field would flood the slide with its own ink.
+for it ships in `@deckard/core/styles.css`, and a theme's unlayered CSS always
+wins over the base layer, so every theme in the registry restates the pair. The
+first rule sets `--background` and `--foreground` on the canvas. The second
+remaps the ink one level down, on `[data-slide-frame]`, `[data-slide-header]`,
+and `[data-slide-footer]`: a custom property resolves against the element that
+uses it, so remapping `--primary` on the same element that reads
+`var(--primary)` for the field would flood the slide with its own ink.
 
 The decoration tokens are `--slide-grid-color`, `--slide-grid-size`,
 `--slide-hatch`, `--slide-rule`, `--slide-scanline`, and `--slide-halo`, and all
@@ -164,16 +153,16 @@ want to reach, and the theme styles that attribute, decorative `::before` and
 its markup as long as the attributes stay where they are. The full list lives in
 the "Block part contract" comment at the bottom of `@deckard/core/styles.css`.
 
-What does not belong in a theme is anything that is new content rather than a
-treatment of existing content. A boot log, a status table, a cursor line with
-words in it are all slide content, so they go in a block the deck composes.
+A theme treats existing content and never adds new content. A boot log, a status
+table, a cursor line with words in it are all slide content, so they go in a
+block the deck composes.
 
 Meridian is quiet here too, and reaches six parts:
 
 - `[data-slide-breaker-index]`, the section numeral a divider carries, is held
   at the plain `--slide-title-size` in `--muted-foreground` with the theme's
   `-0.03em` of tracking. Other themes set the numeral larger than a heading;
-  this one refuses to let it outrank the section it introduces.
+  this one holds it at the title size.
 - `[data-slide-list-marker]` drops to `font-size: 0` and its `::before` draws a
   `0.75rem` round dot in `--primary`, which is the marker the source design puts
   in front of a bullet. Blanking the marker rather than hiding it keeps the row
@@ -182,9 +171,8 @@ Meridian is quiet here too, and reaches six parts:
   figure reads as a pill rather than as a bar chart.
 - `[data-slide-badge]`, `[data-slide-quote-portrait]`,
   `[data-slide-timeline-marker]`, and `[data-slide-accent-rule]` take the same
-  `999px`. The pill is this theme's one shape note, and this is the only one of
-  the six that draws one; every other theme leaves those four at
-  `--slide-radius`, which is how ledger keeps a portrait square.
+  `999px`. Every other theme leaves those four at `--slide-radius`, which is how
+  ledger keeps a portrait square.
 - `[data-slide-quote-text]` takes the `-0.025em` of tracking the headings
   already carry. A pull quote is display type without being a heading element,
   so the `h1, h2` rule does not reach it.
@@ -193,8 +181,7 @@ Meridian is quiet here too, and reaches six parts:
 default mixes `--primary` to 10%, and the source design picks a lighter chroma
 than that mix lands on, so the theme states `oklch(0.945 0.03 258)` in light and
 `oklch(0.315 0.055 258)` in dark. It is the tint on the one recommended card in
-a `CardGrid` and on a highlighted `DataTable` row, and this is the only theme
-that uses cards at all.
+a `CardGrid` and on a highlighted `DataTable` row.
 
 ## Deck chrome
 
@@ -215,8 +202,7 @@ the deck name from the slide title, the counter runs in tabular figures, and the
 progress is a 1px hairline on the bottom edge of the canvas in `--border`.
 
 If a deck needs the chrome to be readable from the back of a room, raise
-`--slide-chrome-size` and drop the opacity rule. That is the trade this theme
-makes on purpose.
+`--slide-chrome-size` and drop the opacity rule.
 
 ## Safe to change
 
@@ -245,9 +231,8 @@ different scrim.
 
 ## Common mistakes
 
-Decorating it. Every instinct to add a gradient, a glow, or a second accent is
-the instinct this theme exists to refuse. If a slide feels empty, the copy is
-too short, not the background.
+Decorating it. A gradient, a glow, or a second accent takes the theme off its
+brief. If a slide feels empty, the copy is too short.
 
 Losing the tracking. Any rule that sets `letter-spacing` on a heading after this
 file wins, and the theme goes generic.

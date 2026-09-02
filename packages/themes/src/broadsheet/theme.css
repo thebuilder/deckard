@@ -211,7 +211,7 @@
 }
 
 /* A pull quote is set in the masthead face, italic, which is where a paper puts
- * one. Nothing else changes: this theme has no source design to imitate. */
+ * one. */
 
 .broadsheet-theme [data-slide-quote-text] {
   font-family: var(--slide-font-heading);
