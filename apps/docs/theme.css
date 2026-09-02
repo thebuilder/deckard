@@ -172,3 +172,15 @@ h6,
 .prose :where(pre:not(.twoslash, .twoslash pre, blume-panel-tabs *) > code) {
   padding-block: 0;
 }
+
+/* Blume marks a Steps block not-prose, and the inline code rule excludes
+   anything inside one, so code in a step body renders as bare monospace. A step
+   body is prose, so it gets the prose treatment back. */
+[class*="blume-step"] :not(pre) > code {
+  padding: 0.15em 0.35em;
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  font-weight: 500;
+  background: var(--blume-code-background);
+  border-radius: 0.3rem;
+}
