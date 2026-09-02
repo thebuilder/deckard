@@ -225,6 +225,27 @@
   }
 }
 
+/* The theme picker is a playground affordance, and it shares the deck controls'
+ * reveal: the canvas fills a 16:9 window, so anything parked in a corner covers
+ * the slide. Reaching for the controls brings up both, and Tab brings up this
+ * one on its own. */
+[data-deck-theme-picker] {
+  opacity: 0;
+  transition: opacity 150ms ease-out;
+}
+
+body:has([data-deck-controls-revealed]) [data-deck-theme-picker],
+[data-deck-theme-picker]:hover,
+[data-deck-theme-picker]:focus-within {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-deck-theme-picker] {
+    transition: none;
+  }
+}
+
 html[data-pdf-export="true"] *,
 html[data-pdf-export="true"] *::before,
 html[data-pdf-export="true"] *::after {
