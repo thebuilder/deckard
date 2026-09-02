@@ -77,9 +77,10 @@ flight console; run `deckard add theme phosphor` and it is a green CRT.
 `deckard eject theme` copies the source into `deck/theme/` and it is yours from
 then on.
 
-A theme that comes from a design set in a real face carries that face: Source
-Serif 4 and Public Sans for ledger, Schibsted Grotesk for meridian, Orbitron and
-IBM Plex for nexus, JetBrains Mono for phosphor. Every one is SIL Open Font
+A theme that comes from a design set in a real face carries that face: Chivo and
+Azeret Mono for blueprint, Source Serif 4 and Public Sans for ledger, Schibsted
+Grotesk for meridian, Orbitron and IBM Plex for nexus, JetBrains Mono for
+phosphor, the IBM Plex family for quorum. Every one is SIL Open Font
 License 1.1 and ships inside the package, subset and self-hosted, so a deck
 renders offline and never calls a font host. A theme on a system stack downloads
 nothing, and a deck only pays for the theme it uses.

@@ -1,0 +1,521 @@
+/*
+ * Quorum theme.
+ * Every rule is scoped to .quorum-theme, which lives on the slide canvas.
+ * Nothing here reaches the utility bar, the command center, or the presenter console.
+ */
+
+/*
+ * The typefaces the source design asks for, self-hosted in this package under
+ * SIL Open Font License 1.1. ../fonts holds the files and one <family>.OFL.txt
+ * per family, and both the packed tarball and `deckard eject theme` carry the
+ * licence wherever the binaries go.
+ *
+ * Every url is relative to this stylesheet, so a theme resolves its own fonts
+ * from node_modules, from a tarball, and from deck/theme after an eject,
+ * without the deck wiring anything up. Every family stays at the front of the
+ * system stack it replaces, so a missing file degrades rather than fails, and
+ * font-display: swap paints that stack first so a slide is never blank.
+ *
+ * latin is what an English deck downloads. latin-ext carries its own
+ * unicode-range, so a deck that sets no character in it never asks for the file.
+ *
+ * IBM Plex Sans and IBM Plex Mono are already in ../fonts for another theme, so
+ * the faces below are declared against those same files and a deck that swaps
+ * between the two themes downloads one copy.
+ */
+
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url("../fonts/ibm-plex-sans-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url("../fonts/ibm-plex-sans-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "IBM Plex Serif";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/ibm-plex-serif-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "IBM Plex Serif";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/ibm-plex-serif-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "IBM Plex Serif";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../fonts/ibm-plex-serif-600-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "IBM Plex Serif";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../fonts/ibm-plex-serif-600-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/ibm-plex-mono-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/ibm-plex-mono-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../fonts/ibm-plex-mono-500-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../fonts/ibm-plex-mono-500-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+.quorum-theme {
+  --background: oklch(0.995 0.002 250);
+  --foreground: oklch(0.235 0.032 258);
+  --card: oklch(0.965 0.008 250);
+  --card-foreground: oklch(0.235 0.032 258);
+  --popover: oklch(0.965 0.008 250);
+  --popover-foreground: oklch(0.235 0.032 258);
+  --primary: oklch(0.435 0.145 258);
+  --primary-foreground: oklch(0.985 0.004 250);
+  --secondary: oklch(0.925 0.014 250);
+  --secondary-foreground: oklch(0.235 0.032 258);
+  --muted: oklch(0.965 0.008 250);
+  --muted-foreground: oklch(0.505 0.024 258);
+  --accent: oklch(0.925 0.014 250);
+  --accent-foreground: oklch(0.375 0.13 258);
+  --destructive: oklch(0.545 0.16 25);
+  --border: oklch(0.885 0.012 250);
+  --input: oklch(0.885 0.012 250);
+  --ring: oklch(0.435 0.145 258);
+  --radius: 0.25rem;
+
+  /*
+   * Three tokens this theme adds for itself, alongside the contract.
+   *
+   * --slide-font-figure is the serif the source design sets figures in and
+   * nothing else. --slide-font-heading covers headings and figures together, so
+   * a theme that splits them needs a second name.
+   *
+   * --quorum-positive is the green a reporting pack marks a number that moved
+   * the right way. --destructive is already the other half of the pair. The
+   * contract has no direction on a figure, because direction is data the deck
+   * knows and the theme does not, so the only parts these reach are the ones
+   * that carry a state of their own: a landed milestone and a log row's tone.
+   */
+  --slide-font-figure: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+  --quorum-positive: oklch(0.545 0.12 155);
+
+  --slide-font-heading:
+    "IBM Plex Sans", ui-sans-serif, system-ui, "Segoe UI", Roboto,
+    "Helvetica Neue", sans-serif;
+  --slide-font-body:
+    "IBM Plex Sans", ui-sans-serif, system-ui, "Segoe UI", Roboto,
+    "Helvetica Neue", sans-serif;
+  --slide-font-mono:
+    "IBM Plex Mono", var(--font-mono, ui-monospace), ui-monospace,
+    SFMono-Regular, Menlo, Consolas, monospace;
+
+  --slide-padding-inline: 5.5rem;
+  --slide-padding-block: 4.5rem;
+  --slide-content-gap: 2.25rem;
+  --slide-item-gap: 1.25rem;
+  --slide-rail-size: 20rem;
+
+  --slide-title-size: 6rem;
+  --slide-heading-size: 3.625rem;
+  --slide-subheading-size: 2.25rem;
+  --slide-lead-size: 2.25rem;
+  --slide-body-size: 1.75rem;
+  --slide-code-size: 1.5625rem;
+  --slide-support-size: 1.625rem;
+  --slide-label-size: 1.5rem;
+  --slide-label-tracking: 0.16em;
+
+  --slide-figure-size: 5.75rem;
+  --slide-figure-unit-size: 2.375rem;
+
+  --slide-radius: 0.25rem;
+  --slide-radius-lg: 0.25rem;
+  --slide-surface: oklch(0.965 0.008 250);
+  --slide-surface-muted: oklch(0.965 0.008 250);
+  --slide-surface-border: oklch(0.885 0.012 250);
+  --slide-surface-shadow: none;
+  --slide-accent-soft: color-mix(in oklab, var(--primary) 8%, transparent);
+
+  --slide-grid-color: oklch(0.235 0.032 258 / 6%);
+  --slide-grid-size: 4rem;
+  --slide-hatch: repeating-linear-gradient(
+    135deg,
+    var(--slide-grid-color) 0 2px,
+    transparent 2px 22px
+  );
+  --slide-rule: oklch(0.885 0.012 250);
+  --slide-halo: none;
+
+  --slide-chrome-foreground: var(--muted-foreground);
+  --slide-chrome-emphasis: var(--foreground);
+  --slide-chrome-border: var(--border);
+  --slide-chrome-size: 1.5rem;
+  --slide-chrome-tracking: 0.06em;
+  --slide-progress-track: transparent;
+  --slide-progress-fill: var(--primary);
+
+  /* The sheet and its ink, kept under their own names so the inverted slide
+   * below can swap them without a custom property resolving against itself. */
+  --quorum-paper: oklch(0.995 0.002 250);
+  --quorum-ink: oklch(0.235 0.032 258);
+  color-scheme: light;
+}
+
+.quorum-theme:where(.dark, .dark *):where(
+  :not([data-slide-color-mode="light"])
+),
+.quorum-theme:where([data-slide-color-mode="dark"]) {
+  --background: oklch(0.205 0.028 258);
+  --foreground: oklch(0.965 0.006 250);
+  --card: oklch(0.255 0.03 258);
+  --card-foreground: oklch(0.965 0.006 250);
+  --popover: oklch(0.255 0.03 258);
+  --popover-foreground: oklch(0.965 0.006 250);
+  --primary: oklch(0.685 0.125 258);
+  --primary-foreground: oklch(0.185 0.03 258);
+  --secondary: oklch(0.315 0.032 258);
+  --secondary-foreground: oklch(0.965 0.006 250);
+  --muted: oklch(0.255 0.03 258);
+  --muted-foreground: oklch(0.725 0.018 250);
+  --accent: oklch(0.315 0.032 258);
+  --accent-foreground: oklch(0.865 0.09 258);
+  --destructive: oklch(0.685 0.15 25);
+  --border: oklch(0.355 0.026 258);
+  --input: oklch(0.355 0.026 258);
+  --ring: oklch(0.685 0.125 258);
+
+  --quorum-positive: oklch(0.715 0.13 155);
+
+  --slide-surface: oklch(0.255 0.03 258);
+  --slide-surface-muted: oklch(0.255 0.03 258);
+  --slide-surface-border: oklch(0.355 0.026 258);
+  --slide-surface-shadow: none;
+  --slide-grid-color: oklch(0.965 0.006 250 / 6%);
+  --slide-rule: oklch(0.355 0.026 258);
+
+  --quorum-paper: oklch(0.205 0.028 258);
+  --quorum-ink: oklch(0.965 0.006 250);
+  color-scheme: dark;
+}
+
+/* Running copy sits a weight below regular, which is what lets a 28px body
+ * hold a slide this dense. Every heading and label sets its own weight, and a
+ * direct declaration beats an inherited one, so they keep it. */
+
+.quorum-theme {
+  font-family: var(--slide-font-body);
+  font-weight: 300;
+}
+
+.quorum-theme :is(h1, h2) {
+  font-family: var(--slide-font-heading);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.quorum-theme :is(h3, h4, h5, h6) {
+  font-family: var(--slide-font-heading);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.quorum-theme :is(code, kbd, pre, samp) {
+  font-family: var(--slide-font-mono);
+  letter-spacing: 0;
+}
+
+/* Background variants. The runtime only renders the hook element and the variant name. */
+
+.quorum-theme .slide-background {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-color: var(--background);
+}
+
+.quorum-theme .slide-background[data-slide-background="grid"] {
+  background-image:
+    linear-gradient(to right, var(--slide-grid-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--slide-grid-color) 1px, transparent 1px);
+  background-size: var(--slide-grid-size) var(--slide-grid-size);
+}
+
+/* The fill behind an exhibit that has not been dropped in yet. */
+
+.quorum-theme .slide-background[data-slide-background="spotlight"] {
+  background-color: var(--card);
+  background-image: var(--slide-hatch);
+}
+
+/* Block parts. */
+
+/* Figures are the one place the serif appears, which is what separates a
+ * number being reported from a number being described. */
+
+.quorum-theme :is([data-stat-value], [data-stat-unit]) {
+  font-family: var(--slide-font-figure);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.quorum-theme [data-slide-quote-text] {
+  font-family: var(--slide-font-figure);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+/* The section number, set thin and large in the accent, with the divider's
+ * whole column hung off one accent stroke. */
+
+.quorum-theme [data-slide-breaker-index] {
+  font-size: 11.25rem;
+  font-weight: 300;
+  line-height: 0.8;
+  letter-spacing: -0.01em;
+}
+
+.quorum-theme [data-slide-breaker] {
+  padding-inline-start: 3.5rem;
+  border-inline-start: 5px solid var(--primary);
+}
+
+/* A minimal breaker has no index and no lead, so the stroke down the side is
+ * the whole slide. It keeps the rule the block already draws instead. */
+
+.quorum-theme [data-slide-breaker]:not(:has([data-slide-breaker-index])) {
+  padding-inline-start: 0;
+  border-inline-start: 0;
+}
+
+/* Cards are hung off a stroke on the leading edge rather than boxed, and the
+ * one card a deck is arguing for takes the accent in that stroke. */
+
+.quorum-theme [data-slide-card] {
+  background-color: var(--card);
+  border: 0;
+  border-inline-start: 5px solid var(--slide-surface-border);
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+}
+
+.quorum-theme [data-slide-card-accent] {
+  background-color: var(--card);
+  border-inline-start-color: var(--primary);
+}
+
+/* Ruled groups. The rule over a column is heavier than the one between rows,
+ * so a three up reads as three headed blocks rather than a table. */
+
+.quorum-theme [data-slide-column] {
+  border-block-start-width: 5px;
+}
+
+.quorum-theme :is([data-slide-contents], [data-slide-log], [data-stat-item]) {
+  border-block-start-color: var(--foreground);
+}
+
+/* Numbering and metadata are mono, at the size the block set them. */
+
+.quorum-theme
+:is(
+  [data-slide-contents-index],
+  [data-slide-list-marker],
+  [data-slide-note-index],
+  [data-slide-contents-folio],
+  [data-slide-quote-source],
+  [data-slide-statement-source]
+) {
+  font-family: var(--slide-font-mono);
+  text-transform: none;
+  letter-spacing: 0.04em;
+}
+
+/* The two parts that carry a direction of their own. A landed milestone and an
+ * ok row are the only things a theme can colour without being told which way a
+ * number moved. */
+
+.quorum-theme [data-slide-timeline-marker] {
+  block-size: 5px;
+}
+
+.quorum-theme [data-slide-timeline-marker][data-slide-timeline-done] {
+  background-color: var(--quorum-positive);
+}
+
+.quorum-theme [data-slide-log-tone="ok"] [data-slide-log-status] {
+  color: var(--quorum-positive);
+}
+
+.quorum-theme [data-slide-log-tone="alert"] [data-slide-log-status] {
+  color: var(--destructive);
+}
+
+/* The total row a pack closes a table on: ruled off in the ink colour and set
+ * a weight up, rather than tinted. */
+
+.quorum-theme [data-slide-table-highlight] {
+  font-weight: 500;
+  background-color: transparent;
+  border-block-end-color: var(--foreground);
+  border-block-end-width: 2px;
+}
+
+.quorum-theme [data-slide-table-cell] {
+  font-variant-numeric: tabular-nums;
+}
+
+.quorum-theme [data-slide-accent-rule] {
+  inline-size: 11.25rem;
+  block-size: 5px;
+}
+
+/* The one slide that inverts. The source design runs the statement and the
+ * covers as the negative of the sheet rather than as a field of the accent, in
+ * both colour modes, so the sheet and its ink are swapped here.
+ * The field colour is read on the canvas and the ink is remapped one level
+ * down: a custom property resolves against the element that uses it, so
+ * remapping --primary here would flood the slide with its own ink. */
+
+.quorum-theme[data-slide-background="accent"] {
+  --background: var(--quorum-ink);
+  --foreground: var(--quorum-paper);
+  --slide-halo: none;
+  --slide-scanline: none;
+  --slide-hatch: none;
+}
+
+.quorum-theme[data-slide-background="accent"]
+  :is([data-slide-frame], [data-slide-header], [data-slide-footer]) {
+  --primary: var(--quorum-paper);
+  --muted-foreground: color-mix(in oklab, var(--quorum-paper) 72%, transparent);
+  --slide-surface: transparent;
+  --slide-surface-muted: color-mix(
+    in oklab,
+    var(--quorum-paper) 12%,
+    transparent
+  );
+  --slide-surface-border: color-mix(
+    in oklab,
+    var(--quorum-paper) 30%,
+    transparent
+  );
+  --slide-chrome-foreground: color-mix(
+    in oklab,
+    var(--quorum-paper) 70%,
+    transparent
+  );
+  --slide-chrome-emphasis: var(--quorum-paper);
+  --slide-chrome-border: color-mix(
+    in oklab,
+    var(--quorum-paper) 25%,
+    transparent
+  );
+  --slide-progress-fill: var(--quorum-paper);
+}
+
+/* Deck chrome. The running head of a board pack: mono, sentence case, ruled
+ * off, and no louder than the page number it carries. */
+
+.quorum-theme :is([data-slide-header], [data-slide-footer]) {
+  font-family: var(--slide-font-mono);
+  letter-spacing: var(--slide-chrome-tracking);
+}
+
+.quorum-theme [data-slide-header-brand] {
+  font-family: var(--slide-font-body);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.quorum-theme [data-slide-header-title]::before {
+  margin-inline-end: var(--slide-chrome-gap);
+  color: var(--slide-chrome-border);
+  content: "|";
+}
+
+.quorum-theme [data-slide-progress] {
+  inset-block: auto 0;
+  height: 3px;
+}
