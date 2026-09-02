@@ -15,8 +15,8 @@ below applies there unchanged. Paths in this skill are written for this repo, so
 drop the `apps/playground/` prefix when the deck is a standalone app.
 
 Read the `THEME.md` of the theme the deck renders before you touch a color or a
-size. The playground imports `deckard` from `@deckard/themes`, so that is
-`packages/themes/src/deckard/THEME.md`. A deck that ejected its theme reads
+size. `apps/playground/deck/deck.ts` names it, and its document sits in
+`packages/themes/src/<name>/THEME.md`. A deck that ejected its theme reads
 `deck/theme/THEME.md` instead.
 
 ## Start from a block

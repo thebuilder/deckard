@@ -23,7 +23,7 @@ const blockFiles = [
 
 // The fixture deck imports this one from @deckard/themes. Nothing installs
 // it, so finding its class in the build proves the import is the whole path.
-const themeSelector = ".broadsheet-theme"
+const themeSelector = ".ledger-theme"
 
 // Classes only the @deckard/core runtime writes. Tailwind reaches them through
 // the @source the package stylesheet registers against its own compiled output,

@@ -6,10 +6,18 @@ import path from "node:path"
 import process from "node:process"
 import { fileURLToPath } from "node:url"
 
+import { defaultThemeId, themeIds } from "../../packages/themes/src/ids.ts"
+
 const toolDirectory = path.dirname(fileURLToPath(import.meta.url))
 const repoRoot = path.resolve(toolDirectory, "../..")
 const keepScratch = process.argv.includes("--keep")
 const packageNames = ["core", "themes", "cli"] as const
+
+// init writes the default, so that is what ejecting has to produce. Switching
+// back needs any other built-in, picked off the shipped list rather than named
+// here, so removing one cannot leave this reaching for a theme nothing ships.
+const switchToTheme =
+  themeIds.find((id) => id !== defaultThemeId) ?? defaultThemeId
 
 type PackageName = (typeof packageNames)[number]
 
@@ -164,7 +172,7 @@ function assertEjected(directory: string) {
   assert(
     fs
       .readFileSync(path.join(directory, "deck/theme/index.ts"), "utf8")
-      .includes('id: "deckard"'),
+      .includes(`id: "${defaultThemeId}"`),
     "the ejected deck/theme/index.ts does not carry the theme it was ejected from"
   )
 }
@@ -173,7 +181,7 @@ function assertSwitchedBack(directory: string) {
   const source = fs.readFileSync(path.join(directory, "deck/deck.ts"), "utf8")
 
   assert(
-    source.includes('import { phosphor } from "@deckard/themes"') &&
+    source.includes(`import { ${switchToTheme} } from "@deckard/themes"`) &&
       !source.includes("@/deck/theme"),
     "deckard add theme left deck.ts pointing at the ejected copy"
   )
@@ -237,7 +245,7 @@ function assertScaffold(directory: string) {
   assert(
     fs
       .readFileSync(path.join(directory, "deck/deck.ts"), "utf8")
-      .includes('import { deckard } from "@deckard/themes"'),
+      .includes(`import { ${defaultThemeId} } from "@deckard/themes"`),
     "the generated deck.ts does not import its theme from @deckard/themes"
   )
 
@@ -354,7 +362,7 @@ try {
   // Switching back leaves the ejected directory on disk with nothing importing
   // it. validate has to read the built-in the deck went back to, not the copy.
   time("pnpm: switch back to a built-in over the ejected copy", () => {
-    run(deckard, ["add", "theme", "phosphor"], pnpmApp)
+    run(deckard, ["add", "theme", switchToTheme], pnpmApp)
     assertSwitchedBack(pnpmApp)
     run(deckard, ["validate"], pnpmApp)
   })

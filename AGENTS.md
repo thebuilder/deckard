@@ -92,8 +92,8 @@ Read `.claude/skills/slide-authoring/SKILL.md` first. It covers the blocks, when
 a slide earns its own file, the Server Component boundary, canvas sizing, tokens,
 metadata, and discovery ordering.
 
-Read `packages/themes/src/deckard/THEME.md` before changing a color or a
-size token in the default theme. Each of the six themes carries its own.
+Read `packages/themes/src/meridian/THEME.md` before changing a color or a
+size token in the default theme. Every theme carries its own.
 
 Keep deck-specific content out of `packages/core`. Colors, sizes, backgrounds,
 and copy belong to the deck that owns them. If a component names the deck, a

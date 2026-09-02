@@ -1,0 +1,36 @@
+---
+import { galleryTheme, themeNames } from "../lib/deck-preview"
+
+/*
+ * One row per built-in, in the gallery's order. The summary is the same string
+ * the gallery card carries, so a theme is described once and this table is not
+ * a second copy to keep level with it.
+ */
+---
+
+<table>
+  <thead>
+    <tr>
+      <th>Theme</th>
+      <th><code>defaultColorMode</code></th>
+      <th>The idea</th>
+    </tr>
+  </thead>
+  <tbody>
+    {
+      themeNames.map((name) => (
+        <tr>
+          <td>
+            <a href={`/themes#${name}`}>
+              <code>{name}</code>
+            </a>
+          </td>
+          <td>
+            <code>{galleryTheme[name].defaultColorMode}</code>
+          </td>
+          <td>{galleryTheme[name].summary}</td>
+        </tr>
+      ))
+    }
+  </tbody>
+</table>

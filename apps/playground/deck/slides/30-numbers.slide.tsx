@@ -17,7 +17,7 @@ The meter under the first figure is a proportion, and the caption says what of. 
 
 Nothing on this slide is typed. The deck counts its own routes, the delay is the constant the server slide awaits, and the block families are the files in app/slides/blocks. A figure that repeats a number from somewhere else is wrong the week after you write it.
 
-The block only sets the rule, the figure size, the meter, and the caption size. Everything else is the theme, which is why this slide looks like newsprint under broadsheet and like a console under nexus.`
+The block only sets the rule, the figure size, the meter, and the caption size. Everything else is the theme, which is why this slide looks like a bound report under ledger and like a console under nexus.`
 
 /*
  * The families a deck composes from, counted where they live. Read off disk

@@ -10,13 +10,13 @@ const noThemePattern = /imports no theme/
 const noPropertyPattern = /does not pass a theme/
 
 const builtInDeck = `import { defineDeck } from "@deckard/core"
-import { deckard } from "@deckard/themes"
+import { meridian } from "@deckard/themes"
 import { slides } from "@/deck/slides"
 
 export const deck = defineDeck({
   description: "A deck.",
   slides,
-  theme: deckard,
+  theme: meridian,
   title: "A deck",
 })
 `
@@ -36,15 +36,15 @@ export const deck = defineDeck({
 describe("findThemeImport", () => {
   it("names the built-in a deck imports", () => {
     expect(findThemeImport(builtInDeck)).toEqual({
-      binding: "deckard",
+      binding: "meridian",
       kind: "builtin",
-      name: "deckard",
+      name: "meridian",
     })
   })
 
   it("sees through an alias", () => {
     const source = builtInDeck.replace(
-      "{ deckard }",
+      "{ meridian }",
       "{ phosphor as deckTheme }"
     )
 
@@ -74,16 +74,16 @@ describe("applyBuiltInTheme", () => {
   it("swaps one built-in for another", () => {
     expect(applyBuiltInTheme(builtInDeck, "phosphor")).toBe(
       builtInDeck
-        .replace("{ deckard }", "{ phosphor }")
-        .replace("theme: deckard,", "theme: phosphor,")
+        .replace("{ meridian }", "{ phosphor }")
+        .replace("theme: meridian,", "theme: phosphor,")
     )
   })
 
   it("replaces a local theme and sorts the import in", () => {
     expect(applyBuiltInTheme(localDeck, "nexus")).toBe(
       builtInDeck
-        .replace("{ deckard }", "{ nexus }")
-        .replace("theme: deckard,", "theme: nexus,")
+        .replace("{ meridian }", "{ nexus }")
+        .replace("theme: meridian,", "theme: nexus,")
     )
   })
 
@@ -100,7 +100,7 @@ describe("applyLocalTheme", () => {
   })
 
   it("refuses a deck that never passes a theme to defineDeck", () => {
-    const source = builtInDeck.replace("  theme: deckard,\n", "")
+    const source = builtInDeck.replace("  theme: meridian,\n", "")
 
     expect(() => applyLocalTheme(source)).toThrow(noPropertyPattern)
   })

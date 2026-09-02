@@ -12,6 +12,7 @@ import {
 } from "../deck/deck-source.ts"
 import {
   builtInThemes,
+  defaultTheme,
   hasLocalTheme,
   isBuiltInTheme,
   localThemeDirectory,
@@ -21,6 +22,12 @@ import { write } from "../output.ts"
 import { projectPath, projectRoot } from "../project.ts"
 
 const kinds = ["block", "theme"] as const
+
+// The names an error message reaches for come off the shipped list, so a theme
+// that is removed cannot be left behind in the advice for switching to one.
+const exampleTheme = defaultTheme
+const otherExampleTheme =
+  builtInThemes.find((name) => name !== exampleTheme) ?? exampleTheme
 
 // shadcn does not publish its package.json through its export map, so the
 // manifest that names the binary is found by walking up from the entry it does
@@ -152,13 +159,13 @@ export async function runAdd(args: ParsedArgs): Promise<void> {
 
   if (!(kinds as readonly string[]).includes(kind)) {
     throw new Error(
-      `deckard add takes ${kinds.join(" or ")}, not "${kind ?? ""}". Try: deckard add theme broadsheet`
+      `deckard add takes ${kinds.join(" or ")}, not "${kind ?? ""}". Try: deckard add theme ${exampleTheme}`
     )
   }
 
   if (!name) {
     throw new Error(
-      `deckard add ${kind} needs a name, such as ${kind === "theme" ? "deckard or phosphor" : "typography or metrics"}.`
+      `deckard add ${kind} needs a name, such as ${kind === "theme" ? `${exampleTheme} or ${otherExampleTheme}` : "typography or metrics"}.`
     )
   }
 

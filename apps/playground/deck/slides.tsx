@@ -669,7 +669,7 @@ Say what is missing: no heading, no lead, no panel. The slide is the code, which
       <HeroCenteredSlide
         badge="Part two"
         title="Themes"
-        description="Six stylesheets, one contract, and no component edits between them."
+        description="One contract, a stylesheet each, and no component edits between them."
       />
     ),
   },
@@ -697,11 +697,14 @@ Say what is missing: no heading, no lead, no panel. The slide is the code, which
   },
   {
     slug: "theme-table",
-    title: "Six Themes",
+    title: "Themes",
     notes:
       "The last column is what each theme puts where a list number would go, and none of it is an edit to the block. The highlighted row is the theme this deck is rendering right now. Swap it in deck/deck.ts and every slide you have seen restyles with no other edit.",
     body: (
-      <OpenContentSlide eyebrow="Themes" title="Same deck, six stylesheets">
+      // A slide holds the rows that fit it, so this is a sample of the
+      // built-ins rather than the list of them. The theme gallery on the docs
+      // site is the one that has to carry every theme the package ships.
+      <OpenContentSlide eyebrow="Themes" title="Same deck, another stylesheet">
         <DataTable
           columns={[
             { label: "Theme" },
@@ -710,24 +713,13 @@ Say what is missing: no heading, no lead, no panel. The slide is the code, which
             { label: "List marker" },
           ]}
           rows={[
-            {
-              cells: [
-                "broadsheet",
-                "System serif",
-                "2",
-                "A small-caps numeral",
-              ],
-            },
             { cells: ["ledger", "Source Serif 4", "0", "A hanging rule"] },
             {
               cells: ["meridian", "Schibsted Grotesk", "10", "An accent dot"],
+              highlight: true,
             },
             { cells: ["nexus", "Orbitron", "2", "A mono numeral"] },
             { cells: ["phosphor", "JetBrains Mono", "0", "[x]"] },
-            {
-              cells: ["deckard", "Geist", "12", "01, 02, 03"],
-              highlight: true,
-            },
           ]}
         />
       </OpenContentSlide>

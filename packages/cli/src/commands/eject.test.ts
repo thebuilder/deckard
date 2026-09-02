@@ -13,7 +13,7 @@ const themesSource = path.resolve(
 
 describe("planFonts", () => {
   it("leaves a theme that self-hosts nothing alone", () => {
-    const css = ".deckard-theme { --slide-font-body: var(--font-sans); }"
+    const css = ".my-theme { --slide-font-body: var(--font-sans); }"
 
     expect(planFonts(css)).toEqual({ css, files: [] })
   })

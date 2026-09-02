@@ -103,11 +103,11 @@ It has no `<track>` support, so captions are not something the component can add
 
 ## Colour and contrast
 
-The six built-in themes ship as they are. The moment you eject one and edit `theme.css`, contrast is yours.
+The built-in themes ship as they are. The moment you eject one and edit `theme.css`, contrast is yours.
 
 The rule each `THEME.md` states: body copy has to clear 4.5:1 against `--background` and against `--slide-surface`.
 
-Check against the composite, not the token. `--slide-surface` is translucent (`oklch(1 0 0 / 88%)` in the default theme), so text on a surface sits over whatever background variant is painted underneath. Sampling the rendered pixels is the only reliable read.
+Check against the composite, not the token. `--slide-surface` is translucent in every built-in, so text on a surface sits over whatever background variant is painted underneath. Sampling the rendered pixels is the only reliable read.
 
 Check both colour modes. A dark override that changes `--foreground` and leaves `--slide-surface` alone passes validation and fails a reader.
 

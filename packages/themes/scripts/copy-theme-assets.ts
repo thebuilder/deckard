@@ -21,8 +21,9 @@ const assets = ["theme.css", "THEME.md"]
 // there with the binaries and travel wherever they go.
 const fontsDirectory = "fonts"
 
-// An editor writing a file lands as more than one event, and the copy is twelve
-// files, so a burst is answered once the directory has been quiet this long.
+// An editor writing a file lands as more than one event, and the copy is every
+// theme asset at once, so a burst is answered once the directory has been quiet
+// this long.
 const settleMs = 50
 
 // A face is named <family>[-<weight>][-italic]-<subset>.woff2 and its licence is
@@ -96,8 +97,8 @@ export function copyThemeAssets(): number {
 
 // One watcher per theme directory rather than a recursive watch on src: the
 // recursive option is not implemented on every platform Node runs on. Any
-// change recopies all twelve files, which is cheaper than tracking which theme
-// an event came from and cannot leave dist half written.
+// change recopies every file, which is cheaper than tracking which theme an
+// event came from and cannot leave dist half written.
 export function watchThemeAssets(onCopy: (copied: number) => void): void {
   let timer: NodeJS.Timeout | undefined
 

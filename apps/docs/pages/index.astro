@@ -5,7 +5,12 @@ import data from "blume:data"
 import PageLayout from "blume/components/layout/PageLayout.astro"
 import presenterImage from "../assets/presenter.png"
 import DeckPreview from "../components/DeckPreview.astro"
-import { galleryTheme, themeCountWord, themeNames } from "../lib/deck-preview"
+import {
+  defaultTheme,
+  galleryTheme,
+  themeCountWord,
+  themeNames,
+} from "../lib/deck-preview"
 import {
   canvas,
   cliCode,
@@ -175,7 +180,7 @@ ${motionRules}
                       mode="light"
                       scale={0.17}
                       slide={step.slide}
-                      theme="deckard"
+                      theme={defaultTheme}
                     />
                   </div>
                 ))

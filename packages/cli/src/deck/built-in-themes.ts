@@ -6,10 +6,10 @@
 import type { BuiltInThemeId } from "@deckard/themes/ids"
 
 export const themeIds = [
-  "broadsheet",
-  "deckard",
   "ledger",
   "meridian",
   "nexus",
   "phosphor",
 ] as const satisfies readonly BuiltInThemeId[]
+
+export const defaultThemeId: BuiltInThemeId = "meridian"
