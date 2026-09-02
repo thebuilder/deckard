@@ -73,7 +73,6 @@ const families: FontFamily[] = [
     slug: "azeret-mono",
     version: "v21",
   },
-  ,
   {
     faces: [
       {
@@ -91,7 +90,6 @@ const families: FontFamily[] = [
     slug: "bricolage-grotesque",
     version: "v9",
   },
-  ,
   {
     faces: [
       {
@@ -109,7 +107,6 @@ const families: FontFamily[] = [
     slug: "chivo",
     version: "v21",
   },
-  ,
   {
     faces: [
       {
@@ -135,7 +132,6 @@ const families: FontFamily[] = [
     slug: "cormorant-garamond",
     version: "v21",
   },
-  ,
   {
     faces: [
       {
@@ -161,7 +157,6 @@ const families: FontFamily[] = [
     slug: "dm-mono",
     version: "v16",
   },
-  ,
   {
     faces: [
       {
@@ -187,7 +182,6 @@ const families: FontFamily[] = [
     slug: "ibm-plex-mono",
     version: "v20",
   },
-  ,
   {
     faces: [
       {
@@ -205,7 +199,6 @@ const families: FontFamily[] = [
     slug: "ibm-plex-sans",
     version: "v23",
   },
-  ,
   {
     faces: [
       {
@@ -231,7 +224,6 @@ const families: FontFamily[] = [
     slug: "ibm-plex-serif",
     version: "v20",
   },
-  ,
   {
     faces: [
       {
@@ -249,7 +241,6 @@ const families: FontFamily[] = [
     slug: "jetbrains-mono",
     version: "v24",
   },
-  ,
   {
     faces: [
       {
@@ -267,7 +258,6 @@ const families: FontFamily[] = [
     slug: "jost",
     version: "v20",
   },
-  ,
   {
     faces: [
       {
@@ -285,7 +275,6 @@ const families: FontFamily[] = [
     slug: "manrope",
     version: "v20",
   },
-  ,
   {
     faces: [
       {
@@ -299,7 +288,6 @@ const families: FontFamily[] = [
     slug: "orbitron",
     version: "v35",
   },
-  ,
   {
     faces: [
       {
@@ -317,7 +305,6 @@ const families: FontFamily[] = [
     slug: "outfit",
     version: "v15",
   },
-  ,
   {
     faces: [
       {
@@ -335,7 +322,6 @@ const families: FontFamily[] = [
     slug: "public-sans",
     version: "v21",
   },
-  ,
   {
     faces: [
       {
@@ -353,7 +339,6 @@ const families: FontFamily[] = [
     slug: "schibsted-grotesk",
     version: "v7",
   },
-  ,
   {
     faces: [
       {
@@ -379,7 +364,6 @@ const families: FontFamily[] = [
     slug: "source-serif-4",
     version: "v14",
   },
-  ,
   {
     faces: [
       {
@@ -397,7 +381,6 @@ const families: FontFamily[] = [
     slug: "space-grotesk",
     version: "v22",
   },
-  ,
   {
     faces: [
       {

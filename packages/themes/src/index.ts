@@ -1,9 +1,9 @@
 import type { SlideTheme } from "@deckard/core"
 
 import { atelier } from "./atelier/index"
-import { cotton } from "./cotton/index"
 import { aurora } from "./aurora/index"
 import { blueprint } from "./blueprint/index"
+import { cotton } from "./cotton/index"
 import { type BuiltInThemeId, themeIds } from "./ids"
 import { ledger } from "./ledger/index"
 import { meridian } from "./meridian/index"
@@ -13,9 +13,9 @@ import { phosphor } from "./phosphor/index"
 import { quorum } from "./quorum/index"
 
 export { atelier } from "./atelier/index"
-export { cotton } from "./cotton/index"
 export { aurora } from "./aurora/index"
 export { blueprint } from "./blueprint/index"
+export { cotton } from "./cotton/index"
 export { type BuiltInThemeId, defaultThemeId, themeIds } from "./ids"
 export { ledger } from "./ledger/index"
 export { meridian } from "./meridian/index"
@@ -28,9 +28,9 @@ export { quorum } from "./quorum/index"
 // with no id there, is a type error rather than a gap someone finds later.
 const themeById = {
   atelier,
-  cotton,
   aurora,
   blueprint,
+  cotton,
   ledger,
   meridian,
   nexus,

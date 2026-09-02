@@ -4,17 +4,13 @@
 // it, or ./index stops compiling.
 export const themeIds = [
   "atelier",
+  "aurora",
+  "blueprint",
   "cotton",
   "ledger",
   "meridian",
   "nexus",
   "noir",
-  "phosphor",
-  "aurora",
-  "blueprint",
-  "ledger",
-  "meridian",
-  "nexus",
   "phosphor",
   "quorum",
 ] as const

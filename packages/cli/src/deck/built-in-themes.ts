@@ -7,9 +7,9 @@ import type { BuiltInThemeId } from "@deckard/themes/ids"
 
 export const themeIds = [
   "atelier",
-  "cotton",
   "aurora",
   "blueprint",
+  "cotton",
   "ledger",
   "meridian",
   "nexus",
