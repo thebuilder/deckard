@@ -76,13 +76,22 @@ flight console; run `deckard add theme phosphor` and it is a green CRT.
 `deckard eject theme` copies the source into `deck/theme/` and it is yours from
 then on, which is how the demo deck grew its own.
 
+Four of the six carry their own typefaces, because the designs they come from
+are set in a real face: Source Serif 4 and Public Sans for ledger, Schibsted
+Grotesk for meridian, Orbitron and IBM Plex for nexus, JetBrains Mono for
+phosphor. Every one is SIL Open Font License 1.1 and ships inside the package,
+subset and self-hosted, so a deck renders offline and never calls a font host.
+The two remaining themes stay on system stacks and download nothing, and a deck
+only pays for the theme it uses.
+
 Slide blocks are the other half, and they work the other way around. Those
 install as source through the shadcn registry, because a layout is something
 you edit.
 
 ## Documentation
 
-The docs site is `apps/docs`. It is not deployed yet, so run it locally:
+The docs site is [deckard.thebuilder.dk](https://deckard.thebuilder.dk), built from
+`apps/docs`. To run it locally:
 
 ```bash
 pnpm --filter docs dev

@@ -36,14 +36,21 @@ rounded windows.
 
 ## Typography
 
-`ui-monospace` for headings, body, and code. That is the whole type system.
+JetBrains Mono for headings, body, and code. That is the whole type system, and
+the letterforms are the theme rather than a refinement of it.
 
-The original design used JetBrains Mono at weights 400 through 800. What ships
-here is the system mono, which is SF Mono on Apple platforms, Cascadia on
-Windows, and whatever the browser picks elsewhere. If you want JetBrains Mono,
-load it in `app/layout.tsx` and put it at the front of all three font tokens
-together. It is the one font swap in this registry that changes the theme
-rather than refining it, since the letterforms are the theme.
+The face ships with the theme. `theme.css` declares it from
+`../fonts/jetbrains-mono-latin.woff2`, one variable file covering weights 400
+through 800, which is the range the source design uses. Nothing to wire up in
+`app/layout.tsx`, and no font host is called at render time. The licence is SIL
+Open Font License 1.1 and travels with the file as
+`fonts/jetbrains-mono.OFL.txt`; `deckard eject theme` copies both.
+
+The system mono stack stays behind it in all three tokens, so a build that loses
+the file falls back to SF Mono on Apple platforms and Cascadia on Windows rather
+than to nothing. `font-display: swap` paints that stack while the woff2 lands.
+An English deck downloads 31KB; latin-ext sits behind its own `unicode-range`
+and is only fetched by a deck that sets a character in it.
 
 Every size below is set against the 1920x1080 canvas at a 16px root, so `1rem`
 is 16 canvas pixels and the numbers read the way they do on a projector rather
@@ -178,6 +185,20 @@ What this theme does with the parts it reaches:
 - `[data-stat-meter]` takes its border in `--primary`.
 - `[data-slide-breaker-index]` is set at 1.6 times `--slide-title-size`, with
   the halo on it.
+- `[data-slide-statement-text]` and `[data-slide-quote-text]` take the halo, for
+  the same reason `[data-stat-value]` does: both are display type without being
+  heading elements.
+- `[data-slide-log-status]` is wrapped in square brackets by a `::before` and an
+  `::after`, the way the checklist marker is. The status word itself is a prop
+  on the block, because it is content: a log that says `pass` in one deck says
+  `ok` in another.
+- `[data-slide-badge]` is bracketed the same way and takes the halo.
+- `[data-slide-accent-rule]` and a `[data-slide-timeline-marker]` carrying
+  `[data-slide-timeline-done]` take the halo as a `box-shadow`, which is the
+  status light the source design puts on a module card.
+- `[data-slide-log-row][data-slide-log-tone="alert"]` takes `--destructive` for
+  the whole row. The tone is a value on the row rather than a class, so the
+  block names the level and the theme decides what a fault looks like.
 
 ## Theme-private tokens
 

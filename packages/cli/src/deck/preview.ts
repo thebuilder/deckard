@@ -339,6 +339,11 @@ export async function openSlide(
   colorMode: ColorMode
 ): Promise<void> {
   await page.goto(`${baseUrl}/slides/${id}`, { waitUntil: "networkidle" })
+
+  // A theme can self-host its typeface, and font-display: swap paints the
+  // fallback first. Every capture below measures or photographs the slide, so
+  // both have to wait for the real face to land or they record the wrong metrics.
+  await page.evaluate(() => document.fonts.ready)
   await page.waitForTimeout(80)
 
   assertColorMode(

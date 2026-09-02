@@ -32,15 +32,28 @@ under a panel, the line has to do all of the separating, and a hairline at
 
 ## Typography
 
-Serif headings from `ui-serif`, which is New York on Apple platforms and Georgia
-elsewhere. Body copy from the system sans stack. No web font loads, so the theme
-adds nothing to page weight and renders the same offline.
+Source Serif 4 for headings, Public Sans for body, IBM Plex Mono for labels and
+code. All three are the source design's own, and all three ship with the theme:
+`theme.css` declares them from `../fonts/`, so there is nothing to load in
+`app/layout.tsx` and no font host is called at render time. Every family is SIL
+Open Font License 1.1, covered by `fonts/source-serif-4.OFL.txt`,
+`fonts/public-sans.OFL.txt`, and `fonts/ibm-plex-mono.OFL.txt`.
 
-The original design used Source Serif 4 for headings, Public Sans for body, and
-IBM Plex Mono for labels. If you want them, load them in `app/layout.tsx` and
-put each family at the front of the matching stack. Source Serif is the one
-worth the request; it has a lower contrast and a larger x-height than Georgia,
-so it holds together better at `--slide-title-size`.
+Source Serif is the one carrying the theme. It has lower contrast and a larger
+x-height than Georgia, so it holds together at `--slide-title-size` where a
+system serif starts to look thin. It ships roman and italic, both variable
+across 400 to 700, because the folio title in the header is set in the italic
+and a synthesised oblique serif at that size reads as a mistake. Public Sans is
+variable across 300 to 700, which reaches the weight 300 body copy the design
+sets. IBM Plex Mono is not variable, so 400 and 500 are separate files.
+
+Each family stays at the front of the system stack it replaces, so a build that
+loses a file degrades rather than fails, and `font-display: swap` paints that
+stack while the woff2 lands. An English deck downloads 139KB across the four
+files, the most of any theme here, and the serif italic is half of it. Drop the
+italic faces from `theme.css` if the header title is not worth 51KB to you.
+latin-ext sits behind its own `unicode-range` and is only fetched by a deck that
+sets a character in it.
 
 Every size below is set against the 1920x1080 canvas at a 16px root, so 1rem is
 16 canvas pixels and the scale reads the way it does on a projector rather than
@@ -167,6 +180,31 @@ a UI label.
 `[data-stat-value]` is the fifth. The heading tracking and weight described
 above reach it by name, because the metrics figure sits inside a description
 list rather than in a heading element.
+
+The catalogue layouts added since then reach six more.
+
+`[data-slide-contents-index]` uses the same `font-size: 0` swap as the list
+marker, but for a counter rather than a rule. `[data-slide-contents]` resets
+`ledger-contents`, and the `::before` increments it and prints
+`counter(ledger-contents, upper-roman)`, so a contents list numbered 01, 02, 03
+in the block reads I, II, III on the sheet. That is a treatment of a number the
+block already put there, not a number the theme invented.
+
+`[data-slide-rail-term]`, `[data-slide-statement-source]`,
+`[data-slide-table-heading]`, `[data-slide-column-label]`,
+`[data-slide-card-label]`, and `[data-slide-badge]` all run in small caps with
+`text-transform` cleared, for the same reason the credit row does.
+
+`[data-slide-quote-text]` is set in the heading face, italic, with an opening
+quotation mark hung `-0.45em` into the margin. The block writes no quotation
+marks of its own, so a theme that does not want them is not fighting one.
+
+`[data-slide-timeline-marker]` is a 1px rule and 2px when it carries
+`[data-slide-timeline-done]`, because this theme has no pills. Same for
+`[data-slide-accent-rule]`, which is a `9rem` by 2px rule rather than a bar.
+
+`[data-slide-contents-folio]` and `[data-slide-note-index]` take the mono face,
+which is where every number in this deck belongs.
 
 ## Theme-private tokens
 

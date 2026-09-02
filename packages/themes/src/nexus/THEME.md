@@ -40,15 +40,25 @@ is what keeps a card from looking like a web component.
 
 ## Typography
 
-The system sans stack for headings and body, `var(--font-mono)` for code.
+Orbitron for headings, IBM Plex Sans for body, IBM Plex Mono for labels and
+code. All three are the source design's own, and all three ship with the theme:
+`theme.css` declares them from `../fonts/`, so there is nothing to load in
+`app/layout.tsx` and no font host is called at render time. Every family is SIL
+Open Font License 1.1, covered by `fonts/orbitron.OFL.txt`,
+`fonts/ibm-plex-sans.OFL.txt`, and `fonts/ibm-plex-mono.OFL.txt`.
 
-The original design used Orbitron for headings, IBM Plex Sans for body, and IBM
-Plex Mono for labels. Orbitron has no system equivalent and this theme does not
-try to fake one. What it takes from Orbitron instead is the behavior: capitals
-everywhere, wide label tracking, and the glow. If you want the real face, load
-it in `app/layout.tsx` and put it at the front of `--slide-font-heading` alone,
-not `--slide-font-body`. Orbitron is unreadable below about 24px and body copy
-set in it will not survive a room.
+Orbitron is display only and stays out of `--slide-font-body`. It is unreadable
+below about 24px, and body copy set in it will not survive a room. It carries
+weights 400 through 900 in one variable file, which covers the 700 the headings
+take and the 900 the breaker numeral takes. IBM Plex Sans is variable across 300
+to 700. IBM Plex Mono is not variable, so 400 and 500 are separate files and the
+600 the chrome asks for resolves to 500.
+
+Each family stays at the front of the system stack it replaces, so a build that
+loses a file degrades rather than fails, and `font-display: swap` paints that
+stack while the woff2 lands. An English deck downloads 72KB across the four
+files; latin-ext sits behind its own `unicode-range` and is only fetched by a
+deck that sets a character in it.
 
 Every size below is set against the 1920x1080 canvas at a 16px root, so `1rem`
 is 16 canvas pixels and the numbers read the way they do on a projector rather
@@ -173,6 +183,23 @@ What this theme does with the parts it reaches:
   than as prose.
 - `[data-stat-meter]` takes its border in `--primary` at 55%, which keeps the
   empty part of the bar quieter than the fill.
+- `[data-slide-statement-text]` and `[data-slide-quote-text]` take the halo. Both
+  are display type without being heading elements, so the `h1, h2` rule does not
+  reach them.
+- `[data-slide-contents-index]`, `[data-slide-column-index]`,
+  `[data-slide-note-index]`, `[data-slide-rail-term]`,
+  `[data-slide-statement-source]`, `[data-slide-table-heading]`, and
+  `[data-slide-log-status]` run in the mono face, uppercase, at `0.14em`.
+  Everything in this deck's chrome is spaced out, and a numeral, a folio, and a
+  status all count as chrome.
+- `[data-slide-column]`, `[data-slide-contents]`, `[data-slide-log]`, and
+  `[data-slide-rail]` take their top rule in `--primary` at 55%, which is the
+  accent border the source design opens a panel with.
+- `[data-slide-accent-rule]` and a `[data-slide-timeline-marker]` carrying
+  `[data-slide-timeline-done]` take the halo as a `box-shadow`, so a milestone
+  that landed is lit and one that has not is not.
+- `[data-slide-badge]` takes the display face, the accent border at 55%, and the
+  halo.
 
 ## Theme-private tokens
 

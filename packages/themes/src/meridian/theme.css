@@ -4,6 +4,70 @@
  * Nothing here reaches the utility bar, the command center, or the presenter console.
  */
 
+/*
+ * The typefaces the source design asks for, self-hosted in this package under
+ * SIL Open Font License 1.1. ../fonts holds the files and one <family>.OFL.txt
+ * per family, and both the packed tarball and `deckard eject theme` carry the
+ * licence wherever the binaries go.
+ *
+ * Every url is relative to this stylesheet, so a theme resolves its own fonts
+ * from node_modules, from a tarball, and from deck/theme after an eject,
+ * without the deck wiring anything up. Every family stays at the front of the
+ * system stack it replaces, so a missing file degrades rather than fails, and
+ * font-display: swap paints that stack first so a slide is never blank.
+ *
+ * latin is what an English deck downloads. latin-ext carries its own
+ * unicode-range, so a deck that sets no character in it never asks for the file.
+ */
+
+@font-face {
+  font-family: "Schibsted Grotesk";
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url("../fonts/schibsted-grotesk-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Schibsted Grotesk";
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url("../fonts/schibsted-grotesk-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url("../fonts/jetbrains-mono-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url("../fonts/jetbrains-mono-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
 .meridian-theme {
   --background: oklch(0.988 0.002 250);
   --foreground: oklch(0.205 0.012 250);
@@ -26,10 +90,14 @@
   --radius: 0.625rem;
 
   --slide-font-heading:
-    ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    "Schibsted Grotesk", ui-sans-serif, system-ui, "Segoe UI", Roboto,
+    "Helvetica Neue", sans-serif;
   --slide-font-body:
-    ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-  --slide-font-mono: var(--font-mono);
+    "Schibsted Grotesk", ui-sans-serif, system-ui, "Segoe UI", Roboto,
+    "Helvetica Neue", sans-serif;
+  --slide-font-mono:
+    "JetBrains Mono", var(--font-mono, ui-monospace), ui-monospace,
+    SFMono-Regular, Menlo, Consolas, monospace;
 
   --slide-padding-inline: 7.5rem;
   --slide-padding-block: 6.25rem;
@@ -55,6 +123,11 @@
   --slide-surface-muted: oklch(1 0 0 / 94%);
   --slide-surface-border: oklch(0.885 0.005 250);
   --slide-surface-shadow: none;
+
+  /* The soft tint the source design marks a recommendation with. It is stated
+   * rather than mixed off --primary, because the design picks a lighter chroma
+   * than a straight mix lands on. */
+  --slide-accent-soft: oklch(0.945 0.03 258);
   --slide-grid-color: oklch(0.5 0.012 250 / 8%);
   --slide-hatch: repeating-linear-gradient(
     135deg,
@@ -101,6 +174,7 @@
   --slide-surface-muted: oklch(0.28 0.012 250 / 62%);
   --slide-surface-border: oklch(0.325 0.012 250);
   --slide-surface-shadow: none;
+  --slide-accent-soft: oklch(0.315 0.055 258);
   --slide-grid-color: oklch(0.85 0.01 250 / 9%);
   --slide-rule: oklch(0.325 0.012 250);
   color-scheme: dark;
@@ -179,6 +253,26 @@
 
 .meridian-theme [data-stat-meter] {
   border-radius: 999px;
+}
+
+/* The pill is this theme's one shape note, and it is the only template that
+ * draws one. Everything the source design rounds all the way is listed here. */
+
+.meridian-theme
+:is(
+  [data-slide-badge],
+  [data-slide-quote-portrait],
+  [data-slide-timeline-marker],
+  [data-slide-accent-rule]
+) {
+  border-radius: 999px;
+}
+
+/* The headings carry this already. A quote is display type without being a
+ * heading element, so it picks it up here. */
+
+.meridian-theme [data-slide-quote-text] {
+  letter-spacing: -0.025em;
 }
 
 /* The statement slide: one flat field of the accent with the type in the page

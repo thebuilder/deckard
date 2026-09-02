@@ -32,14 +32,22 @@ highlighted table row.
 
 ## Typography
 
-One family for everything, from the system sans stack. No web font loads.
+Schibsted Grotesk for headings and body, JetBrains Mono for labels and code.
+Both are the source design's own, and both ship with the theme: `theme.css`
+declares them from `../fonts/`, so there is nothing to load in `app/layout.tsx`
+and no font host is called at render time. Both are SIL Open Font License 1.1,
+covered by `fonts/schibsted-grotesk.OFL.txt` and `fonts/jetbrains-mono.OFL.txt`.
 
-The original design used Schibsted Grotesk for headings and body and JetBrains
-Mono for labels. Schibsted is a touch narrower than the system grotesks and
-carries a lower cap height, so a headline set in it fits about a word more per
-line than what ships here. Load it in `app/layout.tsx` and put it at the front
-of `--slide-font-heading` and `--slide-font-body` if you want the original
-measure back.
+Schibsted is a touch narrower than the system grotesks and carries a lower cap
+height, so a headline set in it fits about a word more per line than a system
+stack does. That measure is the design's, and the `-0.03em` on `h1` and `h2` was
+tuned against it. It is one variable file across 400 to 900.
+
+Each family stays at the front of the system stack it replaces, so a build that
+loses a file degrades rather than fails, and `font-display: swap` paints that
+stack while the woff2 lands. An English deck downloads 78KB across the two
+files; latin-ext sits behind its own `unicode-range` and is only fetched by a
+deck that sets a character in it.
 
 | Token                      | Used by                               |
 | -------------------------- | ------------------------------------- |
@@ -160,7 +168,7 @@ What does not belong in a theme is anything that is new content rather than a
 treatment of existing content. A boot log, a status table, a cursor line with
 words in it are all slide content, so they go in a block the deck composes.
 
-Meridian is quiet here too, and reaches three parts:
+Meridian is quiet here too, and reaches six parts:
 
 - `[data-slide-breaker-index]`, the section numeral a divider carries, is held
   at the plain `--slide-title-size` in `--muted-foreground` with the theme's
@@ -172,6 +180,21 @@ Meridian is quiet here too, and reaches three parts:
   in the layout the block set.
 - `[data-stat-meter]` takes a `999px` radius, so the proportion bar under a
   figure reads as a pill rather than as a bar chart.
+- `[data-slide-badge]`, `[data-slide-quote-portrait]`,
+  `[data-slide-timeline-marker]`, and `[data-slide-accent-rule]` take the same
+  `999px`. The pill is this theme's one shape note, and this is the only one of
+  the six that draws one; every other theme leaves those four at
+  `--slide-radius`, which is how ledger keeps a portrait square.
+- `[data-slide-quote-text]` takes the `-0.025em` of tracking the headings
+  already carry. A pull quote is display type without being a heading element,
+  so the `h1, h2` rule does not reach it.
+
+`--slide-accent-soft` is set here rather than left at the contract default. The
+default mixes `--primary` to 10%, and the source design picks a lighter chroma
+than that mix lands on, so the theme states `oklch(0.945 0.03 258)` in light and
+`oklch(0.315 0.055 258)` in dark. It is the tint on the one recommended card in
+a `CardGrid` and on a highlighted `DataTable` row, and this is the only theme
+that uses cards at all.
 
 ## Deck chrome
 
