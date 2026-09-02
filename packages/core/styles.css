@@ -263,8 +263,11 @@
  * Painted by the runtime, so every deck has them:
  *
  *   [data-slide-canvas]            the 1920x1080 stage, carrying the theme
- *                                  class, the color mode, and the background
- *                                  variant name
+ *                                  class, the color mode, the background
+ *                                  variant name, and the slide layout
+ *   [data-slide-layout]            "default" or "fullscreen", which is how the
+ *                                  layout checks know a slide was handed the
+ *                                  whole canvas with the chrome out of the way
  *   [data-slide-frame]             the padded region a slide body renders in
  *   [data-slide-background]        the background layer, and the variant name
  *                                  on the canvas itself

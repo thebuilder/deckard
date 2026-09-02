@@ -201,7 +201,7 @@ export const slides: SlideDefinition[] = [
       <OpenContentSlide
         eyebrow="Stepped content"
         title="Reveal information in phases"
-        description="This slide uses `stepCount={4}` with `SlideStep` blocks."
+        description="This slide uses `stepCount={3}` with `SlideStep` blocks."
       >
         <div className="grid gap-3">
           <SlideStep step={0}>
@@ -217,20 +217,14 @@ export const slides: SlideDefinition[] = [
           </SlideStep>
 
           <SlideStep step={2}>
-            <RevealCard label="Step 3">
-              Show options and tradeoffs before deciding.
-            </RevealCard>
-          </SlideStep>
-
-          <SlideStep step={3}>
-            <RevealLandingCard label="Step 4">
+            <RevealLandingCard label="Step 3">
               Land on one recommendation and the next action.
             </RevealLandingCard>
           </SlideStep>
         </div>
       </OpenContentSlide>
     ),
-    stepCount: 4,
+    stepCount: 3,
   },
   {
     title: "Layout and Background",
@@ -321,11 +315,7 @@ Say what is missing on purpose: no heading, no lead, no panel. The slide is the 
       </OpenContentSlide>
     ),
   },
-  {
-    title: "Rollout",
-    stepCount: 3,
-    body: <RolloutSlide />,
-  },
+  { title: "Rollout", stepCount: 3, body: <RolloutSlide /> },
   ...discoveredSlides,
 ]`}
           language="typescript"

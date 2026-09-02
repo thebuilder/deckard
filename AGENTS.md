@@ -62,7 +62,7 @@ All of these run from the root.
 | `pnpm cli:build`           | builds `@deckard/core`, `@deckard/themes`, and `@deckard/cli` |
 | `pnpm deck:validate`       | deck resolves, theme is coherent, registry paths exist       |
 | `pnpm deck:doctor`         | node, package resolution, stylesheet import, deck, routes    |
-| `pnpm deck:check-overflow` | fails listing slides whose content the canvas clips          |
+| `pnpm deck:check-overflow` | fails listing slides that lose content to the canvas edge, the chrome, or a clipped box |
 | `pnpm deck:screenshots`    | one PNG per slide at canvas size, `--light` for light mode   |
 | `pnpm deck:contact-sheet`  | every screenshot in one grid image for review                |
 | `pnpm export:pdf`          | one PDF page per slide at canvas size                        |
@@ -77,6 +77,14 @@ All of these run from the root.
 slug, a moved slide module, a theme edit, a registry path. Run
 `deck:check-overflow` after changing slide content, and read a fresh
 `deck:contact-sheet` before calling a deck done.
+
+`deck:check-overflow` and the amber ring `next dev` draws share one measurement,
+`measureSlideLayout` in `packages/core/src/lib/slide-layout.ts`, exported as
+`@deckard/core/layout`. It reads the canvas edge, the header and footer bands,
+and any box inside the frame that hides its own overflow. The CLI evaluates it in
+the page from the deck's own installed `@deckard/core`, so the gate and the
+warning are literally the same code. Keep it in one place: a second copy is how
+the two start disagreeing.
 
 ## Authoring slides
 
@@ -128,7 +136,7 @@ is what generates it, so a change to that shape belongs in
 
 ## The package boundary
 
-- Apps import the runtime through the package exports only: `@deckard/core`, `/components`, `/code-block`, `/discovery`, `/next`, `/slide-from-module`, `/ui`, `/utils`, `/styles.css`, and `@deckard/themes` for the presets. Never a deep path into `packages/core/src` or `packages/themes/src`.
+- Apps import the runtime through the package exports only: `@deckard/core`, `/components`, `/code-block`, `/discovery`, `/layout`, `/next`, `/slide-from-module`, `/ui`, `/utils`, `/styles.css`, and `@deckard/themes` for the presets. Never a deep path into `packages/core/src` or `packages/themes/src`.
 - The runtime depends on the token contract, never on a preset. Presets live in `@deckard/themes`, a theme is data the deck chooses, and `packages/core` must not reference it: the dependency runs one way, `@deckard/themes` takes `SlideTheme` from `@deckard/core` as a type-only import and names it a peer, so nothing crosses at runtime. A theme's stylesheet is copied into `dist` next to its compiled module by `scripts/copy-theme-assets.ts`, which is why importing the module carries its CSS.
 - New runtime code goes in `packages/core` and gets an export. New deck content goes in `apps/playground`. If a component names the deck, a color, or a slide, it is deck content.
 - A new export means adding it to the matching index file, and a new subpath means adding it to the `exports` map in `packages/core/package.json`, where every entry points at `dist`. `packages/core/src/index.ts`, `src/components/index.ts`, and `src/ui/index.ts` are the only barrels, and biome allows barrels only there.

@@ -32,6 +32,10 @@
       "types": "./dist/components/code-block.d.ts",
       "default": "./dist/components/code-block.js"
     },
+    "./layout": {
+      "types": "./dist/lib/slide-layout.d.ts",
+      "default": "./dist/lib/slide-layout.js"
+    },
     "./discovery": {
       "types": "./dist/deck/discovery.d.ts",
       "default": "./dist/deck/discovery.js"

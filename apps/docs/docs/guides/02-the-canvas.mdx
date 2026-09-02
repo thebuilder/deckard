@@ -47,23 +47,25 @@ Outside the canvas the rules invert: the deck controls, command center, presente
 
 ## Overflow
 
-The canvas clips what does not fit. Three things tell you about it:
+A slide loses content three ways, and only one of them reaches the canvas edge. Content can run past the canvas, it can sit inside the canvas and run under the header or the footer, and it can be cut off inside a box that hides its own overflow. All three are silent, and all three are measured:
 
 <Steps>
   <Step title="Development">
-    `next dev` draws an amber outline around an overflowing slide and logs a
-    warning.
+    `next dev` draws an amber outline around the slide and logs a warning
+    naming the part, what it ran into, and by how many canvas pixels.
   </Step>
   <Step title="The overflow check">
     `deckard check-overflow` builds the deck, opens every slide, and exits
-    non-zero listing each one the canvas clips and by how much. It measures the
-    slide frame, the header, and the footer, with a 1px tolerance.
+    non-zero with the same findings. It runs the same measurement the amber
+    ring does, so the gate and the browser cannot disagree.
   </Step>
   <Step title="The contact sheet">
     `deckard screenshots` then `deckard contact-sheet` puts the whole deck in
     one grid. Nothing else catches a slide that fits but looks unfinished.
   </Step>
 </Steps>
+
+Two things are exempt, because in both the content leaves its box on purpose: anything inside a [`SlideScrollArea`](#slidescrollarea), and a slide whose `layout` is `"fullscreen"`, which is handed the whole canvas with the chrome out of the way.
 
 The usual fix is deleting a sentence, and the slide is usually better for it.
 

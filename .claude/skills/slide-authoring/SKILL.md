@@ -135,6 +135,18 @@ warning; `pnpm deck:check-overflow` fails on it. Trim the content, or wrap the
 part that has to scroll in `SlideScrollArea` from `@deckard/core/components`, so
 scrolling never steps the deck.
 
+Both of those run one measurement, and it catches three things. Content past the
+canvas edge. Content still inside the canvas but running under
+`[data-slide-header]` or over `[data-slide-footer]`, which is the failure that
+looks fine in a screenshot of the body and wrong on the slide. And a box with a
+non-visible `overflow` whose content is bigger than it is, which says nothing at
+all. Each finding names the part by its `data-slide-*` or `data-stat-*`
+attribute, so a report reads back to the block that made it.
+
+Inside a `SlideScrollArea` nothing is measured for the last two, and a
+`layout: "fullscreen"` slide is not measured against the chrome, because in both
+cases leaving the box is the point. Everywhere else, trim.
+
 Inside the canvas, style with semantic tokens (`bg-card`, `text-muted-foreground`,
 `border-border`) or slide tokens (`--slide-title-size`, `--slide-code-size`,
 `--slide-surface`, `--slide-radius`). Never a hardcoded color, and never a raw
@@ -199,5 +211,10 @@ theme edit, a registry path. It loads the real deck in about a second.
 Run `pnpm deck:check-overflow` after changing slide content, and read the
 contact sheet before calling a deck done. Screenshots build the app first and
 reuse a fresh build, so the second run is fast.
+
+A change to a type size or a theme moves what fits, so run the check in both
+color modes (`--light`) and against every theme the deck might ship with.
+Intrusion into the chrome band depends on the type scale, and a deck that clears
+the footer in one theme can run under it in another.
 
 Then the usual gates: `pnpm lint`, `pnpm typecheck`, `pnpm test`.

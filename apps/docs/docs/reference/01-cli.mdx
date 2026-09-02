@@ -30,7 +30,7 @@ deckard <command> [options]
 | [`deckard init <dir>`](#deckard-init) | Write a deck, install it, commit it, typecheck it. |
 | [`deckard validate`](#deckard-validate) | Load the deck, check its slides and its theme. |
 | [`deckard doctor`](#deckard-doctor) | Check node, the package, the stylesheet, the deck, and the routes. |
-| [`deckard check-overflow`](#deckard-check-overflow) | Fail listing the slides the canvas clips. |
+| [`deckard check-overflow`](#deckard-check-overflow) | Fail listing the slides that lose content to the canvas, the chrome, or a clipped box. |
 | [`deckard screenshots`](#deckard-screenshots) | One PNG per slide at canvas size. |
 | [`deckard contact-sheet`](#deckard-contact-sheet) | Every screenshot in one labelled grid. |
 | [`deckard export pdf`](#deckard-export-pdf) | One PDF page per slide. |
@@ -128,7 +128,17 @@ deckard check-overflow --light
 | `--skip-build` | boolean | off |
 | `--port <n>` | positive integer | `3412` |
 
-Builds the deck, serves it, and opens every slide, measuring the slide frame, the header, and the footer against the canvas with a 1px tolerance. Exits 1 listing every slide the canvas clips and by how much, naming which region overflowed.
+Builds the deck, serves it, and opens every slide, then runs three measurements over it with a 1px tolerance, in canvas pixels:
+
+- **The canvas edge.** The slide frame, the header, and the footer against the 1920x1080 canvas.
+- **The chrome band.** Nothing inside `[data-slide-frame]` may cross the top of `[data-slide-footer]` or the bottom of `[data-slide-header]`. Absolutely positioned parts are skipped, and so is a slide whose `layout` is `"fullscreen"`, where full-bleed content under the chrome is the point.
+- **Clipping.** Nothing inside the frame may hide its own overflow: a box with a non-visible `overflow` whose content is taller or wider than it is has lost that content silently.
+
+Anything inside a `SlideScrollArea` is exempt from the last two, because outgrowing its box is what a scroll area is for.
+
+Exits 1 listing every slide that loses content, naming the part by its `data-slide-*` or `data-stat-*` attribute, which band or which axis, and by how many pixels. A container and the rows it drags with it are one finding, reported against the outermost part.
+
+The measurement is `measureSlideLayout` from `@deckard/core`, which is the same function [the amber ring](/guides/the-canvas) runs in development, so this gate and `next dev` cannot disagree.
 
 ## deckard screenshots
 
