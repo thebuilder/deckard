@@ -1,0 +1,593 @@
+/*
+ * Aurora theme.
+ * Every rule is scoped to .aurora-theme, which lives on the slide canvas.
+ * Nothing here reaches the utility bar, the command center, or the presenter console.
+ */
+
+/*
+ * The typefaces the source design asks for, self-hosted in this package under
+ * SIL Open Font License 1.1. ../fonts holds the files and one <family>.OFL.txt
+ * per family, and both the packed tarball and `deckard eject theme` carry the
+ * licence wherever the binaries go.
+ *
+ * Every url is relative to this stylesheet, so a theme resolves its own fonts
+ * from node_modules, from a tarball, and from deck/theme after an eject,
+ * without the deck wiring anything up. Every family stays at the front of the
+ * system stack it replaces, so a missing file degrades rather than fails, and
+ * font-display: swap paints that stack first so a slide is never blank.
+ *
+ * latin is what an English deck downloads. latin-ext carries its own
+ * unicode-range, so a deck that sets no character in it never asks for the file.
+ */
+
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("../fonts/space-grotesk-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("../fonts/space-grotesk-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Manrope";
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url("../fonts/manrope-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Manrope";
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url("../fonts/manrope-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/ibm-plex-mono-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/ibm-plex-mono-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../fonts/ibm-plex-mono-500-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../fonts/ibm-plex-mono-500-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+.aurora-theme {
+  --background: oklch(0.985 0.006 275);
+  --foreground: oklch(0.215 0.032 275);
+  --card: oklch(0.955 0.012 275);
+  --card-foreground: oklch(0.215 0.032 275);
+  --popover: oklch(0.955 0.012 275);
+  --popover-foreground: oklch(0.215 0.032 275);
+  --primary: oklch(0.45 0.155 195);
+  --primary-foreground: oklch(0.985 0.006 195);
+  --secondary: oklch(0.905 0.02 275);
+  --secondary-foreground: oklch(0.215 0.032 275);
+  --muted: oklch(0.955 0.012 275);
+  --muted-foreground: oklch(0.495 0.028 275);
+  --accent: oklch(0.905 0.02 275);
+  --accent-foreground: oklch(0.505 0.19 300);
+  --destructive: oklch(0.53 0.2 27);
+  --border: oklch(0.885 0.016 275);
+  --input: oklch(0.885 0.016 275);
+  --ring: oklch(0.45 0.155 195);
+  --radius: 1.25rem;
+
+  --slide-font-heading:
+    "Space Grotesk", ui-sans-serif, system-ui, "Segoe UI", Roboto,
+    "Helvetica Neue", sans-serif;
+  --slide-font-body:
+    Manrope, ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue",
+    sans-serif;
+  --slide-font-mono:
+    "IBM Plex Mono", var(--font-mono, ui-monospace), ui-monospace,
+    SFMono-Regular, Menlo, Consolas, monospace;
+
+  --slide-padding-inline: 7rem;
+  --slide-padding-block: 6rem;
+  --slide-content-gap: 2.75rem;
+  --slide-item-gap: 1.5rem;
+
+  --slide-title-size: 8.25rem;
+  --slide-heading-size: 4.625rem;
+  --slide-subheading-size: 2.625rem;
+  --slide-lead-size: 2.625rem;
+  --slide-body-size: 1.9375rem;
+  --slide-code-size: 1.6875rem;
+  --slide-support-size: 1.6875rem;
+  --slide-label-size: 1.5rem;
+  --slide-label-tracking: 0.18em;
+
+  --slide-figure-size: 7.5rem;
+  --slide-figure-unit-size: 2.625rem;
+
+  --slide-radius: 1.25rem;
+  --slide-radius-lg: 1.25rem;
+  --slide-surface: var(--card);
+  --slide-surface-muted: var(--secondary);
+  --slide-surface-border: var(--border);
+  --slide-surface-shadow: none;
+  --slide-grid-color: oklch(0.45 0.03 275 / 8%);
+  --slide-rule: oklch(0.545 0.155 195 / 55%);
+  --slide-grid-size: 3rem;
+  --slide-hatch: repeating-linear-gradient(
+    120deg,
+    var(--slide-grid-color) 0 2px,
+    transparent 2px 18px
+  );
+  --slide-halo: none;
+
+  /* The lit edge under a panel and along the chrome, which is the one place
+   * the field's second colour reaches a slide that has no field. */
+  --slide-aurora-edge: oklch(0.505 0.19 300 / 42%);
+
+  --slide-chrome-foreground: var(--muted-foreground);
+  --slide-chrome-emphasis: var(--foreground);
+  --slide-chrome-border: var(--border);
+  --slide-chrome-size: 1.5rem;
+  --slide-chrome-tracking: 0.16em;
+  --slide-progress-track: var(--border);
+  --slide-progress-fill: var(--primary);
+  color-scheme: light;
+}
+
+.aurora-theme:where(.dark, .dark *):where(
+  :not([data-slide-color-mode="light"])
+),
+.aurora-theme:where([data-slide-color-mode="dark"]) {
+  --background: oklch(0.165 0.032 275);
+  --foreground: oklch(0.975 0.008 275);
+  --card: oklch(0.215 0.038 275);
+  --card-foreground: oklch(0.975 0.008 275);
+  --popover: oklch(0.215 0.038 275);
+  --popover-foreground: oklch(0.975 0.008 275);
+  --primary: oklch(0.755 0.155 195);
+  --primary-foreground: oklch(0.165 0.032 275);
+  --secondary: oklch(0.285 0.042 275);
+  --secondary-foreground: oklch(0.975 0.008 275);
+  --muted: oklch(0.215 0.038 275);
+  --muted-foreground: oklch(0.735 0.022 275);
+  --accent: oklch(0.285 0.042 275);
+  --accent-foreground: oklch(0.685 0.19 300);
+  --destructive: oklch(0.7 0.19 22);
+  --border: oklch(0.345 0.036 275);
+  --input: oklch(0.345 0.036 275);
+  --ring: oklch(0.755 0.155 195);
+
+  --slide-grid-color: oklch(0.755 0.05 275 / 10%);
+  --slide-rule: oklch(0.755 0.155 195 / 55%);
+  --slide-aurora-edge: oklch(0.685 0.19 300 / 55%);
+  color-scheme: dark;
+}
+
+.aurora-theme {
+  font-family: var(--slide-font-body);
+  font-weight: 300;
+}
+
+/* Display type is set tight and heavy against body copy that is set light, and
+ * that gap between 300 and 600 is what carries the theme where the field does
+ * not reach. */
+
+.aurora-theme :is(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--slide-font-heading);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.aurora-theme :is(h1, h2) {
+  letter-spacing: -0.035em;
+}
+
+/* Display type without a heading element around it: the metrics figure, the
+ * statement, and a pulled quote. */
+
+.aurora-theme
+:is([data-stat-value], [data-slide-statement-text], [data-slide-quote-text]) {
+  font-family: var(--slide-font-heading);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.aurora-theme :is(code, kbd, pre, samp) {
+  font-family: var(--slide-font-mono);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+/* Background variants. The runtime only renders the hook element and the variant name. */
+
+.aurora-theme .slide-background {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-color: var(--background);
+}
+
+/* Flat. A slide with no field paints one colour, so the four that carry a field
+ * are the ones the eye moves to. */
+
+.aurora-theme .slide-background[data-slide-background="grid"] {
+  background-image:
+    linear-gradient(to right, var(--slide-grid-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--slide-grid-color) 1px, transparent 1px);
+  background-size: var(--slide-grid-size) var(--slide-grid-size);
+}
+
+.aurora-theme .slide-background[data-slide-background="spotlight"] {
+  background-image: var(--slide-hatch);
+}
+
+/*
+ * The four fields.
+ *
+ * Each variant sets the three colours the shader reads off the canvas and
+ * paints a gradient of the same three underneath it. The canvas covers the
+ * gradient once WebGL is up, so the two are read as one picture: the painted
+ * half is what an audience sees while the runtime loads, on a machine with no
+ * WebGL, and after a lost context.
+ *
+ * Colours run to the top of the canvas the way they run up the shader's own
+ * coordinate space, so a curtain lands in the same half of the slide either
+ * way. Dark values are the source design's; light values are this theme's.
+ */
+
+.aurora-theme
+.slide-background:is(
+  [data-slide-background="hero"],
+  [data-slide-background="breaker"]
+) {
+  background-image: linear-gradient(
+    to top,
+    var(--slide-motion-color-1) 0%,
+    color-mix(
+        in oklab,
+        var(--slide-motion-color-3) 55%,
+        var(--slide-motion-color-1)
+      )
+      26%,
+    var(--slide-motion-color-1) 46%,
+    color-mix(
+        in oklab,
+        var(--slide-motion-color-2) 85%,
+        var(--slide-motion-color-1)
+      )
+      74%,
+    var(--slide-motion-color-1) 100%
+  );
+}
+
+.aurora-theme .slide-background[data-slide-background="statement"] {
+  background-image: linear-gradient(
+    140deg,
+    var(--slide-motion-color-1) 0%,
+    color-mix(
+        in oklab,
+        var(--slide-motion-color-2) 78%,
+        var(--slide-motion-color-1)
+      )
+      52%,
+    color-mix(
+        in oklab,
+        var(--slide-motion-color-3) 62%,
+        var(--slide-motion-color-2)
+      )
+      100%
+  );
+}
+
+.aurora-theme .slide-background[data-slide-background="closing"] {
+  background-image: linear-gradient(
+    to top,
+    var(--slide-motion-color-1) 0%,
+    var(--slide-motion-color-1) 26%,
+    color-mix(
+        in oklab,
+        var(--slide-motion-color-2) 85%,
+        var(--slide-motion-color-1)
+      )
+      50%,
+    var(--slide-motion-color-1) 66%,
+    color-mix(
+        in oklab,
+        var(--slide-motion-color-3) 45%,
+        var(--slide-motion-color-1)
+      )
+      78%,
+    var(--slide-motion-color-1) 100%
+  );
+}
+
+.aurora-theme .slide-background[data-slide-background="hero"] {
+  --slide-motion-color-1: oklch(0.975 0.008 275);
+  --slide-motion-color-2: oklch(0.86 0.075 300);
+  --slide-motion-color-3: oklch(0.885 0.07 195);
+}
+
+.aurora-theme .slide-background[data-slide-background="breaker"] {
+  --slide-motion-color-1: oklch(0.97 0.01 275);
+  --slide-motion-color-2: oklch(0.83 0.09 300);
+  --slide-motion-color-3: oklch(0.87 0.075 195);
+}
+
+.aurora-theme .slide-background[data-slide-background="statement"] {
+  --slide-motion-color-1: oklch(0.975 0.008 275);
+  --slide-motion-color-2: oklch(0.9 0.05 275);
+  --slide-motion-color-3: oklch(0.87 0.06 240);
+}
+
+.aurora-theme .slide-background[data-slide-background="closing"] {
+  --slide-motion-color-1: oklch(0.975 0.008 275);
+  --slide-motion-color-2: oklch(0.875 0.07 275);
+  --slide-motion-color-3: oklch(0.885 0.07 195);
+}
+
+.aurora-theme:where(.dark, .dark *):where(:not([data-slide-color-mode="light"]))
+  .slide-background[data-slide-background="hero"],
+.aurora-theme:where([data-slide-color-mode="dark"])
+  .slide-background[data-slide-background="hero"] {
+  --slide-motion-color-1: #0a0d1f;
+  --slide-motion-color-2: #3a2f86;
+  --slide-motion-color-3: #1c7c96;
+}
+
+.aurora-theme:where(.dark, .dark *):where(:not([data-slide-color-mode="light"]))
+  .slide-background[data-slide-background="breaker"],
+.aurora-theme:where([data-slide-color-mode="dark"])
+  .slide-background[data-slide-background="breaker"] {
+  --slide-motion-color-1: #0d1130;
+  --slide-motion-color-2: #5c2f92;
+  --slide-motion-color-3: #1c8fa0;
+}
+
+.aurora-theme:where(.dark, .dark *):where(:not([data-slide-color-mode="light"]))
+  .slide-background[data-slide-background="statement"],
+.aurora-theme:where([data-slide-color-mode="dark"])
+  .slide-background[data-slide-background="statement"] {
+  --slide-motion-color-1: #0b0f24;
+  --slide-motion-color-2: #232a63;
+  --slide-motion-color-3: #3f7fa6;
+}
+
+.aurora-theme:where(.dark, .dark *):where(:not([data-slide-color-mode="light"]))
+  .slide-background[data-slide-background="closing"],
+.aurora-theme:where([data-slide-color-mode="dark"])
+  .slide-background[data-slide-background="closing"] {
+  --slide-motion-color-1: #0a0d1f;
+  --slide-motion-color-2: #2f3f96;
+  --slide-motion-color-3: #1c8fa0;
+}
+
+/* A slide over a field carries no panel, so the chrome and the copy sit on the
+ * paint. The ink is the deck's own either way: the fields are dark in dark mode
+ * and pale in light, which is what keeps the same header readable on both. */
+
+.aurora-theme:is(
+  [data-slide-background="hero"],
+  [data-slide-background="breaker"],
+  [data-slide-background="statement"],
+  [data-slide-background="closing"]
+) {
+  --slide-chrome-border: color-mix(
+    in oklab,
+    var(--foreground) 18%,
+    transparent
+  );
+  --slide-progress-track: color-mix(
+    in oklab,
+    var(--foreground) 18%,
+    transparent
+  );
+}
+
+/* Block parts. */
+
+.aurora-theme [data-slide-breaker-index] {
+  font-family: var(--slide-font-heading);
+  font-size: calc(var(--slide-title-size) * 1.5);
+  font-weight: 600;
+  line-height: 0.85;
+  color: color-mix(in oklab, var(--primary) 70%, transparent);
+  letter-spacing: -0.045em;
+}
+
+.aurora-theme
+  :is(
+    [data-slide-hero-meta],
+    [data-slide-contents-index],
+    [data-slide-column-index],
+    [data-slide-note-index],
+    [data-slide-rail-term],
+    [data-slide-statement-source],
+    [data-slide-table-heading],
+    [data-slide-log-status],
+    [data-slide-list-marker],
+    [data-stat-unit]
+  ) {
+  font-family: var(--slide-font-mono);
+  font-weight: 400;
+  letter-spacing: 0.06em;
+}
+
+/* The emphasised surface: the panel a content slide frames its body in, lit
+ * from the top left corner the way the source design lights it. Every other
+ * surface stays flat, so one box per slide is the raised one. */
+
+.aurora-theme [data-slide-panel] {
+  background-image: linear-gradient(
+    120deg,
+    var(--secondary),
+    var(--slide-surface)
+  );
+  border-color: var(--slide-surface-border);
+}
+
+.aurora-theme [data-slide-accent-rule] {
+  background-color: var(--slide-aurora-edge);
+}
+
+.aurora-theme [data-slide-badge] {
+  border-color: var(--slide-aurora-edge);
+}
+
+.aurora-theme [data-stat-meter] {
+  border-color: color-mix(in oklab, var(--primary) 55%, transparent);
+}
+
+.aurora-theme
+  :is(
+    [data-slide-column],
+    [data-slide-contents],
+    [data-slide-log],
+    [data-slide-rail]
+  ) {
+  border-block-start-color: var(--slide-aurora-edge);
+}
+
+/* The statement slide: the canvas floods with the accent and the ink flips.
+ * The field colour is read on the canvas and the ink is remapped one level
+ * down: a custom property resolves against the element that uses it, so
+ * remapping --primary here would flood the slide with its own ink. */
+
+.aurora-theme[data-slide-background="accent"] {
+  --background: var(--primary);
+  --foreground: var(--primary-foreground);
+  --slide-halo: none;
+  --slide-scanline: none;
+  --slide-hatch: none;
+}
+
+.aurora-theme[data-slide-background="accent"]
+  :is([data-slide-frame], [data-slide-header], [data-slide-footer]) {
+  --primary: var(--primary-foreground);
+  --muted-foreground: color-mix(
+    in oklab,
+    var(--primary-foreground) 74%,
+    transparent
+  );
+  --slide-surface: transparent;
+  --slide-surface-muted: color-mix(
+    in oklab,
+    var(--primary-foreground) 12%,
+    transparent
+  );
+  --slide-surface-border: color-mix(
+    in oklab,
+    var(--primary-foreground) 38%,
+    transparent
+  );
+  --slide-aurora-edge: color-mix(
+    in oklab,
+    var(--primary-foreground) 45%,
+    transparent
+  );
+  --slide-chrome-foreground: color-mix(
+    in oklab,
+    var(--primary-foreground) 72%,
+    transparent
+  );
+  --slide-chrome-emphasis: var(--primary-foreground);
+  --slide-chrome-border: color-mix(
+    in oklab,
+    var(--primary-foreground) 32%,
+    transparent
+  );
+  --slide-progress-track: color-mix(
+    in oklab,
+    var(--primary-foreground) 32%,
+    transparent
+  );
+  --slide-progress-fill: var(--primary-foreground);
+}
+
+/* Deck chrome. One thin band of mono at the top and the bottom, tracked out and
+ * left in the muted ink, so it reads as a caption on the field rather than a
+ * second heading. */
+
+.aurora-theme :is([data-slide-header], [data-slide-footer]) {
+  font-family: var(--slide-font-mono);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: var(--slide-chrome-tracking);
+}
+
+.aurora-theme [data-slide-header-brand] {
+  color: var(--slide-chrome-emphasis);
+}
+
+.aurora-theme [data-slide-header-meta] {
+  color: color-mix(in oklab, var(--slide-chrome-foreground) 80%, transparent);
+}
+
+.aurora-theme [data-slide-counter-current] {
+  color: var(--primary);
+}
+
+.aurora-theme [data-slide-progress] {
+  inset-block: auto 0;
+  height: 2px;
+}
