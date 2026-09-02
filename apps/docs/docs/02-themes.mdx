@@ -29,6 +29,18 @@ The quietest theme here. A near-white blue-gray in light mode and a cool near-bl
 
 <ThemePalette theme="meridian" />
 
+## aurora
+
+`defaultColorMode: "dark"`, both modes.
+
+A live field behind the slides that open, break, state, and close a deck. Four background variants paint in a WebGL canvas rather than in CSS: `hero` and `breaker` take banded curtains, `closing` an undulating band, and `statement` a soft noise wash. Under every canvas the theme paints a gradient of the same three colours, and that gradient is the slide while the runtime loads, on a machine with no WebGL, and after a lost context. Reduced motion, a capture, and the presenter preview each hold the field on one fixed frame, so two screenshots of a slide are the same image.
+
+Dark is home. Light mode carries its own field colours rather than the dark ones lightened, and both sets sit in `theme.css` beside the rest of the paint. Body copy runs light in Manrope under tightly tracked Space Grotesk display type.
+
+The aurora card in the gallery is showing that painted gradient. The gallery renders slide markup and no runtime, so the card carries the `hero` variant's fallback rather than a canvas.
+
+<ThemePalette theme="aurora" />
+
 ## ledger
 
 `defaultColorMode: "system"`, both modes.

@@ -5,7 +5,16 @@ import { defaultThemeId, themes } from "@deckard/themes"
 import { resolveRepoFile } from "./repo-file"
 
 export type ColorMode = "light" | "dark"
-export type BackgroundVariant = "default" | "grid" | "spotlight" | "none"
+// The variants every theme paints, plus the ones a card names for itself. A
+// theme may declare its own, and aurora's "hero" is one a card asks for: the
+// gallery renders no motion canvas, so the card shows the gradient that theme
+// paints under the field.
+export type BackgroundVariant =
+  | "default"
+  | "grid"
+  | "hero"
+  | "none"
+  | "spotlight"
 export type PreviewLayout = "breaker" | "bullets" | "figures" | "hero" | "panel"
 
 export interface PreviewFigure {
@@ -41,6 +50,11 @@ export interface GalleryCopy {
 }
 
 const galleryCopy = {
+  aurora: {
+    background: "hero",
+    summary:
+      "A live field behind the openers and the close, frozen to capture.",
+  },
   ledger: {
     background: "grid",
     summary: "A bound report. Serif, sans, and mono, each with one job.",

@@ -101,6 +101,23 @@ const families: FontFamily[] = [
   {
     faces: [
       {
+        file: "manrope-latin.woff2",
+        url: "https://fonts.gstatic.com/s/manrope/v20/xn7gYHE41ni1AdIRggexSvfedN4.woff2",
+      },
+      {
+        file: "manrope-latin-ext.woff2",
+        url: "https://fonts.gstatic.com/s/manrope/v20/xn7gYHE41ni1AdIRggmxSvfedN62Zw.woff2",
+      },
+    ],
+    family: "Manrope",
+    licence:
+      "https://raw.githubusercontent.com/google/fonts/main/ofl/manrope/OFL.txt",
+    slug: "manrope",
+    version: "v20",
+  },
+  {
+    faces: [
+      {
         file: "orbitron-latin.woff2",
         url: "https://fonts.gstatic.com/s/orbitron/v35/yMJRMIlzdpvBhQQL_Qq7dy1biN15.woff2",
       },
@@ -169,6 +186,23 @@ const families: FontFamily[] = [
       "https://raw.githubusercontent.com/google/fonts/main/ofl/sourceserif4/OFL.txt",
     slug: "source-serif-4",
     version: "v14",
+  },
+  {
+    faces: [
+      {
+        file: "space-grotesk-latin.woff2",
+        url: "https://fonts.gstatic.com/s/spacegrotesk/v22/V8mDoQDjQSkFtoMM3T6r8E7mPbF4C_k3HqU.woff2",
+      },
+      {
+        file: "space-grotesk-latin-ext.woff2",
+        url: "https://fonts.gstatic.com/s/spacegrotesk/v22/V8mDoQDjQSkFtoMM3T6r8E7mPb94C_k3HqUtEw.woff2",
+      },
+    ],
+    family: "Space Grotesk",
+    licence:
+      "https://raw.githubusercontent.com/google/fonts/main/ofl/spacegrotesk/OFL.txt",
+    slug: "space-grotesk",
+    version: "v22",
   },
 ]
 
