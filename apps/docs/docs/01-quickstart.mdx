@@ -20,7 +20,7 @@ sidebar:
     npx @deckard/cli init my-talk
     ```
 
-    `init` uses whichever package manager invoked it. Through `npx` that is npm, through `pnpm dlx` it is pnpm, and it records the choice in the generated `package.json` under `packageManager`, so every later `deckard` command reads that field instead of guessing.
+    `init` installs with whichever package manager invoked it. Through `npx` that is npm, through `pnpm dlx` it is pnpm. It writes no `packageManager` field, so the deck is not locked to that choice, and later `deckard` commands read the lockfile.
 
   </Step>
   <Step title="Start the dev server">
@@ -75,7 +75,7 @@ The theme is not a file. `init` writes it as an import from `@deckard/themes` in
 | `--package-manager <name>` | detected | `bun`, `npm`, `pnpm`, or `yarn`. |
 | `--no-install` | install runs | Write the files and stop. Skips the typecheck too. |
 | `--no-git` | git runs | Skip `git init` and the first commit. |
-| `--registry <url>` | `http://localhost:3001/r/{name}.json` | The `@deckard` registry written into `components.json`. |
+| `--registry <url>` | `https://deckard.thebuilder.dk/r/{name}.json` | The `@deckard` registry written into `components.json`. |
 | `--core-tarball <path>` | `^<cli version>` | Install `@deckard/core` from a local tarball. |
 | `--themes-tarball <path>` | `^<cli version>` | Same, for `@deckard/themes`. |
 | `--cli-tarball <path>` | `^<cli version>` | Same, for `@deckard/cli`. |
@@ -100,7 +100,7 @@ node packages/cli/bin/deckard.mjs init ~/code/my-talk \
 
 The generated app is identical either way. When the packages publish, `npx @deckard/cli init` becomes the whole install and nothing in the app changes.
 
-The blocks are not affected by any of this. `init` ships them inside the CLI package and copies them in, because a brand-new app has no shadcn config yet and the registry has no public host. Adding a block *later* does need a registry, which today means the Deckard docs site running locally on port 3001. See [Blocks and the registry](/guides/blocks-and-the-registry).
+The blocks are not affected by any of this. `init` ships them inside the CLI package and copies them in, because a brand-new app has no shadcn config yet. Adding a block later fetches from the registry the docs site serves. See [Blocks and the registry](/guides/blocks-and-the-registry).
 
 ## Adding a deck to an app you already have
 
