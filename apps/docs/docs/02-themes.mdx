@@ -40,6 +40,13 @@ Dark is home. Light mode carries its own field colours rather than the dark ones
 The aurora card in the gallery is showing that painted gradient. The gallery renders slide markup and no runtime, so the card carries the `hero` variant's fallback rather than a canvas.
 
 <ThemePalette theme="aurora" />
+## blueprint
+
+`defaultColorMode: "dark"`, both modes.
+
+A drafting sheet. The background variant that carries the theme is `grid`, which draws a cell pitch and a division pitch over each other from the same corner. Nothing is rounded and nothing is tinted: a section number sits boxed in three strokes of the accent, a card grid is butted together over a field of the line colour so the gutters read as drawn divisions, and an opener's meta row becomes the title block along the foot of the sheet. Body copy runs a weight under regular in both modes, which is what keeps a slide reading as a drawing rather than as a web page.
+
+<ThemePalette theme="blueprint" />
 
 ## ledger
 
@@ -64,6 +71,14 @@ A flight console. Dark is home. Every heading is capitalised with a hair of posi
 A green CRT. One monospace family for every word on the slide, scanlines painted across every background variant, and a phosphor bloom on display headings. It also runs a thinner status bar than the rest, taking `--slide-footer-space` below the contract default, which hands the space back to the slide. Light mode turns the tube off, for handouts and for printing.
 
 <ThemePalette theme="phosphor" />
+
+## quorum
+
+`defaultColorMode: "light"`, both modes.
+
+A board pack. A short type scale inside a short frame, which is what lets a segment table and a five-figure band sit on one slide without shrinking. Figures and pull quotes are set in a serif and everything else in the sans, so a number being reported reads differently from a number being described. Cards hang off a stroke on their leading edge rather than sitting in a box. `background: "accent"` inverts the sheet rather than flooding it with the accent, in both colour modes.
+
+<ThemePalette theme="quorum" />
 
 ## About the swatches
 

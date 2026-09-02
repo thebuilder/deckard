@@ -4,10 +4,12 @@
 // it, or ./index stops compiling.
 export const themeIds = [
   "aurora",
+  "blueprint",
   "ledger",
   "meridian",
   "nexus",
   "phosphor",
+  "quorum",
 ] as const
 
 export type BuiltInThemeId = (typeof themeIds)[number]

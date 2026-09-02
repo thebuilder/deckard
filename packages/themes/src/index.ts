@@ -1,27 +1,33 @@
 import type { SlideTheme } from "@deckard/core"
 
 import { aurora } from "./aurora/index"
+import { blueprint } from "./blueprint/index"
 import { type BuiltInThemeId, themeIds } from "./ids"
 import { ledger } from "./ledger/index"
 import { meridian } from "./meridian/index"
 import { nexus } from "./nexus/index"
 import { phosphor } from "./phosphor/index"
+import { quorum } from "./quorum/index"
 
 export { aurora } from "./aurora/index"
+export { blueprint } from "./blueprint/index"
 export { type BuiltInThemeId, defaultThemeId, themeIds } from "./ids"
 export { ledger } from "./ledger/index"
 export { meridian } from "./meridian/index"
 export { nexus } from "./nexus/index"
 export { phosphor } from "./phosphor/index"
+export { quorum } from "./quorum/index"
 
 // Keyed by id, so a theme named in ./ids with no module here, or a module here
 // with no id there, is a type error rather than a gap someone finds later.
 const themeById = {
   aurora,
+  blueprint,
   ledger,
   meridian,
   nexus,
   phosphor,
+  quorum,
 } satisfies Record<BuiltInThemeId, SlideTheme>
 
 /**

@@ -54,6 +54,10 @@ const galleryCopy = {
     background: "hero",
     summary:
       "A live field behind the openers and the close, frozen to capture.",
+  blueprint: {
+    background: "grid",
+    summary:
+      "A drafting sheet. A ruled field, boxed numerals, hairline gutters.",
   },
   ledger: {
     background: "grid",
@@ -70,6 +74,10 @@ const galleryCopy = {
   phosphor: {
     background: "spotlight",
     summary: "A green CRT. Monospace everywhere, scanlines, a heading bloom.",
+  },
+  quorum: {
+    background: "default",
+    summary: "A board pack. A tight scale, serif figures, no boxed cards.",
   },
 } satisfies Record<string, GalleryCopy>
 
