@@ -32,13 +32,47 @@ interface FontFamily {
 // latin-ext, requested without the optical size axis where that axis costs more
 // than it earns: Source Serif 4 drops from 122KB to 51KB without it.
 //
-// One directory for seven families, because two themes share JetBrains Mono and
-// two share IBM Plex Mono, and a deck should download one copy either way. Only
-// the faces a theme's stylesheet names are ever fetched by a browser.
+// One directory for every family, because several themes share a family and a
+// deck should download one copy either way. Only the faces a theme's stylesheet
+// names are ever fetched by a browser.
 //
 // Re-run this after bumping a version, then commit the woff2 files. Nothing
 // calls a font host at render time.
 const families: FontFamily[] = [
+  {
+    faces: [
+      {
+        file: "azeret-mono-latin.woff2",
+        url: "https://fonts.gstatic.com/s/azeretmono/v21/3XFuErsiyJsY9O_Gepph-HHhZfn23vRK.woff2",
+      },
+      {
+        file: "azeret-mono-latin-ext.woff2",
+        url: "https://fonts.gstatic.com/s/azeretmono/v21/3XFuErsiyJsY9O_Gepph-HHvZfn23vRKV0U.woff2",
+      },
+    ],
+    family: "Azeret Mono",
+    licence:
+      "https://raw.githubusercontent.com/google/fonts/main/ofl/azeretmono/OFL.txt",
+    slug: "azeret-mono",
+    version: "v21",
+  },
+  {
+    faces: [
+      {
+        file: "chivo-latin.woff2",
+        url: "https://fonts.gstatic.com/s/chivo/v21/va9I4kzIxd1KFrBoQeNVkqDO.woff2",
+      },
+      {
+        file: "chivo-latin-ext.woff2",
+        url: "https://fonts.gstatic.com/s/chivo/v21/va9I4kzIxd1KFrBmQeNVkqDOeTY.woff2",
+      },
+    ],
+    family: "Chivo",
+    licence:
+      "https://raw.githubusercontent.com/google/fonts/main/ofl/chivo/OFL.txt",
+    slug: "chivo",
+    version: "v21",
+  },
   {
     faces: [
       {
@@ -80,6 +114,31 @@ const families: FontFamily[] = [
       "https://raw.githubusercontent.com/google/fonts/main/ofl/ibmplexsans/OFL.txt",
     slug: "ibm-plex-sans",
     version: "v23",
+  },
+  {
+    faces: [
+      {
+        file: "ibm-plex-serif-latin.woff2",
+        url: "https://fonts.gstatic.com/s/ibmplexserif/v20/jizDREVNn1dOx-zrZ2X3pZvkTiUf2zcZiVbJ.woff2",
+      },
+      {
+        file: "ibm-plex-serif-latin-ext.woff2",
+        url: "https://fonts.gstatic.com/s/ibmplexserif/v20/jizDREVNn1dOx-zrZ2X3pZvkTiUR2zcZiVbJsNo.woff2",
+      },
+      {
+        file: "ibm-plex-serif-600-latin.woff2",
+        url: "https://fonts.gstatic.com/s/ibmplexserif/v20/jizAREVNn1dOx-zrZ2X3pZvkTi3A_yI0q1vjitOh.woff2",
+      },
+      {
+        file: "ibm-plex-serif-600-latin-ext.woff2",
+        url: "https://fonts.gstatic.com/s/ibmplexserif/v20/jizAREVNn1dOx-zrZ2X3pZvkTi3A_yI6q1vjitOh3oc.woff2",
+      },
+    ],
+    family: "IBM Plex Serif",
+    licence:
+      "https://raw.githubusercontent.com/google/fonts/main/ofl/ibmplexserif/OFL.txt",
+    slug: "ibm-plex-serif",
+    version: "v20",
   },
   {
     faces: [

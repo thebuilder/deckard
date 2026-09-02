@@ -1,0 +1,450 @@
+/*
+ * Blueprint theme.
+ * Every rule is scoped to .blueprint-theme, which lives on the slide canvas.
+ * Nothing here reaches the utility bar, the command center, or the presenter console.
+ */
+
+/*
+ * The typefaces the source design asks for, self-hosted in this package under
+ * SIL Open Font License 1.1. ../fonts holds the files and one <family>.OFL.txt
+ * per family, and both the packed tarball and `deckard eject theme` carry the
+ * licence wherever the binaries go.
+ *
+ * Every url is relative to this stylesheet, so a theme resolves its own fonts
+ * from node_modules, from a tarball, and from deck/theme after an eject,
+ * without the deck wiring anything up. Every family stays at the front of the
+ * system stack it replaces, so a missing file degrades rather than fails, and
+ * font-display: swap paints that stack first so a slide is never blank.
+ *
+ * latin is what an English deck downloads. latin-ext carries its own
+ * unicode-range, so a deck that sets no character in it never asks for the file.
+ */
+
+@font-face {
+  font-family: Chivo;
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url("../fonts/chivo-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: Chivo;
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url("../fonts/chivo-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Azeret Mono";
+  font-style: normal;
+  font-weight: 400 500;
+  font-display: swap;
+  src: url("../fonts/azeret-mono-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Azeret Mono";
+  font-style: normal;
+  font-weight: 400 500;
+  font-display: swap;
+  src: url("../fonts/azeret-mono-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+.blueprint-theme {
+  --background: oklch(0.985 0.006 240);
+  --foreground: oklch(0.235 0.036 245);
+  --card: oklch(0.955 0.012 240);
+  --card-foreground: oklch(0.235 0.036 245);
+  --popover: oklch(0.955 0.012 240);
+  --popover-foreground: oklch(0.235 0.036 245);
+  --primary: oklch(0.505 0.135 235);
+  --primary-foreground: oklch(0.985 0.006 235);
+  --secondary: oklch(0.915 0.02 240);
+  --secondary-foreground: oklch(0.235 0.036 245);
+  --muted: oklch(0.955 0.012 240);
+  --muted-foreground: oklch(0.505 0.03 245);
+  --accent: oklch(0.915 0.02 240);
+  --accent-foreground: oklch(0.375 0.115 235);
+  --destructive: oklch(0.545 0.19 27);
+  --border: oklch(0.855 0.024 240);
+  --input: oklch(0.855 0.024 240);
+  --ring: oklch(0.505 0.135 235);
+  --radius: 0;
+
+  --slide-font-heading:
+    Chivo, ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue",
+    sans-serif;
+  --slide-font-body:
+    Chivo, ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue",
+    sans-serif;
+  --slide-font-mono:
+    "Azeret Mono", var(--font-mono, ui-monospace), ui-monospace, SFMono-Regular,
+    Menlo, Consolas, monospace;
+
+  --slide-padding-inline: 6rem;
+  --slide-padding-block: 5rem;
+  --slide-content-gap: 2.5rem;
+  --slide-item-gap: 1.375rem;
+  --slide-rail-size: 17.5rem;
+
+  --slide-title-size: 7.25rem;
+  --slide-heading-size: 4.125rem;
+  --slide-subheading-size: 2.5rem;
+  --slide-lead-size: 2.5rem;
+  --slide-body-size: 1.875rem;
+  --slide-code-size: 1.625rem;
+  --slide-support-size: 1.625rem;
+  --slide-label-size: 1.5rem;
+  --slide-label-tracking: 0.2em;
+
+  --slide-figure-size: 7.5rem;
+  --slide-figure-unit-size: 2.75rem;
+
+  --slide-radius: 0;
+  --slide-radius-lg: 0;
+  --slide-surface: oklch(0.955 0.012 240);
+  --slide-surface-muted: oklch(0.955 0.012 240);
+  --slide-surface-border: oklch(0.855 0.024 240);
+  --slide-surface-shadow: none;
+  --slide-accent-soft: color-mix(in oklab, var(--primary) 12%, transparent);
+
+  /* The drafting field. Two pitches rather than one: a cell in
+   * --slide-grid-color with a division five cells wide in --slide-grid-major
+   * over it, which is what separates a sheet from graph paper. */
+  --slide-grid-color: oklch(0.35 0.08 245 / 9%);
+  --slide-grid-major: oklch(0.35 0.08 245 / 18%);
+  --slide-grid-size: 3.75rem;
+  --slide-rule: oklch(0.855 0.024 240);
+  --slide-halo: none;
+
+  --slide-chrome-foreground: var(--muted-foreground);
+  --slide-chrome-emphasis: var(--foreground);
+  --slide-chrome-border: var(--border);
+  --slide-chrome-size: 1.5rem;
+  --slide-chrome-tracking: 0.14em;
+  --slide-progress-track: var(--slide-grid-major);
+  --slide-progress-fill: var(--primary);
+  color-scheme: light;
+}
+
+.blueprint-theme:where(.dark, .dark *):where(
+  :not([data-slide-color-mode="light"])
+),
+.blueprint-theme:where([data-slide-color-mode="dark"]) {
+  --background: oklch(0.185 0.032 245);
+  --foreground: oklch(0.965 0.012 220);
+  --card: oklch(0.235 0.036 245);
+  --card-foreground: oklch(0.965 0.012 220);
+  --popover: oklch(0.235 0.036 245);
+  --popover-foreground: oklch(0.965 0.012 220);
+  --primary: oklch(0.795 0.135 205);
+  --primary-foreground: oklch(0.175 0.03 205);
+  --secondary: oklch(0.295 0.038 245);
+  --secondary-foreground: oklch(0.965 0.012 220);
+  --muted: oklch(0.235 0.036 245);
+  --muted-foreground: oklch(0.735 0.024 220);
+  --accent: oklch(0.295 0.038 245);
+  --accent-foreground: oklch(0.855 0.11 205);
+  --destructive: oklch(0.7 0.19 22);
+  --border: oklch(0.375 0.04 240);
+  --input: oklch(0.375 0.04 240);
+  --ring: oklch(0.795 0.135 205);
+
+  --slide-surface: oklch(0.235 0.036 245);
+  --slide-surface-muted: oklch(0.235 0.036 245);
+  --slide-surface-border: oklch(0.375 0.04 240);
+  --slide-surface-shadow: none;
+  --slide-grid-color: oklch(0.995 0.02 220 / 7%);
+  --slide-grid-major: oklch(0.995 0.02 220 / 14%);
+  --slide-rule: oklch(0.375 0.04 240);
+  color-scheme: dark;
+}
+
+/* The sheet is drawn at weight 300 and the type carries the rest. Every
+ * heading and label sets its own weight, and a direct declaration beats an
+ * inherited one, so they keep it. */
+
+.blueprint-theme {
+  font-family: var(--slide-font-body);
+  font-weight: 300;
+}
+
+.blueprint-theme :is(h1, h2) {
+  font-family: var(--slide-font-heading);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.blueprint-theme :is(h3, h4, h5, h6) {
+  font-family: var(--slide-font-heading);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.blueprint-theme :is(code, kbd, pre, samp) {
+  font-family: var(--slide-font-mono);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+/* Background variants. The runtime only renders the hook element and the variant name. */
+
+.blueprint-theme .slide-background {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-color: var(--background);
+}
+
+/* The sheet the theme is named for: the cell grid and the division grid over
+ * each other, both drawn from the top left corner so the divisions land on a
+ * cell line. */
+
+.blueprint-theme .slide-background[data-slide-background="grid"] {
+  background-image:
+    linear-gradient(to right, var(--slide-grid-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--slide-grid-color) 1px, transparent 1px),
+    linear-gradient(to right, var(--slide-grid-major) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--slide-grid-major) 1px, transparent 1px);
+  background-size:
+    var(--slide-grid-size) var(--slide-grid-size),
+    var(--slide-grid-size) var(--slide-grid-size),
+    calc(var(--slide-grid-size) * 5) calc(var(--slide-grid-size) * 5),
+    calc(var(--slide-grid-size) * 5) calc(var(--slide-grid-size) * 5);
+}
+
+/* The drawing plate: the tighter cell grid alone on the second sheet colour,
+ * which is what the source design puts a render or a section view on. */
+
+.blueprint-theme .slide-background[data-slide-background="spotlight"] {
+  background-color: var(--card);
+  background-image:
+    linear-gradient(to right, var(--slide-grid-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--slide-grid-color) 1px, transparent 1px);
+  background-size: calc(var(--slide-grid-size) * 0.8)
+    calc(var(--slide-grid-size) * 0.8);
+}
+
+/* Block parts. */
+
+/* The section number, boxed the way a drawing numbers a detail: a square in
+ * three strokes of the accent with the numeral centred in it. */
+
+.blueprint-theme [data-slide-breaker-index] {
+  display: grid;
+  place-items: center;
+  align-self: start;
+  inline-size: 9.5rem;
+  aspect-ratio: 1;
+  font-family: var(--slide-font-mono);
+  font-size: 4.5rem;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0;
+  border: 3px solid var(--primary);
+}
+
+/* The title block along the bottom of an opener: the accent stroke that opens
+ * a drawing's own title block, over a panel in the second sheet colour. */
+
+.blueprint-theme [data-slide-hero-meta] {
+  padding: 1.375rem 1.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  background-color: var(--card);
+  border: 1px solid var(--slide-surface-border);
+  border-block-start: 3px solid var(--primary);
+}
+
+/* A rule opens a group, and a heavy one in the ink colour opens the group the
+ * slide is about. No cards anywhere but the grids below. */
+
+.blueprint-theme
+:is(
+  [data-slide-columns] [data-slide-column],
+  [data-slide-contents],
+  [data-slide-log],
+  [data-slide-rail],
+  [data-stat-item]
+) {
+  border-block-start-color: var(--foreground);
+}
+
+.blueprint-theme [data-slide-list] {
+  border-block-start: 2px solid var(--foreground);
+}
+
+/* Reference numbers, not counters: mono, at the accent, with the tracking off
+ * so a part number reads as one string. */
+
+.blueprint-theme
+:is(
+  [data-slide-list-marker],
+  [data-slide-timeline-date],
+  [data-slide-rail-term],
+  [data-slide-card-label],
+  [data-slide-column-label]
+) {
+  font-family: var(--slide-font-mono);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+}
+
+.blueprint-theme :is([data-slide-list-marker], [data-slide-card-label]) {
+  text-transform: none;
+}
+
+/* The grids the source design rules rather than spaces: cards butted together
+ * over a field of the line colour, so the gutter reads as a drawn division. */
+
+.blueprint-theme [data-slide-grid] {
+  gap: 2px;
+  background-color: var(--slide-surface-border);
+  border: 1px solid var(--slide-surface-border);
+}
+
+.blueprint-theme [data-slide-card] {
+  padding: 2.75rem;
+  background-color: var(--background);
+  border: 0;
+}
+
+/* The one card a deck is arguing for takes a stroke across its head rather
+ * than a tint, which is how a drawing marks the option it recommends. */
+
+.blueprint-theme [data-slide-card-accent] {
+  background-color: var(--background);
+  border-block-start: 4px solid var(--primary);
+}
+
+/* The statement rule, drawn as a dimension line: a filled square where it
+ * starts, then a hairline the width of the measure. */
+
+.blueprint-theme [data-slide-statement] [data-slide-accent-rule] {
+  position: relative;
+  inline-size: 100%;
+  max-inline-size: 1560px;
+  block-size: 1px;
+}
+
+.blueprint-theme [data-slide-statement] [data-slide-accent-rule]::before {
+  position: absolute;
+  inset-block-start: -0.4375rem;
+  inset-inline-start: 0;
+  width: 0.875rem;
+  height: 0.875rem;
+  content: "";
+  background-color: var(--primary);
+}
+
+.blueprint-theme [data-slide-badge] {
+  font-family: var(--slide-font-mono);
+  border-color: var(--primary);
+}
+
+.blueprint-theme [data-stat-value] {
+  letter-spacing: -0.03em;
+}
+
+.blueprint-theme [data-slide-quote-text] {
+  font-weight: 500;
+  letter-spacing: -0.025em;
+}
+
+.blueprint-theme [data-slide-table-head] {
+  font-family: var(--slide-font-mono);
+}
+
+/* The statement slide: one flat field of the accent with the type in the sheet
+ * colour, the grid off, because a field is not a sheet.
+ * The field colour is read on the canvas and the ink is remapped one level
+ * down: a custom property resolves against the element that uses it, so
+ * remapping --primary here would flood the slide with its own ink. */
+
+.blueprint-theme[data-slide-background="accent"] {
+  --background: var(--primary);
+  --foreground: var(--primary-foreground);
+  --slide-halo: none;
+  --slide-scanline: none;
+  --slide-hatch: none;
+}
+
+.blueprint-theme[data-slide-background="accent"]
+  :is([data-slide-frame], [data-slide-header], [data-slide-footer]) {
+  --primary: var(--primary-foreground);
+  --muted-foreground: color-mix(
+    in oklab,
+    var(--primary-foreground) 72%,
+    transparent
+  );
+  --slide-surface: transparent;
+  --slide-surface-muted: color-mix(
+    in oklab,
+    var(--primary-foreground) 12%,
+    transparent
+  );
+  --slide-surface-border: color-mix(
+    in oklab,
+    var(--primary-foreground) 38%,
+    transparent
+  );
+  --slide-chrome-foreground: color-mix(
+    in oklab,
+    var(--primary-foreground) 72%,
+    transparent
+  );
+  --slide-chrome-emphasis: var(--primary-foreground);
+  --slide-chrome-border: color-mix(
+    in oklab,
+    var(--primary-foreground) 32%,
+    transparent
+  );
+  --slide-progress-fill: var(--primary-foreground);
+}
+
+/* Deck chrome. The drawing's own margin notes: mono, capitals, ruled off, with
+ * the drawing number and the sheet at opposite ends of the band. */
+
+.blueprint-theme :is([data-slide-header], [data-slide-footer]) {
+  font-family: var(--slide-font-mono);
+  text-transform: uppercase;
+  letter-spacing: var(--slide-chrome-tracking);
+}
+
+.blueprint-theme [data-slide-header-brand] {
+  font-weight: 500;
+  color: var(--primary);
+}
+
+.blueprint-theme [data-slide-header-title]::before {
+  margin-inline-end: var(--slide-chrome-gap);
+  color: var(--slide-chrome-border);
+  content: "/";
+}
+
+.blueprint-theme [data-slide-counter-current] {
+  color: var(--primary);
+}
+
+.blueprint-theme [data-slide-progress] {
+  inset-block: 0 auto;
+  height: 2px;
+}
