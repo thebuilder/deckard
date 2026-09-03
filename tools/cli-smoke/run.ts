@@ -300,14 +300,11 @@ try {
   }
 
   const core =
-    injected[0] ??
-    pack("@thebuilder/deckard-core", scratch, "thebuilder-deckard-core")
+    injected[0] ?? pack("@thebuilder/deckard-core", scratch, "deckard-core")
   const themes =
-    injected[1] ??
-    pack("@thebuilder/deckard-themes", scratch, "thebuilder-deckard-themes")
+    injected[1] ?? pack("@thebuilder/deckard-themes", scratch, "deckard-themes")
   const cli =
-    injected[2] ??
-    pack("@thebuilder/deckard-cli", scratch, "thebuilder-deckard-cli")
+    injected[2] ?? pack("@thebuilder/deckard-cli", scratch, "deckard-cli")
 
   const initFlags = [
     "--core-tarball",

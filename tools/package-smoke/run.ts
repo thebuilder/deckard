@@ -226,8 +226,8 @@ try {
     ],
     repoRoot
   )
-  pack("@thebuilder/deckard-core", scratch, "thebuilder-deckard-core")
-  pack("@thebuilder/deckard-themes", scratch, "thebuilder-deckard-themes")
+  pack("@thebuilder/deckard-core", scratch, "deckard-core")
+  pack("@thebuilder/deckard-themes", scratch, "deckard-themes")
   fs.cpSync(fixtureSource, appDirectory, { recursive: true })
 
   run(

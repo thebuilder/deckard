@@ -226,8 +226,8 @@ try {
     ],
     repoRoot
   )
-  await pack("@thebuilder/deckard-core", scratch, "thebuilder-deckard-core")
-  await pack("@thebuilder/deckard-themes", scratch, "thebuilder-deckard-themes")
+  await pack("@thebuilder/deckard-core", scratch, "deckard-core")
+  await pack("@thebuilder/deckard-themes", scratch, "deckard-themes")
   fs.cpSync(fixtureSource, smokeApp, { recursive: true })
   pointAtRegistry(smokeApp, server.port)
 
