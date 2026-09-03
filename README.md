@@ -35,11 +35,6 @@ read the [theme gallery](https://deckard.thebuilder.dk/themes). It asks no
 questions. It installs with whichever package manager ran it, and writes no
 `packageManager` field, so nobody who clones your deck is locked to your choice.
 
-The packages are built for npm and are not published yet, so that first
-command does not work from a clean machine today. Until it does, pack them here
-and point `init` at the tarballs. `pnpm release:pack` does exactly that, and it
-runs on every CI build, so it is the path with a test behind it.
-
 ## What a deck looks like
 
 ```tsx

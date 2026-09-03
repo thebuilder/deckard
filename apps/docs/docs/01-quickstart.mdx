@@ -1,16 +1,12 @@
 ---
 title: Quickstart
-description: Scaffold a deck with deckard init, run it, and change a slide. Includes the tarball install that works while the packages are unpublished.
+description: Scaffold a deck with deckard init, run it, and change a slide.
 sidebar:
   label: Quickstart
   order: 1
 ---
 
 `deckard init` writes a Next.js app with a sample deck in it, installs the dependencies, makes the first commit, and typechecks the result.
-
-:::warning
-`@thebuilder/deckard-core`, `@thebuilder/deckard-themes`, and `@thebuilder/deckard-cli` are built for npm but not published there yet, so the `npx` line below does not work from a clean machine. [Install from tarballs](#installing-before-the-packages-publish) until they land.
-:::
 
 ## Scaffold a deck
 
@@ -76,31 +72,15 @@ The theme is not a file. `init` writes it as an import from `@thebuilder/deckard
 | `--no-install` | install runs | Write the files and stop. Skips the typecheck too. |
 | `--no-git` | git runs | Skip `git init` and the first commit. |
 | `--registry <url>` | `https://deckard.thebuilder.dk/r/{name}.json` | The `@deckard` registry written into `components.json`. |
-| `--core-tarball <path>` | `^<cli version>` | Install `@thebuilder/deckard-core` from a local tarball. |
+| `--core-tarball <path>` | `^<cli version>` | Install `@thebuilder/deckard-core` from a local tarball instead of npm. |
 | `--themes-tarball <path>` | `^<cli version>` | Same, for `@thebuilder/deckard-themes`. |
 | `--cli-tarball <path>` | `^<cli version>` | Same, for `@thebuilder/deckard-cli`. |
 
 `init` refuses a directory that already has files in it. It asks no questions.
 
-## Installing before the packages publish
+## The blocks
 
-Pack all three from a checkout of the Deckard repository and point `init` at the tarballs:
-
-```bash
-pnpm cli:build
-pnpm --filter @thebuilder/deckard-core exec pnpm pack --pack-destination /tmp/deckard
-pnpm --filter @thebuilder/deckard-themes exec pnpm pack --pack-destination /tmp/deckard
-pnpm --filter @thebuilder/deckard-cli exec pnpm pack --pack-destination /tmp/deckard
-
-node packages/cli/bin/deckard.mjs init ~/code/my-talk \
-  --core-tarball /tmp/deckard/thebuilder-deckard-core-0.0.1.tgz \
-  --themes-tarball /tmp/deckard/thebuilder-deckard-themes-0.0.1.tgz \
-  --cli-tarball /tmp/deckard/thebuilder-deckard-cli-0.0.1.tgz
-```
-
-The generated app is identical either way. When the packages publish, `npx @thebuilder/deckard-cli init` becomes the whole install and nothing in the app changes.
-
-The blocks come in either way. `init` ships them inside the CLI package and copies them into `app/slides/blocks/`. Adding a block later fetches from the registry the docs site serves. See [Blocks and the registry](/guides/blocks-and-the-registry).
+The slide blocks ship inside the CLI package, and `init` copies them into `app/slides/blocks/`, where they are source you edit. Adding a block later fetches it from the registry the docs site serves. See [Blocks and the registry](/guides/blocks-and-the-registry).
 
 ## Adding a deck to an app you already have
 
