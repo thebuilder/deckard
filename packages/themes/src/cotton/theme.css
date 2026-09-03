@@ -1,0 +1,592 @@
+/*
+ * Cotton theme.
+ * Every rule is scoped to .cotton-theme, which lives on the slide canvas.
+ * Nothing here reaches the utility bar, the command center, or the presenter console.
+ */
+
+/*
+ * The typefaces the source design asks for, self-hosted in this package under
+ * SIL Open Font License 1.1. ../fonts holds the files and one <family>.OFL.txt
+ * per family, and both the packed tarball and `deckard eject theme` carry the
+ * licence wherever the binaries go.
+ *
+ * Every url is relative to this stylesheet, so a theme resolves its own fonts
+ * from node_modules, from a tarball, and from deck/theme after an eject,
+ * without the deck wiring anything up. Every family stays at the front of the
+ * system stack it replaces, so a missing file degrades rather than fails, and
+ * font-display: swap paints that stack first so a slide is never blank.
+ *
+ * latin is what an English deck downloads. latin-ext carries its own
+ * unicode-range, so a deck that sets no character in it never asks for the file.
+ *
+ * Bricolage Grotesque carries an optical size axis alongside its weight axis.
+ * The file is the whole axis rather than one instance, and the display rules
+ * below turn optical sizing on, so a 112px headline and a 24px label are drawn
+ * from different points on it.
+ */
+
+@font-face {
+  font-family: "Bricolage Grotesque";
+  font-style: normal;
+  font-weight: 400 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("../fonts/bricolage-grotesque-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Bricolage Grotesque";
+  font-style: normal;
+  font-weight: 400 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("../fonts/bricolage-grotesque-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Outfit";
+  font-style: normal;
+  font-weight: 300 600;
+  font-display: swap;
+  src: url("../fonts/outfit-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Outfit";
+  font-style: normal;
+  font-weight: 300 600;
+  font-display: swap;
+  src: url("../fonts/outfit-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "DM Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/dm-mono-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "DM Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/dm-mono-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "DM Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../fonts/dm-mono-500-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "DM Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../fonts/dm-mono-500-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+.cotton-theme {
+  --background: oklch(0.975 0.016 62);
+  --foreground: oklch(0.285 0.036 42);
+  --card: oklch(0.995 0.006 62);
+  --card-foreground: oklch(0.285 0.036 42);
+  --popover: oklch(0.995 0.006 62);
+  --popover-foreground: oklch(0.285 0.036 42);
+  --primary: oklch(0.735 0.135 42);
+  --primary-foreground: oklch(0.245 0.05 42);
+  --secondary: oklch(0.935 0.032 60);
+  --secondary-foreground: oklch(0.285 0.036 42);
+  --muted: oklch(0.935 0.032 60);
+  --muted-foreground: oklch(0.525 0.03 42);
+  --accent: oklch(0.925 0.05 44);
+  --accent-foreground: oklch(0.245 0.05 42);
+  --destructive: oklch(0.585 0.19 27);
+  --border: oklch(0.895 0.024 58);
+  --input: oklch(0.895 0.024 58);
+  --ring: oklch(0.735 0.135 42);
+  --radius: 1.25rem;
+
+  --slide-font-heading:
+    "Bricolage Grotesque", ui-sans-serif, system-ui, "Segoe UI", Roboto,
+    "Helvetica Neue", sans-serif;
+  --slide-font-body:
+    "Outfit", ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue",
+    sans-serif;
+  --slide-font-mono:
+    "DM Mono", var(--font-mono, ui-monospace), ui-monospace, SFMono-Regular,
+    Menlo, Consolas, monospace;
+
+  --slide-padding-inline: 7rem;
+  --slide-padding-block: 6rem;
+  --slide-content-gap: 2.75rem;
+  --slide-item-gap: 1.5rem;
+
+  --slide-title-size: 7rem;
+  --slide-heading-size: 4.375rem;
+  --slide-subheading-size: 2.625rem;
+  --slide-lead-size: 2.625rem;
+  --slide-body-size: 2rem;
+  --slide-code-size: 1.875rem;
+  --slide-support-size: 1.6875rem;
+  --slide-label-size: 1.4375rem;
+  --slide-label-tracking: 0.14em;
+
+  --slide-figure-size: 7rem;
+  --slide-figure-unit-size: 3.25rem;
+  --slide-meter-size: 0.75rem;
+
+  /* --r-sm on the small shapes, --r on the ones that hold a whole block. */
+  --slide-radius: 1.25rem;
+  --slide-radius-lg: 2rem;
+  --slide-surface: oklch(0.995 0.006 62);
+  --slide-surface-muted: oklch(0.935 0.032 60);
+  --slide-surface-border: oklch(0.895 0.024 58);
+
+  /* The one lift in the theme. Only [data-slide-panel] reads it, so a slide
+   * carries at most one raised surface however many blocks it composes. */
+  --slide-surface-shadow: 0 24px 60px -30px oklch(0.4 0.06 42 / 0.32);
+
+  /* The workhorse. Tinted cards, the highlighted table row, the metrics panel
+   * and every filled capsule sit on it, and the accent itself is kept for the
+   * breaker numeral, the closing plate and the dots. */
+  --slide-accent-soft: oklch(0.925 0.05 44);
+
+  --slide-grid-color: oklch(0.55 0.04 44 / 9%);
+  --slide-grid-size: 4rem;
+  --slide-rule: oklch(0.895 0.024 58);
+  --slide-hatch: repeating-linear-gradient(
+    135deg,
+    var(--slide-grid-color) 0 22px,
+    transparent 22px 44px
+  );
+
+  /* Metadata, tags and status are capsules. One token so squaring the theme off
+   * is one edit rather than a search. */
+  --slide-pill: 999px;
+
+  --slide-chrome-foreground: var(--muted-foreground);
+  --slide-chrome-emphasis: var(--foreground);
+  --slide-chrome-border: transparent;
+  --slide-chrome-size: 1.375rem;
+  --slide-chrome-tracking: 0.06em;
+  --slide-progress-track: transparent;
+  --slide-progress-fill: var(--primary);
+  color-scheme: light;
+}
+
+.cotton-theme:where(.dark, .dark *):where(
+  :not([data-slide-color-mode="light"])
+),
+.cotton-theme:where([data-slide-color-mode="dark"]) {
+  --background: oklch(0.235 0.026 42);
+  --foreground: oklch(0.965 0.014 62);
+  --card: oklch(0.285 0.03 42);
+  --card-foreground: oklch(0.965 0.014 62);
+  --popover: oklch(0.285 0.03 42);
+  --popover-foreground: oklch(0.965 0.014 62);
+  --primary: oklch(0.795 0.125 46);
+  --primary-foreground: oklch(0.235 0.026 42);
+  --secondary: oklch(0.345 0.034 42);
+  --secondary-foreground: oklch(0.965 0.014 62);
+  --muted: oklch(0.345 0.034 42);
+  --muted-foreground: oklch(0.755 0.022 56);
+  --accent: oklch(0.375 0.052 44);
+  --accent-foreground: oklch(0.945 0.05 48);
+  --destructive: oklch(0.705 0.18 27);
+  --border: oklch(0.375 0.03 44);
+  --input: oklch(0.375 0.03 44);
+  --ring: oklch(0.795 0.125 46);
+
+  --slide-surface: oklch(0.285 0.03 42);
+  --slide-surface-muted: oklch(0.345 0.034 42);
+  --slide-surface-border: oklch(0.375 0.03 44);
+  --slide-surface-shadow: 0 24px 60px -30px oklch(0.1 0.02 42 / 0.6);
+  --slide-accent-soft: oklch(0.375 0.052 44);
+  --slide-grid-color: oklch(0.9 0.03 48 / 8%);
+  --slide-rule: oklch(0.375 0.03 44);
+  color-scheme: dark;
+}
+
+/* Body copy runs light, which is what makes the theme read soft. Every heading
+ * and label below states its own weight, so nothing inherits this by accident. */
+
+.cotton-theme {
+  font-family: var(--slide-font-body);
+  font-weight: 300;
+}
+
+.cotton-theme :is(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--slide-font-heading);
+  font-weight: 600;
+  font-optical-sizing: auto;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+
+.cotton-theme :is(h1, h2) {
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+}
+
+/* Display type without a heading element around it, so the display face reaches
+ * them here. */
+
+.cotton-theme
+:is([data-slide-statement-text], [data-slide-quote-text], [data-stat-value]) {
+  font-family: var(--slide-font-heading);
+  font-weight: 600;
+  font-optical-sizing: auto;
+  letter-spacing: -0.03em;
+}
+
+.cotton-theme :is(code, kbd, pre, samp) {
+  font-family: var(--slide-font-mono);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+/* Background variants. The runtime only renders the hook element and the variant name. */
+
+.cotton-theme .slide-background {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-color: var(--background);
+}
+
+.cotton-theme .slide-background[data-slide-background="grid"] {
+  background-image:
+    linear-gradient(to right, var(--slide-grid-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--slide-grid-color) 1px, transparent 1px);
+  background-size: var(--slide-grid-size) var(--slide-grid-size);
+}
+
+.cotton-theme .slide-background[data-slide-background="spotlight"] {
+  background-image: var(--slide-hatch);
+}
+
+/*
+ * Block parts. Nothing here is ruled off against the page: a group that another
+ * theme opens with a line opens with a tinted or rounded block instead.
+ */
+
+/* Capsules. Metadata and status are filled with the tint; the badge over a
+ * centred opener is outlined instead, which is the pair the source design
+ * alternates between. */
+
+.cotton-theme
+:is(
+  [data-slide-badge],
+  [data-slide-timeline-marker],
+  [data-slide-accent-rule],
+  [data-stat-meter],
+  [data-stat-meter] > *
+) {
+  border-radius: var(--slide-pill);
+}
+
+.cotton-theme [data-slide-badge] {
+  padding-block: 0.5rem;
+  color: var(--accent-foreground);
+  border-width: 2px;
+}
+
+.cotton-theme [data-slide-log-status] {
+  padding-block: 0.25rem;
+  padding-inline: 1rem;
+  color: var(--accent-foreground);
+  background-color: var(--slide-accent-soft);
+  border-radius: var(--slide-pill);
+}
+
+/* A dot where another theme puts a number. The number goes to zero rather than
+ * display:none so the rail keeps its width and every list in the deck starts
+ * its copy on the same column. */
+
+.cotton-theme [data-slide-list-marker] {
+  font-size: 0;
+}
+
+.cotton-theme [data-slide-list-marker]::before {
+  display: block;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-block-start: 0.85rem;
+  content: "";
+  background-color: var(--primary);
+  border-radius: var(--slide-pill);
+}
+
+/* The numbered step: a filled circle holding the numeral, on a rounded row
+ * rather than between two rules. */
+
+.cotton-theme [data-slide-contents-item] {
+  align-items: center;
+  padding-block: 0.625rem;
+  padding-inline: 1.5rem;
+  background-color: var(--slide-surface);
+  border-block-end-width: 0;
+  border-radius: var(--slide-radius);
+}
+
+.cotton-theme [data-slide-contents] {
+  gap: 0.5rem;
+  border-block-start-width: 0;
+}
+
+.cotton-theme [data-slide-contents-index] {
+  display: grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  font-family: var(--slide-font-heading);
+  font-weight: 600;
+  color: var(--primary-foreground);
+  background-color: var(--primary);
+  border-radius: var(--slide-pill);
+}
+
+/* Cards read as one soft block. The line around them goes and the fill carries
+ * the separation, and the card the deck argues for takes the tint with the ink
+ * that belongs on it. */
+
+.cotton-theme [data-slide-card] {
+  border-color: transparent;
+}
+
+.cotton-theme
+  :is(
+    [data-slide-card-accent],
+    [data-slide-card-accent] :is(h1, h2, h3, h4, h5, h6),
+    [data-slide-card-accent] [data-slide-card-body]
+  ) {
+  color: var(--accent-foreground);
+}
+
+/* The metrics row sits on the tint as one panel rather than each figure being
+ * ruled off on its own. */
+
+.cotton-theme [data-stat-grid] {
+  gap: 2.5rem;
+  padding: 2.75rem;
+  background-color: var(--slide-accent-soft);
+  border-radius: var(--slide-radius-lg);
+}
+
+.cotton-theme [data-stat-item] {
+  padding-block-start: 0;
+  border-block-start-width: 0;
+}
+
+.cotton-theme :is([data-stat-value], [data-stat-unit], [data-stat-caption]) {
+  color: var(--accent-foreground);
+}
+
+/* The table is a rounded panel with hairline rows inside it, rather than a
+ * block ruled off against the sheet. The end cells give their padding back so
+ * the first word clears the panel edge. */
+
+.cotton-theme [data-slide-table] {
+  background-color: var(--slide-surface);
+  border-radius: var(--slide-radius-lg);
+}
+
+.cotton-theme
+  :is(
+    [data-slide-table-cell]:first-child,
+    [data-slide-table-heading]:first-child
+  ) {
+  padding-inline-start: 2rem;
+}
+
+.cotton-theme
+  :is(
+    [data-slide-table-cell]:last-child,
+    [data-slide-table-heading]:last-child
+  ) {
+  padding-inline-end: 2rem;
+}
+
+.cotton-theme [data-slide-table-heading] {
+  border-block-end-width: 1px;
+}
+
+.cotton-theme [data-slide-table-highlight] {
+  color: var(--accent-foreground);
+}
+
+/* The statement is the one centred layout in the theme, and the rule it opens
+ * on is a soft disc rather than a line. */
+
+.cotton-theme [data-slide-statement] {
+  align-items: center;
+  text-align: center;
+}
+
+.cotton-theme [data-slide-accent-rule] {
+  width: 4.5rem;
+  height: 4.5rem;
+  background-color: var(--slide-accent-soft);
+}
+
+.cotton-theme [data-slide-timeline-marker] {
+  height: 0.5rem;
+}
+
+/* Placeholder media is a flat fill at the theme's own radius, with no stripe
+ * and no line around it. */
+
+.cotton-theme [data-slide-media-frame] {
+  border-color: transparent;
+  border-radius: var(--slide-radius-lg);
+}
+
+.cotton-theme [data-slide-quote-portrait] {
+  border-radius: var(--slide-pill);
+}
+
+.cotton-theme [data-slide-quote-attribution] {
+  border-block-start-width: 1px;
+}
+
+/* Labels are the body face rather than the mono one; the mono face is kept for
+ * numerals, captions and code, which is where the source design puts it. */
+
+.cotton-theme
+:is(
+  [data-slide-eyebrow],
+  [data-slide-badge],
+  [data-slide-kicker],
+  [data-slide-rail-term],
+  [data-slide-column-label],
+  [data-slide-card-label],
+  [data-slide-table-heading]
+) {
+  font-family: var(--slide-font-body);
+  font-weight: 500;
+}
+
+.cotton-theme
+  :is(
+    [data-slide-contents-folio],
+    [data-slide-column-index],
+    [data-slide-note-index],
+    [data-slide-timeline-date],
+    [data-slide-media-credit]
+  ) {
+  font-family: var(--slide-font-mono);
+  font-weight: 500;
+}
+
+/* The closing plate: the accent flooded to every edge.
+ * The field colour is read on the canvas and the ink is remapped one level
+ * down: a custom property resolves against the element that uses it, so
+ * remapping --primary here would flood the slide with its own ink. */
+
+.cotton-theme[data-slide-background="accent"] {
+  --background: var(--primary);
+  --foreground: var(--primary-foreground);
+  --slide-halo: none;
+  --slide-scanline: none;
+  --slide-hatch: none;
+}
+
+.cotton-theme[data-slide-background="accent"]
+  :is([data-slide-frame], [data-slide-header], [data-slide-footer]) {
+  --primary: var(--primary-foreground);
+  --accent-foreground: var(--primary-foreground);
+  --muted-foreground: color-mix(
+    in oklab,
+    var(--primary-foreground) 76%,
+    transparent
+  );
+  --slide-surface: transparent;
+  --slide-surface-muted: color-mix(
+    in oklab,
+    var(--primary-foreground) 12%,
+    transparent
+  );
+  --slide-surface-border: color-mix(
+    in oklab,
+    var(--primary-foreground) 32%,
+    transparent
+  );
+  --slide-accent-soft: color-mix(
+    in oklab,
+    var(--primary-foreground) 14%,
+    transparent
+  );
+  --slide-surface-shadow: none;
+  --slide-chrome-foreground: color-mix(
+    in oklab,
+    var(--primary-foreground) 74%,
+    transparent
+  );
+  --slide-chrome-emphasis: var(--primary-foreground);
+  --slide-chrome-border: transparent;
+  --slide-progress-fill: var(--primary-foreground);
+}
+
+/* Deck chrome. Quiet, with the counter set as one more capsule. */
+
+.cotton-theme :is([data-slide-header], [data-slide-footer]) {
+  border-color: transparent;
+}
+
+.cotton-theme [data-slide-header-brand] {
+  font-family: var(--slide-font-heading);
+  font-weight: 600;
+  font-optical-sizing: auto;
+}
+
+.cotton-theme [data-slide-counter] {
+  padding-block: 0.25rem;
+  padding-inline: 1rem;
+  font-variant-numeric: tabular-nums;
+  background-color: var(--slide-surface-muted);
+  border-radius: var(--slide-pill);
+}
+
+.cotton-theme [data-slide-progress] {
+  inset-block: auto 0;
+  height: 4px;
+  border-radius: var(--slide-pill);
+}

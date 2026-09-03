@@ -72,6 +72,29 @@ A green CRT. One monospace family for every word on the slide, scanlines painted
 
 <ThemePalette theme="phosphor" />
 
+## atelier
+
+`defaultColorMode: "system"`, both modes.
+
+A print poster. `--slide-rule` and `--slide-surface-border` are both the foreground, so every line on the slide is full-strength ink at the theme's own 4px measure rather than a tint at one. Headings are Archivo capitals at the heaviest weight the face carries, and the display size runs well past every other theme here. Grid cells and the highlighted table row are flooded with the accent and flip their ink rather than taking a tint. Nothing is rounded and nothing is raised.
+
+<ThemePalette theme="atelier" />
+
+## cotton
+
+`defaultColorMode: "system"`, both modes.
+
+The other pole from atelier. Body copy is Outfit at weight 300, headings are Bricolage Grotesque with its optical size axis mapped rather than pinned, and the corners are the largest in the gallery. `--slide-accent-soft` carries the tinted card, the metrics panel and the filled capsule; the accent itself is kept for the breaker, the closing plate and the dots. `--slide-surface-shadow` is the one lift in the theme, and only `data-slide-panel` reads it, so a slide raises at most one surface however many blocks it composes.
+
+<ThemePalette theme="cotton" />
+
+## noir
+
+`defaultColorMode: "dark"`, both modes.
+
+A fashion lookbook. Every rule is one pixel, the opener, the breaker, the statement and the quote all centre their content, and Cormorant Garamond sets the display at weight 300 with the italic kept for the statement and the quotation. There is no monospace family: `--slide-font-mono` carries the body sans, and tracked capitals up to `--slide-track` stand where another theme sets mono. Code keeps a monospaced stack of its own so a sample still lines up.
+
+<ThemePalette theme="noir" />
 ## quorum
 
 `defaultColorMode: "light"`, both modes.

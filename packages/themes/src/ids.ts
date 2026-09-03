@@ -3,11 +3,14 @@
 // CSS loader. Adding a theme starts here: add the id, then the module beside
 // it, or ./index stops compiling.
 export const themeIds = [
+  "atelier",
   "aurora",
   "blueprint",
+  "cotton",
   "ledger",
   "meridian",
   "nexus",
+  "noir",
   "phosphor",
   "quorum",
 ] as const

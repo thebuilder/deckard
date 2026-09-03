@@ -1,0 +1,538 @@
+/*
+ * Atelier theme.
+ * Every rule is scoped to .atelier-theme, which lives on the slide canvas.
+ * Nothing here reaches the utility bar, the command center, or the presenter console.
+ */
+
+/*
+ * The typefaces the source design asks for, self-hosted in this package under
+ * SIL Open Font License 1.1. ../fonts holds the files and one <family>.OFL.txt
+ * per family, and both the packed tarball and `deckard eject theme` carry the
+ * licence wherever the binaries go.
+ *
+ * Every url is relative to this stylesheet, so a theme resolves its own fonts
+ * from node_modules, from a tarball, and from deck/theme after an eject,
+ * without the deck wiring anything up. Every family stays at the front of the
+ * system stack it replaces, so a missing file degrades rather than fails, and
+ * font-display: swap paints that stack first so a slide is never blank.
+ *
+ * latin is what an English deck downloads. latin-ext carries its own
+ * unicode-range, so a deck that sets no character in it never asks for the file.
+ */
+
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 400 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("../fonts/archivo-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 400 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("../fonts/archivo-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Space Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/space-mono-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Space Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/space-mono-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Space Mono";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../fonts/space-mono-700-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Space Mono";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../fonts/space-mono-700-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+.atelier-theme {
+  --background: oklch(0.965 0.012 95);
+  --foreground: oklch(0.155 0.01 60);
+  --card: oklch(0.995 0.004 95);
+  --card-foreground: oklch(0.155 0.01 60);
+  --popover: oklch(0.995 0.004 95);
+  --popover-foreground: oklch(0.155 0.01 60);
+  --primary: oklch(0.575 0.215 28);
+  --primary-foreground: oklch(0.985 0.01 95);
+  --secondary: oklch(0.915 0.02 95);
+  --secondary-foreground: oklch(0.155 0.01 60);
+  --muted: oklch(0.915 0.02 95);
+  --muted-foreground: oklch(0.435 0.012 60);
+  --accent: oklch(0.915 0.02 95);
+  --accent-foreground: oklch(0.44 0.175 28);
+  --destructive: oklch(0.505 0.21 27);
+  --border: oklch(0.155 0.01 60);
+  --input: oklch(0.155 0.01 60);
+  --ring: oklch(0.575 0.215 28);
+  --radius: 0rem;
+
+  --slide-font-heading:
+    "Archivo", ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue",
+    sans-serif;
+  --slide-font-body:
+    "Archivo", ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue",
+    sans-serif;
+  --slide-font-mono:
+    "Space Mono", var(--font-mono, ui-monospace), ui-monospace, SFMono-Regular,
+    Menlo, Consolas, monospace;
+
+  --slide-padding-inline: 6.5rem;
+  --slide-padding-block: 5.5rem;
+  --slide-content-gap: 3rem;
+  --slide-item-gap: 1.625rem;
+
+  --slide-title-size: 9.25rem;
+  --slide-heading-size: 5.25rem;
+  --slide-subheading-size: 2.875rem;
+  --slide-lead-size: 2.875rem;
+  --slide-body-size: 2.0625rem;
+  --slide-code-size: 1.75rem;
+  --slide-support-size: 1.75rem;
+  --slide-label-size: 1.5rem;
+  --slide-label-tracking: 0.16em;
+
+  --slide-figure-size: 8.75rem;
+  --slide-figure-unit-size: 3.5rem;
+  --slide-meter-size: 1.25rem;
+
+  --slide-radius: 0rem;
+  --slide-radius-lg: 0rem;
+  --slide-surface: oklch(0.995 0.004 95);
+  --slide-surface-muted: oklch(0.915 0.02 95);
+  --slide-surface-border: oklch(0.155 0.01 60);
+  --slide-surface-shadow: none;
+
+  /* Flat, not a tint. The source design marks the recommended block by filling
+   * it with the accent, so this is the accent itself and the rules below flip
+   * the ink on top of it. */
+  --slide-accent-soft: oklch(0.575 0.215 28);
+
+  --slide-grid-color: oklch(0.155 0.01 60 / 16%);
+  --slide-grid-size: 4rem;
+  --slide-rule: oklch(0.155 0.01 60);
+  --slide-stripe: oklch(0.915 0.02 95);
+  --slide-hatch: repeating-linear-gradient(
+    45deg,
+    var(--slide-stripe) 0 16px,
+    transparent 16px 32px
+  );
+
+  /* The signature measure. Section rules, table heads and dividers all take it,
+   * and the blocks set their own widths in the markup, so every rule this theme
+   * thickens names this token rather than a number. */
+  --slide-poster-rule: 4px;
+
+  --slide-chrome-foreground: var(--muted-foreground);
+  --slide-chrome-emphasis: var(--foreground);
+  --slide-chrome-border: var(--slide-rule);
+  --slide-chrome-size: 1.375rem;
+  --slide-chrome-tracking: 0.2em;
+  --slide-progress-track: transparent;
+  --slide-progress-fill: var(--primary);
+  color-scheme: light;
+}
+
+.atelier-theme:where(.dark, .dark *):where(
+  :not([data-slide-color-mode="light"])
+),
+.atelier-theme:where([data-slide-color-mode="dark"]) {
+  --background: oklch(0.165 0.008 60);
+  --foreground: oklch(0.965 0.012 95);
+  --card: oklch(0.225 0.01 60);
+  --card-foreground: oklch(0.965 0.012 95);
+  --popover: oklch(0.225 0.01 60);
+  --popover-foreground: oklch(0.965 0.012 95);
+  --primary: oklch(0.665 0.19 30);
+  --primary-foreground: oklch(0.165 0.008 60);
+  --secondary: oklch(0.305 0.012 60);
+  --secondary-foreground: oklch(0.965 0.012 95);
+  --muted: oklch(0.305 0.012 60);
+  --muted-foreground: oklch(0.705 0.012 90);
+  --accent: oklch(0.305 0.012 60);
+  --accent-foreground: oklch(0.795 0.155 30);
+  --destructive: oklch(0.665 0.2 27);
+  --border: oklch(0.965 0.012 95);
+  --input: oklch(0.965 0.012 95);
+  --ring: oklch(0.665 0.19 30);
+
+  --slide-surface: oklch(0.225 0.01 60);
+  --slide-surface-muted: oklch(0.305 0.012 60);
+  --slide-surface-border: oklch(0.965 0.012 95);
+  --slide-surface-shadow: none;
+  --slide-accent-soft: oklch(0.665 0.19 30);
+  --slide-grid-color: oklch(0.965 0.012 95 / 14%);
+  --slide-rule: oklch(0.965 0.012 95);
+  --slide-stripe: oklch(0.305 0.012 60);
+  color-scheme: dark;
+}
+
+.atelier-theme {
+  font-family: var(--slide-font-body);
+}
+
+/*
+ * One family, set the way a poster sets it: capitals at the heaviest weight the
+ * face carries, pulled tight enough that the counters close up at display size.
+ */
+
+.atelier-theme :is(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--slide-font-heading);
+  font-weight: 800;
+  line-height: 0.98;
+  text-transform: uppercase;
+  letter-spacing: -0.035em;
+}
+
+.atelier-theme :is(h1, h2) {
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+}
+
+/* Display type without a heading element around it, so the capitals and the
+ * tracking reach them here. */
+
+.atelier-theme :is([data-slide-statement-text], [data-stat-value]) {
+  font-family: var(--slide-font-heading);
+  font-weight: 800;
+  line-height: 0.9;
+  text-transform: uppercase;
+  letter-spacing: -0.045em;
+}
+
+/* The source design sets a statement below the display size rather than at it,
+ * which is what lets a sentence run four lines and still clear the chrome.
+ * StatementSlide reads --slide-title-size, so the size is set on the part. */
+
+.atelier-theme [data-slide-statement-text] {
+  font-size: 7.75rem;
+}
+
+/* Body copy runs a step heavier than a screen would set it, and the sentence
+ * under a headline heavier still, which is what holds a poster together at
+ * reading distance. */
+
+.atelier-theme [data-slide-lead] {
+  font-weight: 500;
+}
+
+.atelier-theme :is(code, kbd, pre, samp) {
+  font-family: var(--slide-font-mono);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* Background variants. The runtime only renders the hook element and the variant name. */
+
+.atelier-theme .slide-background {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-color: var(--background);
+}
+
+/* A registration grid, the pitch a poster is pasted up on. */
+
+.atelier-theme .slide-background[data-slide-background="grid"] {
+  background-image:
+    linear-gradient(to right, var(--slide-grid-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--slide-grid-color) 1px, transparent 1px);
+  background-size: var(--slide-grid-size) var(--slide-grid-size);
+}
+
+/* The two-tone stripe the source design fills an empty plate with, promoted to
+ * a whole sheet. */
+
+.atelier-theme .slide-background[data-slide-background="spotlight"] {
+  background-image: var(--slide-hatch);
+}
+
+/*
+ * Block parts. Every rule the blocks draw at one or two pixels is restated at
+ * the poster measure, because the width is the theme and the blocks set theirs
+ * in the markup.
+ */
+
+.atelier-theme
+:is(
+  [data-slide-rail],
+  [data-slide-contents],
+  [data-slide-column],
+  [data-slide-log],
+  [data-stat-item]
+) {
+  border-block-start-width: var(--slide-poster-rule);
+}
+
+.atelier-theme :is([data-slide-hero-meta], [data-slide-quote-attribution]) {
+  border-block-start-width: var(--slide-poster-rule);
+}
+
+/* The table head rule is drawn on the row in the markup, so it is restated on
+ * the cells, which collapse into the same line. */
+
+.atelier-theme [data-slide-table-heading] {
+  border-block-end: var(--slide-poster-rule) solid var(--slide-surface-border);
+}
+
+.atelier-theme [data-slide-note] {
+  border-block-start-width: 2px;
+}
+
+.atelier-theme [data-slide-panel] {
+  border-width: var(--slide-poster-rule);
+}
+
+/* Colour blocks, not cards. A grid cell is a flat panel with no line around it,
+ * and the one the deck marks takes the accent with the paper colour on top. */
+
+.atelier-theme [data-slide-card] {
+  justify-content: space-between;
+  border-color: transparent;
+}
+
+.atelier-theme
+  :is(
+    [data-slide-card-accent],
+    [data-slide-card-accent] :is(h1, h2, h3, h4, h5, h6),
+    [data-slide-card-accent] [data-slide-card-body],
+    [data-slide-card-accent] [data-slide-card-label]
+  ) {
+  color: var(--primary-foreground);
+}
+
+/* A figure sits at the top of its block and the caption on the floor of it,
+ * which is the composition the source design gives a metrics row. */
+
+.atelier-theme [data-stat-item] {
+  justify-content: space-between;
+}
+
+.atelier-theme [data-stat-meter] {
+  border-width: 2px;
+}
+
+/* The highlighted row is flooded rather than tinted, so the ink flips with it. */
+
+.atelier-theme
+:is([data-slide-table-highlight], [data-slide-table-highlight] *) {
+  color: var(--primary-foreground);
+}
+
+/* A solid square where a lesser deck puts a bullet. The number goes to zero
+ * rather than display:none so the rail keeps its width and every list in the
+ * deck starts its copy on the same column. */
+
+.atelier-theme [data-slide-list-marker] {
+  font-size: 0;
+}
+
+.atelier-theme [data-slide-list-marker]::before {
+  display: block;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-block-start: 0.75rem;
+  content: "";
+  background-color: var(--primary);
+}
+
+/* A chapter opens on a numeral set at the largest size in the deck. The source
+ * design stands it in an accent panel beside the copy; the breaker block is one
+ * column, so the numeral takes the accent and the panel goes. */
+
+.atelier-theme [data-slide-breaker-index] {
+  font-size: calc(var(--slide-title-size) * 1.35);
+  font-weight: 800;
+  line-height: 0.7;
+  letter-spacing: -0.05em;
+}
+
+/* The statement rule and the milestone bar are the same 4px measure as every
+ * other rule here. */
+
+.atelier-theme [data-slide-accent-rule] {
+  width: 12.5rem;
+  height: var(--slide-poster-rule);
+}
+
+.atelier-theme [data-slide-timeline-marker] {
+  height: var(--slide-poster-rule);
+}
+
+/* Every label, caption and numeral is Space Mono at its heaviest, uppercase and
+ * spaced out, which is where the source design puts all of its metadata. */
+
+.atelier-theme
+:is(
+  [data-slide-eyebrow],
+  [data-slide-badge],
+  [data-slide-kicker],
+  [data-slide-rail-term],
+  [data-slide-column-label],
+  [data-slide-card-label],
+  [data-slide-media-caption],
+  [data-slide-media-credit],
+  [data-slide-statement-source],
+  [data-slide-table-heading],
+  [data-slide-timeline-date],
+  [data-slide-quote-source],
+  [data-slide-log-status]
+) {
+  font-family: var(--slide-font-mono);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.atelier-theme
+  :is(
+    [data-slide-contents-index],
+    [data-slide-contents-folio],
+    [data-slide-column-index],
+    [data-slide-note-index]
+  ) {
+  font-family: var(--slide-font-mono);
+  font-weight: 700;
+}
+
+.atelier-theme [data-slide-badge] {
+  border-width: 2px;
+}
+
+/* Placeholder media is the stripe rather than a flat fill, and the frame around
+ * it carries the poster rule. */
+
+.atelier-theme [data-slide-media-frame] {
+  background-image: var(--slide-hatch);
+  border-width: 2px;
+}
+
+/* A quotation is display type in this theme too, so it takes the capitals the
+ * headings take and hangs its own opening mark. */
+
+.atelier-theme [data-slide-quote-text] {
+  font-family: var(--slide-font-heading);
+  font-weight: 800;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: -0.04em;
+}
+
+.atelier-theme [data-slide-quote-text]::before {
+  margin-inline-start: -0.5em;
+  content: "\201C";
+}
+
+/* The closing plate: the accent flooded to every edge with the type in the
+ * paper colour.
+ * The field colour is read on the canvas and the ink is remapped one level
+ * down: a custom property resolves against the element that uses it, so
+ * remapping --primary here would flood the slide with its own ink. */
+
+.atelier-theme[data-slide-background="accent"] {
+  --background: var(--primary);
+  --foreground: var(--primary-foreground);
+  --slide-halo: none;
+  --slide-scanline: none;
+  --slide-hatch: none;
+}
+
+.atelier-theme[data-slide-background="accent"]
+  :is([data-slide-frame], [data-slide-header], [data-slide-footer]) {
+  --primary: var(--primary-foreground);
+  --muted-foreground: color-mix(
+    in oklab,
+    var(--primary-foreground) 80%,
+    transparent
+  );
+  --slide-surface: transparent;
+  --slide-surface-muted: color-mix(
+    in oklab,
+    var(--primary-foreground) 14%,
+    transparent
+  );
+  --slide-surface-border: var(--primary-foreground);
+  --slide-chrome-foreground: color-mix(
+    in oklab,
+    var(--primary-foreground) 78%,
+    transparent
+  );
+  --slide-chrome-emphasis: var(--primary-foreground);
+  --slide-chrome-border: var(--primary-foreground);
+  --slide-progress-fill: var(--primary-foreground);
+}
+
+/* Deck chrome. A poster's colophon: everything in the mono face, capitals, and
+ * tracked wider than anything else on the sheet. */
+
+.atelier-theme :is([data-slide-header], [data-slide-footer]) {
+  font-family: var(--slide-font-mono);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--slide-chrome-tracking);
+}
+
+.atelier-theme [data-slide-header] {
+  border-block-end-width: var(--slide-poster-rule);
+}
+
+.atelier-theme [data-slide-header-brand] {
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.atelier-theme [data-slide-footer] {
+  border-block-start-width: var(--slide-poster-rule);
+}
+
+.atelier-theme [data-slide-progress] {
+  inset-block: auto 0;
+  height: var(--slide-poster-rule);
+}

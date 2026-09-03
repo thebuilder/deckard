@@ -32,13 +32,30 @@ interface FontFamily {
 // latin-ext, requested without the optical size axis where that axis costs more
 // than it earns: Source Serif 4 drops from 122KB to 51KB without it.
 //
-// One directory for every family, because several themes share a family and a
-// deck should download one copy either way. Only the faces a theme's stylesheet
-// names are ever fetched by a browser.
+// One directory for seven families, because two themes share JetBrains Mono and
+// two share IBM Plex Mono, and a deck should download one copy either way. Only
+// the faces a theme's stylesheet names are ever fetched by a browser.
 //
 // Re-run this after bumping a version, then commit the woff2 files. Nothing
 // calls a font host at render time.
 const families: FontFamily[] = [
+  {
+    faces: [
+      {
+        file: "archivo-latin.woff2",
+        url: "https://fonts.gstatic.com/s/archivo/v25/k3kPo8UDI-1M0wlSV9XAw6lQkqWY8Q82sLydOxKsv4Rn.woff2",
+      },
+      {
+        file: "archivo-latin-ext.woff2",
+        url: "https://fonts.gstatic.com/s/archivo/v25/k3kPo8UDI-1M0wlSV9XAw6lQkqWY8Q82sLyTOxKsv4RnUPU.woff2",
+      },
+    ],
+    family: "Archivo",
+    licence:
+      "https://raw.githubusercontent.com/google/fonts/main/ofl/archivo/OFL.txt",
+    slug: "archivo",
+    version: "v25",
+  },
   {
     faces: [
       {
@@ -59,6 +76,23 @@ const families: FontFamily[] = [
   {
     faces: [
       {
+        file: "bricolage-grotesque-latin.woff2",
+        url: "https://fonts.gstatic.com/s/bricolagegrotesque/v9/3y9K6as8bTXq_nANBjzKo3IeZx8z6up5BeSl9D4dj_x9PpZBMlGIInHWVyNJ.woff2",
+      },
+      {
+        file: "bricolage-grotesque-latin-ext.woff2",
+        url: "https://fonts.gstatic.com/s/bricolagegrotesque/v9/3y9K6as8bTXq_nANBjzKo3IeZx8z6up5BeSl9D4dj_x9PpZBMlGGInHWVyNJtvI.woff2",
+      },
+    ],
+    family: "Bricolage Grotesque",
+    licence:
+      "https://raw.githubusercontent.com/google/fonts/main/ofl/bricolagegrotesque/OFL.txt",
+    slug: "bricolage-grotesque",
+    version: "v9",
+  },
+  {
+    faces: [
+      {
         file: "chivo-latin.woff2",
         url: "https://fonts.gstatic.com/s/chivo/v21/va9I4kzIxd1KFrBoQeNVkqDO.woff2",
       },
@@ -72,6 +106,56 @@ const families: FontFamily[] = [
       "https://raw.githubusercontent.com/google/fonts/main/ofl/chivo/OFL.txt",
     slug: "chivo",
     version: "v21",
+  },
+  {
+    faces: [
+      {
+        file: "cormorant-garamond-latin.woff2",
+        url: "https://fonts.gstatic.com/s/cormorantgaramond/v21/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYqXtKky2F7g.woff2",
+      },
+      {
+        file: "cormorant-garamond-latin-ext.woff2",
+        url: "https://fonts.gstatic.com/s/cormorantgaramond/v21/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYp3tKky2F7i6C.woff2",
+      },
+      {
+        file: "cormorant-garamond-italic-latin.woff2",
+        url: "https://fonts.gstatic.com/s/cormorantgaramond/v21/co3ZmX5slCNuHLi8bLeY9MK7whWMhyjYrEtImSqn7B6D.woff2",
+      },
+      {
+        file: "cormorant-garamond-italic-latin-ext.woff2",
+        url: "https://fonts.gstatic.com/s/cormorantgaramond/v21/co3ZmX5slCNuHLi8bLeY9MK7whWMhyjYrEtGmSqn7B6DxjY.woff2",
+      },
+    ],
+    family: "Cormorant Garamond",
+    licence:
+      "https://raw.githubusercontent.com/google/fonts/main/ofl/cormorantgaramond/OFL.txt",
+    slug: "cormorant-garamond",
+    version: "v21",
+  },
+  {
+    faces: [
+      {
+        file: "dm-mono-latin.woff2",
+        url: "https://fonts.gstatic.com/s/dmmono/v16/aFTU7PB1QTsUX8KYthqQBK6PYK0.woff2",
+      },
+      {
+        file: "dm-mono-latin-ext.woff2",
+        url: "https://fonts.gstatic.com/s/dmmono/v16/aFTU7PB1QTsUX8KYthSQBK6PYK3EXw.woff2",
+      },
+      {
+        file: "dm-mono-500-latin.woff2",
+        url: "https://fonts.gstatic.com/s/dmmono/v16/aFTR7PB1QTsUX8KYvumzEYOtbYf-Vlg.woff2",
+      },
+      {
+        file: "dm-mono-500-latin-ext.woff2",
+        url: "https://fonts.gstatic.com/s/dmmono/v16/aFTR7PB1QTsUX8KYvumzEY2tbYf-Vlh3uA.woff2",
+      },
+    ],
+    family: "DM Mono",
+    licence:
+      "https://raw.githubusercontent.com/google/fonts/main/ofl/dmmono/OFL.txt",
+    slug: "dm-mono",
+    version: "v16",
   },
   {
     faces: [
@@ -160,6 +244,23 @@ const families: FontFamily[] = [
   {
     faces: [
       {
+        file: "jost-latin.woff2",
+        url: "https://fonts.gstatic.com/s/jost/v20/92zatBhPNqw73oTd4jQmfxI.woff2",
+      },
+      {
+        file: "jost-latin-ext.woff2",
+        url: "https://fonts.gstatic.com/s/jost/v20/92zatBhPNqw73ord4jQmfxIC7w.woff2",
+      },
+    ],
+    family: "Jost",
+    licence:
+      "https://raw.githubusercontent.com/google/fonts/main/ofl/jost/OFL.txt",
+    slug: "jost",
+    version: "v20",
+  },
+  {
+    faces: [
+      {
         file: "manrope-latin.woff2",
         url: "https://fonts.gstatic.com/s/manrope/v20/xn7gYHE41ni1AdIRggexSvfedN4.woff2",
       },
@@ -186,6 +287,23 @@ const families: FontFamily[] = [
       "https://raw.githubusercontent.com/google/fonts/main/ofl/orbitron/OFL.txt",
     slug: "orbitron",
     version: "v35",
+  },
+  {
+    faces: [
+      {
+        file: "outfit-latin.woff2",
+        url: "https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJtEtqUYLknw.woff2",
+      },
+      {
+        file: "outfit-latin-ext.woff2",
+        url: "https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJuktqUYLkn8BJ.woff2",
+      },
+    ],
+    family: "Outfit",
+    licence:
+      "https://raw.githubusercontent.com/google/fonts/main/ofl/outfit/OFL.txt",
+    slug: "outfit",
+    version: "v15",
   },
   {
     faces: [
@@ -262,6 +380,31 @@ const families: FontFamily[] = [
       "https://raw.githubusercontent.com/google/fonts/main/ofl/spacegrotesk/OFL.txt",
     slug: "space-grotesk",
     version: "v22",
+  },
+  {
+    faces: [
+      {
+        file: "space-mono-latin.woff2",
+        url: "https://fonts.gstatic.com/s/spacemono/v17/i7dPIFZifjKcF5UAWdDRYEF8RXi4EwQ.woff2",
+      },
+      {
+        file: "space-mono-latin-ext.woff2",
+        url: "https://fonts.gstatic.com/s/spacemono/v17/i7dPIFZifjKcF5UAWdDRYE98RXi4EwSsbg.woff2",
+      },
+      {
+        file: "space-mono-700-latin.woff2",
+        url: "https://fonts.gstatic.com/s/spacemono/v17/i7dMIFZifjKcF5UAWdDRaPpZUFWaHi6WZ3Q.woff2",
+      },
+      {
+        file: "space-mono-700-latin-ext.woff2",
+        url: "https://fonts.gstatic.com/s/spacemono/v17/i7dMIFZifjKcF5UAWdDRaPpZUFuaHi6WZ3S_Yg.woff2",
+      },
+    ],
+    family: "Space Mono",
+    licence:
+      "https://raw.githubusercontent.com/google/fonts/main/ofl/spacemono/OFL.txt",
+    slug: "space-mono",
+    version: "v17",
   },
 ]
 
