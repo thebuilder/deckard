@@ -3,7 +3,7 @@ import { resolveRepoFile } from "./repo-file"
 import { slideTokenNotes, type TokenGroup } from "./slide-token-notes"
 
 const stylesheet = "packages/core/styles.css"
-const specifier = "@deckard/core/styles.css"
+const specifier = "@thebuilder/deckard-core/styles.css"
 
 export interface SlideTokenRow {
   /** The custom property, without the leading dashes. */

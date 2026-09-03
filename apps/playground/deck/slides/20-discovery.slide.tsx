@@ -1,4 +1,4 @@
-import type { SlideMeta } from "@deckard/core"
+import type { SlideMeta } from "@thebuilder/deckard-core"
 import { FeatureGrid } from "@/app/slides/blocks/collections"
 import { OpenContentSlide } from "@/app/slides/blocks/templates"
 

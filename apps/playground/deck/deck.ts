@@ -1,5 +1,5 @@
-import { defineDeck } from "@deckard/core"
-import { meridian } from "@deckard/themes"
+import { defineDeck } from "@thebuilder/deckard-core"
+import { meridian } from "@thebuilder/deckard-themes"
 import { canvas } from "@/deck/canvas"
 import { slides } from "@/deck/slides"
 

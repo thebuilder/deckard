@@ -84,12 +84,12 @@ function packageJson(options: ScaffoldOptions): string {
         typecheck: "next typegen && tsc --noEmit",
       },
       dependencies: sortedEntries({
-        "@deckard/core": options.coreDependency,
-        "@deckard/themes": options.themesDependency,
+        "@thebuilder/deckard-core": options.coreDependency,
+        "@thebuilder/deckard-themes": options.themesDependency,
         ...versions.dependencies,
       }),
       devDependencies: sortedEntries({
-        "@deckard/cli": options.cliDependency,
+        "@thebuilder/deckard-cli": options.cliDependency,
         ...versions.devDependencies,
       }),
     },

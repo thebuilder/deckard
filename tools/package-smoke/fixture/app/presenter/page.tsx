@@ -1,4 +1,4 @@
-import { createPresenterPage } from "@deckard/core/next"
+import { createPresenterPage } from "@thebuilder/deckard-core/next"
 
 import { deck } from "../../deck/deck"
 

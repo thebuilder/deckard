@@ -85,7 +85,7 @@ What a slide module exports as `meta`. Same fields as `SlideDefinition` minus `b
 `notes` can be exported either on `meta` or as its own top-level export. The top-level export wins.
 
 ```tsx deck/slides/pricing.slide.tsx
-import type { SlideMeta } from "@deckard/core"
+import type { SlideMeta } from "@thebuilder/deckard-core"
 
 export const meta: SlideMeta = { slug: "pricing", title: "Pricing", order: 20 }
 export const notes = "Pause on the middle tier."

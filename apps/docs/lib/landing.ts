@@ -1,4 +1,4 @@
-import { resolveCanvas } from "@deckard/core"
+import { resolveCanvas } from "@thebuilder/deckard-core"
 import type { PreviewSlide } from "./deck-preview"
 
 /* The canvas a deck renders at, read from the runtime rather than typed here,
@@ -126,7 +126,7 @@ export const demoBackgrounds = [
   "spotlight",
 ] as const
 
-export const demoCode = `import type { SlideDefinition } from "@deckard/core"
+export const demoCode = `import type { SlideDefinition } from "@thebuilder/deckard-core"
 import { BulletList } from "@/app/slides/blocks/collections"
 import { StatGrid } from "@/app/slides/blocks/metrics"
 import {
@@ -174,8 +174,8 @@ export const slides: SlideDefinition[] = [
  */
 export const installCode = {
   agent:
-    "Set up a new Deckard presentation in ./my-talk with npx @deckard/cli init",
-  terminal: "npx @deckard/cli init my-talk",
+    "Set up a new Deckard presentation in ./my-talk with npx @thebuilder/deckard-cli init",
+  terminal: "npx @thebuilder/deckard-cli init my-talk",
 } as const
 
 export const cliCode = `deckard check-overflow    # fails, naming the slides the canvas clips

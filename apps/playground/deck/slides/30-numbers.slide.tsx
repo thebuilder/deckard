@@ -1,7 +1,7 @@
 import fs from "node:fs"
 import path from "node:path"
 import process from "node:process"
-import type { SlideMeta } from "@deckard/core"
+import type { SlideMeta } from "@thebuilder/deckard-core"
 import { StatGrid } from "@/app/slides/blocks/metrics"
 import { OpenContentSlide } from "@/app/slides/blocks/templates"
 

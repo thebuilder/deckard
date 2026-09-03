@@ -28,8 +28,8 @@ Each frame is a slide canvas, not a picture of one, painted by that theme's own 
 Import it and hand it to `defineDeck`. Importing the module pulls in its stylesheet:
 
 ```ts deck/deck.ts
-import { defineDeck } from "@deckard/core"
-import { phosphor } from "@deckard/themes"
+import { defineDeck } from "@thebuilder/deckard-core"
+import { phosphor } from "@thebuilder/deckard-themes"
 import { slides } from "@/deck/slides"
 
 export const deck = defineDeck({ slides, theme: phosphor, /* ... */ })
@@ -41,10 +41,10 @@ Only the theme a deck imports reaches the bundle. The barrel re-exports every bu
 
 ### The stylesheet on its own
 
-`@deckard/themes/<name>/theme.css` is the same file the module imports, exported as a subpath so something that is not a deck can load it:
+`@thebuilder/deckard-themes/<name>/theme.css` is the same file the module imports, exported as a subpath so something that is not a deck can load it:
 
 ```ts
-import "@deckard/themes/ledger/theme.css"
+import "@thebuilder/deckard-themes/ledger/theme.css"
 ```
 
 A deck never needs this. It exists for a page that renders a slide outside the runtime, such as the [theme gallery](/themes) on this site, which builds a scaled-down canvas out of the real markup and lets each theme's own stylesheet paint it.
@@ -61,13 +61,13 @@ deckard eject theme --theme ledger   # eject a different built-in instead
 It refuses when `deck/theme/` already exists.
 
 :::warning
-An ejected theme no longer receives updates from `@deckard/themes`. If the built-in you started from gains a token or fixes a contrast bug, your copy does not, and no check compares the two files.
+An ejected theme no longer receives updates from `@thebuilder/deckard-themes`. If the built-in you started from gains a token or fixes a contrast bug, your copy does not, and no check compares the two files.
 :::
 
 ## The SlideTheme object
 
 ```ts deck/theme/index.ts
-import type { SlideTheme } from "@deckard/core"
+import type { SlideTheme } from "@thebuilder/deckard-core"
 
 import "./theme.css"
 
@@ -90,7 +90,7 @@ export const theme = {
 
 ## The token contract
 
-`@deckard/core/styles.css` declares every `--slide-*` token with a neutral default, in the `base` layer. A theme redefines them on the canvas and wins, because it ships unlayered CSS. The runtime depends on the tokens, never on a preset, so a deck with no theme still renders in neutral sizes with no decoration.
+`@thebuilder/deckard-core/styles.css` declares every `--slide-*` token with a neutral default, in the `base` layer. A theme redefines them on the canvas and wins, because it ships unlayered CSS. The runtime depends on the tokens, never on a preset, so a deck with no theme still renders in neutral sizes with no decoration.
 
 The [token reference](/reference/tokens) lists all of them. The short version of what a theme sets:
 
@@ -105,7 +105,7 @@ The [token reference](/reference/tokens) lists all of them. The short version of
 
 Tokens are values. Data attributes are parts, and they are the rest of the contract.
 
-Every part of a block a theme might want to reach carries one, from `data-slide-eyebrow` and `data-slide-list-marker` to `data-stat-meter`. A theme styles those attributes, decorative `::before` and `::after` content included, which is how phosphor writes `[x]` where a list number goes and ledger hangs a rule there instead, neither of them editing the block. The [full list](/reference/tokens) is also the "Block part contract" comment at the bottom of `@deckard/core/styles.css`, and a block may rewrite its markup and its class names freely as long as those attributes stay put.
+Every part of a block a theme might want to reach carries one, from `data-slide-eyebrow` and `data-slide-list-marker` to `data-stat-meter`. A theme styles those attributes, decorative `::before` and `::after` content included, which is how phosphor writes `[x]` where a list number goes and ledger hangs a rule there instead, neither of them editing the block. The [full list](/reference/tokens) is also the "Block part contract" comment at the bottom of `@thebuilder/deckard-core/styles.css`, and a block may rewrite its markup and its class names freely as long as those attributes stay put.
 
 A theme styles parts. It does not add content. A boot log, a status table, a cursor line with words in it are slide content, so they belong in a block the deck composes, however much they look like decoration.
 

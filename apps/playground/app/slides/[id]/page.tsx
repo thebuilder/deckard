@@ -4,8 +4,8 @@ import {
   toDeckPresentation,
   toSlideSummaries,
   toSlideSummary,
-} from "@deckard/core"
-import { createSlideRoute } from "@deckard/core/next"
+} from "@thebuilder/deckard-core"
+import { createSlideRoute } from "@thebuilder/deckard-core/next"
 import { notFound } from "next/navigation"
 import { ThemedSlideShell } from "@/components/theme-switch/themed-slide-shell"
 import { deck } from "@/deck/deck"

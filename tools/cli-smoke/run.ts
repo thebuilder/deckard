@@ -127,7 +127,7 @@ function installCli(manager: string, directory: string, tarball: string) {
     path.join(directory, "package.json"),
     `${JSON.stringify(
       {
-        dependencies: { "@deckard/cli": `file:${tarball}` },
+        dependencies: { "@thebuilder/deckard-cli": `file:${tarball}` },
         name: `deckard-cli-smoke-${manager}`,
         private: true,
         version: "0.0.0",
@@ -165,7 +165,7 @@ function assertEjected(directory: string) {
 
   assert(
     source.includes('import { theme } from "@/deck/theme"') &&
-      !source.includes("@deckard/themes"),
+      !source.includes("@thebuilder/deckard-themes"),
     "deckard eject theme left deck.ts pointing at the built-in"
   )
 
@@ -181,8 +181,9 @@ function assertSwitchedBack(directory: string) {
   const source = fs.readFileSync(path.join(directory, "deck/deck.ts"), "utf8")
 
   assert(
-    source.includes(`import { ${switchToTheme} } from "@deckard/themes"`) &&
-      !source.includes("@/deck/theme"),
+    source.includes(
+      `import { ${switchToTheme} } from "@thebuilder/deckard-themes"`
+    ) && !source.includes("@/deck/theme"),
     "deckard add theme left deck.ts pointing at the ejected copy"
   )
 
@@ -245,8 +246,10 @@ function assertScaffold(directory: string) {
   assert(
     fs
       .readFileSync(path.join(directory, "deck/deck.ts"), "utf8")
-      .includes(`import { ${defaultThemeId} } from "@deckard/themes"`),
-    "the generated deck.ts does not import its theme from @deckard/themes"
+      .includes(
+        `import { ${defaultThemeId} } from "@thebuilder/deckard-themes"`
+      ),
+    "the generated deck.ts does not import its theme from @thebuilder/deckard-themes"
   )
 
   const generated = JSON.parse(
@@ -258,8 +261,8 @@ function assertScaffold(directory: string) {
   }
 
   assert(
-    "@deckard/themes" in generated.dependencies,
-    "the generated package.json does not depend on @deckard/themes"
+    "@thebuilder/deckard-themes" in generated.dependencies,
+    "the generated package.json does not depend on @thebuilder/deckard-themes"
   )
 
   assert(
@@ -288,15 +291,20 @@ try {
   )
 
   if (injected[0] === null) {
-    time("build @deckard/core, @deckard/themes, and @deckard/cli", () => {
-      run("pnpm", ["cli:build"], repoRoot)
-    })
+    time(
+      "build @thebuilder/deckard-core, @thebuilder/deckard-themes, and @thebuilder/deckard-cli",
+      () => {
+        run("pnpm", ["cli:build"], repoRoot)
+      }
+    )
   }
 
-  const core = injected[0] ?? pack("@deckard/core", scratch, "deckard-core")
+  const core =
+    injected[0] ?? pack("@thebuilder/deckard-core", scratch, "deckard-core")
   const themes =
-    injected[1] ?? pack("@deckard/themes", scratch, "deckard-themes")
-  const cli = injected[2] ?? pack("@deckard/cli", scratch, "deckard-cli")
+    injected[1] ?? pack("@thebuilder/deckard-themes", scratch, "deckard-themes")
+  const cli =
+    injected[2] ?? pack("@thebuilder/deckard-cli", scratch, "deckard-cli")
 
   const initFlags = [
     "--core-tarball",
@@ -338,7 +346,7 @@ try {
   })
   assertStaticSlides(pnpmApp, ["intro", "keyboard", "2"])
 
-  // check-overflow loads its measurement out of the deck's own @deckard/core, so
+  // check-overflow loads its measurement out of the deck's own @thebuilder/deckard-core, so
   // it is the one command that only proves itself against an installed deck.
   time("pnpm: validate, doctor, check-overflow, one screenshot", () => {
     run(deckard, ["validate"], pnpmApp)

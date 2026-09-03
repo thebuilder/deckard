@@ -100,7 +100,7 @@ styling of its own. This file decides what each variant paints.
 - `hero`, `breaker`, `statement`, and `closing` are the fields, below.
 
 `accent` is painted by two unlayered rules near the bottom of this file. A base
-layer fallback ships in `@deckard/core/styles.css`, and a theme's unlayered CSS
+layer fallback ships in `@thebuilder/deckard-core/styles.css`, and a theme's unlayered CSS
 always wins over the base layer, so every theme in the registry restates the
 pair. The first rule reads the field colour on the canvas, moving `--primary`
 into `--background` and `--primary-foreground` into `--foreground`. The second
@@ -121,7 +121,7 @@ element that uses it: remapping `--primary` on the same element that reads
 | `statement` | `wash`   | The one sentence a deck is built around    |
 | `closing`   | `waves`  | The last slide, and a thank-you            |
 
-The three fields are the shader programs `@deckard/core` ships: `aurora` is
+The three fields are the shader programs `@thebuilder/deckard-core` ships: `aurora` is
 banded curtains over noise, `waves` is a horizontal band that undulates, and
 `wash` is a soft noise field with a dither. A deck picks a field by picking the
 variant whose name matches the moment it is on, so `background: "closing"` on a
@@ -165,7 +165,7 @@ The contract has two halves. Tokens are values: a size, a colour, a gradient.
 Data attributes are parts. A block names the piece of itself a theme may reach,
 and the theme styles that attribute, decorative `::before` and `::after` content
 included. The full list lives in the "Block part contract" comment at the bottom
-of `@deckard/core/styles.css`. A block is free to rewrite its markup and its
+of `@thebuilder/deckard-core/styles.css`. A block is free to rewrite its markup and its
 class names as long as those attributes stay where they are.
 
 A theme treats existing content and never adds new content. A boot log, a status
@@ -204,7 +204,7 @@ every rule that opens a group, the badge border, and the accent rule. Set it to
 `var(--border)` for a deck that wants the structure without the colour.
 
 `--slide-grid-color`, `--slide-rule`, and `--slide-hatch` are in the token
-contract in `@deckard/core/styles.css` rather than private here. `--slide-halo`
+contract in `@thebuilder/deckard-core/styles.css` rather than private here. `--slide-halo`
 is `none` in both modes: a bloom behind copy on a field is a smudge, and the
 field is already doing that job.
 
@@ -259,7 +259,7 @@ when a slide asks for a background neither the runtime nor this file paints.
 
 `--slide-media-foreground`, `--slide-media-foreground-muted`, and the three
 `--slide-media-overlay-*` gradients ship in the base layer of
-`@deckard/core/styles.css` rather than here, because a scrim over a photograph
+`@thebuilder/deckard-core/styles.css` rather than here, because a scrim over a photograph
 is dark in both color modes. Override them in this file if a deck needs a
 different scrim.
 

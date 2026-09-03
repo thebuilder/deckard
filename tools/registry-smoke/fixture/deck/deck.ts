@@ -1,5 +1,5 @@
-import { defineDeck } from "@deckard/core"
-import { ledger } from "@deckard/themes"
+import { defineDeck } from "@thebuilder/deckard-core"
+import { ledger } from "@thebuilder/deckard-themes"
 
 import { slides } from "@/deck/slides"
 

@@ -1,4 +1,4 @@
-import type { SlideDefinition } from "@deckard/core"
+import type { SlideDefinition } from "@thebuilder/deckard-core"
 import { ContentSlideCard, HeroSlide } from "@/app/slides/blocks/templates"
 import "server-only"
 

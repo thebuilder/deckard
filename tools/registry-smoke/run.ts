@@ -21,11 +21,11 @@ const blockFiles = [
   "media.tsx",
 ]
 
-// The fixture deck imports this one from @deckard/themes. Nothing installs
+// The fixture deck imports this one from @thebuilder/deckard-themes. Nothing installs
 // it, so finding its class in the build proves the import is the whole path.
 const themeSelector = ".ledger-theme"
 
-// Classes only the @deckard/core runtime writes. Tailwind reaches them through
+// Classes only the @thebuilder/deckard-core runtime writes. Tailwind reaches them through
 // the @source the package stylesheet registers against its own compiled output,
 // so finding them proves the single @import is the whole contract.
 const runtimeUtilities = ["min-h-16", "backdrop-blur-sm", "data-slide-chrome"]
@@ -152,8 +152,8 @@ function assertStylesheetWiring(appDirectory: string) {
   const css = readFile(appDirectory, "app/globals.css")
 
   assert(
-    css.includes('@import "@deckard/core/styles.css"'),
-    "the preset did not add the @deckard/core stylesheet import"
+    css.includes('@import "@thebuilder/deckard-core/styles.css"'),
+    "the preset did not add the @thebuilder/deckard-core stylesheet import"
   )
   assert(
     !css.includes("@source"),
@@ -166,7 +166,7 @@ function assertPlainNextConfig(appDirectory: string) {
 
   assert(
     !config.includes("transpilePackages"),
-    "the consumer app needs no transpilePackages, because @deckard/core ships compiled"
+    "the consumer app needs no transpilePackages, because @thebuilder/deckard-core ships compiled"
   )
 }
 
@@ -203,7 +203,7 @@ function assertBuiltStylesheet(appDirectory: string) {
 
   assert(
     missing.length === 0,
-    `the built stylesheet is missing @deckard/core runtime utilities: ${missing.join(", ")}`
+    `the built stylesheet is missing @thebuilder/deckard-core runtime utilities: ${missing.join(", ")}`
   )
 }
 
@@ -218,16 +218,16 @@ try {
     "pnpm",
     [
       "--filter",
-      "@deckard/core",
+      "@thebuilder/deckard-core",
       "--filter",
-      "@deckard/themes",
+      "@thebuilder/deckard-themes",
       "run",
       "build",
     ],
     repoRoot
   )
-  await pack("@deckard/core", scratch, "deckard-core")
-  await pack("@deckard/themes", scratch, "deckard-themes")
+  await pack("@thebuilder/deckard-core", scratch, "deckard-core")
+  await pack("@thebuilder/deckard-themes", scratch, "deckard-themes")
   fs.cpSync(fixtureSource, smokeApp, { recursive: true })
   pointAtRegistry(smokeApp, server.port)
 

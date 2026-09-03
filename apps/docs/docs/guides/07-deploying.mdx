@@ -90,7 +90,7 @@ If you want the whole deck private, put the deployment behind the host's access 
 
 Files in `public/` are served from the site root, so `public/logo.svg` is `/logo.svg`. Reference them with a root-relative path; the deck holds no base path.
 
-A built-in theme reaches no font host. The ones set in a real typeface ship it inside `@deckard/themes`, subset and self-hosted, and the rest use system stacks. Adding a web font of your own is `next/font` in `app/layout.tsx`, the same as any Next app.
+A built-in theme reaches no font host. The ones set in a real typeface ship it inside `@thebuilder/deckard-themes`, subset and self-hosted, and the rest use system stacks. Adding a web font of your own is `next/font` in `app/layout.tsx`, the same as any Next app.
 
 Images in the media blocks go through `next/image`, which needs the optimizer the host runs. That is automatic on Vercel and on any Node host running `next start`. It is the one thing [static export](/reference/requirements#static-export) has to turn off.
 

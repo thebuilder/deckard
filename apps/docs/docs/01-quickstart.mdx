@@ -9,7 +9,7 @@ sidebar:
 `deckard init` writes a Next.js app with a sample deck in it, installs the dependencies, makes the first commit, and typechecks the result.
 
 :::warning
-`@deckard/core`, `@deckard/themes`, and `@deckard/cli` are built for npm but not published there yet, so the `npx` line below does not work from a clean machine. [Install from tarballs](#installing-before-the-packages-publish) until they land.
+`@thebuilder/deckard-core`, `@thebuilder/deckard-themes`, and `@thebuilder/deckard-cli` are built for npm but not published there yet, so the `npx` line below does not work from a clean machine. [Install from tarballs](#installing-before-the-packages-publish) until they land.
 :::
 
 ## Scaffold a deck
@@ -17,7 +17,7 @@ sidebar:
 <Steps>
   <Step title="Run init">
     ```bash
-    npx @deckard/cli init my-talk
+    npx @thebuilder/deckard-cli init my-talk
     ```
 
     `init` installs with whichever package manager invoked it. Through `npx` that is npm, through `pnpm dlx` it is pnpm. It writes no `packageManager` field, so the deck is not locked to that choice, and later `deckard` commands read the lockfile.
@@ -64,7 +64,7 @@ sidebar:
 
 </FileTree>
 
-The theme is not a file. `init` writes it as an import from `@deckard/themes` in `deck/deck.ts`, so `--theme phosphor` changes one identifier.
+The theme is not a file. `init` writes it as an import from `@thebuilder/deckard-themes` in `deck/deck.ts`, so `--theme phosphor` changes one identifier.
 
 ## init flags
 
@@ -76,9 +76,9 @@ The theme is not a file. `init` writes it as an import from `@deckard/themes` in
 | `--no-install` | install runs | Write the files and stop. Skips the typecheck too. |
 | `--no-git` | git runs | Skip `git init` and the first commit. |
 | `--registry <url>` | `https://deckard.thebuilder.dk/r/{name}.json` | The `@deckard` registry written into `components.json`. |
-| `--core-tarball <path>` | `^<cli version>` | Install `@deckard/core` from a local tarball. |
-| `--themes-tarball <path>` | `^<cli version>` | Same, for `@deckard/themes`. |
-| `--cli-tarball <path>` | `^<cli version>` | Same, for `@deckard/cli`. |
+| `--core-tarball <path>` | `^<cli version>` | Install `@thebuilder/deckard-core` from a local tarball. |
+| `--themes-tarball <path>` | `^<cli version>` | Same, for `@thebuilder/deckard-themes`. |
+| `--cli-tarball <path>` | `^<cli version>` | Same, for `@thebuilder/deckard-cli`. |
 
 `init` refuses a directory that already has files in it. It asks no questions.
 
@@ -88,17 +88,17 @@ Pack all three from a checkout of the Deckard repository and point `init` at the
 
 ```bash
 pnpm cli:build
-pnpm --filter @deckard/core exec pnpm pack --pack-destination /tmp/deckard
-pnpm --filter @deckard/themes exec pnpm pack --pack-destination /tmp/deckard
-pnpm --filter @deckard/cli exec pnpm pack --pack-destination /tmp/deckard
+pnpm --filter @thebuilder/deckard-core exec pnpm pack --pack-destination /tmp/deckard
+pnpm --filter @thebuilder/deckard-themes exec pnpm pack --pack-destination /tmp/deckard
+pnpm --filter @thebuilder/deckard-cli exec pnpm pack --pack-destination /tmp/deckard
 
 node packages/cli/bin/deckard.mjs init ~/code/my-talk \
-  --core-tarball /tmp/deckard/deckard-core-0.0.1.tgz \
-  --themes-tarball /tmp/deckard/deckard-themes-0.0.1.tgz \
-  --cli-tarball /tmp/deckard/deckard-cli-0.0.1.tgz
+  --core-tarball /tmp/deckard/thebuilder-deckard-core-0.0.1.tgz \
+  --themes-tarball /tmp/deckard/thebuilder-deckard-themes-0.0.1.tgz \
+  --cli-tarball /tmp/deckard/thebuilder-deckard-cli-0.0.1.tgz
 ```
 
-The generated app is identical either way. When the packages publish, `npx @deckard/cli init` becomes the whole install and nothing in the app changes.
+The generated app is identical either way. When the packages publish, `npx @thebuilder/deckard-cli init` becomes the whole install and nothing in the app changes.
 
 The blocks come in either way. `init` ships them inside the CLI package and copies them into `app/slides/blocks/`. Adding a block later fetches from the registry the docs site serves. See [Blocks and the registry](/guides/blocks-and-the-registry).
 
@@ -109,14 +109,14 @@ The blocks come in either way. `init` ships them inside the CLI package and copi
 <Steps>
   <Step title="Install the packages">
     ```bash
-    pnpm add @deckard/core @deckard/themes
-    pnpm add -D @deckard/cli
+    pnpm add @thebuilder/deckard-core @thebuilder/deckard-themes
+    pnpm add -D @thebuilder/deckard-cli
     ```
   </Step>
   <Step title="Import the stylesheet">
     ```css app/globals.css
     @import "tailwindcss";
-    @import "@deckard/core/styles.css";
+    @import "@thebuilder/deckard-core/styles.css";
     ```
 
     That sheet carries the `--slide-*` token contract and registers the package's own compiled output as a Tailwind source, so the runtime's utility classes survive without you naming a path inside `node_modules`. There is no `transpilePackages` entry to add.
@@ -127,7 +127,7 @@ The blocks come in either way. `init` ships them inside the CLI package and copi
   </Step>
   <Step title="Re-export the four routes">
     ```tsx app/slides/[id]/page.tsx
-    import { createSlideRoute } from "@deckard/core/next"
+    import { createSlideRoute } from "@thebuilder/deckard-core/next"
     import { deck } from "@/deck/deck"
 
     const { Page, generateMetadata, generateStaticParams } =

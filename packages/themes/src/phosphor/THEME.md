@@ -128,7 +128,7 @@ glow, and the contract carries no `--slide-wash`, `--slide-veil`,
   `null`.
 
 `accent` is painted by two unlayered rules near the bottom of this file. A base
-layer fallback ships in `@deckard/core/styles.css`, and a theme's unlayered CSS
+layer fallback ships in `@thebuilder/deckard-core/styles.css`, and a theme's unlayered CSS
 always wins over the base layer, so every theme in the registry restates the
 pair. The first rule reads the field colour on the canvas, moving
 `--primary` into `--background` and `--primary-foreground` into `--foreground`.
@@ -148,7 +148,7 @@ The contract has two halves. Tokens are values: a size, a colour, a gradient.
 Data attributes are parts. A block names the piece of itself a theme may reach,
 and the theme styles that attribute, decorative `::before` and `::after` content
 included. The full list lives in the "Block part contract" comment at the bottom
-of `@deckard/core/styles.css`. A block is free to rewrite its markup and its
+of `@thebuilder/deckard-core/styles.css`. A block is free to rewrite its markup and its
 class names as long as those attributes stay where they are.
 
 A theme treats existing content and never adds new content. A boot log, a status
@@ -191,7 +191,7 @@ What this theme does with the parts it reaches:
 ## Theme-private tokens
 
 `--slide-scanline`, `--slide-halo`, `--slide-rule`, and `--slide-hatch` are in
-the token contract in `@deckard/core/styles.css` rather than private to this
+the token contract in `@thebuilder/deckard-core/styles.css` rather than private to this
 theme, so a theme that wants a scanned sheet or a hatched plate sets a value
 instead of inventing a name. `--slide-scanline` is the repeating gradient, two
 dark pixels every five, and it is `none` in light mode, which is why every
@@ -260,7 +260,7 @@ If you change the class name, change it in `index.ts` too. The class in the
 
 `--slide-media-foreground`, `--slide-media-foreground-muted`, and the three
 `--slide-media-overlay-*` gradients ship in the base layer of
-`@deckard/core/styles.css` rather than here, because a scrim over a photograph
+`@thebuilder/deckard-core/styles.css` rather than here, because a scrim over a photograph
 is dark in both color modes. Override them in this file if a deck needs a
 different scrim.
 

@@ -11,7 +11,7 @@ export interface ThemeSwitchState {
   themeId: string | null
 }
 
-// A module store rather than context, the way @deckard/core reads step and
+// A module store rather than context, the way @thebuilder/deckard-core reads step and
 // presenterPreview: the reader has to sit under a Suspense boundary, and
 // everything that reads the choice sits above one.
 const initialState: ThemeSwitchState = {

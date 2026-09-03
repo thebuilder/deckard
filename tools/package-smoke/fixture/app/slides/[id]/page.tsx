@@ -1,4 +1,4 @@
-import { createSlideRoute } from "@deckard/core/next"
+import { createSlideRoute } from "@thebuilder/deckard-core/next"
 
 import { deck } from "../../../deck/deck"
 

@@ -1,4 +1,4 @@
-import type { SlideDefinition } from "@deckard/core"
+import type { SlideDefinition } from "@thebuilder/deckard-core"
 
 import { BulletList, FeatureGrid } from "@/app/slides/blocks/collections"
 import {
@@ -43,7 +43,7 @@ export const slides: SlideDefinition[] = [
         <BulletList
           items={[
             "The theme landed in deck/theme and this app owns those files.",
-            "The blocks landed in app/slides/blocks and import @deckard/core.",
+            "The blocks landed in app/slides/blocks and import @thebuilder/deckard-core.",
             "The only build wiring is the stylesheet import the preset wrote.",
           ]}
         />

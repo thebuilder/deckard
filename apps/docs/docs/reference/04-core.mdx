@@ -1,5 +1,5 @@
 ---
-title: "@deckard/core"
+title: "@thebuilder/deckard-core"
 description: Every entry point the package exposes, what each one exports, and the four Next.js route adapters an app re-exports.
 sidebar:
   label: Core API
@@ -12,19 +12,19 @@ The package compiles to `dist/` with `tsc`: ESM, `.d.ts`, and `"use client"` dir
 
 | Entry point | Contents |
 | --- | --- |
-| `@deckard/core` | `defineDeck`, slide resolution, summaries, theme helpers, every type |
-| `@deckard/core/components` | The runtime components and slide context hooks |
-| `@deckard/core/code-block` | `CodeBlock`, kept off the components barrel because shiki loads WebAssembly |
-| `@deckard/core/discovery` | `discoverSlides` |
-| `@deckard/core/next` | The four route adapters |
-| `@deckard/core/slide-from-module` | `slideFromModule` |
-| `@deckard/core/ui` | The shadcn primitives the runtime renders |
-| `@deckard/core/utils` | `cn` |
-| `@deckard/core/styles.css` | The `--slide-*` token contract |
+| `@thebuilder/deckard-core` | `defineDeck`, slide resolution, summaries, theme helpers, every type |
+| `@thebuilder/deckard-core/components` | The runtime components and slide context hooks |
+| `@thebuilder/deckard-core/code-block` | `CodeBlock`, kept off the components barrel because shiki loads WebAssembly |
+| `@thebuilder/deckard-core/discovery` | `discoverSlides` |
+| `@thebuilder/deckard-core/next` | The four route adapters |
+| `@thebuilder/deckard-core/slide-from-module` | `slideFromModule` |
+| `@thebuilder/deckard-core/ui` | The shadcn primitives the runtime renders |
+| `@thebuilder/deckard-core/utils` | `cn` |
+| `@thebuilder/deckard-core/styles.css` | The `--slide-*` token contract |
 
 `CodeBlock` is split out because shiki pulls in a WebAssembly regex engine. Importing it through the components barrel would turn every discovered slide module async, which discovery refuses. A slide that shows highlighted code belongs in the `slides` array.
 
-## @deckard/core
+## @thebuilder/deckard-core
 
 | Export | What it does |
 | --- | --- |
@@ -47,7 +47,7 @@ The package compiles to `dist/` with `tsc`: ESM, `.d.ts`, and `"use client"` dir
 
 Types: `Deck`, `DeckConfig`, `DeckCanvasConfig`, `DeckHeaderConfig`, `DeckFooterConfig`, `DeckPresentation`, `ResolvedSlide`, `SlideDefinition`, `SlideMeta`, `SlideModule`, `SlideComponent`, `SlideDefaults`, `SlideSummary`, `SlideTheme`, `SlideColorMode`, `SlideHeaderMode`, `SlideFooterMode`, `SlideFooterModeInput`, `SlideLayoutMode`, `SlideBackgroundMode`, `BuiltInSlideBackgroundMode`, `SlideMotionMode`, `SlideMotionField`, `PresenterChannelMessage`, `PresenterPreviewState`, `PresenterSlideState`.
 
-## @deckard/core/components
+## @thebuilder/deckard-core/components
 
 | Export | What it does |
 | --- | --- |
@@ -123,7 +123,7 @@ Returns `{ currentStep, stepCount, advance, retreat, canAdvance, canRetreat, isR
 
 ## Route adapters
 
-`@deckard/core/next` ships the route logic, so an app owns its deck and re-exports the routes. Each adapter takes the resolved deck and returns the route pieces.
+`@thebuilder/deckard-core/next` ships the route logic, so an app owns its deck and re-exports the routes. Each adapter takes the resolved deck and returns the route pieces.
 
 | Adapter | File | Returns |
 | --- | --- | --- |
@@ -135,7 +135,7 @@ Returns `{ currentStep, stepCount, advance, retreat, canAdvance, canRetreat, isR
 <CodeGroup>
 
 ```tsx app/slides/[id]/page.tsx
-import { createSlideRoute } from "@deckard/core/next"
+import { createSlideRoute } from "@thebuilder/deckard-core/next"
 import { deck } from "@/deck/deck"
 
 const { Page, generateMetadata, generateStaticParams } = createSlideRoute(deck)
@@ -145,7 +145,7 @@ export default Page
 ```
 
 ```tsx app/presenter/page.tsx
-import { createPresenterPage } from "@deckard/core/next"
+import { createPresenterPage } from "@thebuilder/deckard-core/next"
 import { deck } from "@/deck/deck"
 
 const { Page, metadata } = createPresenterPage(deck)
@@ -155,14 +155,14 @@ export default Page
 ```
 
 ```ts app/sitemap.ts
-import { createDeckSitemap } from "@deckard/core/next"
+import { createDeckSitemap } from "@thebuilder/deckard-core/next"
 import { deck } from "@/deck/deck"
 
 export default createDeckSitemap(deck)
 ```
 
 ```tsx app/page.tsx
-import { createFirstSlideRedirect } from "@deckard/core/next"
+import { createFirstSlideRedirect } from "@thebuilder/deckard-core/next"
 import { deck } from "@/deck/deck"
 
 export default createFirstSlideRedirect(deck)
@@ -178,6 +178,6 @@ The components the adapters compose are exported too, so a deck that needs its o
 
 ## The dependency direction
 
-`@deckard/core` holds nothing deck-specific. Colors, sizes, and backgrounds live in a theme, and a theme is data: the runtime depends on the token contract in `styles.css` and never on a preset.
+`@thebuilder/deckard-core` holds nothing deck-specific. Colors, sizes, and backgrounds live in a theme, and a theme is data: the runtime depends on the token contract in `styles.css` and never on a preset.
 
-`@deckard/themes` takes `SlideTheme` from core as a type-only import and names core a peer dependency, so nothing crosses at runtime and core does not know the themes exist.
+`@thebuilder/deckard-themes` takes `SlideTheme` from core as a type-only import and names core a peer dependency, so nothing crosses at runtime and core does not know the themes exist.

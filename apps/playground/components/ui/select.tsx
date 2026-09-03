@@ -1,7 +1,7 @@
 "use client"
 
 import { Select as SelectPrimitive } from "@base-ui/react/select"
-import { cn } from "@deckard/core/utils"
+import { cn } from "@thebuilder/deckard-core/utils"
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react"
 import type * as React from "react"
 

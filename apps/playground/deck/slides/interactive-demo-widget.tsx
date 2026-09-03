@@ -5,9 +5,9 @@ import type {
   SlideFooterMode,
   SlideHeaderMode,
   SlideLayoutMode,
-} from "@deckard/core"
+} from "@thebuilder/deckard-core"
 
-import { Button } from "@deckard/core/ui"
+import { Button } from "@thebuilder/deckard-core/ui"
 import { useCallback, useState } from "react"
 
 export interface ChromePreset {

@@ -1,7 +1,7 @@
 "use client"
 
 import { Menu as MenuPrimitive } from "@base-ui/react/menu"
-import { cn } from "@deckard/core/utils"
+import { cn } from "@thebuilder/deckard-core/utils"
 import { CheckIcon, ChevronRightIcon } from "lucide-react"
 import type * as React from "react"
 

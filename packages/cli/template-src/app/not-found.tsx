@@ -2,8 +2,8 @@ import {
   type SlideSummary,
   toDeckPresentation,
   toSlideSummaries,
-} from "@deckard/core"
-import { SlideShell } from "@deckard/core/components"
+} from "@thebuilder/deckard-core"
+import { SlideShell } from "@thebuilder/deckard-core/components"
 import Link from "next/link"
 import { Eyebrow } from "@/app/slides/blocks/typography"
 import { deck } from "@/deck/deck"

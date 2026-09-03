@@ -8,7 +8,7 @@ if (fs.existsSync(entry)) {
   await import(entry.href)
 } else {
   process.stderr.write(
-    "@deckard/cli has no build yet. Run: pnpm --filter @deckard/cli build\n"
+    "@thebuilder/deckard-cli has no build yet. Run: pnpm --filter @thebuilder/deckard-cli build\n"
   )
   process.exit(1)
 }

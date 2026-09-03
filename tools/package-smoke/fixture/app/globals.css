@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "@deckard/core/styles.css";
+@import "@thebuilder/deckard-core/styles.css";
 
 @theme inline {
   --color-background: var(--background);

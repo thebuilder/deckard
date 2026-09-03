@@ -1,4 +1,4 @@
-import { cn } from "@deckard/core/utils"
+import { cn } from "@thebuilder/deckard-core/utils"
 import type * as React from "react"
 
 function Card({ className, ...props }: React.ComponentProps<"div">) {

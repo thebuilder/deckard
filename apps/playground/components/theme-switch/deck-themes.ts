@@ -1,5 +1,5 @@
-import type { SlideTheme } from "@deckard/core"
-import { themes } from "@deckard/themes"
+import type { SlideTheme } from "@thebuilder/deckard-core"
+import { themes } from "@thebuilder/deckard-themes"
 
 /*
  * The playground renders one deck under any built-in, so a reader can answer
@@ -8,7 +8,7 @@ import { themes } from "@deckard/themes"
  * every command the CLI runs still measures that one, and a deck scaffolded
  * with `deckard init` gets none of this.
  *
- * The list is @deckard/themes' own, so a built-in that ships reaches the picker
+ * The list is @thebuilder/deckard-themes' own, so a built-in that ships reaches the picker
  * with nothing here to edit. Importing it is also what puts every built-in
  * stylesheet in the bundle: a theme's rules are scoped to its class, so the
  * ones a reader is not looking at cost their CSS and paint nothing.

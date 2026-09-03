@@ -8,8 +8,8 @@ sidebar:
 `defineDeck` takes a `DeckConfig` and returns a resolved `Deck`. It resolves the canvas, resolves every slide into an id, a number, a URL and its chrome defaults, and validates the theme.
 
 ```ts deck/deck.ts
-import { defineDeck } from "@deckard/core"
-import { meridian } from "@deckard/themes"
+import { defineDeck } from "@thebuilder/deckard-core"
+import { meridian } from "@thebuilder/deckard-themes"
 import { slides } from "@/deck/slides"
 
 export const deck = defineDeck({

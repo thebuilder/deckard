@@ -1,6 +1,6 @@
 "use client"
 
-import { useSlideTitle } from "@deckard/core/components"
+import { useSlideTitle } from "@thebuilder/deckard-core/components"
 import { type RefObject, useEffect, useRef } from "react"
 import { Eyebrow, SlideHeading } from "@/app/slides/blocks/typography"
 

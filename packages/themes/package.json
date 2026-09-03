@@ -1,5 +1,5 @@
 {
-  "name": "@deckard/themes",
+  "name": "@thebuilder/deckard-themes",
   "version": "0.0.1",
   "description": "The deck themes behind Deckard, a React presentation framework for Next.js. Each one is a SlideTheme that carries its own stylesheet.",
   "keywords": [
@@ -40,12 +40,12 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@deckard/core": "workspace:*",
+    "@thebuilder/deckard-core": "workspace:*",
     "@types/node": "^26.4.0",
     "typescript": "^7.0.2"
   },
   "peerDependencies": {
-    "@deckard/core": ">=0.0.1"
+    "@thebuilder/deckard-core": ">=0.0.1"
   },
   "engines": {
     "node": ">=20.9"

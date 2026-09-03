@@ -1,1 +1,1 @@
-export { cn } from "@deckard/core/utils"
+export { cn } from "@thebuilder/deckard-core/utils"

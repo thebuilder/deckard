@@ -1,6 +1,6 @@
 "use client"
 
-import { Button } from "@deckard/core/ui"
+import { Button } from "@thebuilder/deckard-core/ui"
 import { useCallback, useState } from "react"
 
 export function Counter() {

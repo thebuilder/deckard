@@ -63,7 +63,7 @@ function shadcnEntry(): string {
     return path.join(root, typeof bin === "string" ? bin : bin.shadcn)
   } catch (error) {
     throw new Error(
-      "shadcn does not resolve from @deckard/cli. Reinstall the deck's dependencies.",
+      "shadcn does not resolve from @thebuilder/deckard-cli. Reinstall the deck's dependencies.",
       { cause: error }
     )
   }
@@ -115,7 +115,7 @@ async function assertReachable(url: string): Promise<void> {
   )
 }
 
-// A theme is no longer an install. It is a named export of @deckard/themes,
+// A theme is no longer an install. It is a named export of @thebuilder/deckard-themes,
 // so switching one is an edit to the import in deck/deck.ts.
 function switchTheme(name: string): void {
   if (!isBuiltInTheme(name)) {

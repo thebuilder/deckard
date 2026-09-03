@@ -1,6 +1,6 @@
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
-import { cn } from "@deckard/core/utils"
+import { cn } from "@thebuilder/deckard-core/utils"
 import { cva, type VariantProps } from "class-variance-authority"
 import { Separator } from "@/components/ui/separator"
 
