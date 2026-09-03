@@ -110,8 +110,11 @@ The blocks come in either way. `init` ships them inside the CLI package and copi
   <Step title="Install the packages">
     ```bash
     pnpm add @thebuilder/deckard-core @thebuilder/deckard-themes
-    pnpm add -D @thebuilder/deckard-cli
+    pnpm add -D @thebuilder/deckard-cli playwright pdf-lib
     ```
+
+    `playwright` and `pdf-lib` are what `check-overflow`, `screenshots`, `contact-sheet`, and `export pdf` load from the deck. Leave them out if the deck will only ever be presented.
+
   </Step>
   <Step title="Import the stylesheet">
     ```css app/globals.css

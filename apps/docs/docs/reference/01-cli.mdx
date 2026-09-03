@@ -146,7 +146,10 @@ Generating route types...
   npm run dev
 
 Slides are deck/slides.tsx. The theme is imported from @thebuilder/deckard-themes; run deckard eject theme to own a copy of it.
+The export commands drive Chromium. Download it once with npm exec -- playwright install chromium.
 ```
+
+`init` writes `playwright` and `pdf-lib` into the deck's `devDependencies`. The capture commands load both from the deck rather than from the CLI, so the CLI install itself carries neither.
 
 `--no-install` skips the typecheck too, since there is nothing installed to typecheck against. A git failure is a warning, not an exit, and the commit prints nothing when it works. A typecheck failure exits 1 after everything is written, so the files are on disk either way.
 
@@ -220,6 +223,7 @@ Takes no flags at all. Checks the shape of the app rather than the content of th
 | --- | --- |
 | `node` | Node is at least 20.9.0. |
 | `core` | `@thebuilder/deckard-core/package.json` resolves from the project. |
+| `tooling` | `playwright` and `pdf-lib` resolve from the project. The capture commands load them from the deck. |
 | `styles` | `app/globals.css` contains `@import "@thebuilder/deckard-core/styles.css"`. |
 | `routes` | Each of the four route files re-exports its adapter. |
 | `deck` | `deck/deck.ts` loads. |
@@ -229,6 +233,7 @@ deckard doctor
 
 ok node      node 24.14.0
 ok core      @thebuilder/deckard-core 0.0.1
+ok tooling   playwright 1.62.1, pdf-lib 1.17.1
 ok styles    app/globals.css imports the slide token contract
 ok routes    4 route files re-export their adapter
 ok deck      deck/deck.ts loads 5 slides for "My talk"
@@ -243,6 +248,7 @@ deckard doctor
 
 ok node      node 24.14.0
 ok core      @thebuilder/deckard-core 0.0.1
+ok tooling   playwright 1.62.1, pdf-lib 1.17.1
 FAIL styles  app/globals.css never imports @import "@thebuilder/deckard-core/styles.css"
              Add @import "@thebuilder/deckard-core/styles.css"; to app/globals.css. It carries the --slide-* tokens and registers the runtime's own Tailwind source.
 ok routes    4 route files re-export their adapter

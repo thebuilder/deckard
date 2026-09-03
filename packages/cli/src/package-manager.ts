@@ -126,3 +126,14 @@ export function addCommand(
     ? `npm install ${dependency}`
     : `${manager} add ${dependency}`
 }
+
+export function addDevCommand(
+  manager: PackageManager,
+  dependencies: string[]
+): string {
+  const line = dependencies.join(" ")
+
+  return manager === "npm"
+    ? `npm install -D ${line}`
+    : `${manager} add -D ${line}`
+}

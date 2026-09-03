@@ -29,6 +29,8 @@ const pinnedFrom = {
     "@types/node",
     "@types/react",
     "@types/react-dom",
+    "pdf-lib",
+    "playwright",
     "postcss",
     "tailwindcss",
     "typescript",

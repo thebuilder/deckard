@@ -2,8 +2,6 @@ import fs from "node:fs"
 import path from "node:path"
 import process from "node:process"
 
-import { PDFDocument } from "pdf-lib"
-
 import { booleanFlag, numberFlag, type ParsedArgs } from "../args.ts"
 import {
   type CanvasSession,
@@ -11,6 +9,7 @@ import {
   pdfProfile,
   withCanvasSession,
 } from "../deck/preview.ts"
+import { loadPdfLib } from "../deck/tooling.ts"
 import { type ColorMode, write } from "../output.ts"
 import { projectRoot } from "../project.ts"
 
@@ -34,6 +33,7 @@ export function runExportPdf(args: ParsedArgs): Promise<void> {
   const skipBuild = booleanFlag(args, "skip-build")
 
   async function exportPdf({ baseUrl, canvas, ids, page }: CanvasSession) {
+    const { PDFDocument } = await loadPdfLib()
     const pdf = await PDFDocument.create()
 
     for (const id of ids) {

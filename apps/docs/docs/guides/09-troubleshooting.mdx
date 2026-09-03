@@ -234,11 +234,23 @@ A presenter window opened by pasting the URL into a different browser will never
 Failed to launch Chromium. Run: pnpm exec playwright install chromium
 ```
 
-**Cause.** Playwright installs with the CLI. The browser binary is a separate download.
+**Cause.** The Playwright package is installed in the deck, but the browser binary is a separate download.
 
 **Fix.** Run the line the message printed. It names your deck's package manager, so an npm deck is told `npm exec -- playwright install chromium` and a bun deck `bunx playwright install chromium`.
 
 This hits `check-overflow`, `screenshots`, `contact-sheet`, and `export pdf`. It never hits `validate`, `doctor`, `init`, `add`, or `eject`, which drive no browser.
+
+## A capture command cannot find playwright or pdf-lib
+
+**Symptom.**
+
+```text
+playwright does not resolve from this deck. The capture commands load it from the deck's own node_modules. Install it: pnpm add -D playwright
+```
+
+**Cause.** The CLI does not ship the browser or the PDF writer. `deckard init` writes both into the deck's `devDependencies`; a deck added to an existing app by hand, or one that removed them, has neither.
+
+**Fix.** Run the line the message printed, then the Chromium download above. `deckard doctor` lists both packages under `tooling`.
 
 ### The port is taken
 
