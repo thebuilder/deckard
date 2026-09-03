@@ -1,10 +1,10 @@
-import { SlideStep } from "@deckard/core/components"
+import { SlideStep } from "@thebuilder/deckard-core/components"
 import { FeatureGrid } from "@/app/slides/blocks/collections"
 import { HeroSlide, OpenContentSlide } from "@/app/slides/blocks/templates"
 import "server-only"
 
-import type { SlideDefinition } from "@deckard/core"
-import { discoverSlides } from "@deckard/core/discovery"
+import type { SlideDefinition } from "@thebuilder/deckard-core"
+import { discoverSlides } from "@thebuilder/deckard-core/discovery"
 
 const discoveredSlides = discoverSlides(
   import.meta.glob("./slides/**/*.slide.tsx", { eager: true }),

@@ -73,7 +73,7 @@ Three slides in a row that all end above the halfway line, or the same numbered 
 
 ## Build reuse
 
-The screenshot, overflow, and PDF commands share one harness. It stamps `.next/deckard-build.json` after a build and compares that timestamp against the newest file under `app/`, `assets/`, `components/`, `deck/`, `hooks/`, `lib/`, and `public/`, plus `components.json`, `next.config.*`, `package.json`, `postcss.config.*`, `tsconfig.json`, and the resolved `@deckard/core` and its `src/`. A stale stamp triggers `next build`.
+The screenshot, overflow, and PDF commands share one harness. It stamps `.next/deckard-build.json` after a build and compares that timestamp against the newest file under `app/`, `assets/`, `components/`, `deck/`, `hooks/`, `lib/`, and `public/`, plus `components.json`, `next.config.*`, `package.json`, `postcss.config.*`, `tsconfig.json`, and the resolved `@thebuilder/deckard-core` and its `src/`. A stale stamp triggers `next build`.
 
 `--skip-build` reuses whatever is there regardless. `--port <n>` moves off the default when something else has the port; the harness refuses to start if anything already answers on it.
 

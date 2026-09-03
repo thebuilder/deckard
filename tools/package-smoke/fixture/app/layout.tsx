@@ -1,4 +1,4 @@
-import { ColorModeProvider } from "@deckard/core/components"
+import { ColorModeProvider } from "@thebuilder/deckard-core/components"
 import type { Metadata } from "next"
 import type { ReactNode } from "react"
 

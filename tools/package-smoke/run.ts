@@ -104,7 +104,7 @@ function assertRuntimeStyles(css: string) {
 function assertBuiltInTheme(css: string) {
   if (!css.includes(importedTheme)) {
     throw new Error(
-      `The built CSS is missing ${importedTheme}, so importing a theme from @deckard/themes did not carry its stylesheet`
+      `The built CSS is missing ${importedTheme}, so importing a theme from @thebuilder/deckard-themes did not carry its stylesheet`
     )
   }
 
@@ -130,7 +130,7 @@ function assertPackedFonts(tarball: string) {
 
   if (fonts.length === 0) {
     throw new Error(
-      "The @deckard/themes tarball ships no woff2 files, so a theme that self-hosts a typeface would render in its fallback stack"
+      "The @thebuilder/deckard-themes tarball ships no woff2 files, so a theme that self-hosts a typeface would render in its fallback stack"
     )
   }
 
@@ -218,16 +218,16 @@ try {
     "pnpm",
     [
       "--filter",
-      "@deckard/core",
+      "@thebuilder/deckard-core",
       "--filter",
-      "@deckard/themes",
+      "@thebuilder/deckard-themes",
       "run",
       "build",
     ],
     repoRoot
   )
-  pack("@deckard/core", scratch, "deckard-core")
-  pack("@deckard/themes", scratch, "deckard-themes")
+  pack("@thebuilder/deckard-core", scratch, "thebuilder-deckard-core")
+  pack("@thebuilder/deckard-themes", scratch, "thebuilder-deckard-themes")
   fs.cpSync(fixtureSource, appDirectory, { recursive: true })
 
   run(
@@ -246,7 +246,7 @@ try {
   assertBuiltFonts(appDirectory, css)
 
   process.stdout.write(
-    "\n@deckard/core and @deckard/themes build and style a standalone Next.js app\n"
+    "\n@thebuilder/deckard-core and @thebuilder/deckard-themes build and style a standalone Next.js app\n"
   )
 } finally {
   if (keepScratch) {

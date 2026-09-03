@@ -1,4 +1,4 @@
-import type { SlideTheme } from "@deckard/core"
+import type { SlideTheme } from "@thebuilder/deckard-core"
 
 import "./theme.css"
 

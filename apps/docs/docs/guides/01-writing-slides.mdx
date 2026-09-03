@@ -68,7 +68,7 @@ Keep a slide in the array while it is metadata plus one block. Move it to `deck/
 A slide module exports the component as `default`, plus `meta` and `notes` as plain values so the deck can title and order it without rendering it:
 
 ```tsx deck/slides/pricing.slide.tsx
-import type { SlideMeta } from "@deckard/core"
+import type { SlideMeta } from "@thebuilder/deckard-core"
 
 export const meta: SlideMeta = { slug: "pricing", title: "Pricing" }
 export const notes = "Pause on the middle tier."
@@ -107,7 +107,7 @@ A slide that throws under `next dev` renders an inline error card with the slide
 `discoverSlides` takes an eager glob and returns slide definitions, so you skip the imports:
 
 ```tsx deck/slides.tsx
-import { discoverSlides } from "@deckard/core/discovery"
+import { discoverSlides } from "@thebuilder/deckard-core/discovery"
 
 const discovered = discoverSlides(
   import.meta.glob("./slides/**/*.slide.tsx", { eager: true }),
@@ -137,11 +137,11 @@ Sorting never reads the enumeration order of the glob object.
 
 ### Two limits
 
-**A discovered module has to be synchronous.** If it or anything it imports uses top-level await or WebAssembly, the eager glob hands back a promise instead of the exports and discovery throws naming the file. `CodeBlock` is the case that bites: shiki loads a WebAssembly regex engine, which is why it ships from `@deckard/core/code-block` rather than the components barrel. A slide that shows highlighted code belongs in the array, wired with `slideFromModule` if you want it in a file anyway:
+**A discovered module has to be synchronous.** If it or anything it imports uses top-level await or WebAssembly, the eager glob hands back a promise instead of the exports and discovery throws naming the file. `CodeBlock` is the case that bites: shiki loads a WebAssembly regex engine, which is why it ships from `@thebuilder/deckard-core/code-block` rather than the components barrel. A slide that shows highlighted code belongs in the array, wired with `slideFromModule` if you want it in a file anyway:
 
 ```tsx
 import * as pricingSlide from "@/deck/slides/pricing.slide"
-import { slideFromModule } from "@deckard/core/slide-from-module"
+import { slideFromModule } from "@thebuilder/deckard-core/slide-from-module"
 
 slideFromModule(pricingSlide, "deck/slides/pricing.slide.tsx")
 ```

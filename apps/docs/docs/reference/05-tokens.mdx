@@ -1,18 +1,18 @@
 ---
 title: Token contract
-description: Every --slide-* custom property declared in @deckard/core/styles.css, its neutral default, and which part of the runtime reads it.
+description: Every --slide-* custom property declared in @thebuilder/deckard-core/styles.css, its neutral default, and which part of the runtime reads it.
 sidebar:
   label: Tokens
   icon: swatch-book
 ---
 
-`@deckard/core/styles.css` declares every `--slide-*` token with a neutral default, inside `@layer base`. A theme redefines them on the canvas and wins, because it ships unlayered CSS and everything in the contract sits in the base layer.
+`@thebuilder/deckard-core/styles.css` declares every `--slide-*` token with a neutral default, inside `@layer base`. A theme redefines them on the canvas and wins, because it ships unlayered CSS and everything in the contract sits in the base layer.
 
 The runtime depends on these names and never on a preset, so a deck with no theme still renders: neutral sizes, app surfaces, no decoration.
 
 ```css app/globals.css
 @import "tailwindcss";
-@import "@deckard/core/styles.css";
+@import "@thebuilder/deckard-core/styles.css";
 ```
 
 ## Type

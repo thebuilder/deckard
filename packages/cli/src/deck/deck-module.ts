@@ -1,4 +1,4 @@
-import type { Deck } from "@deckard/core"
+import type { Deck } from "@thebuilder/deckard-core"
 import type { Plugin } from "vite"
 import { createServer } from "vite"
 
@@ -36,7 +36,11 @@ export async function loadDeck(): Promise<Deck> {
     root: projectRoot,
     server: { hmr: false, middlewareMode: true, watch: null },
     ssr: {
-      noExternal: ["@deckard/core", "@deckard/themes", "server-only"],
+      noExternal: [
+        "@thebuilder/deckard-core",
+        "@thebuilder/deckard-themes",
+        "server-only",
+      ],
     },
   })
 

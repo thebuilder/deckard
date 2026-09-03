@@ -7,7 +7,7 @@
     "analyze": "fallow",
     "build": "turbo run build",
     "check-overflow": "pnpm deck:check-overflow",
-    "cli:build": "turbo run build --filter=@deckard/cli --filter=@deckard/themes",
+    "cli:build": "turbo run build --filter=@thebuilder/deckard-cli --filter=@thebuilder/deckard-themes",
     "deck:check-overflow": "pnpm cli:build && pnpm --filter playground deck:check-overflow",
     "deck:contact-sheet": "pnpm cli:build && pnpm --filter playground deck:contact-sheet",
     "deck:doctor": "pnpm cli:build && pnpm --filter playground deck:doctor",
@@ -25,7 +25,7 @@
     "smoke:registry": "node tools/registry-smoke/run.ts",
     "test": "turbo run test",
     "test:browser": "turbo run test:browser",
-    "test:browser:install": "pnpm --filter @deckard/core exec playwright install --with-deps chromium firefox webkit",
+    "test:browser:install": "pnpm --filter @thebuilder/deckard-core exec playwright install --with-deps chromium firefox webkit",
     "test:unit": "turbo run test:unit",
     "typecheck": "turbo run typecheck",
     "validate": "pnpm deck:validate"

@@ -1,4 +1,4 @@
-import { themeIds } from "@deckard/themes/ids"
+import { themeIds } from "@thebuilder/deckard-themes/ids"
 import { describe, expect, it } from "vitest"
 
 import {
@@ -7,8 +7,8 @@ import {
   themeStylesheetKind,
 } from "./theme-source.ts"
 
-const builtInDeck = `import { defineDeck } from "@deckard/core"
-import { phosphor } from "@deckard/themes"
+const builtInDeck = `import { defineDeck } from "@thebuilder/deckard-core"
+import { phosphor } from "@thebuilder/deckard-themes"
 import { slides } from "@/deck/slides"
 
 export const deck = defineDeck({
@@ -19,7 +19,7 @@ export const deck = defineDeck({
 })
 `
 
-const localDeck = `import { defineDeck } from "@deckard/core"
+const localDeck = `import { defineDeck } from "@thebuilder/deckard-core"
 import { slides } from "@/deck/slides"
 import { theme } from "@/deck/theme"
 
@@ -35,7 +35,7 @@ export const deck = defineDeck({
 // tests can read it without a build. This is what catches it left behind: the
 // checks job never regenerates it before running them.
 describe("builtInThemes", () => {
-  it("names every theme @deckard/themes ships, and no other", () => {
+  it("names every theme @thebuilder/deckard-themes ships, and no other", () => {
     expect([...builtInThemes]).toEqual([...themeIds])
   })
 

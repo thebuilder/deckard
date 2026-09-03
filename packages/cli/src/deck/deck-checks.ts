@@ -1,4 +1,4 @@
-import type { Deck, ResolvedSlide, SlideTheme } from "@deckard/core"
+import type { Deck, ResolvedSlide, SlideTheme } from "@thebuilder/deckard-core"
 
 import { inspectThemeCss } from "./theme-css.ts"
 
@@ -19,7 +19,7 @@ export type ReadFile = (relativePath: string) => string | null
 // motion map or in its stylesheet, so a background in none of the three is a
 // misspelling and the slide renders the wrong thing quietly. Written out rather
 // than imported: the CLI reads the deck's runtime and never loads its own, and
-// deck-checks.test.ts holds this list to what @deckard/core declares.
+// deck-checks.test.ts holds this list to what @thebuilder/deckard-core declares.
 export const builtInBackgrounds = [
   "accent",
   "default",

@@ -1,5 +1,5 @@
 "use client"
-import { cn } from "@deckard/core/utils"
+import { cn } from "@thebuilder/deckard-core/utils"
 import { motion, type TargetAndTransition, type Transition } from "motion/react"
 
 export interface GlowEffectProps {

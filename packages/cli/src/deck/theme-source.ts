@@ -1,7 +1,7 @@
 import fs from "node:fs"
 import path from "node:path"
 
-import type { BuiltInThemeId } from "@deckard/themes/ids"
+import type { BuiltInThemeId } from "@thebuilder/deckard-themes/ids"
 
 import { projectPath, resolveFromProject } from "../project.ts"
 import { defaultThemeId, themeIds } from "./built-in-themes.ts"
@@ -11,7 +11,7 @@ import {
   type ThemeImportKind,
 } from "./deck-source.ts"
 
-// The names and the default are decided in @deckard/themes/ids and copied into
+// The names and the default are decided in @thebuilder/deckard-themes/ids and copied into
 // ./built-in-themes.ts by the build. Nothing the CLI ships imports the theme
 // package at runtime, so it installs on its own; the copy is generated rather
 // than kept by hand.
@@ -54,7 +54,7 @@ export function themeStylesheetKind(
   return localThemeExists ? "local" : "builtin"
 }
 
-export const themesPackage = "@deckard/themes"
+export const themesPackage = "@thebuilder/deckard-themes"
 
 // The presets ship inside the package the deck installed, so their source is
 // wherever that copy landed rather than anywhere in the deck.

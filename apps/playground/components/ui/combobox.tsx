@@ -7,8 +7,8 @@ import {
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
-} from "@deckard/core/ui"
-import { cn } from "@deckard/core/utils"
+} from "@thebuilder/deckard-core/ui"
+import { cn } from "@thebuilder/deckard-core/utils"
 import { CheckIcon, ChevronDownIcon, XIcon } from "lucide-react"
 import { type ComponentPropsWithRef, useRef } from "react"
 

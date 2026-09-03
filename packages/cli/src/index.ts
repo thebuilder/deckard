@@ -90,9 +90,9 @@ const help = `deckard ${version}
     --package-manager <name>     npm, pnpm, yarn, or bun (default: the one that ran init)
     --no-install                 write the files and stop
     --no-git                     skip git init and the first commit
-    --core-tarball <path>        install @deckard/core from a local tarball
-    --cli-tarball <path>         install @deckard/cli from a local tarball
-    --themes-tarball <path>      install @deckard/themes from a local tarball
+    --core-tarball <path>        install @thebuilder/deckard-core from a local tarball
+    --cli-tarball <path>         install @thebuilder/deckard-cli from a local tarball
+    --themes-tarball <path>      install @thebuilder/deckard-themes from a local tarball
     --registry <url>             the @deckard registry for components.json
 
   deckard validate           load the deck, check its slides and its theme

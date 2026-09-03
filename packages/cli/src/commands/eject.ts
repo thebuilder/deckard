@@ -1,7 +1,7 @@
 import fs from "node:fs"
 import path from "node:path"
 
-import type { SlideTheme } from "@deckard/core"
+import type { SlideTheme } from "@thebuilder/deckard-core"
 
 import { type ParsedArgs, stringFlag } from "../args.ts"
 import { loadDeck } from "../deck/deck-module.ts"
@@ -48,7 +48,7 @@ function chooseTheme(args: ParsedArgs, source: string): string {
 
   if (!name) {
     throw new Error(
-      `${deckSourcePath} imports no theme from @deckard/themes, so there is no built-in to copy. Name one with --theme <${builtInThemes.join("|")}>.`
+      `${deckSourcePath} imports no theme from @thebuilder/deckard-themes, so there is no built-in to copy. Name one with --theme <${builtInThemes.join("|")}>.`
     )
   }
 
@@ -72,7 +72,7 @@ function assertNoLocalTheme(): void {
 }
 
 function themeEntry(theme: SlideTheme): string {
-  return `import type { SlideTheme } from "@deckard/core"
+  return `import type { SlideTheme } from "@thebuilder/deckard-core"
 
 import "./theme.css"
 

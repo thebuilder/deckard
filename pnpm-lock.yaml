@@ -39,10 +39,10 @@ importers:
         specifier: 0.3.1
         version: 0.3.1
     devDependencies:
-      '@deckard/core':
+      '@thebuilder/deckard-core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@deckard/themes':
+      '@thebuilder/deckard-themes':
         specifier: workspace:*
         version: link:../../packages/themes
       '@types/node':
@@ -60,10 +60,10 @@ importers:
       '@base-ui/react':
         specifier: ^1.7.0
         version: 1.7.0(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@deckard/core':
+      '@thebuilder/deckard-core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@deckard/themes':
+      '@thebuilder/deckard-themes':
         specifier: workspace:*
         version: link:../../packages/themes
       class-variance-authority:
@@ -94,12 +94,12 @@ importers:
         specifier: ^1.4.0
         version: 1.4.0
     devDependencies:
-      '@deckard/cli':
-        specifier: workspace:*
-        version: link:../../packages/cli
       '@tailwindcss/postcss':
         specifier: ^4.3.3
         version: 4.3.3
+      '@thebuilder/deckard-cli':
+        specifier: workspace:*
+        version: link:../../packages/cli
       '@types/node':
         specifier: ^26.4.0
         version: 26.4.0
@@ -146,10 +146,10 @@ importers:
         specifier: ^8.2.2
         version: 8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0)
     devDependencies:
-      '@deckard/core':
+      '@thebuilder/deckard-core':
         specifier: workspace:*
         version: link:../core
-      '@deckard/themes':
+      '@thebuilder/deckard-themes':
         specifier: workspace:*
         version: link:../themes
       '@types/node':
@@ -225,7 +225,7 @@ importers:
 
   packages/themes:
     devDependencies:
-      '@deckard/core':
+      '@thebuilder/deckard-core':
         specifier: workspace:*
         version: link:../core
       '@types/node':

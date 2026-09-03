@@ -1,6 +1,6 @@
 import { pathToFileURL } from "node:url"
 
-import type { SlideLayoutFinding } from "@deckard/core/layout"
+import type { SlideLayoutFinding } from "@thebuilder/deckard-core/layout"
 import type { Page } from "playwright"
 
 import { booleanFlag, numberFlag, type ParsedArgs } from "../args.ts"
@@ -17,18 +17,18 @@ interface SlideFinding extends SlideLayoutFinding {
   id: string
 }
 
-type LayoutModule = typeof import("@deckard/core/layout")
+type LayoutModule = typeof import("@thebuilder/deckard-core/layout")
 
 // Resolved against the deck rather than bundled here. The measurement this gate
-// runs is the deck's own copy of @deckard/core, which is the same file
+// runs is the deck's own copy of @thebuilder/deckard-core, which is the same file
 // SlideOverflowGuard draws its amber ring from, so CI fails on exactly what an
 // author sees in next dev and neither can drift from the other.
 async function loadLayout(): Promise<LayoutModule> {
-  const resolved = resolveFromProject("@deckard/core/layout")
+  const resolved = resolveFromProject("@thebuilder/deckard-core/layout")
 
   if (!resolved) {
     throw new Error(
-      "This deck's @deckard/core does not export the layout measurement this check runs. Update @deckard/core, then run deckard doctor if it still does not resolve."
+      "This deck's @thebuilder/deckard-core does not export the layout measurement this check runs. Update @thebuilder/deckard-core, then run deckard doctor if it still does not resolve."
     )
   }
 

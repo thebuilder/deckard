@@ -1,4 +1,4 @@
-import { SlideMediaVideo } from "@deckard/core/components"
+import { SlideMediaVideo } from "@thebuilder/deckard-core/components"
 import type { ImageProps } from "next/image"
 import Image from "next/image"
 

@@ -1,8 +1,8 @@
 "use client"
 
-import type { SlideTheme } from "@deckard/core"
-import { Button } from "@deckard/core/ui"
-import { cn } from "@deckard/core/utils"
+import type { SlideTheme } from "@thebuilder/deckard-core"
+import { Button } from "@thebuilder/deckard-core/ui"
+import { cn } from "@thebuilder/deckard-core/utils"
 import { useCallback } from "react"
 import { useDeckTheme, useThemeSwitch } from "./deck-theme"
 import { switchableThemes } from "./deck-themes"

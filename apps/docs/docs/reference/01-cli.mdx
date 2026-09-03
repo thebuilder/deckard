@@ -9,7 +9,7 @@ sidebar:
 deckard <command> [options]
 ```
 
-`deckard` is the only binary `@deckard/cli` puts on the path. Every command except `init` takes the current working directory as the deck, which is how a generated app wires its own scripts:
+`deckard` is the only binary `@thebuilder/deckard-cli` puts on the path. Every command except `init` takes the current working directory as the deck, which is how a generated app wires its own scripts:
 
 ```json package.json
 {
@@ -66,9 +66,9 @@ deckard 0.0.1
     --package-manager <name>     npm, pnpm, yarn, or bun (default: the one that ran init)
     --no-install                 write the files and stop
     --no-git                     skip git init and the first commit
-    --core-tarball <path>        install @deckard/core from a local tarball
-    --cli-tarball <path>         install @deckard/cli from a local tarball
-    --themes-tarball <path>      install @deckard/themes from a local tarball
+    --core-tarball <path>        install @thebuilder/deckard-core from a local tarball
+    --cli-tarball <path>         install @thebuilder/deckard-cli from a local tarball
+    --themes-tarball <path>      install @thebuilder/deckard-themes from a local tarball
     --registry <url>             the @deckard registry for components.json
 
   deckard validate           load the deck, check its slides and its theme
@@ -124,7 +124,7 @@ Package manager precedence for `init`: the `--package-manager` flag, then `npm_c
 No `packageManager` field is written into the generated `package.json`. Corepack reads that field as an enforcement lock, so recording the manager that happened to run `init` would refuse every other manager afterwards. Later `deckard` commands resolve the deck's manager from a `packageManager` field if you add one yourself, then the lockfile, then `npm_config_user_agent`, then `npm`.
 
 ```bash ~
-npx @deckard/cli init my-talk
+npx @thebuilder/deckard-cli init my-talk
 
 Created my-talk in ~/my-talk
   meridian theme, sample deck
@@ -145,7 +145,7 @@ Generating route types...
   cd my-talk
   npm run dev
 
-Slides are deck/slides.tsx. The theme is imported from @deckard/themes; run deckard eject theme to own a copy of it.
+Slides are deck/slides.tsx. The theme is imported from @thebuilder/deckard-themes; run deckard eject theme to own a copy of it.
 ```
 
 `--no-install` skips the typecheck too, since there is nothing installed to typecheck against. A git failure is a warning, not an exit, and the commit prints nothing when it works. A typecheck failure exits 1 after everything is written, so the files are on disk either way.
@@ -176,7 +176,7 @@ deck   6 slides: 4 inline, 2 discovered
        3 slugs, 3 numbered
        canvas 1920x1080, margin 0
 theme  meridian (.meridian-theme): light and dark, default system
-       57 tokens in the light block, 25 dark overrides, from @deckard/themes/meridian
+       57 tokens in the light block, 25 dark overrides, from @thebuilder/deckard-themes/meridian
 
 deckard validate passed
 ```
@@ -202,7 +202,7 @@ deck      32 slides: 28 inline, 4 discovered
           32 slugs, 0 numbered
           canvas 1920x1080, margin 0
 theme     meridian (.meridian-theme): light and dark, default system
-          57 tokens in the light block, 25 dark overrides, from @deckard/themes/meridian
+          57 tokens in the light block, 25 dark overrides, from @thebuilder/deckard-themes/meridian
 registry  8 items, 7 files
 
 deckard validate passed
@@ -219,8 +219,8 @@ Takes no flags at all. Checks the shape of the app rather than the content of th
 | Check | Passes when |
 | --- | --- |
 | `node` | Node is at least 20.9.0. |
-| `core` | `@deckard/core/package.json` resolves from the project. |
-| `styles` | `app/globals.css` contains `@import "@deckard/core/styles.css"`. |
+| `core` | `@thebuilder/deckard-core/package.json` resolves from the project. |
+| `styles` | `app/globals.css` contains `@import "@thebuilder/deckard-core/styles.css"`. |
 | `routes` | Each of the four route files re-exports its adapter. |
 | `deck` | `deck/deck.ts` loads. |
 
@@ -228,7 +228,7 @@ Takes no flags at all. Checks the shape of the app rather than the content of th
 deckard doctor
 
 ok node      node 24.14.0
-ok core      @deckard/core 0.0.1
+ok core      @thebuilder/deckard-core 0.0.1
 ok styles    app/globals.css imports the slide token contract
 ok routes    4 route files re-export their adapter
 ok deck      deck/deck.ts loads 5 slides for "My talk"
@@ -242,9 +242,9 @@ Each failure prints what to do about it, and the run keeps going, so one run sho
 deckard doctor
 
 ok node      node 24.14.0
-ok core      @deckard/core 0.0.1
-FAIL styles  app/globals.css never imports @import "@deckard/core/styles.css"
-             Add @import "@deckard/core/styles.css"; to app/globals.css. It carries the --slide-* tokens and registers the runtime's own Tailwind source.
+ok core      @thebuilder/deckard-core 0.0.1
+FAIL styles  app/globals.css never imports @import "@thebuilder/deckard-core/styles.css"
+             Add @import "@thebuilder/deckard-core/styles.css"; to app/globals.css. It carries the --slide-* tokens and registers the runtime's own Tailwind source.
 ok routes    4 route files re-export their adapter
 ok deck      deck/deck.ts loads 5 slides for "My talk"
 
@@ -294,7 +294,7 @@ deckard check-overflow
 Slide content runs 794px below the canvas and is clipped.
 ```
 
-The ring is development only. Both run `measureSlideLayout` from `@deckard/core`, so this gate and `next dev` cannot disagree.
+The ring is development only. Both run `measureSlideLayout` from `@thebuilder/deckard-core`, so this gate and `next dev` cannot disagree.
 
 
 ## deckard screenshots
@@ -376,7 +376,7 @@ PDF written to ~/my-talk/out/slides.pdf
 deckard add theme ledger
 ```
 
-A pure source edit, with no install. Rewrites the `@deckard/themes` import and the `theme` property in `defineDeck`, keeping import order (package imports, then `@/` imports, alphabetical within each). It no-ops when the deck is already on that theme, rejects a name that is not a built-in, and warns when a stale `deck/theme` directory is still sitting there.
+A pure source edit, with no install. Rewrites the `@thebuilder/deckard-themes` import and the `theme` property in `defineDeck`, keeping import order (package imports, then `@/` imports, alphabetical within each). It no-ops when the deck is already on that theme, rejects a name that is not a built-in, and warns when a stale `deck/theme` directory is still sitting there.
 
 ```bash ~/my-talk
 deckard add theme ledger
@@ -439,7 +439,7 @@ deckard eject theme --theme meridian
 | --- | --- | --- |
 | `--theme <name>` | a built-in theme name | the theme `deck/deck.ts` imports |
 
-Creates `deck/theme/` with `theme.css` and `THEME.md` copied out of the installed `@deckard/themes`, generates an `index.ts` exporting a `SlideTheme` literal, and rewrites `deck/deck.ts` to `import { theme } from "@/deck/theme"`.
+Creates `deck/theme/` with `theme.css` and `THEME.md` copied out of the installed `@thebuilder/deckard-themes`, generates an `index.ts` exporting a `SlideTheme` literal, and rewrites `deck/deck.ts` to `import { theme } from "@/deck/theme"`.
 
 ```bash ~/my-talk
 deckard eject theme
@@ -495,7 +495,7 @@ It refuses when `deck/theme/` already exists, when the deck already imports from
     A stamp at `.next/deckard-build.json` is compared against the newest file
     under `app/`, `assets/`, `components/`, `deck/`, `hooks/`, `lib/`,
     `public/`, plus `components.json`, `next.config.*`, `package.json`,
-    `postcss.config.*`, `tsconfig.json`, and the resolved `@deckard/core` and
+    `postcss.config.*`, `tsconfig.json`, and the resolved `@thebuilder/deckard-core` and
     its `src/`. `--skip-build` skips the comparison entirely.
   </Step>
   <Step title="Refuse an occupied port">

@@ -1,7 +1,7 @@
 # playground
 
 The reference deck. It is a normal Deckard presentation, so it doubles as the
-example of what an app built on `@deckard/core` looks like, and as the deck the
+example of what an app built on `@thebuilder/deckard-core` looks like, and as the deck the
 visual checks and the PDF export run against.
 
 Run it from the repository root with `pnpm dev`, on port 3000.
@@ -15,7 +15,7 @@ README.
 
 ## Switching theme
 
-Any slide URL takes `?theme=<id>`, naming a built-in from `@deckard/themes`, and
+Any slide URL takes `?theme=<id>`, naming a built-in from `@thebuilder/deckard-themes`, and
 a picker beside the deck controls switches between them. The choice follows the
 reader across slides, into a shared link, and into the presenter window. The
 light and dark toggle is left alone, so a comparison moves one thing at a time.

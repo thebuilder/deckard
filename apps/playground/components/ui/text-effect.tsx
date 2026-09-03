@@ -1,5 +1,5 @@
 "use client"
-import { cn } from "@deckard/core/utils"
+import { cn } from "@thebuilder/deckard-core/utils"
 import type {
   TargetAndTransition,
   Transition,

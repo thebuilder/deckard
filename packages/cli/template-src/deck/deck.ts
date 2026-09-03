@@ -1,5 +1,5 @@
-import { defineDeck } from "@deckard/core"
-import { __DECK_THEME__ } from "@deckard/themes"
+import { defineDeck } from "@thebuilder/deckard-core"
+import { __DECK_THEME__ } from "@thebuilder/deckard-themes"
 import { slides } from "@/deck/slides"
 
 export const deck = defineDeck({

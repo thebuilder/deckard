@@ -1,4 +1,4 @@
-import { SlideStep } from "@deckard/core/components"
+import { SlideStep } from "@thebuilder/deckard-core/components"
 import type { ReactNode } from "react"
 import { act } from "react"
 import { createRoot, type Root } from "react-dom/client"

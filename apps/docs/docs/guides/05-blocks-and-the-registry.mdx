@@ -5,7 +5,7 @@ sidebar:
   icon: blocks
 ---
 
-Slide blocks are not in `@deckard/core`. They install into your app as source files through shadcn, into `app/slides/blocks/`, and you edit them from then on.
+Slide blocks are not in `@thebuilder/deckard-core`. They install into your app as source files through shadcn, into `app/slides/blocks/`, and you edit them from then on.
 
 Expect to edit them. A block that assumed your theme would be a block you fight. `HeroSlide` caps its headline with `text-balance` tuned for a sans display face; on a serif you will want to change it, and you can, because it is your file.
 
@@ -22,11 +22,11 @@ Expect to edit them. A block that assumed your theme would be a block you fight.
 | `block-metrics` | `metrics.tsx` | `StatGrid`. |
 | `preset-blocks` | all of them | Plus the one stylesheet line a consumer cannot guess. |
 
-`preset-blocks` is the one to run. Alongside the block files it adds `@import "@deckard/core/styles.css"` to your app stylesheet, which carries the token contract and registers the package's own compiled output as a Tailwind source. That import is the entire build wiring. There is no `transpilePackages` entry and no `@source` line for you to add.
+`preset-blocks` is the one to run. Alongside the block files it adds `@import "@thebuilder/deckard-core/styles.css"` to your app stylesheet, which carries the token contract and registers the package's own compiled output as a Tailwind source. That import is the entire build wiring. There is no `transpilePackages` entry and no `@source` line for you to add.
 
 Every block is left aligned and fills the padded frame. The source designs put content at the left margin and run it to the right one, and only `HeroCenteredSlide` and `MinimalBreakerSlide` centre anything. `ProseSlide` caps its measure, in canvas pixels rather than `ch`, because the canvas is 1920 wide and never changes.
 
-Themes used to be registry items and are not any more. They ship as `@deckard/themes`, so a deck gets one by importing it rather than by installing files it did not ask to own.
+Themes used to be registry items and are not any more. They ship as `@thebuilder/deckard-themes`, so a deck gets one by importing it rather than by installing files it did not ask to own.
 
 ## Installing
 
@@ -42,7 +42,7 @@ pnpm dlx shadcn@latest add @deckard/preset-blocks
 
 `deckard add block` reads the registry URL from `components.json` under `registries["@deckard"]`, or takes `--registry <url>` with a `{name}` placeholder. It probes the host before doing anything and tells you what to start when the probe fails. `--yes` passes shadcn `-y -o`, overwriting the files it installs without asking.
 
-shadcn is a dependency of `@deckard/cli`, pinned to the version the registry is built with, and `deckard add` runs that installed binary. There is no `dlx` and no download, so the same version runs on every package manager.
+shadcn is a dependency of `@thebuilder/deckard-cli`, pinned to the version the registry is built with, and `deckard add` runs that installed binary. There is no `dlx` and no download, so the same version runs on every package manager.
 
 :::warning
 `deckard init` writes `https://deckard.thebuilder.dk/r/{name}.json` into `components.json`, which is this documentation site. Nothing to run locally: `deckard add block` fetches from it directly. Point `--registry` at another URL with a `{name}` placeholder to install from your own.
@@ -130,7 +130,7 @@ All of `HeroSlide`, `BreakerSlide`, `ContentSlideCard`, and `OpenContentSlide` f
 </FullscreenMediaSlide>
 ```
 
-`FullscreenMediaSlide` takes `variant` (`"background"`, the default, bleeds to every edge; `"framed"` insets it in a bordered surface) and `overlay` (`"none"`, `"subtle"`, `"medium"` by default, `"strong"`) for text readability over media. Both blocks take `next/image` sources, forward `blurDataURL` from a static import, and accept `unoptimized` so an SVG served from `public/` skips the image optimizer instead of needing `images.dangerouslyAllowSVG`. Video goes through `SlideMediaVideo` from `@deckard/core/components`, which suppresses autoplay inside the presenter preview iframe, and defaults an autoplaying video to muted and looping with no controls.
+`FullscreenMediaSlide` takes `variant` (`"background"`, the default, bleeds to every edge; `"framed"` insets it in a bordered surface) and `overlay` (`"none"`, `"subtle"`, `"medium"` by default, `"strong"`) for text readability over media. Both blocks take `next/image` sources, forward `blurDataURL` from a static import, and accept `unoptimized` so an SVG served from `public/` skips the image optimizer instead of needing `images.dangerouslyAllowSVG`. Video goes through `SlideMediaVideo` from `@thebuilder/deckard-core/components`, which suppresses autoplay inside the presenter preview iframe, and defaults an autoplaying video to muted and looping with no controls.
 
 Both pad against `--slide-chrome-top` and `--slide-chrome-bottom`, so the deck header and slide counter never sit on top of a caption. Use them instead of dropping an `<img>` on a slide, which will not fit the canvas and will not respect the chrome.
 

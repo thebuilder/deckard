@@ -19,7 +19,7 @@ If your deck is bullet points and a photo, Deckard will do that too, but so will
 ## What a deck looks like
 
 ```tsx deck/slides.tsx
-import type { SlideDefinition } from "@deckard/core"
+import type { SlideDefinition } from "@thebuilder/deckard-core"
 
 export const slides: SlideDefinition[] = [
   {
@@ -40,8 +40,8 @@ export const slides: SlideDefinition[] = [
 ```
 
 ```ts deck/deck.ts
-import { defineDeck } from "@deckard/core"
-import { phosphor } from "@deckard/themes"
+import { defineDeck } from "@thebuilder/deckard-core"
+import { phosphor } from "@thebuilder/deckard-themes"
 import { slides } from "@/deck/slides"
 
 export const deck = defineDeck({
@@ -59,15 +59,15 @@ The array is the deck order. `defineDeck` resolves it: every slide gets an id, a
 ## The packages
 
 <CardGroup cols={3}>
-  <Card title="@deckard/core" icon="box">
+  <Card title="@thebuilder/deckard-core" icon="box">
     The deck contract and the runtime: `defineDeck`, the canvas, the slide
     shell, presenter mode, and the Next.js route adapters.
   </Card>
-  <Card title="@deckard/themes" icon="palette">
+  <Card title="@thebuilder/deckard-themes" icon="palette">
     The built-in presets. A deck imports one and hands it to `defineDeck`, and
     can eject it into its own files later.
   </Card>
-  <Card title="@deckard/cli" icon="terminal">
+  <Card title="@thebuilder/deckard-cli" icon="terminal">
     The `deckard` binary: scaffold a deck, check that it fits, screenshot it,
     export it to PDF.
   </Card>

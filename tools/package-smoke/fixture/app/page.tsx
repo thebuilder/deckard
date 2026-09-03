@@ -1,4 +1,4 @@
-import { createFirstSlideRedirect } from "@deckard/core/next"
+import { createFirstSlideRedirect } from "@thebuilder/deckard-core/next"
 
 import { deck } from "../deck/deck"
 

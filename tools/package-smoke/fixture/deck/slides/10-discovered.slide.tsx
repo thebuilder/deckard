@@ -1,4 +1,4 @@
-import type { SlideMeta } from "@deckard/core"
+import type { SlideMeta } from "@thebuilder/deckard-core"
 
 export const meta: SlideMeta = {
   order: 10,

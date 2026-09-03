@@ -16,8 +16,10 @@ import { assertColorMode, colorModeStorageKey } from "./color-mode.ts"
 // app installed. A deck that cannot resolve core fails at the build below, with
 // a better message than here, and a deck with no installed theme package
 // resolves to nothing and contributes no inputs.
-const corePackage = resolveFromProject("@deckard/core/package.json")
-const themesPackage = resolveFromProject("@deckard/themes/package.json")
+const corePackage = resolveFromProject("@thebuilder/deckard-core/package.json")
+const themesPackage = resolveFromProject(
+  "@thebuilder/deckard-themes/package.json"
+)
 
 // The stylesheets are the reason the theme package is here: a retuned token
 // changes every slide and nothing under app/ or deck/ moves with it.
@@ -357,7 +359,7 @@ export async function openSlide(
 // photographed before the deck loads. The runtime reads this off the document
 // element and holds anything that moves on its one deterministic frame, which is
 // what makes two runs of the same slide the same image. The name is what
-// @deckard/core exports as `captureAttribute`, written out here the way the
+// @thebuilder/deckard-core exports as `captureAttribute`, written out here the way the
 // canvas and viewport selectors above are: the CLI reads the deck's DOM rather
 // than importing the deck's runtime.
 async function markAsCapture(context: BrowserContext): Promise<void> {

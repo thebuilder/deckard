@@ -9,8 +9,8 @@ import {
 const noThemePattern = /imports no theme/
 const noPropertyPattern = /does not pass a theme/
 
-const builtInDeck = `import { defineDeck } from "@deckard/core"
-import { meridian } from "@deckard/themes"
+const builtInDeck = `import { defineDeck } from "@thebuilder/deckard-core"
+import { meridian } from "@thebuilder/deckard-themes"
 import { slides } from "@/deck/slides"
 
 export const deck = defineDeck({
@@ -21,7 +21,7 @@ export const deck = defineDeck({
 })
 `
 
-const localDeck = `import { defineDeck } from "@deckard/core"
+const localDeck = `import { defineDeck } from "@thebuilder/deckard-core"
 import { slides } from "@/deck/slides"
 import { theme } from "@/deck/theme"
 
@@ -65,7 +65,7 @@ describe("findThemeImport", () => {
 
   it("reports nothing for a deck with no theme", () => {
     expect(
-      findThemeImport('import { defineDeck } from "@deckard/core"\n')
+      findThemeImport('import { defineDeck } from "@thebuilder/deckard-core"\n')
     ).toBe(null)
   })
 })

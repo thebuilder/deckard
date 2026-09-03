@@ -1,6 +1,6 @@
-import type { SlideDefinition } from "@deckard/core"
-import { SlideStep } from "@deckard/core/components"
-import { discoverSlides } from "@deckard/core/discovery"
+import type { SlideDefinition } from "@thebuilder/deckard-core"
+import { SlideStep } from "@thebuilder/deckard-core/components"
+import { discoverSlides } from "@thebuilder/deckard-core/discovery"
 
 import { Counter } from "./counter"
 

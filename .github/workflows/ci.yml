@@ -85,7 +85,7 @@ jobs:
           cache: pnpm
           node-version: 24
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @deckard/core exec playwright install --with-deps chromium
+      - run: pnpm --filter @thebuilder/deckard-core exec playwright install --with-deps chromium
       - run: pnpm cli:build
       - run: pnpm validate
       - run: pnpm check-overflow
@@ -117,5 +117,5 @@ jobs:
           cache: pnpm
           node-version: 24
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @deckard/core exec playwright install --with-deps chromium
+      - run: pnpm --filter @thebuilder/deckard-core exec playwright install --with-deps chromium
       - run: pnpm release:pack

@@ -12,7 +12,7 @@ deckard validate   # the slides changed
 deckard doctor     # a deck that used to work stopped
 ```
 
-`validate` loads the deck and checks its slides and its theme. `doctor` checks the app around it: Node, whether `@deckard/core` resolves, whether the stylesheet is imported, whether the four route files still re-export their adapter, and whether `deck/deck.ts` loads. Both exit 1 on a problem, and `doctor` keeps going so you see all of them at once.
+`validate` loads the deck and checks its slides and its theme. `doctor` checks the app around it: Node, whether `@thebuilder/deckard-core` resolves, whether the stylesheet is imported, whether the four route files still re-export their adapter, and whether `deck/deck.ts` loads. Both exit 1 on a problem, and `doctor` keeps going so you see all of them at once.
 
 ## A slide does not appear
 
@@ -69,13 +69,13 @@ Discovered slide "slides/api.slide.tsx" is an async module, so the glob handed b
 
 **Cause.** The module, or something it imports, uses top-level await or WebAssembly. The eager glob then returns a promise instead of the exports.
 
-`CodeBlock` is the usual one. Shiki loads a WebAssembly regex engine, which is why it ships from `@deckard/core/code-block` and not from the components barrel. A discovered slide that imports it becomes async.
+`CodeBlock` is the usual one. Shiki loads a WebAssembly regex engine, which is why it ships from `@thebuilder/deckard-core/code-block` and not from the components barrel. A discovered slide that imports it becomes async.
 
 **Fix.** Take that slide out of discovery and wire it into the array by hand:
 
 ```tsx deck/slides.tsx
 import * as apiSlide from "@/deck/slides/api.slide"
-import { slideFromModule } from "@deckard/core/slide-from-module"
+import { slideFromModule } from "@thebuilder/deckard-core/slide-from-module"
 
 export const slides: SlideDefinition[] = [
   ...discovered,
@@ -158,7 +158,7 @@ The overflow check found the page but not the canvas. `app/slides/[id]/page.tsx`
 
 ## Theme validation fails
 
-`deckard validate` reads the stylesheet the deck actually renders, so these name either `@deckard/themes/<id>` or your ejected `deck/theme/theme.css`.
+`deckard validate` reads the stylesheet the deck actually renders, so these name either `@thebuilder/deckard-themes/<id>` or your ejected `deck/theme/theme.css`.
 
 **The class is not in the stylesheet.**
 
@@ -292,17 +292,17 @@ The blocks are yours as source either way. `deckard add block` is for taking an 
 **Cause and fix.** `deckard doctor` names it:
 
 ```text
-FAIL styles  app/globals.css never imports @import "@deckard/core/styles.css"
-             Add @import "@deckard/core/styles.css"; to app/globals.css. It carries the --slide-* tokens and registers the runtime's own Tailwind source.
+FAIL styles  app/globals.css never imports @import "@thebuilder/deckard-core/styles.css"
+             Add @import "@thebuilder/deckard-core/styles.css"; to app/globals.css. It carries the --slide-* tokens and registers the runtime's own Tailwind source.
 ```
 
-The check is a literal substring test, so the import has to read exactly `@import "@deckard/core/styles.css"`.
+The check is a literal substring test, so the import has to read exactly `@import "@thebuilder/deckard-core/styles.css"`.
 
 If the import is there and the deck is still unstyled, the theme class is the next thing to check. `deckard validate` prints the stylesheet it read and the token counts:
 
 ```text
 theme  meridian (.meridian-theme): light and dark, default system
-       57 tokens in the light block, 25 dark overrides, from @deckard/themes/meridian
+       57 tokens in the light block, 25 dark overrides, from @thebuilder/deckard-themes/meridian
 ```
 
 Zero tokens, or a stylesheet path you did not expect, is the answer.

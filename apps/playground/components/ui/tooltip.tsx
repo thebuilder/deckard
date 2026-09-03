@@ -2,7 +2,7 @@
 
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip"
 
-import { cn } from "@deckard/core/utils"
+import { cn } from "@thebuilder/deckard-core/utils"
 
 function TooltipProvider({
   delay = 0,

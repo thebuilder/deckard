@@ -1,6 +1,6 @@
 "use client"
 
-import { SlideShell } from "@deckard/core/components"
+import { SlideShell } from "@thebuilder/deckard-core/components"
 import { type ComponentProps, useMemo } from "react"
 import { ThemeSwitchBoundary, useDeckTheme } from "./deck-theme"
 import { DeckThemePicker } from "./deck-theme-picker"

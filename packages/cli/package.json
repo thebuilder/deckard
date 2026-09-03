@@ -1,5 +1,5 @@
 {
-  "name": "@deckard/cli",
+  "name": "@thebuilder/deckard-cli",
   "version": "0.0.1",
   "description": "The deckard command line: scaffold a deck, check it, screenshot it, export it.",
   "keywords": [
@@ -41,17 +41,17 @@
     "vite": "^8.2.2"
   },
   "devDependencies": {
-    "@deckard/core": "workspace:*",
-    "@deckard/themes": "workspace:*",
+    "@thebuilder/deckard-core": "workspace:*",
+    "@thebuilder/deckard-themes": "workspace:*",
     "@types/node": "^26.4.0",
     "typescript": "^7.0.2",
     "vitest": "^4.1.11"
   },
   "peerDependencies": {
-    "@deckard/core": ">=0.0.1"
+    "@thebuilder/deckard-core": ">=0.0.1"
   },
   "peerDependenciesMeta": {
-    "@deckard/core": {
+    "@thebuilder/deckard-core": {
       "optional": true
     }
   },

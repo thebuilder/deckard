@@ -14,7 +14,7 @@ interface Check {
 }
 
 const minimumNode = "20.9.0"
-const styleImport = '@import "@deckard/core/styles.css"'
+const styleImport = '@import "@thebuilder/deckard-core/styles.css"'
 const versionPattern = /^(\d+)\.(\d+)\.(\d+)/
 
 const routeAdapters = [
@@ -62,12 +62,12 @@ function checkNode(): Check {
 }
 
 function checkCore(): Check {
-  const resolved = resolveFromProject("@deckard/core/package.json")
+  const resolved = resolveFromProject("@thebuilder/deckard-core/package.json")
 
   if (!resolved) {
     return {
-      detail: "@deckard/core does not resolve from this directory",
-      fix: `Install it: ${addCommand(deckPackageManager(projectRoot), "@deckard/core")}. Run deckard from the app root, next to package.json.`,
+      detail: "@thebuilder/deckard-core does not resolve from this directory",
+      fix: `Install it: ${addCommand(deckPackageManager(projectRoot), "@thebuilder/deckard-core")}. Run deckard from the app root, next to package.json.`,
       name: "core",
       ok: false,
     }
@@ -78,7 +78,7 @@ function checkCore(): Check {
   }
 
   return {
-    detail: `@deckard/core ${version ?? "unknown"}`,
+    detail: `@thebuilder/deckard-core ${version ?? "unknown"}`,
     name: "core",
     ok: true,
   }
@@ -122,7 +122,7 @@ function checkRoutes(): Check {
         : missing
             .map((route) => `${route.file} does not use ${route.adapter}`)
             .join("\n"),
-    fix: "Route logic lives in @deckard/core/next. Each route file is a re-export of its adapter.",
+    fix: "Route logic lives in @thebuilder/deckard-core/next. Each route file is a re-export of its adapter.",
     name: "routes",
     ok: missing.length === 0,
   }

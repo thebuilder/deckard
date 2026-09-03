@@ -34,8 +34,8 @@ const packages: Package[] = [
       "dist/ui/index.js",
       "styles.css",
     ],
-    filter: "@deckard/core",
-    name: "deckard-core",
+    filter: "@thebuilder/deckard-core",
+    name: "thebuilder-deckard-core",
     stale: ["packages/core/dist", "packages/core/tsconfig.build.tsbuildinfo"],
   },
   {
@@ -48,8 +48,8 @@ const packages: Package[] = [
         `dist/${theme}/THEME.md`,
       ]),
     ],
-    filter: "@deckard/themes",
-    name: "deckard-themes",
+    filter: "@thebuilder/deckard-themes",
+    name: "thebuilder-deckard-themes",
     stale: [
       "packages/themes/dist",
       "packages/themes/tsconfig.build.tsbuildinfo",
@@ -65,8 +65,8 @@ const packages: Package[] = [
       "template/app/slides/blocks/templates.tsx",
       "template/versions.json",
     ],
-    filter: "@deckard/cli",
-    name: "deckard-cli",
+    filter: "@thebuilder/deckard-cli",
+    name: "thebuilder-deckard-cli",
     stale: [
       "packages/cli/dist",
       "packages/cli/template",

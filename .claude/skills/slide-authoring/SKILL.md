@@ -104,7 +104,7 @@ part of a block a theme might want to restyle carries one, from
 theme styles those attributes including decorative `::before` content. Phosphor
 writes `[x]` where the list number goes and ledger hangs a rule there instead,
 and neither touches the block. The full list is the block part contract at the
-bottom of `@deckard/core/styles.css`. A new block adds its parts to that list.
+bottom of `@thebuilder/deckard-core/styles.css`. A new block adds its parts to that list.
 
 A theme styles parts; it never adds content. A boot log, a status table, a
 cursor line with words in it are slide content, so they go in a block.
@@ -124,7 +124,7 @@ A slide module exports the component as `default`, plus `meta` and `notes` as
 plain values so the deck can title and order it without rendering it:
 
 ```tsx
-import type { SlideMeta } from "@deckard/core"
+import type { SlideMeta } from "@thebuilder/deckard-core"
 
 export const meta: SlideMeta = { slug: "pricing", title: "Pricing" }
 export const notes = "Pause on the middle tier."
@@ -151,7 +151,7 @@ the data resolves.
 A discovered module has to be synchronous. Top-level await anywhere in its
 imports turns it into an async module, the eager glob hands back a promise, and
 discovery throws naming the file. That is why `CodeBlock` ships from
-`@deckard/core/code-block` and why a slide using it stays in the array.
+`@thebuilder/deckard-core/code-block` and why a slide using it stays in the array.
 
 ## The canvas is 1920x1080, always
 
@@ -161,7 +161,7 @@ and the browser window is not.
 
 What does not fit gets clipped. `next dev` draws an amber outline and logs a
 warning; `pnpm deck:check-overflow` fails on it. Trim the content, or wrap the
-part that has to scroll in `SlideScrollArea` from `@deckard/core/components`, so
+part that has to scroll in `SlideScrollArea` from `@thebuilder/deckard-core/components`, so
 scrolling never steps the deck.
 
 Both of those run one measurement, and it catches three things. Content past the

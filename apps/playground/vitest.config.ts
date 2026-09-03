@@ -2,7 +2,7 @@ import { playwright } from "@vitest/browser-playwright"
 import { defineConfig } from "vitest/config"
 
 // The block tests mount one component with no Next app around it, so the two
-// Next client modules resolve to fixtures, the way @deckard/core does it.
+// Next client modules resolve to fixtures, the way @thebuilder/deckard-core does it.
 const nextClientStubs = {
   "next/link": new URL("./tests/__fixtures__/next-link.tsx", import.meta.url)
     .pathname,

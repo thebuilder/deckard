@@ -17,7 +17,7 @@
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
-    "@deckard/cli#build": {
+    "@thebuilder/deckard-cli#build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**", "template/**"]
     },

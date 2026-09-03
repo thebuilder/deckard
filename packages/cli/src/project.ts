@@ -11,7 +11,7 @@ export function projectPath(...segments: string[]): string {
 }
 
 // Resolved against the deck, not against the CLI: the app installs its own
-// @deckard/core, and that copy is the one the build compiles against.
+// @thebuilder/deckard-core, and that copy is the one the build compiles against.
 export function resolveFromProject(specifier: string): string | null {
   try {
     return createRequire(projectPath("package.json")).resolve(specifier)

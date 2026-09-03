@@ -1,6 +1,6 @@
 import fs from "node:fs"
 
-import { defaultThemeId, themes } from "@deckard/themes"
+import { defaultThemeId, themes } from "@thebuilder/deckard-themes"
 
 import { resolveRepoFile } from "./repo-file"
 
@@ -142,7 +142,7 @@ function sectionedThemes(): string[] {
 }
 
 /*
- * @deckard/themes decides which themes exist. The docs decide how to describe
+ * @thebuilder/deckard-themes decides which themes exist. The docs decide how to describe
  * them, in three places that each go wrong quietly: a missing gallery entry
  * renders an empty caption, a missing stylesheet import in DeckPreview.astro
  * renders an unstyled card, and a missing section leaves every "read the notes"
@@ -157,13 +157,13 @@ function readThemeNames(): ThemeName[] {
 
   if (missing.length > 0) {
     throw new Error(
-      `[deck-preview] @deckard/themes ships ${missing.join(", ")}, which apps/docs/lib/deck-preview.ts does not describe. Add a gallery entry here and a stylesheet import in components/DeckPreview.astro.`
+      `[deck-preview] @thebuilder/deckard-themes ships ${missing.join(", ")}, which apps/docs/lib/deck-preview.ts does not describe. Add a gallery entry here and a stylesheet import in components/DeckPreview.astro.`
     )
   }
 
   if (stale.length > 0) {
     throw new Error(
-      `[deck-preview] apps/docs/lib/deck-preview.ts describes ${stale.join(", ")}, which @deckard/themes no longer ships.`
+      `[deck-preview] apps/docs/lib/deck-preview.ts describes ${stale.join(", ")}, which @thebuilder/deckard-themes no longer ships.`
     )
   }
 

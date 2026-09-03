@@ -15,8 +15,8 @@
     "vgpu": "0.3.1"
   },
   "devDependencies": {
-    "@deckard/core": "workspace:*",
-    "@deckard/themes": "workspace:*",
+    "@thebuilder/deckard-core": "workspace:*",
+    "@thebuilder/deckard-themes": "workspace:*",
     "@types/node": "^26.4.0",
     "astro": "7.2.10",
     "typescript": "^7.0.2"

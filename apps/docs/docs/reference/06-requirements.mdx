@@ -6,17 +6,17 @@ sidebar:
   icon: circle-check-big
 ---
 
-A deck is a Next.js app with `@deckard/core` as a dependency. Everything below is what that app needs.
+A deck is a Next.js app with `@thebuilder/deckard-core` as a dependency. Everything below is what that app needs.
 
 ## Versions
 
 | What | Version | Where it comes from |
 | --- | --- | --- |
 | Node | 20.9 or newer | `engines` on all three packages, and the floor `deckard doctor` checks |
-| Next.js | 16 or newer | `peerDependencies` on `@deckard/core` |
-| React | 19 or newer | `peerDependencies` on `@deckard/core` |
-| React DOM | 19 or newer | `peerDependencies` on `@deckard/core` |
-| Tailwind CSS | 4 | `@deckard/core/styles.css` uses `@source`, which is v4 only |
+| Next.js | 16 or newer | `peerDependencies` on `@thebuilder/deckard-core` |
+| React | 19 or newer | `peerDependencies` on `@thebuilder/deckard-core` |
+| React DOM | 19 or newer | `peerDependencies` on `@thebuilder/deckard-core` |
+| Tailwind CSS | 4 | `@thebuilder/deckard-core/styles.css` uses `@source`, which is v4 only |
 
 `deckard init` pins the versions the reference deck runs rather than the floors, so a deck generated today installs Next `16.3.3`, React `^19.2.8`, Tailwind `^4.3.3`, and TypeScript `^7.0.2`.
 
@@ -24,7 +24,7 @@ Tailwind is not a declared peer dependency of any Deckard package. The requireme
 
 ```css app/globals.css
 @import "tailwindcss";
-@import "@deckard/core/styles.css";
+@import "@thebuilder/deckard-core/styles.css";
 ```
 
 That second line carries the `--slide-*` tokens and registers the runtime's own Tailwind source. Drop it and the deck renders unstyled. [`deckard doctor`](/reference/cli#deckard-doctor) checks for it by name.
@@ -52,7 +52,7 @@ Four commands drive a real browser, so they need the Playwright Chromium binary 
 - [`deckard contact-sheet`](/reference/cli#deckard-contact-sheet)
 - [`deckard export pdf`](/reference/cli#deckard-export-pdf)
 
-Playwright itself is a dependency of `@deckard/cli` and installs with it. The browser binary is a separate download:
+Playwright itself is a dependency of `@thebuilder/deckard-cli` and installs with it. The browser binary is a separate download:
 
 ```bash
 pnpm exec playwright install chromium
@@ -85,7 +85,7 @@ The canvas scale is measured in JavaScript and published as `--deckard-scale` ra
 
 Not established, and nothing in the repository claims it either way. There is no `export const runtime` anywhere, no middleware, and no test that runs a deck on Edge.
 
-What is true: the route adapters in `@deckard/core/next` import no Node APIs, and the slide route reads nothing from the request. `@deckard/core/code-block` is the part to check first if you try it, because shiki loads a WebAssembly regex engine there.
+What is true: the route adapters in `@thebuilder/deckard-core/next` import no Node APIs, and the slide route reads nothing from the request. `@thebuilder/deckard-core/code-block` is the part to check first if you try it, because shiki loads a WebAssembly regex engine there.
 
 Treat Edge as untested rather than as supported or unsupported.
 
@@ -98,7 +98,7 @@ Treat Edge as untested rather than as supported or unsupported.
     Without this the build fails with `export const dynamic = "force-static"/export const revalidate not configured on route "/sitemap.xml" with "output: export"`.
 
     ```ts app/sitemap.ts
-    import { createDeckSitemap } from "@deckard/core/next"
+    import { createDeckSitemap } from "@thebuilder/deckard-core/next"
     import { deck } from "@/deck/deck"
 
     export const dynamic = "force-static"

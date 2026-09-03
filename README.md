@@ -21,7 +21,7 @@ notes. Themes you can take ownership of the moment you want to.
 ## Start a deck
 
 ```bash
-npx @deckard/cli init my-talk
+npx @thebuilder/deckard-cli init my-talk
 cd my-talk
 npm run dev
 ```
@@ -68,9 +68,9 @@ the order.
 
 | Package | What it holds |
 | --- | --- |
-| `@deckard/core` | the deck contract, the canvas, the shell, navigation, presenter mode, the route adapters |
-| `@deckard/themes` | the built-in themes, imported rather than installed, ejected into your repo when you want to edit one |
-| `@deckard/cli` | the `deckard` binary: scaffold, validate, screenshot, export |
+| `@thebuilder/deckard-core` | the deck contract, the canvas, the shell, navigation, presenter mode, the route adapters |
+| `@thebuilder/deckard-themes` | the built-in themes, imported rather than installed, ejected into your repo when you want to edit one |
+| `@thebuilder/deckard-cli` | the `deckard` binary: scaffold, validate, screenshot, export |
 
 A theme is one import. Write `theme: nexus` in `deck/deck.ts` and the deck is a
 flight console; run `deckard add theme phosphor` and it is a green CRT.

@@ -1,5 +1,5 @@
-import { CodeBlock } from "@deckard/core/code-block"
-import { SlideStep } from "@deckard/core/components"
+import { CodeBlock } from "@thebuilder/deckard-core/code-block"
+import { SlideStep } from "@thebuilder/deckard-core/components"
 import {
   BulletList,
   CardGrid,
@@ -37,8 +37,8 @@ import {
 } from "@/deck/slides/canvas-scale-widget"
 import "server-only"
 
-import type { SlideDefinition } from "@deckard/core"
-import { discoverSlides } from "@deckard/core/discovery"
+import type { SlideDefinition } from "@thebuilder/deckard-core"
+import { discoverSlides } from "@thebuilder/deckard-core/discovery"
 
 // Eager: every module is in the bundle either way. The glob only saves the imports.
 const discoveredSlides = discoverSlides(

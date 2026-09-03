@@ -220,7 +220,7 @@ export function runInit(args: ParsedArgs, cliVersion: string): void {
 
   write("")
   write(
-    "Slides are deck/slides.tsx. The theme is imported from @deckard/themes; run deckard eject theme to own a copy of it."
+    "Slides are deck/slides.tsx. The theme is imported from @thebuilder/deckard-themes; run deckard eject theme to own a copy of it."
   )
 
   if (!healthy) {

@@ -2,7 +2,7 @@
 
 import { Separator as SeparatorPrimitive } from "@base-ui/react/separator"
 
-import { cn } from "@deckard/core/utils"
+import { cn } from "@thebuilder/deckard-core/utils"
 
 function Separator({
   className,

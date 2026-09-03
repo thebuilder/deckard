@@ -7,7 +7,7 @@ export interface ThemeImport {
 }
 
 export const deckSourcePath = "deck/deck.ts"
-export const themesSpecifier = "@deckard/themes"
+export const themesSpecifier = "@thebuilder/deckard-themes"
 export const localThemeSpecifier = "@/deck/theme"
 
 const importLinePattern = /^import\s.+?\sfrom\s+"([^"]+)"\r?\n/gm

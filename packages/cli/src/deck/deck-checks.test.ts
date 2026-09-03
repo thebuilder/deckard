@@ -1,5 +1,5 @@
-import type { SlideDefinition, SlideTheme } from "@deckard/core"
-import { defineDeck, slideBackgroundModes } from "@deckard/core"
+import type { SlideDefinition, SlideTheme } from "@thebuilder/deckard-core"
+import { defineDeck, slideBackgroundModes } from "@thebuilder/deckard-core"
 import { describe, expect, it } from "vitest"
 
 import {
@@ -72,7 +72,7 @@ describe("checkSlides", () => {
 })
 
 describe("slide backgrounds", () => {
-  it("lists what @deckard/core paints for every deck", () => {
+  it("lists what @thebuilder/deckard-core paints for every deck", () => {
     expect(builtInBackgrounds).toEqual([...slideBackgroundModes])
   })
 
