@@ -2,8 +2,13 @@ import fs from "node:fs"
 import process from "node:process"
 
 import { loadDeck } from "../deck/deck-module.ts"
+import { toolingPackages } from "../deck/tooling.ts"
 import { write } from "../output.ts"
-import { addCommand, deckPackageManager } from "../package-manager.ts"
+import {
+  addCommand,
+  addDevCommand,
+  deckPackageManager,
+} from "../package-manager.ts"
 import { projectPath, projectRoot, resolveFromProject } from "../project.ts"
 
 interface Check {
@@ -80,6 +85,42 @@ function checkCore(): Check {
   return {
     detail: `@thebuilder/deckard-core ${version ?? "unknown"}`,
     name: "core",
+    ok: true,
+  }
+}
+
+// The export commands load these out of the deck rather than shipping them,
+// so a deck that wants a PDF or a screenshot has to install them itself.
+function checkTooling(): Check {
+  const found: string[] = []
+  const missing: string[] = []
+
+  for (const name of toolingPackages) {
+    const resolved = resolveFromProject(`${name}/package.json`)
+
+    if (resolved) {
+      const { version } = JSON.parse(fs.readFileSync(resolved, "utf8")) as {
+        version?: string
+      }
+
+      found.push(`${name} ${version ?? "unknown"}`)
+    } else {
+      missing.push(name)
+    }
+  }
+
+  if (missing.length > 0) {
+    return {
+      detail: `${missing.join(" and ")} ${missing.length === 1 ? "does" : "do"} not resolve from this directory`,
+      fix: `check-overflow, screenshots, contact-sheet, and export pdf load ${missing.join(" and ")} from the deck. Install: ${addDevCommand(deckPackageManager(projectRoot), missing)}`,
+      name: "tooling",
+      ok: false,
+    }
+  }
+
+  return {
+    detail: found.join(", "),
+    name: "tooling",
     ok: true,
   }
 }
@@ -169,6 +210,7 @@ export async function runDoctor(): Promise<void> {
   const checks = [
     checkNode(),
     checkCore(),
+    checkTooling(),
     checkStylesheet(),
     checkRoutes(),
     await checkDeck(),

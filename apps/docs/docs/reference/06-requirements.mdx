@@ -52,13 +52,19 @@ Four commands drive a real browser, so they need the Playwright Chromium binary 
 - [`deckard contact-sheet`](/reference/cli#deckard-contact-sheet)
 - [`deckard export pdf`](/reference/cli#deckard-export-pdf)
 
-Playwright itself is a dependency of `@thebuilder/deckard-cli` and installs with it. The browser binary is a separate download:
+Playwright and `pdf-lib` are dev dependencies of the deck, not of the CLI. `deckard init` writes both into the generated `package.json`, and the four commands above load them from the deck's own `node_modules`. A deck built by hand adds them itself:
+
+```bash
+pnpm add -D playwright pdf-lib
+```
+
+The browser binary is a separate download on top of the package:
 
 ```bash
 pnpm exec playwright install chromium
 ```
 
-Without it those four commands fail with `Failed to launch Chromium` and the install line for your package manager. Nothing else in the CLI needs a browser: `init`, `validate`, `doctor`, `add`, and `eject` do not.
+Without the package those four commands fail naming it and printing the install line; without the binary they fail with `Failed to launch Chromium` and the download line for your package manager. `deckard doctor` reports both packages under `tooling`. Nothing else in the CLI needs a browser: `init`, `validate`, `doctor`, `add`, and `eject` do not, and `npx @thebuilder/deckard-cli init` downloads neither.
 
 `check-overflow`, `screenshots`, and `export pdf` also run `next build` and `next start` before they capture, so they need a machine that can build and serve the deck. `contact-sheet` needs the browser but neither the build nor the server, because it composes PNGs that `screenshots` already wrote.
 

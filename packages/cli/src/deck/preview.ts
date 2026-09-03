@@ -4,12 +4,12 @@ import path from "node:path"
 import process from "node:process"
 
 import type { Browser, BrowserContext, Page } from "playwright"
-import { chromium } from "playwright"
 import type { ColorMode } from "../output.ts"
 import { write } from "../output.ts"
 import { deckPackageManager, execCommand } from "../package-manager.ts"
 import { projectRoot, resolveFromProject } from "../project.ts"
 import { assertColorMode, colorModeStorageKey } from "./color-mode.ts"
+import { loadPlaywright } from "./tooling.ts"
 
 // Resolved rather than assumed: in this workspace these are packages/core and
 // packages/themes, and in a published deck they are whatever node_modules the
@@ -324,6 +324,8 @@ async function readCanvasGeometry(page: Page): Promise<CanvasGeometry> {
 }
 
 export async function launchBrowser(): Promise<Browser> {
+  const { chromium } = await loadPlaywright()
+
   try {
     return await chromium.launch({ headless: true })
   } catch (error) {

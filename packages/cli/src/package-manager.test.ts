@@ -5,6 +5,7 @@ import path from "node:path"
 import { afterEach, describe, expect, it } from "vitest"
 
 import {
+  addDevCommand,
   deckPackageManager,
   fromLockfile,
   fromUserAgent,
@@ -91,5 +92,16 @@ describe("deckPackageManager", () => {
     })
 
     expect(deckPackageManager(root)).toBe("npm")
+  })
+})
+
+describe("addDevCommand", () => {
+  it("writes the dev flag each manager takes", () => {
+    expect(addDevCommand("npm", ["playwright", "pdf-lib"])).toBe(
+      "npm install -D playwright pdf-lib"
+    )
+    expect(addDevCommand("pnpm", ["playwright"])).toBe("pnpm add -D playwright")
+    expect(addDevCommand("yarn", ["pdf-lib"])).toBe("yarn add -D pdf-lib")
+    expect(addDevCommand("bun", ["playwright"])).toBe("bun add -D playwright")
   })
 })

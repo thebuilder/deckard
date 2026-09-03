@@ -148,6 +148,22 @@ function installCli(manager: string, directory: string, tarball: string) {
     `${manager} install left no deckard binary in ${directory}`
   )
 
+  // `npx deckard init` pays for whatever the CLI depends on. The browser and
+  // the PDF writer belong to the deck, so the installed CLI must not carry them.
+  const manifest = JSON.parse(
+    fs.readFileSync(
+      path.join(directory, "node_modules/@thebuilder/deckard-cli/package.json"),
+      "utf8"
+    )
+  ) as { dependencies?: Record<string, string> }
+
+  for (const tool of ["playwright", "pdf-lib"]) {
+    assert(
+      !(tool in (manifest.dependencies ?? {})),
+      `the packed CLI depends on ${tool}, which every init would download`
+    )
+  }
+
   return binary
 }
 
@@ -256,6 +272,7 @@ function assertScaffold(directory: string) {
     fs.readFileSync(path.join(directory, "package.json"), "utf8")
   ) as {
     dependencies: Record<string, string>
+    devDependencies: Record<string, string>
     packageManager?: string
     scripts: Record<string, string>
   }
@@ -264,6 +281,14 @@ function assertScaffold(directory: string) {
     "@thebuilder/deckard-themes" in generated.dependencies,
     "the generated package.json does not depend on @thebuilder/deckard-themes"
   )
+
+  // The capture commands load these from the deck, so init has to write them.
+  for (const tool of ["playwright", "pdf-lib"]) {
+    assert(
+      tool in generated.devDependencies,
+      `the generated package.json does not list ${tool} in devDependencies, so the capture commands would fail to load it`
+    )
+  }
 
   assert(
     generated.packageManager === undefined,

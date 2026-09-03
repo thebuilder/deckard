@@ -19,6 +19,7 @@ import { write } from "../output.ts"
 import {
   type DetectedManager,
   detectPackageManager,
+  execCommand,
   isPackageManager,
   type PackageManager,
   packageManagers,
@@ -221,6 +222,9 @@ export function runInit(args: ParsedArgs, cliVersion: string): void {
   write("")
   write(
     "Slides are deck/slides.tsx. The theme is imported from @thebuilder/deckard-themes; run deckard eject theme to own a copy of it."
+  )
+  write(
+    `The export commands drive Chromium. Download it once with ${execCommand(manager, ["playwright", "install", "chromium"])}.`
   )
 
   if (!healthy) {
