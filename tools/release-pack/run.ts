@@ -12,8 +12,9 @@ const repoRoot = path.resolve(toolDirectory, "../..")
 const tarballDirectory = path.join(repoRoot, "dist-tarballs")
 
 interface Package {
-  // Every path an installer has to find inside the tarball. npm prefixes the
-  // archive with package/, which is added below rather than written out here.
+  // Every path an installer has to find inside the tarball, plus the README
+  // and LICENSE the npm page shows. npm prefixes the archive with package/,
+  // which is added below rather than written out here.
   contents: string[]
   filter: string
   name: string
@@ -33,6 +34,8 @@ const packages: Package[] = [
       "dist/deck/discovery.js",
       "dist/ui/index.js",
       "styles.css",
+      "README.md",
+      "LICENSE",
     ],
     filter: "@deckard/core",
     name: "deckard-core",
@@ -47,6 +50,8 @@ const packages: Package[] = [
         `dist/${theme}/theme.css`,
         `dist/${theme}/THEME.md`,
       ]),
+      "README.md",
+      "LICENSE",
     ],
     filter: "@deckard/themes",
     name: "deckard-themes",
@@ -64,6 +69,8 @@ const packages: Package[] = [
       "template/app/slides/[id]/page.tsx",
       "template/app/slides/blocks/templates.tsx",
       "template/versions.json",
+      "README.md",
+      "LICENSE",
     ],
     filter: "@deckard/cli",
     name: "deckard-cli",
