@@ -21,7 +21,7 @@ importers:
         specifier: ^4.19.1
         version: 4.19.1(typescript@7.0.2)
       turbo:
-        specifier: ^2.5.8
+        specifier: ^2.10.12
         version: 2.10.12
       typescript:
         specifier: ^7.0.2
