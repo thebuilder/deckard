@@ -167,6 +167,17 @@ export const slides: SlideDefinition[] = [
   },
 ]`
 
+/*
+ * The two ways in, shown as a toggle under the hero. The first is the command
+ * the quickstart walks through. The second is the same start phrased for a
+ * coding agent: one line to paste that names the outcome and the command.
+ */
+export const installCode = {
+  agent:
+    "Set up a new Deckard presentation in ./my-talk with npx @deckard/cli init",
+  terminal: "npx @deckard/cli init my-talk",
+} as const
+
 export const cliCode = `deckard check-overflow    # fails, naming the slides the canvas clips
 deckard contact-sheet     # every slide in one grid image
 deckard export pdf        # one page per slide`

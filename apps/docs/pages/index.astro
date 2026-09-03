@@ -5,6 +5,8 @@ import data from "blume:data"
 import PageLayout from "blume/components/layout/PageLayout.astro"
 import presenterImage from "../assets/presenter.png"
 import DeckPreview from "../components/DeckPreview.astro"
+import HeroBackground from "../components/HeroBackground.astro"
+import type { HeroVariantId } from "../components/hero/hero-effect"
 import {
   defaultTheme,
   galleryTheme,
@@ -18,12 +20,16 @@ import {
   demoCode,
   demoSteps,
   heroSlide,
+  installCode,
 } from "../lib/landing"
 import "../styles/landing.css"
 
 const { config } = data
 
 const playgroundUrl = "https://deckard-playground.thebuilder.dk"
+
+/* The effect behind the hero. */
+const heroVariant: HeroVariantId = "esper-scan"
 const canvasSize = `${canvas.width}x${canvas.height}`
 
 const presenterAlt =
@@ -106,25 +112,84 @@ ${motionRules}
   <style is:inline set:html={pageRules}></style>
 
   <div class="landing">
-    <section class="hero">
-      <h1 class="hero-title">Slides are React components</h1>
-      <p class="hero-lead">
-        Build a presentation in Next.js with the components, the data, and the
-        tools you already use. Deckard adds what a deck needs and an app does
-        not: a fixed 16:9 canvas, keyboard navigation, presenter notes, themes,
-        and a PDF export.
-      </p>
+    <section class="hero" data-hero-state="idle" data-hero-variant={heroVariant}>
+      <HeroBackground variant={heroVariant} />
 
-      <div class="hero-actions">
-        <a class="button button-primary" href="/quickstart"> Get started </a>
-        <a class="button button-quiet" href={playgroundUrl}>
-          View the example deck
-        </a>
+      <div class="hero-inner">
+        <h1 class="hero-title">Slides are React components</h1>
+        <p class="hero-lead">
+          Build the deck in Next.js with the components, the data, and the tooling
+          you already use. A chart, a live demo, or a query result goes on a slide
+          the way it goes in an app. Present it from the browser, export the PDF,
+          and hand the repo to your coding agent.
+        </p>
+
+        <div class="hero-actions">
+          <a class="button button-primary" href="/quickstart"> Get started </a>
+          <a class="button button-quiet" href={playgroundUrl}>
+            View the example deck
+          </a>
+        </div>
+
+        <div class="install">
+          <fieldset class="install-tabs">
+            <legend class="sr-only">Install for</legend>
+            <label>
+              <input
+                checked
+                class="switch-input"
+                id="install-terminal"
+                name="install"
+                type="radio"
+                value="terminal"
+              />
+              Your terminal
+            </label>
+            <label>
+              <input
+                class="switch-input"
+                id="install-agent"
+                name="install"
+                type="radio"
+                value="agent"
+              />
+              Your coding agent
+            </label>
+          </fieldset>
+
+          <div class="install-panels">
+            <figure class="code-figure install-panel" data-install="terminal">
+              <Code
+                code={installCode.terminal}
+                defaultColor={false}
+                lang="bash"
+                themes={codeThemes}
+              />
+            </figure>
+            <figure class="code-figure install-panel" data-install="agent">
+              <Code
+                code={installCode.agent}
+                defaultColor={false}
+                lang="text"
+                themes={codeThemes}
+                wrap
+              />
+            </figure>
+          </div>
+
+          <div class="install-notes">
+            <p class="install-note" data-install="terminal">
+              Writes a Next.js app with a sample deck in it, installs it, and makes
+              the first commit. Deckard is in preview and the packages are not on
+              npm yet, so the <a href="/quickstart#installing-before-the-packages-publish">quickstart</a> has the install that works today.
+            </p>
+            <p class="install-note" data-install="agent">
+              Paste it into Claude Code, Cursor, or Codex. The agent runs the
+              scaffold and picks up the deck from there.
+            </p>
+          </div>
+        </div>
       </div>
-
-      <p class="hero-status">
-        Deckard is in preview. The packages are not on npm yet.
-      </p>
     </section>
 
     <section class="section section-lead" id="write">
@@ -358,6 +423,44 @@ ${motionRules}
           themes={codeThemes}
         />
       </figure>
+    </section>
+
+    <section class="section" id="agents">
+      <div class="section-head">
+        <h2>Hand the deck to an agent</h2>
+        <p>
+          A deck is a TypeScript array in a Next.js app, so an agent edits it the
+          way it edits the rest of your code. What it needs to do that well ships
+          with Deckard.
+        </p>
+      </div>
+
+      <div class="agent-grid">
+        <div class="agent-item">
+          <h3>A skill</h3>
+          <p>
+            <code>npx skills add thebuilder/deckard</code> installs the
+            slide-authoring skill: the blocks, when a slide earns its own file,
+            the Server Component boundary, canvas sizing, and the token contract.
+          </p>
+        </div>
+        <div class="agent-item">
+          <h3>The docs in one file</h3>
+          <p>
+            <a href="/llms.txt">/llms.txt</a> indexes the site and <a
+              href="/llms-full.txt">/llms-full.txt</a> carries every page, so
+            the whole reference fits in a context window.
+          </p>
+        </div>
+        <div class="agent-item">
+          <h3>Checks it can run</h3>
+          <p>
+            <code>deckard validate</code> and <code>check-overflow</code> exit
+            non-zero and name the slide. <code>contact-sheet</code> writes every
+            slide into one image an agent can read back before you look.
+          </p>
+        </div>
+      </div>
     </section>
 
     <section class="closing">

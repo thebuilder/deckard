@@ -1,0 +1,29 @@
+---
+/*
+ * The canvas behind the hero, and the CSS under it.
+ *
+ * The backdrop gradient is what renders first, what a reader with no WebGL or
+ * WebGPU keeps, and what shows through while the effect module loads. The
+ * canvas covers it once the effect is live. The scrim on top of both keeps the
+ * hero copy readable whatever the effect is doing, and fades the bottom edge
+ * into the page background so the section below continues from it.
+ */
+import type { HeroVariantId } from "./hero/hero-effect"
+
+interface Props {
+  variant: HeroVariantId
+}
+
+const { variant } = Astro.props
+---
+
+<div aria-hidden="true" class="hero-backdrop">
+  <canvas class="hero-canvas"></canvas>
+  <div class="hero-scrim"></div>
+</div>
+
+<script>
+  import { installHero } from "./hero/mount-hero"
+
+  installHero()
+</script>
