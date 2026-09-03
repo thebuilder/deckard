@@ -11,7 +11,8 @@
     "typecheck": "blume check"
   },
   "dependencies": {
-    "blume": "^1.5.3"
+    "blume": "^1.5.3",
+    "vgpu": "0.3.1"
   },
   "devDependencies": {
     "@deckard/core": "workspace:*",
