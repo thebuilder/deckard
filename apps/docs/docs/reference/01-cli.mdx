@@ -200,16 +200,9 @@ Only a repository that publishes blocks needs `--registry`. It is how this repos
 
 ```bash apps/playground
 deckard validate --registry=../../registry.json
-
-deck      32 slides: 28 inline, 4 discovered
-          32 slugs, 0 numbered
-          canvas 1920x1080, margin 0
-theme     meridian (.meridian-theme): light and dark, default system
-          57 tokens in the light block, 25 dark overrides, from @thebuilder/deckard-themes/meridian
-registry  8 items, 7 files
-
-deckard validate passed
 ```
+
+The report adds a registry row to the deck and theme checks. It names missing source files and duplicate registry targets before returning a failure status.
 
 ## deckard doctor
 

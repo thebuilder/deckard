@@ -5,7 +5,8 @@ import { slides } from "@/deck/slides"
 
 export const deck = defineDeck({
   canvas,
-  description: "Beautiful React presentations with shadcn-native theming.",
+  description:
+    "Next.js presentations with editable slide patterns, presenter tools, themes, and source people and coding agents can review.",
   footer: {
     mode: "visible",
   },

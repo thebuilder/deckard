@@ -9,7 +9,7 @@ export default defineConfig({
     site: "https://deckard.thebuilder.dk",
   },
   description:
-    "Presentations built out of React components: fixed layouts, speaker notes, themes, and PDF export.",
+    "Next.js presentations built from editable slide patterns, with presenter tools, themes, and PDF export.",
   github: {
     branch: "main",
     dir: "apps/docs",
@@ -39,6 +39,16 @@ export default defineConfig({
   search: {
     popular: [
       { href: "/quickstart", icon: "rocket", label: "Quickstart" },
+      {
+        href: "/slide-patterns",
+        icon: "panels-top-left",
+        label: "Slide patterns",
+      },
+      {
+        href: "/example-deck",
+        icon: "presentation",
+        label: "Example presentation",
+      },
       {
         href: "/guides/writing-slides",
         icon: "file-text",

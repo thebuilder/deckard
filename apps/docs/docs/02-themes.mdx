@@ -4,10 +4,10 @@ description: Every built-in Deckard theme, previewed as a real slide canvas pain
 sidebar:
   label: Theme gallery
   icon: swatch-book
-  order: 2
+  order: 3
 ---
 
-Each preview below is a `[data-slide-canvas]` element carrying the theme class, with the header, body, footer, and progress bar the runtime renders, scaled down to fit the card. The stylesheet painting it is `packages/themes/src/<name>/theme.css`, the same file a deck loads.
+Each card applies one theme to the same slide in light and dark mode. The previews are `[data-slide-canvas]` elements with the chrome and progress bar the runtime renders. The stylesheet painting them is `packages/themes/src/<name>/theme.css`, the same file a deck loads.
 
 Switch a card between light and dark, or enlarge it to take the full row. Every one of them carries both color modes; `defaultColorMode` decides which one a browser opens on.
 

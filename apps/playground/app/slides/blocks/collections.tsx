@@ -1,3 +1,44 @@
+import { SlideStep } from "@thebuilder/deckard-core/components"
+
+export interface RevealEntry {
+  accent?: boolean
+  description: string
+  title: string
+}
+
+export function RevealList({ items }: { items: readonly RevealEntry[] }) {
+  return (
+    <div className="grid gap-3" data-slide-reveal="" data-slide-surface="">
+      {items.map((item, index) => (
+        <SlideStep key={item.title} step={index}>
+          <div
+            className={
+              item.accent
+                ? "rounded-[var(--slide-radius)] border border-primary bg-[var(--slide-accent-soft)] p-5"
+                : "rounded-[var(--slide-radius)] border border-[var(--slide-surface-border)] bg-[var(--slide-surface-muted)] p-5"
+            }
+            data-slide-reveal-item=""
+            data-slide-reveal-item-accent={item.accent ? "" : undefined}
+          >
+            <h3
+              className="font-semibold text-[length:var(--slide-subheading-size)] leading-[1.15] tracking-tight"
+              data-slide-reveal-title=""
+            >
+              {item.title}
+            </h3>
+            <p
+              className="mt-2 text-[length:var(--slide-support-size)] text-muted-foreground leading-[1.45]"
+              data-slide-reveal-description=""
+            >
+              {item.description}
+            </p>
+          </div>
+        </SlideStep>
+      ))}
+    </div>
+  )
+}
+
 export function BulletList({ items }: { items: React.ReactNode[] }) {
   return (
     <div data-slide-list="" data-slide-surface="">

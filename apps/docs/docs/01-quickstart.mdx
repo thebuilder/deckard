@@ -51,7 +51,6 @@ sidebar:
   - deck/
     - deck.ts (the defineDeck config)
     - slides.tsx (the slide array)
-    - slides/ (file-per-slide modules, sample deck only)
   - lib/utils.ts
   - public/
   - components.json
@@ -103,6 +102,14 @@ The slide blocks ship inside the CLI package, and `init` copies them into `app/s
     ```
 
     That sheet carries the `--slide-*` token contract and registers the package's own compiled output as a Tailwind source, so the runtime's utility classes survive without you naming a path inside `node_modules`. There is no `transpilePackages` entry to add.
+
+  </Step>
+  <Step title="Install the slide blocks">
+    ```bash
+    pnpm dlx shadcn@latest add https://deckard.thebuilder.dk/r/preset-blocks.json
+    ```
+
+    This writes the block source and its barrel to `app/slides/blocks/`. The Introduction imports from that barrel.
 
   </Step>
   <Step title="Write the deck">

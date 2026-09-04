@@ -141,6 +141,7 @@ export function SlideShell({
           currentNumber={slide.number}
           deckTitle={deck.title}
           next={next}
+          presenterHref={deck.presenterHref}
           previous={previous}
           showColorModeToggle={canSwitchColorMode(deck.theme)}
           slides={slides}
@@ -150,7 +151,8 @@ export function SlideShell({
       initialStep={initialStep}
       next={next}
       notes={notes}
-      presenterEnabled={presenterEnabled}
+      presenterEnabled={presenterEnabled && deck.presenterHref !== undefined}
+      presenterHref={deck.presenterHref}
       previous={previous}
       readOnly={readOnly}
       slide={slide}

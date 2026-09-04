@@ -32,13 +32,18 @@ const slides = [summary(1), summary(2), summary(3)]
 let container: HTMLDivElement
 let root: Root
 
-function mountControls() {
+function mountControls(
+  { presenterHref }: { presenterHref?: string } = {
+    presenterHref: "/presenter",
+  }
+) {
   actNow(() => {
     root.render(
       <DeckControls
         currentNumber={2}
         deckTitle="Test deck"
         next={slides[2]}
+        presenterHref={presenterHref}
         previous={slides[0]}
         showColorModeToggle={true}
         slides={slides}
@@ -127,6 +132,7 @@ beforeEach(() => {
 afterEach(() => {
   actNow(() => root.unmount())
   container.remove()
+  vi.restoreAllMocks()
 })
 
 describe("DeckControls", () => {
@@ -146,6 +152,27 @@ describe("DeckControls", () => {
     expect(controls().hasAttribute("hidden")).toBe(false)
     expect(controls().getAttribute("aria-hidden")).toBeNull()
     expect(button("Next slide").offsetParent).not.toBeNull()
+  })
+
+  it("omits presenter controls when the route has no presenter page", () => {
+    mountControls({ presenterHref: undefined })
+
+    expect(
+      container.querySelector('[aria-label="Open presenter view"]')
+    ).toBeNull()
+  })
+
+  it("opens the presenter route owned by the deck", () => {
+    const open = vi.spyOn(window, "open").mockReturnValue(null)
+    mountControls({ presenterHref: "/review/presenter" })
+
+    button("Open presenter view").click()
+
+    expect(open).toHaveBeenCalledWith(
+      "/review/presenter",
+      "slideshow-presenter",
+      expect.any(String)
+    )
   })
 
   it("reveals the cluster when a control takes focus", async () => {

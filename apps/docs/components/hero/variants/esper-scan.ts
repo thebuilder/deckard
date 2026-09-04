@@ -129,10 +129,6 @@ fn hash21(p: vec2f) -> f32 {
   return fract(q.x * q.y);
 }
 
-fn hash11(x: f32) -> f32 {
-  return fract(sin(x * 91.3458) * 47453.5453);
-}
-
 /* Value noise that repeats every period cells in x. The iris is drawn in
  * polar coordinates, so x is the angle: without the wrap there is a seam down
  * the frame at pi. period has to stay a whole number. */
@@ -226,23 +222,11 @@ fn readout(q: vec2f, origin: vec2f, cells: vec2f, t: f32, seed: f32) -> f32 {
   return box * (0.22 + 0.78 * step(0.55, state));
 }
 
-/* The rare frame roll: x is the vertical shift, y the brightness dip. */
-fn glitch(t: f32) -> vec2f {
-  let seg = floor(t * 1.7);
-  let local = fract(t * 1.7);
-  let live = step(0.955, hash11(seg));
-  let env = live * smoothstep(0.0, 0.04, local) * (1.0 - smoothstep(0.10, 0.28, local));
-  return vec2f(env * (0.03 + 0.05 * hash11(seg + 7.0)), env);
-}
-
 @fragment
 fn fs_main(@location(0) uv: vec2f) -> @location(0) vec4f {
   let res = params.resolution;
   let t = params.time;
   let light = params.mode;
-
-  let roll = glitch(t) * params.motion;
-  let suv = vec2f(uv.x, fract(uv.y + roll.x));
 
   let aspect = res.x / max(res.y, 1.0);
 
@@ -251,7 +235,7 @@ frame_p is fixed to the canvas and carries the
    * scan bar, the readouts and the analyser's cursor. 
 p hangs off the eye
    * centre and carries everything the gaze drags with it. */
-  let frame_p = vec2f((suv.x - 0.5) * aspect, suv.y - CENTER_Y);
+  let frame_p = vec2f((uv.x - 0.5) * aspect, uv.y - CENTER_Y);
   let p = frame_p - params.gaze;
   let r = length(p);
   let a = atan2(p.y, p.x);
@@ -269,7 +253,7 @@ p hangs off the eye
 
   /* The scan bar: a bright leading edge with a dim band trailing behind it. */
   let scan = fract(t / 8.0);
-  let sd = scan - suv.y;
+  let sd = scan - uv.y;
   let scan_edge = 1.0 - smoothstep(0.0, 0.0035, abs(sd));
   let scan_trail = clamp(1.0 - sd / 0.18, 0.0, 1.0) * step(0.0, sd);
   let lit = 1.0 + scan_trail * 0.55;
@@ -315,7 +299,7 @@ p hangs off the eye
   cursor *= smoothstep(gap - 0.03, gap + 0.03, r) * params.track;
   cursor *= 1.0 - smoothstep(0.95, 1.15, r);
 
-  let q = vec2f(suv.x * aspect, suv.y);
+  let q = vec2f(uv.x * aspect, uv.y);
   ui += readout(q, vec2f(0.06, 0.12), vec2f(9.0, 3.0), t, 3.0) * 0.62;
   ui += readout(q, vec2f(aspect - 0.20, 0.80), vec2f(7.0, 3.0), t, 19.0) * 0.62;
   ui = clamp(ui, 0.0, 1.2);
@@ -360,14 +344,12 @@ p hangs off the eye
   }
 
   /* Display character. Keep every term small: the copy has to win. */
-  let scanline = 0.5 + 0.5 * sin(suv.y * res.y * 2.09);
+  let scanline = 0.5 + 0.5 * sin(uv.y * res.y * 2.09);
   col *= 1.0 - 0.045 * scanline;
 
   let drift = fract(t * 7.0) * params.motion;
   let grain = hash21(uv * res + vec2f(drift * 311.0, drift * 173.0)) - 0.5;
   col += vec3f(grain * 0.028);
-
-  col *= 1.0 - 0.12 * roll.y;
 
   return vec4f(clamp(col, vec3f(0.0), vec3f(1.0)), 1.0);
 }

@@ -98,6 +98,7 @@ export function toDeckPresentation(deck: Deck): DeckPresentation {
   return {
     canvas: deck.canvas,
     meta: deck.header.meta,
+    presenterHref: deck.routes.presenter || undefined,
     showProgress: deck.footer.progress ?? true,
     theme: deck.theme,
     title: deck.header.brand,

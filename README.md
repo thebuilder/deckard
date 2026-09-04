@@ -135,6 +135,10 @@ way to see what a change did to a deck. `pnpm deck:screenshots` and
 Slides added to the playground demonstrate the framework. They are nobody's
 presentation and they ship to nobody.
 
+Set `routes.slides` when a site hosts more than one deck. Set
+`routes.presenter` to its matching presenter page, or to `false` when that deck
+does not expose presenter mode.
+
 ## License
 
 MIT

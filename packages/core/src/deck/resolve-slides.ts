@@ -54,7 +54,8 @@ function claimSlug(slug: string, number: number, claimed: Map<string, number>) {
 
 export function resolveSlides(
   slides: SlideDefinition[],
-  defaults: Partial<SlideDefaults> = {}
+  defaults: Partial<SlideDefaults> = {},
+  slidesPath = "/slides"
 ): ResolvedSlide[] {
   const resolvedDefaults = { ...fallbackDefaults, ...defaults }
   const claimedSlugs = new Map<string, number>()
@@ -75,7 +76,7 @@ export function resolveSlides(
       body: slide.body,
       footer: normalizeFooterMode(slide.footer ?? resolvedDefaults.footer),
       header: slide.header ?? resolvedDefaults.header,
-      href: `/slides/${id}`,
+      href: `${slidesPath}/${id}`,
       id,
       index,
       layout: slide.layout ?? resolvedDefaults.layout,

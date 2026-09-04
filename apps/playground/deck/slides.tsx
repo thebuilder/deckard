@@ -18,6 +18,7 @@ import { DataTable, LogList, Timeline } from "@/app/slides/blocks/tables"
 import {
   BreakerSlide,
   CodeSplitSlide,
+  ContentSlideCard,
   FocusSlide,
   HeroCenteredSlide,
   HeroSlide,
@@ -147,7 +148,7 @@ export const slides: SlideDefinition[] = [
         eyebrow="React presentation framework"
         title="A deck you can edit in the editor you already have"
         description="Deckard renders slides as Next.js routes. A slide is an object in an array, a layout is a React component, and a theme is one stylesheet on the canvas."
-        meta={["Deckard 0.0.1", "March 2026"]}
+        meta={["Use ← → to navigate", "P for presenter mode", "⌘K to jump"]}
       />
     ),
   },
@@ -365,6 +366,21 @@ If the room is a single screen, describe it instead of showing it.`,
           ]}
         />
       </OpenContentSlide>
+    ),
+  },
+  {
+    slug: "content-card",
+    title: "A Framed Explanation",
+    body: (
+      <ContentSlideCard
+        description="Use the panel for content that does not draw a border or background of its own."
+        eyebrow="Composition"
+      >
+        <p>
+          The slide definition carries the argument. The block owns its spacing,
+          type, border, and background.
+        </p>
+      </ContentSlideCard>
     ),
   },
   {

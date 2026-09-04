@@ -37,6 +37,7 @@ new markup only when none of these fits.
 | `OpenContentSlide` (templates.tsx)        | the same intro with no panel                      |
 | `FocusSlide` (templates.tsx)              | one block, no heading                             |
 | `BulletList` (collections.tsx)            | four to six numbered points                       |
+| `RevealList` (collections.tsx)            | points revealed in order with `SlideStep`         |
 | `ContentsList` (collections.tsx)          | an agenda: numeral, section, folio                |
 | `ColumnGrid` (collections.tsx)            | parallel points as ruled, numbered columns        |
 | `FeatureGrid` (collections.tsx)           | three parallel cards                              |

@@ -30,7 +30,7 @@ The package compiles to `dist/` with `tsc`: ESM, `.d.ts`, and `"use client"` dir
 | --- | --- |
 | `defineDeck(config)` | Resolve a `DeckConfig` into a `Deck`. |
 | `resolveCanvas(partial)` | Fill in and validate the canvas config. |
-| `resolveSlides(slides, defaults)` | Resolve a slide array. `defineDeck` calls it. |
+| `resolveSlides(slides, defaults, slidesPath)` | Resolve a slide array. `slidesPath` defaults to `/slides`; `defineDeck` passes its resolved route. |
 | `getSlideById(slides, id)` | Find a resolved slide by its id. |
 | `normalizeFooterMode(mode)` | Collapse `"counter"` into `"visible"`. |
 | `toSlideSummary(slide)` / `toSlideSummaries(slides)` | The serializable shape client components receive. |

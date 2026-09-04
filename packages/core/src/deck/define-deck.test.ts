@@ -64,4 +64,27 @@ describe("defineDeck", () => {
     expect(described.header.meta).toBe("March 2026")
     expect(defineDeck(config()).header.meta).toBeUndefined()
   })
+
+  it("resolves custom slide and presenter routes once", () => {
+    const deck = defineDeck(
+      config({
+        routes: { presenter: "/review/presenter/", slides: "/review/" },
+      })
+    )
+
+    expect(deck.routes).toEqual({
+      presenter: "/review/presenter",
+      slides: "/review",
+    })
+    expect(deck.slides[0].href).toBe("/review/1")
+  })
+
+  it("can disable presenter routes", () => {
+    expect(defineDeck(config({ routes: { presenter: false } })).routes).toEqual(
+      {
+        presenter: false,
+        slides: "/slides",
+      }
+    )
+  })
 })

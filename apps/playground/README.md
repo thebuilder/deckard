@@ -1,8 +1,8 @@
 # playground
 
-The reference deck. It is a normal Deckard presentation, so it doubles as the
-example of what an app built on `@thebuilder/deckard-core` looks like, and as the deck the
-visual checks and the PDF export run against.
+The feature deck. It exercises Deckard's full surface and is the deck the visual
+checks and PDF export run against. For a short presentation with a beginning,
+argument, and close, open `/example`.
 
 Run it from the repository root with `pnpm dev`, on port 3000.
 

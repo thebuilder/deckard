@@ -1,0 +1,25 @@
+---
+import { exampleOutline, exampleSlideOrder } from "../../playground/deck/example-outline"
+import { slidePreviewPath } from "../lib/slide-previews"
+import SlideScreenshot from "./SlideScreenshot.astro"
+
+const slides = exampleSlideOrder.map((key) => exampleOutline[key])
+---
+
+<ol class="example-deck not-prose">
+  {slides.map((slide) => (
+    <li>
+      <SlideScreenshot
+        previewPath={slidePreviewPath(`/example/${slide.slug}`)}
+        title={`${slide.title} slide preview`}
+      />
+      <span>{slide.title}</span>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .example-deck { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: 1.5rem; padding: 0; margin-block: 2rem; list-style: none; }
+  .example-deck li { display: grid; gap: 0.5rem; }
+  .example-deck span { color: var(--blume-muted-foreground); font-size: 0.8125rem; }
+</style>

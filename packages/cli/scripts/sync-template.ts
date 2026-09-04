@@ -16,6 +16,8 @@ const blocks = [
   "collections.tsx",
   "media.tsx",
   "metrics.tsx",
+  "prose.tsx",
+  "tables.tsx",
   "templates.tsx",
   "typography.tsx",
 ]

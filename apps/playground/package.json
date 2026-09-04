@@ -11,6 +11,7 @@
     "deck:screenshots": "deckard screenshots",
     "deck:validate": "deckard validate --registry=../../registry.json",
     "dev": "next dev --turbopack",
+    "docs:previews": "node scripts/capture-doc-previews.ts",
     "export:pdf": "deckard export pdf",
     "start": "next start",
     "test": "vitest run --passWithNoTests",

@@ -127,13 +127,13 @@ export const demoBackgrounds = [
 ] as const
 
 export const demoCode = `import type { SlideDefinition } from "@thebuilder/deckard-core"
-import { BulletList } from "@/app/slides/blocks/collections"
-import { StatGrid } from "@/app/slides/blocks/metrics"
 import {
   BreakerSlide,
+  BulletList,
   HeroSlide,
   OpenContentSlide,
-} from "@/app/slides/blocks/templates"
+  StatGrid,
+} from "@/app/slides/blocks"
 
 export const slides: SlideDefinition[] = [
   {

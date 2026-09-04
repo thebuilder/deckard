@@ -1,0 +1,26 @@
+---
+title: Example presentation
+description: A short engineering review built from Deckard's slide patterns, shown as a complete story rather than a component catalogue.
+sidebar:
+  icon: presentation
+  order: 4
+---
+
+This engineering review uses the same content across an opener, an agenda, figures, a comparison, a roadmap, media, a quote, and a close. It is short enough to read as one talk.
+
+[Open the presentation](https://deckard-playground.thebuilder.dk/example) to navigate it.
+
+<ExampleDeck />
+
+The source deck follows this order:
+
+1. `HeroSlide` opens the review.
+2. `OpenContentSlide` and `ContentsList` set the agenda.
+3. `OpenContentSlide` and `StatGrid` report the figures.
+4. `OpenContentSlide` and `CardGrid` compare the decision.
+5. `ImageShowcaseSlide` pairs evidence with its context.
+6. `OpenContentSlide` and `Timeline` set the plan.
+7. `QuoteSlide` carries the reviewer's words.
+8. `BreakerSlide` closes on the next action.
+
+The [slide patterns guide](/slide-patterns) maps each job to its React components. The [feature deck](https://deckard-playground.thebuilder.dk/slides/intro) covers runtime behavior, authoring, themes, and validation in depth.

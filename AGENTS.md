@@ -19,7 +19,7 @@ there, against their own `deck/` directory.
   rather than a template. It imports its theme from `@thebuilder/deckard-themes`, so a
   theme swap is one line in `deck/deck.ts`.
 - `apps/docs` is the documentation site.
-- `packages/themes` is `@thebuilder/deckard-themes`, the six deck themes. Each one is a
+- `packages/themes` is `@thebuilder/deckard-themes`, the built-in deck themes. Each one is a
   `theme.css`, an `index.ts` exporting one `SlideTheme`, and a `THEME.md`. It
   compiles to `dist/` with `tsc` and `scripts/copy-theme-assets.ts` carries the
   stylesheets and the documents across. `pnpm dev` runs `scripts/dev.ts`, which

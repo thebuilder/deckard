@@ -1,7 +1,7 @@
 "use client"
 
 import { MonitorUp } from "lucide-react"
-import { useEffect, useMemo, useRef } from "react"
+import { useCallback, useEffect, useMemo, useRef } from "react"
 import type { SlideSummary } from "../deck/types"
 import {
   PRESENTER_CHANNEL_NAME,
@@ -133,9 +133,9 @@ export function PresenterSync(props: PresenterSyncProps) {
   return null
 }
 
-function openPresenterWindow() {
+function openPresenterWindow(href: string) {
   const presenterWindow = window.open(
-    "/presenter",
+    href,
     "slideshow-presenter",
     "popup=yes,width=1420,height=920,left=80,top=60"
   )
@@ -158,8 +158,10 @@ function isTypingTarget(target: EventTarget | null) {
 
 export function PresenterKeyboardShortcut({
   enabled = true,
+  href = "/presenter",
 }: {
   enabled?: boolean
+  href?: string
 }) {
   useEffect(() => {
     if (!enabled) {
@@ -180,22 +182,28 @@ export function PresenterKeyboardShortcut({
       }
 
       event.preventDefault()
-      openPresenterWindow()
+      openPresenterWindow(href)
     }
 
     window.addEventListener("keydown", onKeyDown)
     return () => window.removeEventListener("keydown", onKeyDown)
-  }, [enabled])
+  }, [enabled, href])
 
   return null
 }
 
-export function PresenterPopoutButton() {
+export function PresenterPopoutButton({
+  href = "/presenter",
+}: {
+  href?: string
+}) {
+  const open = useCallback(() => openPresenterWindow(href), [href])
+
   return (
     <Button
       aria-label="Open presenter view"
       className="border-border/70 bg-background/80 text-muted-foreground backdrop-blur-sm hover:bg-accent/70 hover:text-foreground"
-      onClick={openPresenterWindow}
+      onClick={open}
       size="icon-sm"
       title="Open presenter view"
       type="button"

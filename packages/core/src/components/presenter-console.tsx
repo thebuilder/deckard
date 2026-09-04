@@ -134,8 +134,8 @@ function PreviewLayer({
   )
 }
 
-function previewSrc(id: string, step: number) {
-  return `/slides/${id}?presenterPreview=1&step=${step}`
+function previewSrc(slidesPath: string, id: string, step: number) {
+  return `${slidesPath}/${id}?presenterPreview=1&step=${step}`
 }
 
 // The slide document is loaded once per slide and stepped from here. Putting the
@@ -143,12 +143,14 @@ function previewSrc(id: string, step: number) {
 function PreviewFrame({
   canvas,
   previewId,
+  slidesPath,
   step,
   emptyLabel = "End of deck",
   titlePrefix = "Preview",
 }: {
   canvas: DeckCanvasConfig
   previewId: string | null
+  slidesPath: string
   step: number
   emptyLabel?: string
   titlePrefix?: string
@@ -159,7 +161,7 @@ function PreviewFrame({
     null,
   ])
   const [layerSrcs, setLayerSrcs] = useState<[string | null, string | null]>([
-    previewId ? previewSrc(previewId, step) : null,
+    previewId ? previewSrc(slidesPath, previewId, step) : null,
     null,
   ])
   // The iframe key is layer plus src, so a layer that already holds the wanted
@@ -208,10 +210,10 @@ function PreviewFrame({
     const nextIds: [string | null, string | null] = [...layerIds]
     const nextSrcs: [string | null, string | null] = [...layerSrcs]
     nextIds[hiddenLayer] = previewId
-    nextSrcs[hiddenLayer] = previewSrc(previewId, stepRef.current)
+    nextSrcs[hiddenLayer] = previewSrc(slidesPath, previewId, stepRef.current)
     setLayerIds(nextIds)
     setLayerSrcs(nextSrcs)
-  }, [activeLayer, layerIds, layerSrcs, previewId])
+  }, [activeLayer, layerIds, layerSrcs, previewId, slidesPath])
 
   useEffect(() => {
     if (!previewId) {
@@ -285,9 +287,11 @@ function PreviewFrame({
 
 function CurrentSlidePreview({
   canvas,
+  slidesPath,
   state,
 }: {
   canvas: DeckCanvasConfig
+  slidesPath: string
   state: PresenterSlideState | null
 }) {
   return (
@@ -296,6 +300,7 @@ function CurrentSlidePreview({
         canvas={canvas}
         emptyLabel="Waiting for current slide preview"
         previewId={state?.slide.id ?? null}
+        slidesPath={slidesPath}
         step={state?.currentStep ?? 0}
         titlePrefix="Current slide preview"
       />
@@ -306,15 +311,18 @@ function CurrentSlidePreview({
 function NextStepPreview({
   canvas,
   preview,
+  slidesPath,
 }: {
   canvas: DeckCanvasConfig
   preview: PresenterPreviewState | null | undefined
+  slidesPath: string
 }) {
   return (
     <SlideErrorBoundary slideId={preview?.id ?? "next"}>
       <PreviewFrame
         canvas={canvas}
         previewId={preview?.id ?? null}
+        slidesPath={slidesPath}
         step={preview?.step ?? 0}
         titlePrefix="Next step preview"
       />
@@ -322,7 +330,13 @@ function NextStepPreview({
   )
 }
 
-export function PresenterConsole({ canvas }: { canvas: DeckCanvasConfig }) {
+export function PresenterConsole({
+  canvas,
+  slidesPath = "/slides",
+}: {
+  canvas: DeckCanvasConfig
+  slidesPath?: string
+}) {
   const previewAspectRatio = canvas.width / canvas.height
   const [state, setState] = useState<PresenterSlideState | null>(null)
   const [connected, setConnected] = useState(false)
@@ -448,7 +462,11 @@ export function PresenterConsole({ canvas }: { canvas: DeckCanvasConfig }) {
             className="relative mt-3 w-full overflow-hidden rounded-xl border border-border/70 bg-card/40"
             style={{ aspectRatio: previewAspectRatio }}
           >
-            <NextStepPreview canvas={canvas} preview={state?.preview} />
+            <NextStepPreview
+              canvas={canvas}
+              preview={state?.preview}
+              slidesPath={slidesPath}
+            />
           </div>
         </div>
 
@@ -527,7 +545,11 @@ export function PresenterConsole({ canvas }: { canvas: DeckCanvasConfig }) {
           className="relative w-full overflow-hidden rounded-2xl border border-border/70 bg-card/40"
           style={{ aspectRatio: previewAspectRatio }}
         >
-          <CurrentSlidePreview canvas={canvas} state={state} />
+          <CurrentSlidePreview
+            canvas={canvas}
+            slidesPath={slidesPath}
+            state={state}
+          />
         </div>
 
         <div className="mt-5 flex flex-col rounded-2xl border border-border/80 bg-card/80 lg:min-h-0 lg:flex-1 lg:overflow-hidden">

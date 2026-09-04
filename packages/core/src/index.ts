@@ -22,6 +22,8 @@ export type {
   DeckFooterConfig,
   DeckHeaderConfig,
   DeckPresentation,
+  DeckRoutes,
+  DeckRoutesConfig,
   ResolvedSlide,
   SlideColorMode,
   SlideComponent,

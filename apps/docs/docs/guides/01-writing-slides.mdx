@@ -7,6 +7,8 @@ sidebar:
 
 A slide is an object with a `body` and some optional metadata. The array in `deck/slides.tsx` is the deck, in order.
 
+If you know the job the slide has to do but not the component name, start with the [slide patterns gallery](/slide-patterns).
+
 ```tsx deck/slides.tsx
 export const slides: SlideDefinition[] = [
   { slug: "intro", title: "Deckard", body: <HeroSlide eyebrow="A talk" /> },
@@ -31,6 +33,7 @@ The blocks install into `app/slides/blocks/` as source you own. Compose from the
 | `OpenContentSlide` | `templates.tsx` | The same intro, no panel. |
 | `FocusSlide` | `templates.tsx` | One block, no heading. |
 | `BulletList` | `collections.tsx` | Four to six numbered points. |
+| `RevealList` | `collections.tsx` | Points revealed in order, with the step wrappers inside the block. |
 | `ContentsList` | `collections.tsx` | An agenda: numeral, section, folio. |
 | `ColumnGrid` | `collections.tsx` | Parallel points as ruled, numbered columns. |
 | `FeatureGrid` | `collections.tsx` | Three parallel cards. |
