@@ -1,0 +1,37 @@
+---
+import { existsSync } from "node:fs"
+import path from "node:path"
+import { resolveCanvas } from "@thebuilder/deckard-core"
+
+interface Props {
+  previewPath: string
+  title: string
+}
+
+const { previewPath, title } = Astro.props
+const sourcePath = path.resolve("public", previewPath.slice(1))
+const { height, width } = resolveCanvas()
+
+if (!existsSync(sourcePath)) {
+  throw new Error(`Missing slide screenshot: ${previewPath}`)
+}
+---
+
+<div class="slide-screenshot not-prose">
+  <img alt={title} height={height} loading="lazy" src={previewPath} width={width} />
+</div>
+
+<style>
+  .slide-screenshot {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: #0d1117;
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+</style>

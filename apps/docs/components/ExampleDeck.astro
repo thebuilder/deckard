@@ -1,14 +1,18 @@
 ---
-import { exampleOutline } from "../../playground/deck/example-outline"
-import LiveSlidePreview from "./LiveSlidePreview.astro"
+import { exampleOutline, exampleSlideOrder } from "../../playground/deck/example-outline"
+import { slidePreviewPath } from "../lib/slide-previews"
+import SlideScreenshot from "./SlideScreenshot.astro"
 
-const slides = Object.values(exampleOutline)
+const slides = exampleSlideOrder.map((key) => exampleOutline[key])
 ---
 
 <ol class="example-deck not-prose">
   {slides.map((slide) => (
     <li>
-      <LiveSlidePreview href={`/example/${slide.slug}`} title={`${slide.title} slide preview`} />
+      <SlideScreenshot
+        previewPath={slidePreviewPath(`/example/${slide.slug}`)}
+        title={`${slide.title} slide preview`}
+      />
       <span>{slide.title}</span>
     </li>
   ))}

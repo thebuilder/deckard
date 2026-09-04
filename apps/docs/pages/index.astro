@@ -6,7 +6,7 @@ import PageLayout from "blume/components/layout/PageLayout.astro"
 import presenterImage from "../assets/presenter.png"
 import DeckPreview from "../components/DeckPreview.astro"
 import HeroBackground from "../components/HeroBackground.astro"
-import LiveSlidePreview from "../components/LiveSlidePreview.astro"
+import SlideScreenshot from "../components/SlideScreenshot.astro"
 import SlidePatterns from "../components/SlidePatterns.astro"
 import type { HeroVariantId } from "../components/hero/hero-effect"
 import {
@@ -24,6 +24,7 @@ import {
   heroSlide,
   installCode,
 } from "../lib/landing"
+import { slidePreviewPath } from "../lib/slide-previews"
 import "../styles/landing.css"
 
 const { config } = data
@@ -142,7 +143,7 @@ ${motionRules}
 
         <div aria-label="A four-slide Deckard presentation" class="hero-deck-strip" role="img">
           {examplePreviewPaths.map((href) => (
-            <LiveSlidePreview href={href} title="Example Deckard slide" />
+            <SlideScreenshot previewPath={slidePreviewPath(href)} title="Example Deckard slide" />
           ))}
         </div>
 

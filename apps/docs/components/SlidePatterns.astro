@@ -1,5 +1,6 @@
 ---
-import LiveSlidePreview from "./LiveSlidePreview.astro"
+import { slidePreviewPath, type SlidePreviewRoute } from "../lib/slide-previews"
+import SlideScreenshot from "./SlideScreenshot.astro"
 
 const patterns: Array<{
   component: string
@@ -7,6 +8,7 @@ const patterns: Array<{
   href: string
   level: "Whole slide" | "Slide recipe"
   name: string
+  previewRoute: SlidePreviewRoute
   recipe: string
   use: string
 }> = [
@@ -16,6 +18,7 @@ const patterns: Array<{
     href: "https://deckard-playground.thebuilder.dk/slides/intro",
     level: "Whole slide",
     name: "Opener",
+    previewRoute: "/slides/intro",
     recipe: '<HeroSlide eyebrow="Engineering all-hands" title="What we shipped" />',
     use: "Use this when one title and one line need the whole room.",
   },
@@ -25,6 +28,7 @@ const patterns: Array<{
     href: "https://deckard-playground.thebuilder.dk/slides/canvas",
     level: "Whole slide",
     name: "Section break",
+    previewRoute: "/slides/canvas",
     recipe: '<BreakerSlide eyebrow="The trade" title="What it cost" description={summary} />',
     use: "Use this to reset the room before the next part of the argument.",
   },
@@ -34,6 +38,7 @@ const patterns: Array<{
     href: "https://deckard-playground.thebuilder.dk/slides/presenter",
     level: "Slide recipe",
     name: "Numbered argument",
+    previewRoute: "/slides/presenter",
     recipe: '<OpenContentSlide title="How we got there"><BulletList items={points} /></OpenContentSlide>',
     use: "Use this when the order matters and each point earns a full sentence.",
   },
@@ -43,6 +48,7 @@ const patterns: Array<{
     href: "https://deckard-playground.thebuilder.dk/slides/numbers",
     level: "Slide recipe",
     name: "Key figures",
+    previewRoute: "/slides/numbers",
     recipe: '<OpenContentSlide title="The numbers"><StatGrid items={figures} /></OpenContentSlide>',
     use: "Use this when a small set of numbers carries the argument.",
   },
@@ -52,6 +58,7 @@ const patterns: Array<{
     href: "https://deckard-playground.thebuilder.dk/slides/content-card",
     level: "Whole slide",
     name: "Framed explanation",
+    previewRoute: "/slides/content-card",
     recipe: '<ContentSlideCard title="The decision"><p>{explanation}</p></ContentSlideCard>',
     use: "Use this for flat prose or a definition that needs one clear frame.",
   },
@@ -61,6 +68,7 @@ const patterns: Array<{
     href: "https://deckard-playground.thebuilder.dk/slides/one-surface",
     level: "Slide recipe",
     name: "Option comparison",
+    previewRoute: "/slides/one-surface",
     recipe: '<OpenContentSlide title="Three ways forward"><CardGrid items={options} /></OpenContentSlide>',
     use: "Use this when each alternative needs a name and a short explanation.",
   },
@@ -70,6 +78,7 @@ const patterns: Array<{
     href: "https://deckard-playground.thebuilder.dk/slides/roadmap",
     level: "Slide recipe",
     name: "Roadmap",
+    previewRoute: "/slides/roadmap",
     recipe: '<OpenContentSlide title="The next release"><Timeline items={milestones} /></OpenContentSlide>',
     use: "Use this when dates and sequence matter more than exact duration.",
   },
@@ -79,6 +88,7 @@ const patterns: Array<{
     href: "https://deckard-playground.thebuilder.dk/slides/quote",
     level: "Whole slide",
     name: "Pull quote",
+    previewRoute: "/slides/quote",
     recipe: '<QuoteSlide attribution="Maya Chen" quote={quote} />',
     use: "Use this when someone else's sentence is the evidence.",
   },
@@ -88,6 +98,7 @@ const patterns: Array<{
     href: "https://deckard-playground.thebuilder.dk/slides/image",
     level: "Whole slide",
     name: "Image and explanation",
+    previewRoute: "/slides/image",
     recipe: '<ImageShowcaseSlide image={image}><SlideHeading title="Field notes" /></ImageShowcaseSlide>',
     use: "Use this when the image needs context beside it rather than text on top.",
   },
@@ -97,7 +108,10 @@ const patterns: Array<{
 <div class="pattern-groups">
   {patterns.map((pattern) => (
     <article class="pattern-card">
-      <LiveSlidePreview href={new URL(pattern.href).pathname} title={`${pattern.name} slide preview`} />
+      <SlideScreenshot
+        previewPath={slidePreviewPath(pattern.previewRoute)}
+        title={`${pattern.name} slide preview`}
+      />
       <div class="pattern-copy">
         <p class="pattern-group">{pattern.group}</p>
         <span class="pattern-level">{pattern.level}</span>
@@ -117,7 +131,7 @@ const patterns: Array<{
 <style>
   .pattern-groups { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); margin-block: 2rem; }
   .pattern-card { border: 1px solid var(--blume-border); border-radius: var(--blume-radius); overflow: hidden; background: var(--blume-card); }
-  .pattern-card :global(.live-slide-preview) { border-bottom: 1px solid var(--blume-border); }
+  .pattern-card :global(.slide-screenshot) { border-bottom: 1px solid var(--blume-border); }
   .pattern-copy { padding: 1.1rem 1.25rem 1.35rem; }
   .pattern-copy h3 { font-size: 1.15rem; margin: 0.2rem 0 0.35rem; }
   .pattern-copy p:last-child { color: var(--blume-muted-foreground); margin: 0.75rem 0 0; }

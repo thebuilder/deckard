@@ -8,3 +8,14 @@ export const exampleOutline = {
   review: { slug: "review", title: "The review" },
   roadmap: { slug: "roadmap", title: "The next release" },
 } as const
+
+export const exampleSlideOrder = [
+  "opening",
+  "agenda",
+  "figures",
+  "decision",
+  "fieldNotes",
+  "roadmap",
+  "review",
+  "close",
+] as const satisfies ReadonlyArray<keyof typeof exampleOutline>
