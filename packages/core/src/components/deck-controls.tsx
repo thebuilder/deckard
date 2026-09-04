@@ -197,6 +197,7 @@ interface DeckControlsProps {
   currentNumber: number
   deckTitle: string
   next?: SlideSummary
+  presenterHref?: string
   previous?: SlideSummary
   showColorModeToggle: boolean
   slides: SlideSummary[]
@@ -206,6 +207,7 @@ export function DeckControls({
   currentNumber,
   deckTitle,
   next,
+  presenterHref,
   previous,
   showColorModeToggle,
   slides,
@@ -299,7 +301,7 @@ export function DeckControls({
           onOpenChange={setIsCommandOpen}
           slides={slides}
         />
-        <PresenterPopoutButton />
+        {presenterHref ? <PresenterPopoutButton href={presenterHref} /> : null}
         {showColorModeToggle ? <SlideshowColorModeToggle /> : null}
 
         <Button

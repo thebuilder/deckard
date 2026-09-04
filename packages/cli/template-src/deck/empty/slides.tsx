@@ -1,5 +1,5 @@
 import type { SlideDefinition } from "@thebuilder/deckard-core"
-import { ContentSlideCard, HeroSlide } from "@/app/slides/blocks/templates"
+import { HeroSlide } from "@/app/slides/blocks"
 import "server-only"
 
 export const slides: SlideDefinition[] = [
@@ -11,15 +11,11 @@ export const slides: SlideDefinition[] = [
   {
     title: "Second slide",
     body: (
-      <ContentSlideCard
-        description="Add slides to this array. A slide needs only a body."
+      <HeroSlide
+        description="Add slides to this array. Move one into deck/slides/name.slide.tsx when it needs its own data or widgets."
         eyebrow="Write here"
-      >
-        <p className="text-[length:var(--slide-body-size)] text-muted-foreground">
-          Move a slide into deck/slides/name.slide.tsx once it grows its own
-          data or widgets, then spread discoverSlides() into this array.
-        </p>
-      </ContentSlideCard>
+        title="A slide needs only a body"
+      />
     ),
   },
 ]

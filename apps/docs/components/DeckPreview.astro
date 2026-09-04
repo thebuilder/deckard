@@ -81,6 +81,7 @@ const label = `A ${theme} slide in ${mode} mode, headed "${slide.heading}"`
   role="img"
 >
   <div
+    aria-hidden="true"
     class:list={["deck-preview-canvas", `${theme}-theme`]}
     data-canvas-height="1080"
     data-canvas-width="1920"
@@ -102,7 +103,7 @@ const label = `A ${theme} slide in ${mode} mode, headed "${slide.heading}"`
       {slide.meta && <span data-slide-header-meta>{slide.meta}</span>}
     </header>
 
-    <main class="deck-preview-frame" data-slide-frame>
+    <div class="deck-preview-frame" data-slide-frame>
       {
         layout === "hero" && (
           <div class="deck-preview-hero">
@@ -142,7 +143,7 @@ const label = `A ${theme} slide in ${mode} mode, headed "${slide.heading}"`
               <div>
                 <dl class="deck-preview-stats" data-slide-surface>
                   {figures.map((figure) => (
-                    <div class="deck-preview-stat">
+                    <div>
                       <dt>{figure.caption}</dt>
                       <dd data-stat-value>
                         {figure.value}
@@ -191,7 +192,7 @@ const label = `A ${theme} slide in ${mode} mode, headed "${slide.heading}"`
           </div>
         )
       }
-    </main>
+    </div>
 
     <footer class="deck-preview-chrome-bottom" data-slide-footer>
       <div

@@ -15,7 +15,7 @@ Expect to edit them. A block that assumed your theme would be a block you fight.
 | --- | --- | --- |
 | `block-typography` | `typography.tsx` | `Eyebrow`, `SlideHeading`. Every other block depends on it. |
 | `block-slide-layouts` | `templates.tsx` | `HeroSlide`, `HeroSplitSlide`, `HeroCenteredSlide`, `BreakerSlide`, `MinimalBreakerSlide`, `StatementSlide`, `CodeSplitSlide`, `ContentSlideCard`, `OpenContentSlide`, `FocusSlide`. |
-| `block-collections` | `collections.tsx` | `BulletList`, `ContentsList`, `ColumnGrid`, `FeatureGrid`, `CardGrid`. |
+| `block-collections` | `collections.tsx` | `RevealList`, `BulletList`, `ContentsList`, `ColumnGrid`, `FeatureGrid`, `CardGrid`. |
 | `block-prose` | `prose.tsx` | `QuoteSlide`, `ProseSlide`. |
 | `block-tables` | `tables.tsx` | `DataTable`, `Timeline`, `LogList`. |
 | `block-media` | `media.tsx` | `ImageShowcaseSlide`, `MediaPair`, `MediaGallery`, `FullscreenMediaSlide`. |
@@ -58,9 +58,11 @@ pnpm registry:build
 
 That runs `shadcn build --output apps/docs/public/r`, writing one JSON file per item. This site serves `public/` as static files, so each item lands at `/r/<name>.json`.
 
-The source of truth is `registry.json` at the repository root. Each item's `files[].path` points at the real file in `apps/playground/app/slides/blocks/`, which is why `deckard validate --registry <path>` can check that every path still exists.
+The source of truth is `registry.json` at the repository root. Block files point at `apps/playground/app/slides/blocks/`; the preset barrel points at the matching CLI template source. `deckard validate --registry <path>` checks that every source path exists.
 
 ## Composing
+
+Start with the [slide patterns gallery](/slide-patterns) when you know the job a slide has to do but not the component name. This page documents how the source files install and how their APIs compose.
 
 Two rules cover almost every slide.
 

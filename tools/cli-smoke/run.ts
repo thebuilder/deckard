@@ -244,9 +244,10 @@ function assertScreenshot(directory: string) {
 function assertScaffold(directory: string) {
   for (const file of [
     "app/globals.css",
+    "app/slides/blocks/index.ts",
     "app/slides/[id]/page.tsx",
     "deck/deck.ts",
-    "deck/slides/10-keyboard.slide.tsx",
+    "deck/slides.tsx",
   ]) {
     assert(
       fs.existsSync(path.join(directory, file)),
@@ -266,6 +267,24 @@ function assertScaffold(directory: string) {
         `import { ${defaultThemeId} } from "@thebuilder/deckard-themes"`
       ),
     "the generated deck.ts does not import its theme from @thebuilder/deckard-themes"
+  )
+
+  const slideSource = fs.readFileSync(
+    path.join(directory, "deck/slides.tsx"),
+    "utf8"
+  )
+
+  for (const forbidden of ["var(--slide-", "className=", "import.meta.glob"]) {
+    assert(
+      !slideSource.includes(forbidden),
+      `the generated deck/slides.tsx contains ${forbidden}`
+    )
+  }
+
+  assert(
+    slideSource.includes('from "@/app/slides/blocks"') &&
+      slideSource.includes("RevealList"),
+    "the generated deck does not use the block barrel and semantic reveal block"
   )
 
   const generated = JSON.parse(
@@ -369,7 +388,7 @@ try {
   time("pnpm: next build", () => {
     run("pnpm", ["run", "build"], pnpmApp)
   })
-  assertStaticSlides(pnpmApp, ["intro", "keyboard", "2"])
+  assertStaticSlides(pnpmApp, ["intro", "2", "3", "4"])
 
   // check-overflow loads its measurement out of the deck's own @thebuilder/deckard-core, so
   // it is the one command that only proves itself against an installed deck.
@@ -427,7 +446,7 @@ try {
   time("npm: next build", () => {
     run("npm", ["run", "build"], npmApp)
   })
-  assertStaticSlides(npmApp, ["intro", "keyboard", "2"])
+  assertStaticSlides(npmApp, ["intro", "2", "3", "4"])
 
   const width = Math.max(...timings.map(([label]) => label.length))
 

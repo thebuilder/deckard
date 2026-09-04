@@ -1,0 +1,67 @@
+---
+title: Slide patterns
+description: Choose a complete slide recipe by what the slide needs to do, then edit the installed React source when the recipe needs to change.
+sidebar:
+  icon: panels-top-left
+  order: 2
+---
+
+Deckard calls the source files blocks. Authors usually need a recipe: a whole-slide frame paired with the content block that belongs inside it. The visual gallery is a representative subset. The intent index below covers every author-facing pattern.
+
+<SlidePatterns />
+
+## Representative recipes
+
+| Pattern | Level | Use it for | Example |
+| --- | --- | --- | --- |
+| `HeroSlide` | Whole slide | Open with the talk's title and premise. | [Opener](https://deckard-playground.thebuilder.dk/slides/intro) |
+| `BreakerSlide` | Whole slide | Mark a section change. | [Section break](https://deckard-playground.thebuilder.dk/slides/canvas) |
+| `OpenContentSlide` with `BulletList` | Slide recipe | Explain a short set of points. | [Bullets](https://deckard-playground.thebuilder.dk/slides/presenter) |
+| `OpenContentSlide` with `StatGrid` | Slide recipe | Report a small set of figures. | [Figures](https://deckard-playground.thebuilder.dk/slides/numbers) |
+| `ContentSlideCard` | Whole slide | Put flat prose or custom markup in one panel. | [Content card](https://deckard-playground.thebuilder.dk/slides/content-card) |
+| `OpenContentSlide` with `CardGrid` | Slide recipe | Compare options or grouped ideas. | [Cards](https://deckard-playground.thebuilder.dk/slides/one-surface) |
+| `OpenContentSlide` with `Timeline` | Slide recipe | Show a sequence or plan. | [Timeline](https://deckard-playground.thebuilder.dk/slides/roadmap) |
+| `QuoteSlide` | Whole slide | Give one quotation the canvas. | [Quotation](https://deckard-playground.thebuilder.dk/slides/quote) |
+| `ImageShowcaseSlide` | Whole slide | Pair one image with its context. | [Image](https://deckard-playground.thebuilder.dk/slides/image) |
+
+## Choose the frame first
+
+Use `HeroSlide`, `BreakerSlide`, `StatementSlide`, `QuoteSlide`, and `ProseSlide` as complete slides. They own the composition.
+
+Use `OpenContentSlide` around a block that paints its own border or background, including `BulletList`, `StatGrid`, `FeatureGrid`, `CardGrid`, `DataTable`, `Timeline`, `LogList`, and `RevealList`.
+
+Use `ContentSlideCard` for flat prose or custom markup with no frame of its own. Use `FocusSlide` when one block is the slide and a heading would repeat what the block already says.
+
+```tsx
+import { OpenContentSlide, StatGrid } from "@/app/slides/blocks"
+
+const figures = [
+  { value: "6.2s", caption: "Median build time" },
+  { value: "0", unit: "%", caption: "Slides fixed after export" },
+] as const
+
+<OpenContentSlide eyebrow="Quarter in review" title="The numbers that moved">
+  <StatGrid items={figures} />
+</OpenContentSlide>
+```
+
+## Find a pattern by intent
+
+| You need to | Start with |
+| --- | --- |
+| Open the talk | `HeroSlide`, `HeroSplitSlide`, or `HeroCenteredSlide` |
+| Show the talk's structure | `OpenContentSlide` with `ContentsList` |
+| Introduce a section | `BreakerSlide` or `MinimalBreakerSlide` |
+| Land one claim | `StatementSlide` |
+| Explain one code sample | `CodeSplitSlide` |
+| Give one custom block the frame | `FocusSlide` |
+| Present a longer passage | `ProseSlide` |
+| Explain ordered points | `OpenContentSlide` with `BulletList` |
+| Reveal an argument | `OpenContentSlide` with `RevealList` |
+| Compare options | `OpenContentSlide` with `ColumnGrid`, `FeatureGrid`, or `CardGrid` |
+| Report figures | `OpenContentSlide` with `StatGrid` or `DataTable` |
+| Show a plan | `OpenContentSlide` with `Timeline` |
+| Show an image | `ImageShowcaseSlide`, `MediaPair`, `MediaGallery`, or `FullscreenMediaSlide` |
+| Quote someone | `QuoteSlide` |
+
+The [blocks and registry guide](/guides/blocks-and-the-registry) documents installation, composition rules, and the individual source files.

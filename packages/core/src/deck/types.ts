@@ -119,6 +119,16 @@ export interface DeckFooterConfig {
   progress?: boolean
 }
 
+export interface DeckRoutesConfig {
+  presenter?: false | string
+  slides?: string
+}
+
+export interface DeckRoutes {
+  presenter: false | string
+  slides: string
+}
+
 export interface DeckConfig {
   canvas?: Partial<DeckCanvasConfig>
   description: string
@@ -127,6 +137,7 @@ export interface DeckConfig {
   // The deck-wide default a slide overrides. "frozen" holds every motion
   // background in the deck on its still frame.
   motion?: SlideMotionMode
+  routes?: DeckRoutesConfig
   slides: SlideDefinition[]
   theme?: SlideTheme
   title: string
@@ -137,6 +148,7 @@ export interface Deck {
   description: string
   footer: DeckFooterConfig
   header: DeckHeaderConfig
+  routes: DeckRoutes
   slides: ResolvedSlide[]
   theme: SlideTheme
   title: string
@@ -146,6 +158,7 @@ export interface Deck {
 export interface DeckPresentation {
   canvas: DeckCanvasConfig
   meta?: string
+  presenterHref?: string
   showProgress: boolean
   theme: SlideTheme
   title: string

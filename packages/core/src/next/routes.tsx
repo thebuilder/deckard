@@ -84,7 +84,9 @@ export function createSlideRoute(deck: Deck) {
 
 export function createPresenterPage(deck: Deck) {
   function Page() {
-    return <PresenterConsole canvas={deck.canvas} />
+    return (
+      <PresenterConsole canvas={deck.canvas} slidesPath={deck.routes.slides} />
+    )
   }
 
   return {

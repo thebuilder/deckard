@@ -376,6 +376,11 @@
  *   [data-slide-list-marker]       the row's number, which a theme may blank
  *                                  and replace with its own marker
  *   [data-slide-list-text]         the row's copy
+ *   [data-slide-reveal]            a RevealList
+ *   [data-slide-reveal-item]       one revealed point
+ *   [data-slide-reveal-item-accent] the point carrying the accent
+ *   [data-slide-reveal-title]      the point's heading
+ *   [data-slide-reveal-description] the point's explanation
  *   [data-slide-contents]          a ContentsList
  *   [data-slide-contents-item]     one row of it
  *   [data-slide-contents-index]    the row's numeral, which a theme may swap

@@ -162,13 +162,6 @@ export function scaffold(options: ScaffoldOptions): void {
     fill(readTemplate("deck", variant, "slides.tsx"), options)
   )
 
-  if (options.sample) {
-    copyTree(
-      templatePath("deck/sample/slides"),
-      path.join(target, "deck/slides")
-    )
-  }
-
   write(path.join(target, "package.json"), packageJson(options))
   write(path.join(target, "components.json"), componentsJson(options))
   write(path.join(target, ".gitignore"), gitignore)

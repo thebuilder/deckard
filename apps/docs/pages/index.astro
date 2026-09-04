@@ -6,6 +6,8 @@ import PageLayout from "blume/components/layout/PageLayout.astro"
 import presenterImage from "../assets/presenter.png"
 import DeckPreview from "../components/DeckPreview.astro"
 import HeroBackground from "../components/HeroBackground.astro"
+import LiveSlidePreview from "../components/LiveSlidePreview.astro"
+import SlidePatterns from "../components/SlidePatterns.astro"
 import type { HeroVariantId } from "../components/hero/hero-effect"
 import {
   defaultTheme,
@@ -27,6 +29,12 @@ import "../styles/landing.css"
 const { config } = data
 
 const playgroundUrl = "https://deckard-playground.thebuilder.dk"
+const examplePreviewPaths = [
+  "/example/opening",
+  "/example/figures",
+  "/example/decision",
+  "/example/close",
+] as const
 
 /* The effect behind the hero. */
 const heroVariant: HeroVariantId = "esper-scan"
@@ -101,7 +109,7 @@ ${motionRules}
   navigation={data.navigation}
   ogEnabled={config.og.enabled}
   page={{
-    description: `Deckard builds presentations out of React components: a fixed ${canvasSize} canvas, keyboard navigation, speaker notes, ${themeCountWord} themes, and a PDF export.`,
+    description: `Build presentations in React from editable slide patterns, with a fixed ${canvasSize} canvas, presenter tools, themes, and PDF export.`,
     title: "Deckard, presentations built with React",
   }}
   searchEnabled={config.search.enabled}
@@ -118,17 +126,24 @@ ${motionRules}
       <div class="hero-inner">
         <h1 class="hero-title">Slides are React components</h1>
         <p class="hero-lead">
-          Build the deck in Next.js with the components, the data, and the tooling
-          you already use. A chart, a live demo, or a query result goes on a slide
-          the way it goes in an app. Present it from the browser, export the PDF,
-          and hand the repo to your coding agent.
+          Start with editable slide patterns and a theme. Add your own React when
+          the talk needs a chart, a live demo, or data loaded by Next.js. Present
+          from the browser, export the PDF, and hand the same source to your coding
+          agent.
         </p>
 
         <div class="hero-actions">
-          <a class="button button-primary" href="/quickstart"> Get started </a>
-          <a class="button button-quiet" href={playgroundUrl}>
-            View the example deck
+          <a class="button button-primary" href="/quickstart"> Create a deck </a>
+          <a class="button button-quiet" href="/slide-patterns">
+            Browse slide patterns
           </a>
+          <a class="button button-quiet" href={`${playgroundUrl}/example`}>View the example deck</a>
+        </div>
+
+        <div aria-label="A four-slide Deckard presentation" class="hero-deck-strip" role="img">
+          {examplePreviewPaths.map((href) => (
+            <LiveSlidePreview href={href} title="Example Deckard slide" />
+          ))}
         </div>
 
         <div class="install">
@@ -190,6 +205,25 @@ ${motionRules}
           </div>
         </div>
       </div>
+    </section>
+
+    <section class="section" id="patterns">
+      <div class="section-head">
+        <h2>Start with a slide pattern</h2>
+        <p>
+          Choose by what the slide needs to do. Each recipe pairs a whole-slide
+          frame with the content block that fits inside it, and every block lands
+          in your app as editable source.
+        </p>
+      </div>
+
+      <SlidePatterns />
+
+      <p class="section-footnote">
+        <a href="/slide-patterns">Open the pattern guide</a> for composition rules
+        and the full intent index. <a href={playgroundUrl}>Explore every Deckard feature</a>
+        in the reference deck.
+      </p>
     </section>
 
     <section class="section section-lead" id="write">
@@ -363,11 +397,7 @@ ${motionRules}
               <div class="theme-frame" data-theme-name={name}>
                 <DeckPreview
                   background={galleryTheme[name].background}
-                  mode={
-                    galleryTheme[name].defaultColorMode === "dark"
-                      ? "dark"
-                      : "light"
-                  }
+                  mode={galleryTheme[name].defaultColorMode === "dark" ? "dark" : "light"}
                   scale={0.24}
                   slide={heroSlide}
                   theme={name}

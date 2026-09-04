@@ -1,0 +1,130 @@
+---
+import LiveSlidePreview from "./LiveSlidePreview.astro"
+
+const patterns: Array<{
+  component: string
+  group: string
+  href: string
+  level: "Whole slide" | "Slide recipe"
+  name: string
+  recipe: string
+  use: string
+}> = [
+  {
+    component: "HeroSlide",
+    group: "Start and divide",
+    href: "https://deckard-playground.thebuilder.dk/slides/intro",
+    level: "Whole slide",
+    name: "Opener",
+    recipe: '<HeroSlide eyebrow="Engineering all-hands" title="What we shipped" />',
+    use: "Use this when one title and one line need the whole room.",
+  },
+  {
+    component: "BreakerSlide",
+    group: "Start and divide",
+    href: "https://deckard-playground.thebuilder.dk/slides/canvas",
+    level: "Whole slide",
+    name: "Section break",
+    recipe: '<BreakerSlide eyebrow="The trade" title="What it cost" description={summary} />',
+    use: "Use this to reset the room before the next part of the argument.",
+  },
+  {
+    component: "OpenContentSlide + BulletList",
+    group: "Explain and emphasise",
+    href: "https://deckard-playground.thebuilder.dk/slides/presenter",
+    level: "Slide recipe",
+    name: "Numbered argument",
+    recipe: '<OpenContentSlide title="How we got there"><BulletList items={points} /></OpenContentSlide>',
+    use: "Use this when the order matters and each point earns a full sentence.",
+  },
+  {
+    component: "OpenContentSlide + StatGrid",
+    group: "Show data and activity",
+    href: "https://deckard-playground.thebuilder.dk/slides/numbers",
+    level: "Slide recipe",
+    name: "Key figures",
+    recipe: '<OpenContentSlide title="The numbers"><StatGrid items={figures} /></OpenContentSlide>',
+    use: "Use this when a small set of numbers carries the argument.",
+  },
+  {
+    component: "ContentSlideCard",
+    group: "Explain and emphasise",
+    href: "https://deckard-playground.thebuilder.dk/slides/content-card",
+    level: "Whole slide",
+    name: "Framed explanation",
+    recipe: '<ContentSlideCard title="The decision"><p>{explanation}</p></ContentSlideCard>',
+    use: "Use this for flat prose or a definition that needs one clear frame.",
+  },
+  {
+    component: "OpenContentSlide + CardGrid",
+    group: "Compare and organise",
+    href: "https://deckard-playground.thebuilder.dk/slides/one-surface",
+    level: "Slide recipe",
+    name: "Option comparison",
+    recipe: '<OpenContentSlide title="Three ways forward"><CardGrid items={options} /></OpenContentSlide>',
+    use: "Use this when each alternative needs a name and a short explanation.",
+  },
+  {
+    component: "OpenContentSlide + Timeline",
+    group: "Compare and organise",
+    href: "https://deckard-playground.thebuilder.dk/slides/roadmap",
+    level: "Slide recipe",
+    name: "Roadmap",
+    recipe: '<OpenContentSlide title="The next release"><Timeline items={milestones} /></OpenContentSlide>',
+    use: "Use this when dates and sequence matter more than exact duration.",
+  },
+  {
+    component: "QuoteSlide",
+    group: "Explain and emphasise",
+    href: "https://deckard-playground.thebuilder.dk/slides/quote",
+    level: "Whole slide",
+    name: "Pull quote",
+    recipe: '<QuoteSlide attribution="Maya Chen" quote={quote} />',
+    use: "Use this when someone else's sentence is the evidence.",
+  },
+  {
+    component: "ImageShowcaseSlide",
+    group: "Show media",
+    href: "https://deckard-playground.thebuilder.dk/slides/image",
+    level: "Whole slide",
+    name: "Image and explanation",
+    recipe: '<ImageShowcaseSlide image={image}><SlideHeading title="Field notes" /></ImageShowcaseSlide>',
+    use: "Use this when the image needs context beside it rather than text on top.",
+  },
+]
+---
+
+<div class="pattern-groups">
+  {patterns.map((pattern) => (
+    <article class="pattern-card">
+      <LiveSlidePreview href={new URL(pattern.href).pathname} title={`${pattern.name} slide preview`} />
+      <div class="pattern-copy">
+        <p class="pattern-group">{pattern.group}</p>
+        <span class="pattern-level">{pattern.level}</span>
+        <h3>{pattern.name}</h3>
+        <code>{pattern.component}</code>
+        <p>{pattern.use}</p>
+        <details>
+          <summary>Show composition</summary>
+          <pre><code>{pattern.recipe}</code></pre>
+        </details>
+        <a href={pattern.href}>Open in the playground</a>
+      </div>
+    </article>
+  ))}
+</div>
+
+<style>
+  .pattern-groups { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); margin-block: 2rem; }
+  .pattern-card { border: 1px solid var(--blume-border); border-radius: var(--blume-radius); overflow: hidden; background: var(--blume-card); }
+  .pattern-card :global(.live-slide-preview) { border-bottom: 1px solid var(--blume-border); }
+  .pattern-copy { padding: 1.1rem 1.25rem 1.35rem; }
+  .pattern-copy h3 { font-size: 1.15rem; margin: 0.2rem 0 0.35rem; }
+  .pattern-copy p:last-child { color: var(--blume-muted-foreground); margin: 0.75rem 0 0; }
+  .pattern-copy a { display: inline-block; margin-block-start: 0.85rem; color: var(--blume-accent); font-size: 0.875rem; text-underline-offset: 3px; }
+  .pattern-copy details { margin-block-start: 0.85rem; }
+  .pattern-copy summary { cursor: pointer; font-size: 0.8125rem; }
+  .pattern-copy pre { overflow-x: auto; padding: 0.75rem; margin-block-start: 0.5rem; background: var(--blume-muted); border-radius: var(--blume-radius); font-size: 0.75rem; }
+  .pattern-group { color: var(--blume-accent); font-size: 0.75rem; font-weight: 650; letter-spacing: 0.08em; margin: 0; text-transform: uppercase; }
+  .pattern-level { color: var(--blume-muted-foreground); font-size: 0.75rem; }
+</style>

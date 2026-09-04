@@ -14,7 +14,7 @@ import { slides } from "@/deck/slides"
 
 export const deck = defineDeck({
   canvas: { fit: "contain", height: 1080, mode: "fixed", width: 1920 },
-  description: "Beautiful React presentations with shadcn-native theming.",
+  description: "An engineering review built from editable slide patterns.",
   footer: { mode: "visible" },
   header: { brand: "Deckard", href: "/", meta: "March 2026", mode: "auto" },
   slides,
@@ -65,6 +65,11 @@ export const deck = defineDeck({
       type: '"auto" | "frozen"',
       default: '"auto"',
       description: "The default every slide takes. \"frozen\" holds every motion background in the deck on one fixed frame. Reduced motion, the capture commands, and the presenter preview freeze one either way.",
+    },
+    routes: {
+      type: "DeckRoutesConfig",
+      description: "Route prefixes for slides and presenter mode. Set presenter to false when the deck has no presenter page.",
+      default: '{ slides: "/slides", presenter: "/presenter" }',
     },
   }}
 />
@@ -142,6 +147,14 @@ footer: { mode: "visible", progress: false }
 
 See [Themes](/guides/themes) for the full object. `defineDeck` validates it: `defaultColorMode: "system"` needs both modes in `colorModes`, and a theme listing one mode pins the canvas to it and hides the light/dark toggle.
 
+## routes
+
+`routes.slides` sets the prefix used by every resolved slide URL and presenter preview. `routes.presenter` sets the popout destination; `false` removes the presenter control and keyboard shortcut. Paths start with `/` and cannot be the site root.
+
+```ts
+routes: { slides: "/example", presenter: false }
+```
+
 ## What defineDeck returns
 
 `Deck` is `DeckConfig` with `canvas`, `slides`, and `theme` resolved. Each slide becomes a `ResolvedSlide`:
@@ -149,7 +162,7 @@ See [Themes](/guides/themes) for the full object. `defineDeck` validates it: `de
 | Field | What it holds |
 | --- | --- |
 | `id` | The URL segment: the slug, or the 1-based position. |
-| `href` | `/slides/<id>`. |
+| `href` | The configured slide path followed by the slide id. |
 | `index` | Zero-based position in the array. |
 | `number` | One-based position, what the counter shows. |
 | `title` | The authored title, or the generated `Slide 4` fallback. |

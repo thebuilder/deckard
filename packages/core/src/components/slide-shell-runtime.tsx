@@ -18,6 +18,7 @@ interface SlideShellRuntimeProps {
   next?: SlideSummary
   notes?: string
   presenterEnabled?: boolean
+  presenterHref?: string
   previous?: SlideSummary
   readOnly?: boolean
   slide: SlideSummary
@@ -32,6 +33,7 @@ export function SlideShellRuntime({
   next,
   notes,
   presenterEnabled = true,
+  presenterHref = "/presenter",
   previous,
   readOnly = false,
   slide,
@@ -66,7 +68,10 @@ export function SlideShellRuntime({
             slide={slide}
             slides={slides}
           />
-          <PresenterKeyboardShortcut enabled={isPresenterLive} />
+          <PresenterKeyboardShortcut
+            enabled={isPresenterLive}
+            href={presenterHref}
+          />
 
           {children}
 
