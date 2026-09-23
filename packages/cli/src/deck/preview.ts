@@ -75,8 +75,18 @@ export function pdfProfile(colorMode: ColorMode): BuildProfile {
 
 const buildStampPath = path.join(projectRoot, ".next", "deckard-build.json")
 
-// The Next binary rather than the pnpm script: killing a pnpm wrapper prints a lifecycle failure over a run that succeeded.
-const nextBin = path.join(projectRoot, "node_modules", ".bin", "next")
+// Run the deck's Next entry point through Node so Windows needs no shell shim.
+function nextEntryPoint(): string {
+  const entry = resolveFromProject("next/dist/bin/next")
+
+  if (!entry) {
+    throw new Error(
+      "Next.js does not resolve from this deck. Install the deck dependencies, then run this again."
+    )
+  }
+
+  return entry
+}
 
 const buildInputs = [
   path.join(projectRoot, "app"),
@@ -152,7 +162,7 @@ function ensureBuild(profile: BuildProfile, skipBuild: boolean): void {
     return
   }
 
-  const result = spawnSync(nextBin, ["build"], {
+  const result = spawnSync(process.execPath, [nextEntryPoint(), "build"], {
     cwd: projectRoot,
     env: { ...process.env, ...profile.env },
     stdio: "inherit",
@@ -180,11 +190,15 @@ interface PreviewServer {
 }
 
 function startNextServer(port: number, env: Record<string, string>) {
-  const child = spawn(nextBin, ["start", "-p", String(port)], {
-    cwd: projectRoot,
-    env: { ...process.env, ...env, NODE_ENV: "production" },
-    stdio: "inherit",
-  })
+  const child = spawn(
+    process.execPath,
+    [nextEntryPoint(), "start", "-p", String(port)],
+    {
+      cwd: projectRoot,
+      env: { ...process.env, ...env, NODE_ENV: "production" },
+      stdio: "inherit",
+    }
+  )
 
   let hasExited = false
   const exited = new Promise<void>((resolve) => {
