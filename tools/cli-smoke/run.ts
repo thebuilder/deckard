@@ -390,6 +390,12 @@ try {
   })
   assertStaticSlides(pnpmApp, ["intro", "2", "3", "4"])
 
+  // The generated deck resolves dependency ranges without the workspace lockfile.
+  // Install the browser matching its Playwright, which may differ from CI's copy.
+  time("pnpm: install the deck's Chromium", () => {
+    run("pnpm", ["exec", "playwright", "install", "chromium"], pnpmApp)
+  })
+
   // check-overflow loads its measurement out of the deck's own @thebuilder/deckard-core, so
   // it is the one command that only proves itself against an installed deck.
   time("pnpm: validate, doctor, check-overflow, one screenshot", () => {
