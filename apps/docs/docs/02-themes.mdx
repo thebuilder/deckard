@@ -1,17 +1,15 @@
 ---
 title: Theme gallery
-description: Every built-in Deckard theme, previewed as a real slide canvas painted by that theme's own stylesheet, switchable between light and dark.
+description: Every built-in Deckard theme on the same example deck, running live and captured slide by slide in light and dark.
 sidebar:
   label: Theme gallery
   icon: swatch-book
   order: 3
 ---
 
-Each card applies one theme to the same slide in light and dark mode. The previews are `[data-slide-canvas]` elements with the chrome and progress bar the runtime renders. The stylesheet painting them is `packages/themes/src/<name>/theme.css`, the same file a deck loads.
+Every theme here is the same example deck with one import changed. Switch themes and modes on the running deck, then read the notes for the one you pick.
 
-Switch a card between light and dark, or enlarge it to take the full row. Every one of them carries both color modes; `defaultColorMode` decides which one a browser opens on.
-
-<ThemeGallery />
+<LiveDeck />
 
 Pick one by importing it:
 
@@ -23,6 +21,8 @@ Or switch an existing deck with `deckard add theme meridian`. See the [themes gu
 
 ## meridian
 
+<ThemeShowcase theme="meridian" />
+
 `defaultColorMode: "system"`, both modes. This is the theme a new deck opens in.
 
 The quietest theme here. A near-white blue-gray in light mode and a cool near-black in dark, flat surfaces with a hairline border and softly rounded corners, no shadow in either mode. A white card on a white sheet with no shadow asks a lot of its border. If a deck of yours reads flat rather than calm, that is the thing to put back.
@@ -31,16 +31,25 @@ The quietest theme here. A near-white blue-gray in light mode and a cool near-bl
 
 ## aurora
 
+<ThemeShowcase theme="aurora" />
+
 `defaultColorMode: "dark"`, both modes.
 
-A live field behind the slides that open, break, state, and close a deck. Four background variants paint in a WebGL canvas rather than in CSS: `hero` and `breaker` take banded curtains, `closing` an undulating band, and `statement` a soft noise wash. Under every canvas the theme paints a gradient of the same three colours, and that gradient is the slide while the runtime loads, on a machine with no WebGL, and after a lost context. Reduced motion, a capture, and the presenter preview each hold the field on one fixed frame, so two screenshots of a slide are the same image.
+A live field behind the slides that open, break, state, and close a deck. The four slide roles paint in a WebGL canvas rather than in CSS: `hero` and `breaker` take banded curtains, `closing` an undulating band, and `statement` a soft noise wash. A slide asks for one with its `background`, and on any other theme the same role falls back to a background that theme paints, so the deck keeps working when you switch away.
+
+```tsx deck/slides.tsx
+{ title: "What we shipped in Q1", background: "hero", body: <HeroSlide /> }
+```
+
+Under every canvas the theme paints a gradient of the same colours, and that gradient is the slide while the runtime loads, on a machine with no WebGL, after a lost context, and in the presenter window's previews. Reduced motion and a capture hold the field on one fixed frame, so two screenshots of a slide are the same image.
 
 Dark is home. Light mode carries its own field colours rather than the dark ones lightened, and both sets sit in `theme.css` beside the rest of the paint. Body copy runs light in Manrope under tightly tracked Space Grotesk display type.
 
-The aurora card in the gallery is showing that painted gradient. The gallery renders slide markup and no runtime, so the card carries the `hero` variant's fallback rather than a canvas.
-
 <ThemePalette theme="aurora" />
+
 ## blueprint
+
+<ThemeShowcase theme="blueprint" />
 
 `defaultColorMode: "dark"`, both modes.
 
@@ -50,6 +59,8 @@ A drafting sheet. The background variant that carries the theme is `grid`, which
 
 ## ledger
 
+<ThemeShowcase theme="ledger" />
+
 `defaultColorMode: "system"`, both modes.
 
 A bound report. Nothing is rounded and nothing is raised; rules carry the structure a shadow would carry elsewhere. Three families on one slide, each with exactly one job: serif says what the section is, sans argues it, mono numbers it. The accent is oxblood on paper and a warmer rust after dark.
@@ -57,6 +68,8 @@ A bound report. Nothing is rounded and nothing is raised; rules carry the struct
 <ThemePalette theme="ledger" />
 
 ## nexus
+
+<ThemeShowcase theme="nexus" />
 
 `defaultColorMode: "dark"`, both modes.
 
@@ -66,6 +79,8 @@ A flight console. Dark is home. Every heading is capitalised with a hair of posi
 
 ## phosphor
 
+<ThemeShowcase theme="phosphor" />
+
 `defaultColorMode: "dark"`, both modes.
 
 A green CRT. One monospace family for every word on the slide, scanlines painted across every background variant, and a phosphor bloom on display headings. It also runs a thinner status bar than the rest, taking `--slide-footer-space` below the contract default, which hands the space back to the slide. Light mode turns the tube off, for handouts and for printing.
@@ -73,6 +88,8 @@ A green CRT. One monospace family for every word on the slide, scanlines painted
 <ThemePalette theme="phosphor" />
 
 ## atelier
+
+<ThemeShowcase theme="atelier" />
 
 `defaultColorMode: "system"`, both modes.
 
@@ -82,6 +99,8 @@ A print poster. `--slide-rule` and `--slide-surface-border` are both the foregro
 
 ## cotton
 
+<ThemeShowcase theme="cotton" />
+
 `defaultColorMode: "system"`, both modes.
 
 The other pole from atelier. Body copy is Outfit at weight 300, headings are Bricolage Grotesque with its optical size axis mapped rather than pinned, and the corners are the largest in the gallery. `--slide-accent-soft` carries the tinted card, the metrics panel and the filled capsule; the accent itself is kept for the breaker, the closing plate and the dots. `--slide-surface-shadow` is the one lift in the theme, and only `data-slide-panel` reads it, so a slide raises at most one surface however many blocks it composes.
@@ -90,12 +109,17 @@ The other pole from atelier. Body copy is Outfit at weight 300, headings are Bri
 
 ## noir
 
+<ThemeShowcase theme="noir" />
+
 `defaultColorMode: "dark"`, both modes.
 
 A fashion lookbook. Every rule is one pixel, the opener, the breaker, the statement and the quote all centre their content, and Cormorant Garamond sets the display at weight 300 with the italic kept for the statement and the quotation. There is no monospace family: `--slide-font-mono` carries the body sans, and tracked capitals up to `--slide-track` stand where another theme sets mono. Code keeps a monospaced stack of its own so a sample still lines up.
 
 <ThemePalette theme="noir" />
+
 ## quorum
+
+<ThemeShowcase theme="quorum" />
 
 `defaultColorMode: "light"`, both modes.
 

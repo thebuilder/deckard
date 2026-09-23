@@ -16,6 +16,7 @@ import { exampleOutline } from "@/deck/example-outline"
 export const exampleSlides: SlideDefinition[] = [
   {
     ...exampleOutline.opening,
+    background: "hero",
     body: (
       <HeroSlide
         description="The quarter got faster, quieter, and easier to review."
@@ -133,7 +134,7 @@ export const exampleSlides: SlideDefinition[] = [
   },
   {
     ...exampleOutline.close,
-    background: "accent",
+    background: "closing",
     body: (
       <BreakerSlide
         description="Keep the source readable when the presentation becomes real."

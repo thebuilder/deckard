@@ -8,10 +8,12 @@ export {
   resolveSlides,
 } from "./deck/resolve-slides"
 export { toSlideSummaries, toSlideSummary } from "./deck/slide-summary"
+export type { ResolvedBackground } from "./deck/theme"
 export {
   canSwitchColorMode,
   forcedColorMode,
   motionField,
+  resolveBackground,
   resolveTheme,
   toDeckPresentation,
 } from "./deck/theme"
@@ -42,7 +44,9 @@ export type {
 export { PRESENTER_CHANNEL_NAME } from "./types/presenter"
 export type {
   BuiltInSlideBackgroundMode,
+  PaintedSlideBackgroundMode,
   SlideBackgroundMode,
+  SlideBackgroundRole,
   SlideFooterMode,
   SlideFooterModeInput,
   SlideHeaderMode,
@@ -52,5 +56,6 @@ export type {
 } from "./types/slides"
 export {
   slideBackgroundModes,
+  slideBackgroundRoles,
   slideMotionFields,
 } from "./types/slides"

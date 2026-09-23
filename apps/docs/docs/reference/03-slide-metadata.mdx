@@ -51,9 +51,9 @@ An entry in the array. `body` is required, everything else is optional.
       description: "fullscreen hands the whole canvas to the slide so media can bleed to every edge.",
     },
     background: {
-      type: '"default" | "none" | "spotlight" | "grid" | "accent" | a name the theme adds',
+      type: '"default" | "none" | "spotlight" | "grid" | "accent" | "hero" | "breaker" | "statement" | "closing" | a name the theme adds',
       default: '"default"',
-      description: "Which background variant the theme paints. SlideBackground carries the name on data-slide-background, and deckard validate reports a name neither the runtime nor the theme paints.",
+      description: "Which background variant the theme paints. \"hero\", \"breaker\", \"statement\", and \"closing\" are roles: a theme that paints the role in motion shows its field, and every other theme renders the role's fallback variant. The canvas and SlideBackground carry the resolved name on data-slide-background, and deckard validate reports a name neither the runtime nor the theme paints.",
     },
     motion: {
       type: '"auto" | "frozen"',
@@ -68,6 +68,25 @@ An entry in the array. `body` is required, everything else is optional.
 />
 
 Use `layout`, `header`, `footer`, and `background` to change the frame for one slide, rather than special-casing the route.
+
+### Background roles
+
+A role names the moment a slide is. Mark the cover, the section breaks, the one sentence, and the last slide with their role, and each theme renders them its own way.
+
+| Role | Use it on | Without a motion field it renders as |
+| --- | --- | --- |
+| `"hero"` | The opening slide | `"default"` |
+| `"breaker"` | A section break | `"spotlight"` |
+| `"statement"` | The one sentence a deck is built around | `"default"` |
+| `"closing"` | The last slide | `"accent"` |
+
+The fallbacks are `slideBackgroundRoles` in `@thebuilder/deckard-core`, and `resolveBackground(theme, background)` is what applies them. A theme that lists a role in its `motion` map keeps the role's name on `data-slide-background` and paints its field, as described in [motion backgrounds](/reference/core#motion-backgrounds).
+
+```tsx deck/slides.tsx
+{ slug: "intro", background: "hero", body: <HeroSlide … /> },
+{ slug: "part-two", background: "breaker", body: <BreakerSlide … /> },
+{ slug: "thanks", background: "closing", body: <HeroSplitSlide … /> },
+```
 
 ## SlideMeta
 

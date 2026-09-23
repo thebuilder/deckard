@@ -4,42 +4,29 @@ import { Code } from "astro:components"
 import data from "blume:data"
 import PageLayout from "blume/components/layout/PageLayout.astro"
 import presenterImage from "../assets/presenter.png"
-import DeckPreview from "../components/DeckPreview.astro"
 import HeroBackground from "../components/HeroBackground.astro"
-import SlideScreenshot from "../components/SlideScreenshot.astro"
+import LiveDeck from "../components/LiveDeck.astro"
 import SlidePatterns from "../components/SlidePatterns.astro"
+import ThemeGrid from "../components/ThemeGrid.astro"
 import type { HeroVariantId } from "../components/hero/hero-effect"
-import {
-  defaultTheme,
-  galleryTheme,
-  themeCountWord,
-  themeNames,
-} from "../lib/deck-preview"
-import {
-  canvas,
-  cliCode,
-  demoBackgrounds,
-  demoCode,
-  demoSteps,
-  heroSlide,
-  installCode,
-} from "../lib/landing"
-import { slidePreviewPath } from "../lib/slide-previews"
+import { canvas, cliCode, demoCode, demoSteps, installCode } from "../lib/landing"
+import { playgroundUrl } from "../lib/playground"
+import { previewSrc } from "../lib/preview-src"
+import { themePreviewPath } from "../lib/slide-previews"
 import "../styles/landing.css"
 
 const { config } = data
 
-const playgroundUrl = "https://deckard-playground.thebuilder.dk"
-const examplePreviewPaths = [
-  "/example/opening",
-  "/example/figures",
-  "/example/decision",
-  "/example/close",
-] as const
-
 /* The effect behind the hero. */
 const heroVariant: HeroVariantId = "esper-scan"
 const canvasSize = `${canvas.width}x${canvas.height}`
+
+/* The theme the example deck opens in at the top of the page. */
+const stageTheme = "aurora"
+
+/* The walkthrough and the canvas demonstration show the deck in the default
+ * theme, which is the one a new deck starts in. */
+const walkthroughTheme = "meridian"
 
 const presenterAlt =
   "The presenter window: a timer and a clock, a preview of the next step, the deck listed by title with the current slide picked out, the slide itself, and the speaker notes under it."
@@ -68,10 +55,10 @@ const stateRules = demoSteps
     const active = `.demo:has(${id}:checked)`
 
     return [
-      `${active} .line:not(${range}) { opacity: 0.42 }`,
+      `${active} .line:not(${range}) { opacity: 0.38 }`,
       `${active} .demo-slide[data-step="${index + 1}"] { display: block }`,
-      // visibility, not display: the four captions are stacked in one grid
-      // cell, so the hidden three are what hold the slide above them still.
+      // visibility, not display: the captions are stacked in one grid cell, so
+      // the hidden ones are what hold the slide above them still.
       `${active} .demo-caption[data-step="${index + 1}"] { visibility: visible }`,
     ].join("\n")
   })
@@ -89,15 +76,7 @@ const motionRules = demoSteps
   )
   .join("\n")
 
-const themeRules = themeNames
-  .map(
-    (name) =>
-      `.theme-stage:has(#pick-theme-${name}:checked) .theme-frame[data-theme-name="${name}"] { display: block }`
-  )
-  .join("\n")
-
-const pageRules = `${themeRules}
-${stateRules}
+const pageRules = `${stateRules}
 @media (prefers-reduced-motion: no-preference) {
 ${motionRules}
 }`
@@ -125,26 +104,17 @@ ${motionRules}
       <HeroBackground variant={heroVariant} />
 
       <div class="hero-inner">
+        <p class="hero-eyebrow">A presentation framework for Next.js</p>
         <h1 class="hero-title">Slides are React components</h1>
         <p class="hero-lead">
-          Start with editable slide patterns and a theme. Add your own React when
-          the talk needs a chart, a live demo, or data loaded by Next.js. Present
-          from the browser, export the PDF, and hand the same source to your coding
-          agent.
+          Write the deck in TypeScript with the components you already have.
+          Present it from the browser, export the PDF, and hand the same source
+          to your coding agent.
         </p>
 
         <div class="hero-actions">
-          <a class="button button-primary" href="/quickstart"> Create a deck </a>
-          <a class="button button-quiet" href="/slide-patterns">
-            Browse slide patterns
-          </a>
-          <a class="button button-quiet" href={`${playgroundUrl}/example`}>View the example deck</a>
-        </div>
-
-        <div aria-label="A four-slide Deckard presentation" class="hero-deck-strip" role="img">
-          {examplePreviewPaths.map((href) => (
-            <SlideScreenshot previewPath={slidePreviewPath(href)} title="Example Deckard slide" />
-          ))}
+          <a class="button button-primary" href="/quickstart">Create a deck</a>
+          <a class="button button-quiet" href="/introduction">Read the docs</a>
         </div>
 
         <div class="install">
@@ -181,6 +151,21 @@ ${motionRules}
                 lang="bash"
                 themes={codeThemes}
               />
+              <button
+                aria-label="Copy the command"
+                class="copy-button"
+                data-copy={installCode.terminal}
+                type="button"
+              >
+                <svg aria-hidden="true" class="copy-icon" fill="none" height="15" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="15">
+                  <rect height="13" rx="2" width="13" x="9" y="9"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <svg aria-hidden="true" class="copied-icon" fill="none" height="15" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="15">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>
+                <span class="copied-label">Copied</span>
+              </button>
             </figure>
             <figure class="code-figure install-panel" data-install="agent">
               <Code
@@ -190,6 +175,21 @@ ${motionRules}
                 themes={codeThemes}
                 wrap
               />
+              <button
+                aria-label="Copy the prompt"
+                class="copy-button"
+                data-copy={installCode.agent}
+                type="button"
+              >
+                <svg aria-hidden="true" class="copy-icon" fill="none" height="15" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="15">
+                  <rect height="13" rx="2" width="13" x="9" y="9"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <svg aria-hidden="true" class="copied-icon" fill="none" height="15" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="15">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>
+                <span class="copied-label">Copied</span>
+              </button>
             </figure>
           </div>
 
@@ -206,34 +206,21 @@ ${motionRules}
           </div>
         </div>
       </div>
-    </section>
 
-    <section class="section section-lead" id="patterns">
-      <div class="section-head">
-        <h2>Start with a slide pattern</h2>
-        <p>
-          Choose by what the slide needs to do. Each recipe pairs a whole-slide
-          frame with the content block that fits inside it, and every block lands
-          in your app as editable source.
-        </p>
+      <div class="stage">
+        <LiveDeck theme={stageTheme} />
       </div>
-
-      <SlidePatterns />
-
-      <p class="section-footnote">
-        <a href="/slide-patterns">Open the pattern guide</a> for composition rules
-        and the full intent index. <a href={playgroundUrl}>Explore every Deckard feature</a>
-        in the reference deck.
-      </p>
     </section>
 
     <section class="section" id="write">
       <div class="section-head">
+        <p class="section-eyebrow">Author</p>
         <h2>Write slides in React</h2>
         <p>
-          Your own components, or the layouts Deckard ships. A chart, a table, a
-          code sample, a video, a running demo, data Next.js loaded for you.
-          Pick a slide to see the code behind it.
+          A deck is an array of slides in <code>deck/slides.tsx</code>. Each one
+          is a React element: a layout Deckard ships, a chart you built, a
+          running demo, or data a Server Component loaded. This is the deck
+          above.
         </p>
       </div>
 
@@ -247,6 +234,7 @@ ${motionRules}
                   <input
                     checked={index === 0}
                     class="switch-input"
+                    data-from={String(step.from)}
                     id={`demo-step-${index + 1}`}
                     name="demo-step"
                     type="radio"
@@ -272,19 +260,22 @@ ${motionRules}
             </figure>
 
             <div class="demo-stage">
-              {
-                demoSteps.map((step, index) => (
-                  <div class="demo-slide" data-step={String(index + 1)}>
-                    <DeckPreview
-                      background={demoBackgrounds[index]}
-                      mode="light"
-                      scale={0.17}
-                      slide={step.slide}
-                      theme={defaultTheme}
+              <div class="demo-slides">
+                {
+                  demoSteps.map((step, index) => (
+                    <img
+                      alt={`${step.label}: the slide this entry renders`}
+                      class="demo-slide"
+                      data-step={String(index + 1)}
+                      decoding="async"
+                      height="720"
+                      loading="lazy"
+                      src={previewSrc(themePreviewPath(walkthroughTheme, step.slide, "light"))}
+                      width="1280"
                     />
-                  </div>
-                ))
-              }
+                  ))
+                }
+              </div>
               <div class="demo-captions">
                 {
                   demoSteps.map((step, index) => (
@@ -302,9 +293,8 @@ ${motionRules}
          * One block per step, and between them the height the walkthrough
          * scrolls through. The script observes these and checks the matching
          * radio as each block reaches the middle of the screen; the panels above
-         * stay put while they pass. The step's own prose is the caption under
-         * the slide, so there is nothing to read down here, and the compact
-         * layout drops the track and its height with it.
+         * stay put while they pass. The compact layout drops the track and its
+         * height with it.
          */}
         <div aria-hidden="true" class="demo-track">
           {
@@ -314,155 +304,147 @@ ${motionRules}
           }
         </div>
       </div>
-
-      <p class="section-footnote">
-        Server and client components are both supported.
-      </p>
     </section>
 
-    <section class="section" id="canvas">
+    <section class="section" id="patterns">
       <div class="section-head">
-        <h2>One layout everywhere</h2>
+        <p class="section-eyebrow">Compose</p>
+        <h2>Start from a slide pattern</h2>
         <p>
-          Every slide is drawn on one fixed {canvasSize} canvas that scales to fit
-          the screen. Nothing inside it reflows, so the two frames below are the
-          same slide at two widths. Present, screenshot, and export a PDF from
-          that layout.
+          Pick by what the slide has to do. Every block installs into your app as
+          source, so the markup is yours to change.
         </p>
       </div>
 
-      <div class="canvas-demo">
-        <figure class="canvas-demo-wide">
-          <DeckPreview
-            mode="dark"
-            scale={0.17}
-            slide={demoSteps[1].slide}
-            theme="meridian"
-          />
-          <figcaption>A projector</figcaption>
-        </figure>
-        <figure class="canvas-demo-narrow">
-          <DeckPreview
-            mode="dark"
-            scale={0.0875}
-            slide={demoSteps[1].slide}
-            theme="meridian"
-          />
-          <figcaption>A phone</figcaption>
-        </figure>
-      </div>
+      <SlidePatterns columns={3} />
 
       <p class="section-footnote">
-        <code>deckard export pdf</code> prints that canvas through the same slide
-        routes the deck runs on, one page per slide.
+        <a href="/slide-patterns">The pattern guide</a> maps every job to its
+        blocks. Each picture opens that slide in the <a href={playgroundUrl}
+          >feature deck</a
+        >.
       </p>
-    </section>
-
-    <section class="section" id="present">
-      <div class="section-head">
-        <h2>Present from the browser</h2>
-        <p>
-          Arrow keys walk the reveal steps on a slide and then move to the next
-          one. <code>P</code> opens presenter mode in a second window: your notes,
-          a timer, the slide you are on, and what comes next.
-        </p>
-      </div>
-
-      <figure class="shot">
-        <Image
-          alt={presenterAlt}
-          class="shot-image"
-          loading="lazy"
-          sizes="(min-width: 66rem) 62rem, 100vw"
-          src={presenterImage}
-          widths={[500, 750, 1000, 1500, presenterImage.width]}
-        />
-        <figcaption>Presenter mode, on the second screen.</figcaption>
-      </figure>
     </section>
 
     <section class="section" id="themes">
       <div class="section-head">
-        <h2>Start with a theme</h2>
+        <p class="section-eyebrow">Style</p>
+        <h2>Change the whole look with one import</h2>
         <p>
-          Pick a built-in and switch with one import. Eject it when you want to
-          edit the CSS. Blocks install into your app as source, so their markup
-          is yours to change.
+          A theme is one stylesheet on the canvas: type, spacing, surfaces, and
+          backgrounds, in light and dark. Pick one to see it on the deck at the
+          top of the page. Eject it when you want to edit the CSS.
         </p>
       </div>
 
-      <div class="theme-stage">
-        <div class="theme-frames">
-          {
-            themeNames.map((name) => (
-              <div class="theme-frame" data-theme-name={name}>
-                <DeckPreview
-                  background={galleryTheme[name].background}
-                  mode={galleryTheme[name].defaultColorMode === "dark" ? "dark" : "light"}
-                  scale={0.24}
-                  slide={heroSlide}
-                  theme={name}
-                />
-              </div>
-            ))
-          }
-        </div>
-
-        <fieldset class="theme-picker">
-          <legend class="sr-only">Deck theme</legend>
-          {
-            themeNames.map((name, index) => (
-              <label>
-                <input
-                  checked={index === 0}
-                  class="switch-input"
-                  id={`pick-theme-${name}`}
-                  name="pick-theme"
-                  type="radio"
-                  value={name}
-                />
-                {name}
-              </label>
-            ))
-          }
-        </fieldset>
-      </div>
+      <ThemeGrid />
 
       <p class="section-footnote">
-        One deck, {themeCountWord} themes. <a href="/themes">
-          Open the gallery
-        </a> for each of them in light and dark.
+        <a href="/themes">The theme gallery</a> has every slide of the example in
+        each theme, and the palette each one reads.
       </p>
     </section>
 
-    <section class="section" id="export">
-      <div class="section-head">
-        <h2>Check and export</h2>
-        <p>
-          A fixed canvas does not scroll, so content that does not fit is
-          clipped. Find those slides, review the whole deck as a contact sheet,
-          and produce the PDF.
-        </p>
-      </div>
+    <section class="section" id="canvas">
+      <div class="feature">
+        <div class="feature-copy">
+          <p class="section-eyebrow">Canvas</p>
+          <h2>One canvas on every screen</h2>
+          <p>
+            Every slide is drawn on a fixed {canvasSize} canvas that scales to
+            fit. Nothing inside it reflows, so the laptop, the projector, the
+            phone, and the PDF show the same layout.
+          </p>
+          <p>
+            <code>deckard export pdf</code> prints that canvas through the same
+            routes the deck runs on, one page per slide.
+          </p>
+        </div>
 
-      <figure class="code-figure code-figure-wide">
-        <figcaption>terminal</figcaption>
-        <Code
-          code={cliCode}
-          defaultColor={false}
-          lang="bash"
-          themes={codeThemes}
-        />
-      </figure>
+        <div class="canvas-demo">
+          <figure class="canvas-demo-wide">
+            <img
+              alt="The figures slide at projector width"
+              decoding="async"
+              height="720"
+              loading="lazy"
+              src={previewSrc(themePreviewPath(walkthroughTheme, "figures", "dark"))}
+              width="1280"
+            />
+            <figcaption>Projector</figcaption>
+          </figure>
+          <figure class="canvas-demo-narrow">
+            <img
+              alt="The same slide at phone width"
+              decoding="async"
+              height="720"
+              loading="lazy"
+              src={previewSrc(themePreviewPath(walkthroughTheme, "figures", "dark"))}
+              width="1280"
+            />
+            <figcaption>Phone</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="present">
+      <div class="feature feature-flip">
+        <div class="feature-copy">
+          <p class="section-eyebrow">Present</p>
+          <h2>Presenter mode in a second window</h2>
+          <p>
+            <kbd>P</kbd> opens your notes, a timer, the slide you are on, and the
+            next step, in a window the room never sees. Arrow keys walk the
+            reveal steps on a slide before they move to the next one.
+          </p>
+        </div>
+
+        <figure class="shot">
+          <Image
+            alt={presenterAlt}
+            class="shot-image"
+            loading="lazy"
+            sizes="(min-width: 64rem) 44rem, 100vw"
+            src={presenterImage}
+            widths={[500, 750, 1000, 1500, presenterImage.width]}
+          />
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="export">
+      <div class="feature">
+        <div class="feature-copy">
+          <p class="section-eyebrow">Ship</p>
+          <h2>Checks before the room sees it</h2>
+          <p>
+            A fixed canvas does not scroll, so content that does not fit is
+            clipped. Find those slides, review the deck as one contact sheet,
+            and write the PDF.
+          </p>
+        </div>
+
+        <figure class="code-figure">
+          <figcaption>terminal</figcaption>
+          <Code
+            code={cliCode}
+            defaultColor={false}
+            lang="bash"
+            themes={codeThemes}
+          />
+        </figure>
+      </div>
     </section>
 
     <section class="section" id="agents">
       <div class="section-head">
+        <p class="section-eyebrow">Automate</p>
         <h2>Hand the deck to an agent</h2>
         <p>
           A deck is a TypeScript array in a Next.js app, so an agent edits it the
-          way it edits the rest of your code. What it needs to do that well ships
-          with Deckard.
+          way it edits the rest of your code, and you review the change as a
+          diff.
         </p>
       </div>
 
@@ -497,8 +479,8 @@ ${motionRules}
     <section class="closing">
       <h2>Write the first slide</h2>
       <div class="hero-actions">
-        <a class="button button-primary" href="/quickstart"> Get started </a>
-        <a class="button button-quiet" href="/introduction"> Read the docs </a>
+        <a class="button button-primary" href="/quickstart">Get started</a>
+        <a class="button button-quiet" href="/introduction">Read the docs</a>
       </div>
     </section>
   </div>
@@ -521,7 +503,7 @@ ${motionRules}
    *
    * The radio group stays the control. This writes `checked` and nothing else,
    * so the rules the page already generates do the switching, and a reader with
-   * no script gets the same stepper they get today. Nothing here moves focus.
+   * no script gets the same stepper. Nothing here moves focus.
    *
    * The query is the one the stylesheet lays the scroll track out under, third
    * condition included: without a script there is no track, so there is nothing
@@ -543,6 +525,29 @@ ${motionRules}
     observer?.disconnect()
     observer = null
     covering.clear()
+  }
+
+  /* The array is taller than its panel on most screens, so the panel scrolls
+   * the lit entry near its top whenever the step changes. */
+  const reveal = (demo: Element) => {
+    const checked = demo.querySelector<HTMLInputElement>(
+      ".demo-steps input:checked"
+    )
+    const pre = demo.querySelector<HTMLElement>(".demo-code pre")
+    const first = pre?.querySelector<HTMLElement>(
+      `.line[data-line="${checked?.dataset.from}"]`
+    )
+
+    if (!(pre && first) || pre.scrollHeight <= pre.clientHeight) {
+      return
+    }
+
+    pre.scrollTo({
+      behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth",
+      top: Math.max(0, first.offsetTop - pre.clientHeight * 0.15),
+    })
   }
 
   const connect = () => {
@@ -582,6 +587,7 @@ ${motionRules}
 
             if (radio != null && !radio.checked) {
               radio.checked = true
+              reveal(demo)
             }
 
             return
@@ -599,12 +605,43 @@ ${motionRules}
   const sync = () => {
     disconnect()
 
+    const demo = document.querySelector<HTMLElement>(".demo")
+
+    if (demo && demo.dataset.wired !== "true") {
+      demo.dataset.wired = "true"
+      demo.querySelector(".demo-steps")?.addEventListener("change", () => {
+        reveal(demo)
+      })
+    }
+
     if (layout.matches) {
       connect()
     }
   }
 
   layout.addEventListener("change", sync)
+
+  /* The install panels copy their text and say so for a moment. */
+  const copiedMs = 1600
+
+  document.addEventListener("click", (event) => {
+    const target = event.target instanceof Element ? event.target : null
+    const button = target?.closest<HTMLButtonElement>("[data-copy]")
+
+    if (!button?.dataset.copy) {
+      return
+    }
+
+    navigator.clipboard.writeText(button.dataset.copy).then(
+      () => {
+        button.dataset.copied = ""
+        window.setTimeout(() => {
+          delete button.dataset.copied
+        }, copiedMs)
+      },
+      () => undefined
+    )
+  })
 
   // The client router swaps the document without re-running this module.
   document.addEventListener("astro:page-load", sync)

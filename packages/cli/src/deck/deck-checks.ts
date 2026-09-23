@@ -15,17 +15,23 @@ export interface RegistryItem {
 
 export type ReadFile = (relativePath: string) => string | null
 
-// The variants the runtime hands every deck. A theme may name more, in its
-// motion map or in its stylesheet, so a background in none of the three is a
-// misspelling and the slide renders the wrong thing quietly. Written out rather
-// than imported: the CLI reads the deck's runtime and never loads its own, and
-// deck-checks.test.ts holds this list to what @thebuilder/deckard-core declares.
+// The variants the runtime hands every deck, then the roles, which every theme
+// renders: as a motion field when it paints one, as a built-in variant when it
+// does not. A theme may name more, in its motion map or in its stylesheet, so a
+// background in none of the three is a misspelling and the slide renders the
+// wrong thing quietly. Written out rather than imported: the CLI reads the
+// deck's runtime and never loads its own, and deck-checks.test.ts holds this
+// list to what @thebuilder/deckard-core declares.
 export const builtInBackgrounds = [
   "accent",
   "default",
   "grid",
   "none",
   "spotlight",
+  "breaker",
+  "closing",
+  "hero",
+  "statement",
 ] as string[]
 
 export function checkSlides(

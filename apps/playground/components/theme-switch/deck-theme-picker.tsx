@@ -43,10 +43,10 @@ function ThemeButton({
  * the slide's own counter. app/globals.css holds the reveal.
  */
 export function DeckThemePicker({ deckTheme }: { deckTheme: SlideTheme }) {
-  const { isPresenterPreview, isResolved } = useThemeSwitch()
+  const { isFramed, isResolved } = useThemeSwitch()
   const current = useDeckTheme(deckTheme)
 
-  if (!isResolved || isPresenterPreview) {
+  if (!isResolved || isFramed) {
     return null
   }
 

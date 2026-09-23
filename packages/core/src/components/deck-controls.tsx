@@ -6,10 +6,12 @@ import type { RefObject } from "react"
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   useSyncExternalStore,
 } from "react"
+import { isCapturing } from "../deck/capture"
 import type { SlideSummary } from "../deck/types"
 import { cn } from "../lib/utils"
 import { Button } from "../ui/button"
@@ -17,6 +19,7 @@ import { SlideshowColorModeToggle } from "./color-mode-toggle"
 import { PresenterPopoutButton } from "./presenter-controls"
 import { SlideCommandCenter } from "./slide-command-center"
 import { useSlideStepper } from "./slide-stepper"
+import { useSlideViewParams } from "./slide-view-params"
 
 // A preview and a PDF page carry the deck, not the tooling to drive it.
 const controlsHiddenClass = "group-data-[slide-chrome=hidden]/shell:hidden"
@@ -25,30 +28,33 @@ const controlsHiddenClass = "group-data-[slide-chrome=hidden]/shell:hidden"
 // hand, so it stays the same size whatever the deck is scaled to.
 const revealDistance = 160
 
-// Two frames at 60Hz. Long enough that a painting page always measures on its
-// frame callback instead, short enough that a hand does not outrun it.
-const frameFallbackMs = 32
+// How long the cluster stays up after the pointer last moved anywhere in the
+// window, and after the deck first mounts on a page load.
+const idleHideMs = 2500
 
 // A hybrid laptop has a trackpad and a touchscreen, and (pointer: coarse) names
 // only the primary one. any-pointer asks per capability: a coarse pointer
-// anywhere earns the handle, a fine pointer anywhere earns the proximity
-// reveal, so a hybrid gets both. Either that or hover earns the reveal, because
-// a headless engine can report one of them missing while still delivering
+// anywhere earns the handle, a fine pointer anywhere earns the pointer reveal,
+// so a hybrid gets both. Either that or hover earns the reveal, because a
+// headless engine can report one of them missing while still delivering
 // pointermove.
 const touchQuery = "(any-pointer: coarse)"
 const finePointerQuery = "(any-pointer: fine)"
 const hoverQuery = "(hover: hover)"
 
 // Kept at module scope because the cluster remounts on every slide navigation.
-// Without the last pointer position a reveal earned by proximity would drop
-// until the hand moves again, and without the last reveal state the cluster
-// would mount hidden and blink back in one frame later.
+// The deadline carries a reveal earned by movement across the navigation it
+// caused, the last position lets a new mount see a pointer resting near the
+// corner, and the intro flag keeps the first-mount reveal to one per page load.
 let lastPointerPosition: { x: number; y: number } | null = null
-let lastIsNear = false
+let activeUntil = 0
+let hasIntroduced = false
 
+/** Forgets what the cluster remembers across navigations, as a page load does. */
 export function resetDeckControlsMemory() {
   lastPointerPosition = null
-  lastIsNear = false
+  activeUntil = 0
+  hasIntroduced = false
 }
 
 function useMediaQuery(query: string, serverValue: boolean) {
@@ -67,92 +73,101 @@ function useMediaQuery(query: string, serverValue: boolean) {
   return useSyncExternalStore(subscribe, read, () => serverValue)
 }
 
-function distanceToBox(box: DOMRect, x: number, y: number) {
+function isPointerNear(anchor: RefObject<HTMLElement | null>) {
+  const node = anchor.current
+
+  if (!(node && lastPointerPosition)) {
+    return false
+  }
+
+  const box = node.getBoundingClientRect()
+  const { x, y } = lastPointerPosition
   const dx = Math.max(box.left - x, 0, x - box.right)
   const dy = Math.max(box.top - y, 0, y - box.bottom)
 
-  return Math.hypot(dx, dy)
+  return Math.hypot(dx, dy) <= revealDistance
 }
 
-function usePointerProximity(
+// Any non-touch pointer movement in the window raises the cluster until the
+// pointer has been still for idleHideMs. Touch moves are left to the handle.
+// When the time runs out the cluster measures the last pointer position once,
+// and stays up while the pointer rests within revealDistance of it. The first
+// mount on a page load raises it for the same window once the slide has read
+// its URL, except while the page is captured: a screenshot of the canvas would
+// photograph the controls over its corner.
+function usePointerReveal(
   anchor: RefObject<HTMLElement | null>,
-  enabled: boolean
+  enabled: boolean,
+  canIntroduce: boolean
 ) {
-  const [isNear, setIsNear] = useState(() => enabled && lastIsNear)
+  const [isRevealed, setIsRevealed] = useState(
+    () => enabled && Date.now() < activeUntil
+  )
 
-  useEffect(() => {
-    lastIsNear = isNear
-  }, [isNear])
-
-  useEffect(() => {
+  // A layout effect, so a mount that finds the pointer resting near the corner
+  // paints revealed on its first frame.
+  useLayoutEffect(() => {
     if (!enabled) {
-      setIsNear(false)
+      setIsRevealed(false)
       return
     }
 
-    let frame = 0
     let timer = 0
-    let point = lastPointerPosition
 
-    function clearPending() {
-      if (frame !== 0) {
-        cancelAnimationFrame(frame)
-        frame = 0
-      }
+    function expire() {
+      const remaining = activeUntil - Date.now()
 
-      if (timer !== 0) {
-        clearTimeout(timer)
+      if (remaining > 0) {
+        timer = window.setTimeout(expire, remaining)
+      } else if (isPointerNear(anchor)) {
+        timer = window.setTimeout(expire, idleHideMs)
+      } else {
         timer = 0
+        setIsRevealed(false)
       }
     }
 
-    function measure() {
-      clearPending()
+    function reveal() {
+      setIsRevealed(true)
 
-      const node = anchor.current
-
-      if (!(node && point)) {
-        return
+      if (timer === 0) {
+        timer = window.setTimeout(expire, activeUntil - Date.now())
       }
-
-      setIsNear(
-        distanceToBox(node.getBoundingClientRect(), point.x, point.y) <=
-          revealDistance
-      )
-    }
-
-    // A frame callback coalesces the moves, since measuring reads layout. An
-    // engine that is not compositing never runs one, so a timer races it and
-    // whichever lands first measures. On a page that paints, the frame always
-    // wins and the timer is cancelled unused.
-    function schedule() {
-      if (frame !== 0 || timer !== 0) {
-        return
-      }
-
-      frame = requestAnimationFrame(measure)
-      timer = window.setTimeout(measure, frameFallbackMs)
     }
 
     function handlePointerMove(event: PointerEvent) {
-      point = { x: event.clientX, y: event.clientY }
-      lastPointerPosition = point
-      schedule()
+      if (event.pointerType === "touch") {
+        return
+      }
+
+      lastPointerPosition = { x: event.clientX, y: event.clientY }
+      activeUntil = Date.now() + idleHideMs
+      reveal()
+    }
+
+    if (canIntroduce && !hasIntroduced) {
+      hasIntroduced = true
+
+      if (!isCapturing()) {
+        activeUntil = Date.now() + idleHideMs
+      }
+    }
+
+    if (Date.now() < activeUntil || isPointerNear(anchor)) {
+      reveal()
+    } else {
+      setIsRevealed(false)
     }
 
     window.addEventListener("pointermove", handlePointerMove, { passive: true })
 
-    if (point) {
-      schedule()
-    }
-
     return () => {
       window.removeEventListener("pointermove", handlePointerMove)
-      clearPending()
+      clearTimeout(timer)
     }
-  }, [anchor, enabled])
+  }, [anchor, canIntroduce, enabled])
 
-  return isNear
+  return isRevealed
 }
 
 // Focus rather than :focus-visible: a control that has taken focus has to be
@@ -218,7 +233,13 @@ export function DeckControls({
   const hasTouch = useMediaQuery(touchQuery, false)
   const hasFinePointer = useMediaQuery(finePointerQuery, true)
   const canHover = useMediaQuery(hoverQuery, true)
-  const isNear = usePointerProximity(anchor, hasFinePointer || canHover)
+  const canPoint = hasFinePointer || canHover
+  const params = useSlideViewParams()
+  const isPointerRevealed = usePointerReveal(
+    anchor,
+    canPoint,
+    params.isResolved
+  )
   const isFocused = useFocusWithin(anchor)
   const [isCommandOpen, setIsCommandOpen] = useState(false)
   const [isPinned, setIsPinned] = useState(false)
@@ -254,7 +275,7 @@ export function DeckControls({
 
   const hasPrevious = Boolean(previousHref || stepper?.canRetreat)
   const hasNext = Boolean(nextHref || stepper?.canAdvance)
-  const isRevealed = isNear || isFocused || isCommandOpen || isPinned
+  const isRevealed = isPointerRevealed || isFocused || isCommandOpen || isPinned
 
   return (
     <nav

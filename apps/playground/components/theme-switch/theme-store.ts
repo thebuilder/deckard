@@ -3,8 +3,11 @@
 import { findSwitchableTheme, themeStorageKey } from "./deck-themes"
 
 export interface ThemeSwitchState {
-  /** Set inside a presenter preview iframe, which carries the deck and no chrome. */
-  isPresenterPreview: boolean
+  /**
+   * Set when another page frames the deck: a presenter preview, or the docs
+   * site's live deck, which brings its own theme controls.
+   */
+  isFramed: boolean
   /** True once the URL has been read, so the picker can wait rather than guess. */
   isResolved: boolean
   /** Null until something chooses. The deck's own theme answers for it. */
@@ -15,7 +18,7 @@ export interface ThemeSwitchState {
 // presenterPreview: the reader has to sit under a Suspense boundary, and
 // everything that reads the choice sits above one.
 const initialState: ThemeSwitchState = {
-  isPresenterPreview: false,
+  isFramed: false,
   isResolved: false,
   themeId: null,
 }
@@ -41,7 +44,7 @@ export function getServerThemeSwitchState() {
 
 export function publishThemeSwitch(next: ThemeSwitchState) {
   if (
-    next.isPresenterPreview === state.isPresenterPreview &&
+    next.isFramed === state.isFramed &&
     next.isResolved === state.isResolved &&
     next.themeId === state.themeId
   ) {

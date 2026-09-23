@@ -312,7 +312,7 @@
   border-block-start-width: var(--slide-poster-rule);
 }
 
-.atelier-theme :is([data-slide-hero-meta], [data-slide-quote-attribution]) {
+.atelier-theme [data-slide-quote-attribution] {
   border-block-start-width: var(--slide-poster-rule);
 }
 

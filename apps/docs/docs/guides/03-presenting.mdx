@@ -27,13 +27,17 @@ On a stepped slide the arrow keys walk the steps first and only then move to the
 
 The command center trigger, presenter popout, color mode toggle, and compact previous and next buttons sit in one cluster in the bottom right corner, outside the canvas.
 
-The cluster is hidden at rest. It reveals when the pointer comes near the corner, when anything inside it takes focus, or while the command dialog is open. A device matching `(any-pointer: coarse)` also gets a handle in the corner that expands the cluster on tap, and the proximity reveal is on wherever `(any-pointer: fine)` matches. Both queries ask per capability rather than about the primary pointer, so a hybrid laptop with a trackpad and a touchscreen gets both affordances.
+The cluster shows for a couple of seconds when the deck first loads, then hides. Moving the pointer anywhere in the window brings it back, and it hides again once the pointer has been still for the same couple of seconds, unless the pointer rests near the corner, something inside the cluster has focus, the command dialog is open, or it has been pinned open. The first-load reveal happens once per page load, not on every slide, and never while a `deckard` capture command is photographing the page or inside a presenter preview.
+
+A device matching `(any-pointer: coarse)` also gets a handle in the corner that pins the cluster open on tap, and touch movement leaves the cluster alone. The pointer reveal is on wherever `(any-pointer: fine)` or `(hover: hover)` matches. The queries ask per capability rather than about the primary pointer, so a hybrid laptop with a trackpad and a touchscreen gets both affordances.
 
 Hidden means transparent, not absent. The buttons stay in the accessibility tree and tabbing into them reveals the cluster. A presenter preview and a PDF export drop the cluster entirely and keep the header and footer.
 
 ## The presenter window
 
 Press `P` or click the popout button. A second window opens at `/presenter` and syncs with the deck over a `BroadcastChannel`, so the two stay in step without a server.
+
+![The presenter window: a timer and a clock, a preview of the next step, the deck listed by title with the current slide picked out, the slide itself, and the speaker notes under it.](../../assets/presenter.png)
 
 What it shows:
 
@@ -78,7 +82,7 @@ export function Chart() {
 }
 ```
 
-Use it to skip autoplay, audio, canvas work, or anything else expensive inside the preview iframe. The built-in video primitive already suppresses autoplay there.
+Use it to skip autoplay, audio, canvas work, or anything else expensive inside the preview iframe. The built-in video primitive already suppresses autoplay there, and a theme's motion background mounts no canvas there, so the preview shows the background the theme paints underneath it.
 
 The slide route itself never reads the query. `?presenterPreview=1` and `?step=` are read on the client inside a Suspense boundary that holds nothing but the reader, which is what lets every slide prerender as static HTML.
 

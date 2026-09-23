@@ -17,7 +17,7 @@ A theme is three files:
 
 ## The built-ins
 
-<ThemeStrip />
+<ThemeGrid compact />
 
 Each frame is a slide canvas, not a picture of one, painted by that theme's own stylesheet in the color mode the theme opens on. Follow one into the [theme gallery](/themes) for the same frames at a size you can read, with a light and dark switch on every card and the palette behind it.
 
@@ -122,6 +122,19 @@ A slide picks one with `background`:
 | `"none"` | Nothing painted. |
 
 A theme may name variants of its own. A deck writes the name as `background`, the theme styles `[data-slide-background="<name>"]`, and `deckard validate` reports a name neither the runtime nor the theme paints. A theme paints one of its own variants with an animated canvas instead of CSS by naming it in `motion`, which is in the [core reference](/reference/core#motion-backgrounds).
+
+### Roles
+
+Four more values name the moment a slide is rather than how it looks. Mark the opener `background: "hero"`, each section break `"breaker"`, the one sentence the deck is built around `"statement"`, and the last slide `"closing"`. A theme that paints the role in `motion`, such as aurora, shows its field there. Every other theme renders the role as a variant from the table above:
+
+| Role | Renders as without a field |
+| --- | --- |
+| `"hero"` | `"default"` |
+| `"breaker"` | `"spotlight"` |
+| `"statement"` | `"default"` |
+| `"closing"` | `"accent"` |
+
+The canvas and the background layer carry the resolved name, so a theme that paints no field for `"closing"` styles it through its `"accent"` rules. A theme that adds a field keys `motion` by the role and styles `[data-slide-background="<role>"]` under it. The [slide metadata reference](/reference/slide-metadata#background-roles) has the full contract.
 
 `SlideBackground` renders one element carrying `data-slide-background`, and the canvas carries the variant name too, so a theme can restyle the chrome along with the sheet. What each variant paints lives entirely in `theme.css`, so changing the look is a theme edit. Read the theme's `THEME.md` first, and run `deckard eject theme` if it is still an import.
 

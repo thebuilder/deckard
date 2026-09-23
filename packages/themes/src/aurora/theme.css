@@ -444,6 +444,21 @@
   );
 }
 
+/* The cover and the section breaks carry the curtains behind the copy, so their
+ * rules step back: the header and footer rules fade further and the hero meta
+ * row drops its rule, keeping its spacing. */
+
+.aurora-theme:is(
+  [data-slide-background="hero"],
+  [data-slide-background="breaker"]
+) {
+  --slide-chrome-border: color-mix(in oklab, var(--foreground) 9%, transparent);
+}
+
+.aurora-theme[data-slide-background="hero"] [data-slide-hero-meta] {
+  color: color-mix(in oklab, var(--muted-foreground) 80%, transparent);
+}
+
 /* Block parts. */
 
 .aurora-theme [data-slide-breaker-index] {

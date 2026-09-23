@@ -57,6 +57,10 @@ function useCapturing() {
  * theme painted on `.slide-background`, which is what a viewer sees while the
  * runtime loads, when WebGL is unavailable, and when the context is lost.
  *
+ * The canvas mounts only once the slide knows its URL and knows it is not a
+ * presenter preview. Until then, and in every presenter preview, the painted
+ * background is the slide and the runtime is never fetched.
+ *
  * The runtime is fetched on mount rather than imported, so a deck whose theme
  * declares no motion background never loads it.
  */
@@ -64,19 +68,24 @@ export function SlideMotionBackground({
   field,
   frozen = false,
 }: SlideMotionBackgroundProps) {
+  const params = useSlideViewParams()
+
+  if (!params.isResolved || params.isPresenterPreview) {
+    return null
+  }
+
+  return <MotionFieldCanvas field={field} frozen={frozen} />
+}
+
+function MotionFieldCanvas({
+  field,
+  frozen = false,
+}: SlideMotionBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const handleRef = useRef<MotionFieldHandle | null>(null)
   const reducedMotion = useReducedMotion()
   const capturing = useCapturing()
-  const params = useSlideViewParams()
-  const isFrozen =
-    frozen ||
-    reducedMotion ||
-    capturing ||
-    // A presenter preview is a still of the deck, and a slide only knows it is
-    // one once the URL resolves, so it holds still until then.
-    params.isPresenterPreview ||
-    !params.isResolved
+  const isFrozen = frozen || reducedMotion || capturing
 
   const optionsRef = useRef({ field, frozen: isFrozen })
 

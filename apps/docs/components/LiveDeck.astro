@@ -1,0 +1,240 @@
+---
+import "../styles/live-deck.css"
+import { playgroundHref, playgroundOrigin } from "../lib/playground"
+import { previewSrc } from "../lib/preview-src"
+import {
+  type PreviewColorMode,
+  type ThemePreviewSlide,
+  themePreviewPath,
+} from "../lib/slide-previews"
+import { galleryTheme, type ThemeName, themeNames } from "../lib/theme-gallery"
+
+interface Props {
+  mode?: PreviewColorMode
+  slide?: ThemePreviewSlide
+  theme?: ThemeName
+}
+
+const { slide = "opening", theme = themeNames[0] as ThemeName } = Astro.props
+const mode = Astro.props.mode ?? galleryTheme[theme].homeMode
+const src = playgroundHref(`/example/${slide}`, { mode, theme })
+const modes: PreviewColorMode[] = ["light", "dark"]
+---
+
+{/*
+ * The example deck, running. The frame is the real playground route, so the
+ * theme, the fonts, the motion, and the keys are the ones a deck ships with.
+ * Any element on the page with data-live-deck-theme or data-live-deck-mode
+ * drives it: the chips and buttons here, and the theme cards and "Try it"
+ * buttons elsewhere. The pick is posted into the frame, which switches in place
+ * and stays on the slide the reader walked to. Until the frame paints, the
+ * capture of the same slide stands in, and it is what a reader with no script
+ * keeps.
+ */}
+<figure
+  class="live-deck not-prose"
+  data-live-deck
+  data-mode={mode}
+  data-origin={playgroundOrigin}
+  data-theme={theme}
+>
+  <div class="live-deck-window">
+    <img
+      alt=""
+      class="live-deck-poster"
+      decoding="async"
+      height="720"
+      src={previewSrc(themePreviewPath(theme, slide, mode))}
+      width="1280"
+    />
+    <iframe
+      allow="fullscreen"
+      class="live-deck-frame"
+      loading="lazy"
+      src={src}
+      title="The Deckard example presentation, running live"
+    ></iframe>
+  </div>
+
+  <figcaption class="live-deck-bar">
+    <div aria-label="Theme" class="live-deck-themes" role="group">
+      {
+        themeNames.map((name) => {
+          const home = galleryTheme[name].homeMode
+
+          return (
+            <button
+              aria-pressed={name === theme ? "true" : "false"}
+              class="live-deck-chip"
+              data-live-deck-mode={home}
+              data-live-deck-theme={name}
+              type="button"
+            >
+              <img
+                alt=""
+                class="live-deck-chip-cover"
+                decoding="async"
+                height="720"
+                src={previewSrc(themePreviewPath(name, "opening", home))}
+                width="1280"
+              />
+              {name}
+            </button>
+          )
+        })
+      }
+    </div>
+
+    <div class="live-deck-tools">
+      <div aria-label="Color mode" class="live-deck-modes" role="group">
+        {
+          modes.map((option) => (
+            <button
+              aria-pressed={option === mode ? "true" : "false"}
+              data-live-deck-mode={option}
+              type="button"
+            >
+              {option === "light" ? "Light" : "Dark"}
+            </button>
+          ))
+        }
+      </div>
+      <a
+        class="live-deck-open"
+        data-live-deck-open
+        href={src}
+        rel="noopener"
+        target="_blank"
+      >
+        Open full screen
+        <svg
+          aria-hidden="true"
+          fill="none"
+          height="14"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="14"
+        >
+          <path d="M7 17 17 7M8 7h9v9"></path>
+        </svg>
+      </a>
+    </div>
+  </figcaption>
+
+  <p class="live-deck-hint">
+    Click the slide, then <kbd>←</kbd> <kbd>→</kbd> to move through the deck
+    and <kbd>⌘K</kbd> to jump. Move the pointer over it for the controls.
+  </p>
+</figure>
+
+<script>
+  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)")
+
+  function post(root: HTMLElement) {
+    root
+      .querySelector<HTMLIFrameElement>(".live-deck-frame")
+      ?.contentWindow?.postMessage(
+        {
+          mode: root.dataset.mode,
+          theme: root.dataset.theme,
+          type: "deckard:view",
+        },
+        root.dataset.origin ?? "*"
+      )
+  }
+
+  // The deck's own controls and the open link follow the view it shows.
+  function show(root: HTMLElement, theme?: string, mode?: string) {
+    root.dataset.theme = theme ?? root.dataset.theme
+    root.dataset.mode = mode ?? root.dataset.mode
+
+    for (const button of root.querySelectorAll<HTMLElement>(
+      "[data-live-deck-theme]"
+    )) {
+      button.ariaPressed = String(
+        button.dataset.liveDeckTheme === root.dataset.theme
+      )
+    }
+
+    for (const button of root.querySelectorAll<HTMLElement>(
+      "[data-live-deck-mode]:not([data-live-deck-theme])"
+    )) {
+      button.ariaPressed = String(
+        button.dataset.liveDeckMode === root.dataset.mode
+      )
+    }
+
+    const open = root.querySelector<HTMLAnchorElement>("[data-live-deck-open]")
+
+    if (open) {
+      const url = new URL(open.href)
+
+      url.searchParams.set("theme", root.dataset.theme ?? "")
+      url.searchParams.set("mode", root.dataset.mode ?? "")
+      open.href = url.toString()
+    }
+
+    post(root)
+  }
+
+  function handleClick(event: MouseEvent) {
+    const target = event.target instanceof Element ? event.target : null
+    const control = target?.closest<HTMLElement>(
+      "[data-live-deck-theme], [data-live-deck-mode]"
+    )
+    const root =
+      control?.closest<HTMLElement>("[data-live-deck]") ??
+      document.querySelector<HTMLElement>("[data-live-deck]")
+
+    if (!(control && root) || event.metaKey || event.ctrlKey) {
+      return
+    }
+
+    // A theme card is a link into the gallery for a page with no live deck.
+    // With one on the page, it switches the deck and brings it into view.
+    event.preventDefault()
+    show(root, control.dataset.liveDeckTheme, control.dataset.liveDeckMode)
+
+    if (!root.contains(control)) {
+      root.scrollIntoView({
+        behavior: reducedMotion.matches ? "auto" : "smooth",
+        block: "center",
+      })
+    }
+  }
+
+  function wire() {
+    const roots = document.querySelectorAll<HTMLElement>(
+      "[data-live-deck]:not([data-wired])"
+    )
+
+    for (const root of roots) {
+      root.dataset.wired = ""
+
+      // A pick made before the frame finished loading is sent again once it has.
+      root.querySelector(".live-deck-frame")?.addEventListener("load", () => {
+        root.dataset.state = "live"
+        post(root)
+      })
+    }
+
+    // Controls that only make sense beside a live deck wait for one.
+    if (document.querySelector("[data-live-deck]")) {
+      for (const control of document.querySelectorAll<HTMLElement>(
+        "[data-live-deck-theme][hidden]"
+      )) {
+        control.hidden = false
+      }
+    }
+  }
+
+  // Capture, so a theme card is claimed before the client router follows it.
+  document.addEventListener("click", handleClick, { capture: true })
+  wire()
+
+  // The client router swaps the document without re-running this module.
+  document.addEventListener("astro:page-load", wire)
+</script>

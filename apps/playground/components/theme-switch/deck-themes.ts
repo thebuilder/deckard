@@ -26,6 +26,9 @@ export const switchableThemes: readonly SlideTheme[] = themes
 /** The linkable half. `?theme=<id>` on any slide URL. */
 export const themeSearchParam = "theme"
 
+/** `?mode=light` or `?mode=dark` on any slide URL opens the deck in that mode. */
+export const modeSearchParam = "mode"
+
 /*
  * The remembered half. Not "theme": next-themes owns that key for light and
  * dark, and the CLI seeds it to pin a capture's color mode.

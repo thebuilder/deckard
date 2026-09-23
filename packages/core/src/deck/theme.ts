@@ -1,4 +1,5 @@
-import { slideMotionFields } from "../types/slides"
+import type { SlideBackgroundMode, SlideMotionField } from "../types/slides"
+import { slideBackgroundRoles, slideMotionFields } from "../types/slides"
 import type {
   Deck,
   DeckPresentation,
@@ -81,8 +82,51 @@ export function resolveTheme(theme: SlideTheme = baseTheme): SlideTheme {
 }
 
 /** The field a theme paints a background variant with, or nothing. */
-export function motionField(theme: SlideTheme, background: string) {
-  return theme.motion?.[background]
+export function motionField(
+  theme: SlideTheme,
+  background: string
+): SlideMotionField | undefined {
+  const { motion } = theme
+
+  return motion && Object.hasOwn(motion, background)
+    ? motion[background]
+    : undefined
+}
+
+export interface ResolvedBackground {
+  /** Set when the theme paints this variant in a canvas rather than in CSS. */
+  field?: SlideMotionField
+  /** The name the canvas and the background layer carry. */
+  variant: SlideBackgroundMode
+}
+
+function isBackgroundRole(
+  background: string
+): background is keyof typeof slideBackgroundRoles {
+  return Object.hasOwn(slideBackgroundRoles, background)
+}
+
+/**
+ * What a slide's `background` renders as under a theme. A variant the theme
+ * paints in `motion` keeps its name and gets its field. A role the theme does
+ * not paint in `motion` renders as the variant it falls back to. Anything else
+ * passes through for the theme stylesheet to paint.
+ */
+export function resolveBackground(
+  theme: SlideTheme,
+  background: SlideBackgroundMode
+): ResolvedBackground {
+  const field = motionField(theme, background)
+
+  if (field) {
+    return { field, variant: background }
+  }
+
+  if (isBackgroundRole(background)) {
+    return { variant: slideBackgroundRoles[background] }
+  }
+
+  return { variant: background }
 }
 
 // A single-mode theme pins the canvas to that mode, whatever the app chrome is doing.

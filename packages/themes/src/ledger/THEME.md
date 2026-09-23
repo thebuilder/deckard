@@ -120,7 +120,8 @@ paints a wash or a corner glow.
 - `default` is bare paper under the 2px rule that closes every page in the
   source design. The rule is inset 20% of the canvas width from each side, so it
   runs to the content measure rather than to the bleed, and sits 7.5% of the
-  canvas height up from the floor, clear of the footer.
+  canvas height up from the floor, clear of the footer. The footer draws no
+  border of its own, so this rule is the one line at the foot of the page.
 - `grid` is ledger paper. One horizontal rule every `--slide-grid-size`, `2.5rem`
   here, plus one accent margin rule down the left at 11% of the canvas width.
 - `spotlight` is the plate a printed report reserves a figure with: the 135

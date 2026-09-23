@@ -1,0 +1,48 @@
+---
+import "../styles/theme-gallery.css"
+import { previewSrc } from "../lib/preview-src"
+import { themePreviewPath } from "../lib/slide-previews"
+import { galleryTheme, themeNames } from "../lib/theme-gallery"
+
+interface Props {
+  /* Covers and names only, for a guide that points at the gallery. */
+  compact?: boolean
+}
+
+const { compact = false } = Astro.props
+---
+
+{/*
+ * Every card links to its theme's section in the gallery. On a page with a
+ * live deck, LiveDeck's script reads the data attributes and switches the deck
+ * instead.
+ */}
+<ul class:list={["theme-grid not-prose", { "theme-grid-compact": compact }]}>
+  {
+    themeNames.map((name) => {
+      const { homeMode, summary } = galleryTheme[name]
+
+      return (
+        <li>
+          <a
+            class="theme-grid-card"
+            data-live-deck-mode={homeMode}
+            data-live-deck-theme={name}
+            href={`/themes#${name}`}
+          >
+            <img
+              alt={`The example deck's opening slide in ${name}`}
+              decoding="async"
+              height="720"
+              loading="lazy"
+              src={previewSrc(themePreviewPath(name, "opening", homeMode))}
+              width="1280"
+            />
+            <span class="theme-grid-name">{name}</span>
+            {!compact && <span class="theme-grid-summary">{summary}</span>}
+          </a>
+        </li>
+      )
+    })
+  }
+</ul>
