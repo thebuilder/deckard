@@ -1,0 +1,52 @@
+<svg
+  class="deckard-icon"
+  fill="none"
+  height="64"
+  role="img"
+  viewBox="0 0 64 64"
+  width="64"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <style>
+    svg.deckard-icon {
+      --deckard-icon-surface: #ffffff;
+      --deckard-icon-ink: #0f172a;
+    }
+    @media (prefers-color-scheme: dark) {
+      svg.deckard-icon {
+        --deckard-icon-surface: #0f172a;
+        --deckard-icon-ink: #e2e8f0;
+      }
+    }
+  </style>
+  <g
+    fill="var(--deckard-icon-surface, #ffffff)"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="4"
+  >
+    <rect
+      height="38"
+      rx="9"
+      stroke="var(--deckard-icon-ink, #0f172a)"
+      width="38"
+      x="22"
+      y="4"
+    />
+    <rect height="38" rx="9" stroke="#3b82f6" width="38" x="13" y="13" />
+    <rect height="38" rx="9" stroke="#14f1d9" width="38" x="4" y="22" />
+  </g>
+  <g stroke-linecap="round">
+    <path d="M13 33h13" stroke="#14f1d9" stroke-width="5" />
+    <path
+      d="M13 41h9"
+      stroke="var(--deckard-icon-ink, #0f172a)"
+      stroke-width="3.5"
+    />
+    <path
+      d="M13 48h12"
+      stroke="var(--deckard-icon-ink, #0f172a)"
+      stroke-width="3.5"
+    />
+  </g>
+</svg>
