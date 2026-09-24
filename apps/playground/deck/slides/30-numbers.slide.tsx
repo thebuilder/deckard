@@ -49,7 +49,8 @@ export default async function NumbersSlide() {
       <StatGrid
         items={[
           {
-            caption: "Slide routes, the meter their share written as modules",
+            caption:
+              "Slides in this deck, and the share with a file of their own",
             meter: inOwnFile / slides.length,
             value: String(slides.length),
           },

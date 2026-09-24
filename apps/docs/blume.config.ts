@@ -60,6 +60,21 @@ export default defineConfig({
     ],
     provider: "orama",
   },
+  seo: {
+    // The share cards take the site's dark palette. The landing page carries
+    // its own card, written by `pnpm --filter playground docs:previews`.
+    og: {
+      // The mark in its dark-mode colors, which the card cannot pick by media query.
+      logo: "/og-mark.svg",
+      palette: {
+        accent: "#22d3ee",
+        background: "#0f172a",
+        border: "#1e293b",
+        foreground: "#e2e8f0",
+        muted: "#95a6bf",
+      },
+    },
+  },
   theme: {
     accent: "teal",
     fonts: {
