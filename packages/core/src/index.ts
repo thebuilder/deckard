@@ -13,6 +13,7 @@ export type { ResolvedBackground } from "./deck/theme"
 export {
   canSwitchColorMode,
   forcedColorMode,
+  homeColorMode,
   motionField,
   resolveBackground,
   resolveTheme,
@@ -37,6 +38,7 @@ export type {
   SlideSummary,
   SlideTheme,
   SlideThemeCard,
+  SlideThemeCardColors,
 } from "./deck/types"
 export type {
   PresenterChannelMessage,
@@ -46,6 +48,7 @@ export type {
 export { PRESENTER_CHANNEL_NAME } from "./types/presenter"
 export type {
   BuiltInSlideBackgroundMode,
+  CardFontWeight,
   PaintedSlideBackgroundMode,
   SlideBackgroundMode,
   SlideBackgroundRole,
@@ -57,6 +60,7 @@ export type {
   SlideMotionMode,
 } from "./types/slides"
 export {
+  cardFontWeights,
   slideBackgroundModes,
   slideBackgroundRoles,
   slideMotionFields,

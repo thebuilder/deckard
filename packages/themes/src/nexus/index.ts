@@ -6,7 +6,7 @@ import "./theme.css"
 
 export const nexus = {
   card: {
-    ...cardColors.dark,
+    colors: cardColors,
     font: { family: cardFontFamily, uppercase: true, weight: 700 },
   },
   className: "nexus-theme",

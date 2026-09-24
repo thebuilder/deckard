@@ -1,4 +1,4 @@
-import { createSlideShareCard } from "@thebuilder/deckard-core/next"
+import { createSlideShareCard } from "@thebuilder/deckard-core/share-card"
 import { exampleDeck } from "@/deck/example-deck"
 
 const { Image, alt, contentType, generateStaticParams, size } =

@@ -1,11 +1,16 @@
 import type { SlideBackgroundMode, SlideMotionField } from "../types/slides"
-import { slideBackgroundRoles, slideMotionFields } from "../types/slides"
+import {
+  cardFontWeights,
+  slideBackgroundRoles,
+  slideMotionFields,
+} from "../types/slides"
 import type {
   Deck,
   DeckPresentation,
   SlideColorMode,
   SlideTheme,
   SlideThemeCard,
+  SlideThemeCardColors,
 } from "./types"
 
 // A deck without a theme falls back to the app tokens. No class, no deck stylesheet, both color modes.
@@ -73,9 +78,11 @@ function assertMotion(theme: SlideTheme) {
 const hexColor = /^#(?:[\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})$/i
 const rgbColor = /^rgba?\([^()]*\)$/i
 const cardColorFields = ["accent", "background", "foreground", "muted"] as const
-const cardFontWeights: readonly number[] = [
-  100, 200, 300, 400, 500, 600, 700, 800, 900,
-]
+const colorModes = ["light", "dark"] as const
+
+type CardColorsInput = Partial<
+  Record<SlideColorMode, Partial<SlideThemeCardColors>>
+>
 
 // The card renderer parses hex and rgb() and nothing else: an oklch() or a
 // var() there fails the image, not the theme, so it is caught here instead.
@@ -86,20 +93,24 @@ function assertCard(theme: SlideTheme) {
     return
   }
 
-  for (const field of cardColorFields) {
-    const value = card[field]
+  // A theme can be plain JavaScript, so the shape is checked rather than trusted.
+  const colors: CardColorsInput | undefined = card.colors
 
-    if (
-      typeof value !== "string" ||
-      !(hexColor.test(value.trim()) || rgbColor.test(value.trim()))
-    ) {
-      throw new Error(
-        `Slide theme "${theme.id}" sets card.${field} to ${JSON.stringify(value)}. The share card reads hex or rgb() colors only, so convert it: oklch() and var() do not render.`
-      )
+  for (const mode of colorModes) {
+    for (const field of cardColorFields) {
+      const value: unknown = colors?.[mode]?.[field]
+
+      if (
+        typeof value !== "string" ||
+        !(hexColor.test(value.trim()) || rgbColor.test(value.trim()))
+      ) {
+        throw new Error(
+          `Slide theme "${theme.id}" sets card.colors.${mode}.${field} to ${JSON.stringify(value)}. The share card reads hex or rgb() colors only, so convert it: oklch() and var() do not render.`
+        )
+      }
     }
   }
 
-  // A theme can be plain JavaScript, so the face is checked rather than trusted.
   const font: Partial<SlideThemeCard["font"]> | undefined = card.font
 
   if (typeof font?.family !== "string" || !font.family.trim()) {
@@ -108,9 +119,9 @@ function assertCard(theme: SlideTheme) {
     )
   }
 
-  if (!cardFontWeights.includes(font.weight as number)) {
+  if (!(cardFontWeights as readonly unknown[]).includes(font.weight)) {
     throw new Error(
-      `Slide theme "${theme.id}" sets card.font.weight to ${font.weight}. The card fetches a static instance, so use a hundred from 100 to 900.`
+      `Slide theme "${theme.id}" sets card.font.weight to ${font.weight}. The card fetches a static instance, so use one of ${cardFontWeights.join(", ")}.`
     )
   }
 }
@@ -174,6 +185,14 @@ export function resolveBackground(
   }
 
   return { variant: background }
+}
+
+/**
+ * The color mode a theme is shown in when only one can be: its default, or
+ * light for a theme that follows the system. The share card paints it.
+ */
+export function homeColorMode(theme: SlideTheme): SlideColorMode {
+  return theme.defaultColorMode === "system" ? "light" : theme.defaultColorMode
 }
 
 // A single-mode theme pins the canvas to that mode, whatever the app chrome is doing.

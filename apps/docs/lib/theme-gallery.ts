@@ -1,5 +1,6 @@
 import fs from "node:fs"
 
+import { homeColorMode } from "@thebuilder/deckard-core"
 import { defaultThemeId, themes } from "@thebuilder/deckard-themes"
 
 import { resolveRepoFile } from "./repo-file"
@@ -133,12 +134,19 @@ export const themeNames: readonly ThemeName[] = readThemeNames()
 const byId = new Map(themes.map((theme) => [theme.id, theme]))
 
 function galleryEntry(name: ThemeName): GalleryEntry {
-  const defaultColorMode = byId.get(name)?.defaultColorMode ?? "system"
+  const theme = byId.get(name)
+
+  // readThemeNames only lists themes the package ships.
+  if (!theme) {
+    throw new Error(
+      `[theme-gallery] @thebuilder/deckard-themes has no ${name}.`
+    )
+  }
 
   return {
     ...galleryCopy[name],
-    defaultColorMode,
-    homeMode: defaultColorMode === "dark" ? "dark" : "light",
+    defaultColorMode: theme.defaultColorMode,
+    homeMode: homeColorMode(theme),
   }
 }
 

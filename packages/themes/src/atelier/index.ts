@@ -6,7 +6,7 @@ import "./theme.css"
 
 export const atelier = {
   card: {
-    ...cardColors.light,
+    colors: cardColors,
     font: { family: cardFontFamily, uppercase: true, weight: 800 },
   },
   className: "atelier-theme",

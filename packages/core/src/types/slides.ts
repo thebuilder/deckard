@@ -53,3 +53,11 @@ export type SlideMotionMode = "auto" | "frozen"
 export const slideMotionFields = ["aurora", "waves", "wash"] as const
 
 export type SlideMotionField = (typeof slideMotionFields)[number]
+
+// The weights a share card can set its display face in: the static instances
+// the card fetches.
+export const cardFontWeights = [
+  100, 200, 300, 400, 500, 600, 700, 800, 900,
+] as const
+
+export type CardFontWeight = (typeof cardFontWeights)[number]

@@ -2,9 +2,7 @@
 // time. The card renderer reads ttf, otf, or woff, and a theme ships woff2, so
 // the stylesheet's own files cannot be used.
 
-import type { SlideThemeCard } from "../deck/types"
-
-type CardFontWeight = SlideThemeCard["font"]["weight"]
+import type { CardFontWeight } from "../types/slides"
 
 export interface CardFontFace {
   data: ArrayBuffer

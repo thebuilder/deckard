@@ -8,8 +8,7 @@ import { deckSiteUrl } from "../deck/site-url"
 import { toSlideSummaries, toSlideSummary } from "../deck/slide-summary"
 import { toDeckPresentation } from "../deck/theme"
 import type { Deck } from "../deck/types"
-import { renderSlideShareCard } from "./share-card"
-import { shareCardAlt, shareCardSize } from "./share-card-layout"
+import { slideParams } from "./slide-params"
 
 interface SlideRouteProps {
   params: Promise<{ id: string }>
@@ -17,7 +16,7 @@ interface SlideRouteProps {
 
 export function createSlideRoute(deck: Deck) {
   function generateStaticParams() {
-    return deck.slides.map((slide) => ({ id: slide.id }))
+    return slideParams(deck)
   }
 
   async function generateMetadata({
@@ -31,7 +30,10 @@ export function createSlideRoute(deck: Deck) {
     }
 
     // The share card beside this page links as og:image, which has to be an
-    // absolute URL, so it resolves against the same origin as the sitemap.
+    // absolute URL, so it resolves against the same origin as the sitemap. The
+    // root layout `deckard init` writes sets the same metadataBase; this copy
+    // covers a deck whose layout predates it, and can go once 0.x decks have
+    // moved to a layout that sets it.
     const shared = {
       metadataBase: new URL(deckSiteUrl()),
       twitter: { card: "summary_large_image" },
@@ -90,36 +92,6 @@ export function createSlideRoute(deck: Deck) {
   }
 
   return { generateMetadata, generateStaticParams, Page }
-}
-
-/**
- * The pieces an `app/slides/[id]/opengraph-image.tsx` route re-exports: one
- * designed card per slide, prerendered at build time.
- */
-export function createSlideShareCard(deck: Deck) {
-  // An image route is a route handler, which takes no params from the page
-  // beside it, so it lists the slide ids itself.
-  function generateStaticParams() {
-    return deck.slides.map((slide) => ({ id: slide.id }))
-  }
-
-  async function Image({ params }: SlideRouteProps) {
-    const { id } = await params
-    const response = await renderSlideShareCard(deck, id)
-
-    return response ?? new Response("Not found", { status: 404 })
-  }
-
-  return {
-    // One alt for every card: generateImageMetadata would give each its own,
-    // but it moves the card under a second dynamic segment that the build does
-    // not prerender.
-    alt: shareCardAlt(deck),
-    contentType: "image/png",
-    generateStaticParams,
-    Image,
-    size: shareCardSize,
-  }
 }
 
 export function createPresenterPage(deck: Deck) {

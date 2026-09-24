@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { defineDeck } from "../deck/define-deck"
+import { createSlideShareCard } from "./share-card"
 import {
   googleFontCssUrl,
   loadCardFont,
@@ -164,5 +165,40 @@ describe("loadCardFont", () => {
     await expect(
       loadCardFont("Offline Family", 400, "abc", fetcher)
     ).resolves.toBeUndefined()
+  })
+})
+
+describe("createSlideShareCard", () => {
+  const card = createSlideShareCard(deck)
+
+  it("lists every slide, so each card prerenders", () => {
+    expect(card.generateStaticParams()).toEqual([
+      { id: "opening" },
+      { id: "numbers" },
+    ])
+  })
+
+  it("describes the card for Open Graph", () => {
+    expect(card).toMatchObject({
+      alt: "A slide from What we shipped by Acme",
+      contentType: "image/png",
+      size: { height: 630, width: 1200 },
+    })
+  })
+
+  it("renders a PNG for a slide and a 404 for anything else", async () => {
+    const image = await card.Image({
+      params: Promise.resolve({ id: "opening" }),
+    })
+    const bytes = new Uint8Array(await image.arrayBuffer())
+
+    expect(image.headers.get("content-type")).toBe("image/png")
+    expect([...bytes.slice(1, 4)]).toEqual([0x50, 0x4e, 0x47])
+
+    const missing = await card.Image({
+      params: Promise.resolve({ id: "missing" }),
+    })
+
+    expect(missing.status).toBe(404)
   })
 })

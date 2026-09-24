@@ -1,10 +1,10 @@
-import type { Deck, ResolvedSlide, SlideThemeCard } from "../deck/types"
+import type { Deck, ResolvedSlide, SlideThemeCardColors } from "../deck/types"
 
 export const shareCardSize = { height: 630, width: 1200 }
 
 // A theme with no card of its own, such as a deck's custom theme, gets this:
 // grayscale, in the renderer's default face, so it names no brand.
-export const neutralCardColors: Omit<SlideThemeCard, "font"> = {
+export const neutralCardColors: SlideThemeCardColors = {
   accent: "#0a0a0a",
   background: "#ffffff",
   foreground: "#0a0a0a",
