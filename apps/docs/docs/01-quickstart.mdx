@@ -42,6 +42,7 @@ sidebar:
     - slides/
       - blocks/ (the block families, yours to edit)
       - [id]/page.tsx
+      - [id]/opengraph-image.tsx (the share card)
     - presenter/page.tsx
     - page.tsx
     - sitemap.ts
@@ -127,7 +128,7 @@ The slide blocks ship inside the CLI package, and `init` copies them into `app/s
     export default Page
     ```
 
-    The other three are `app/presenter/page.tsx`, `app/sitemap.ts`, and `app/page.tsx`. See [Route adapters](/reference/core#route-adapters).
+    The other three are `app/presenter/page.tsx`, `app/sitemap.ts`, and `app/page.tsx`. See [Route adapters](/reference/core#route-adapters). Add `app/slides/[id]/opengraph-image.tsx` for a [share card](/guides/deploying#share-cards) per slide.
 
   </Step>
 </Steps>

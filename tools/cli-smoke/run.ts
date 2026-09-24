@@ -246,6 +246,7 @@ function assertScaffold(directory: string) {
     "app/globals.css",
     "app/slides/blocks/index.ts",
     "app/slides/[id]/page.tsx",
+    "app/slides/[id]/opengraph-image.tsx",
     "deck/deck.ts",
     "deck/slides.tsx",
   ]) {

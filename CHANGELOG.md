@@ -2,6 +2,12 @@
 
 Releases are tags. Pushing `v<version>` runs `.github/workflows/release.yml`, which packs, smokes, and publishes. The three packages version together: `@thebuilder/deckard-core`, `@thebuilder/deckard-themes`, and `@thebuilder/deckard-cli` ship the same number, and `deckard init` pins a new deck to the CLI's own version.
 
+## Unreleased
+
+- Every slide URL gets an Open Graph share card, rendered at build time by `createSlideShareCard` from `@thebuilder/deckard-core/next` in the deck's theme colors and display face. `deckard init` writes the `app/slides/[id]/opengraph-image.tsx` route; an existing deck adds that file to opt in.
+- `SlideTheme` takes an optional `card`, and every built-in theme sets one generated from its own palette. `deckard eject theme` copies it.
+- `deckSiteUrl()` in `@thebuilder/deckard-core` is the one source of a deck's public origin. The slide route and the generated root layout set `metadataBase` from it, so `og:image` is absolute.
+
 ## 0.1.1, 2026-09-23
 
 - Launch Next.js builds and preview servers through Node so capture commands work without platform-specific executable wrappers on Windows.

@@ -4,15 +4,16 @@ import { PresenterConsole } from "../components/presenter-console"
 import { SlideShell } from "../components/slide-shell"
 import { isPdfExport } from "../deck/pdf-export"
 import { getSlideById } from "../deck/resolve-slides"
+import { deckSiteUrl } from "../deck/site-url"
 import { toSlideSummaries, toSlideSummary } from "../deck/slide-summary"
 import { toDeckPresentation } from "../deck/theme"
 import type { Deck } from "../deck/types"
+import { renderSlideShareCard } from "./share-card"
+import { shareCardAlt, shareCardSize } from "./share-card-layout"
 
 interface SlideRouteProps {
   params: Promise<{ id: string }>
 }
-
-const defaultSiteUrl = "http://localhost:3000"
 
 export function createSlideRoute(deck: Deck) {
   function generateStaticParams() {
@@ -29,8 +30,16 @@ export function createSlideRoute(deck: Deck) {
       return {}
     }
 
+    // The share card beside this page links as og:image, which has to be an
+    // absolute URL, so it resolves against the same origin as the sitemap.
+    const shared = {
+      metadataBase: new URL(deckSiteUrl()),
+      twitter: { card: "summary_large_image" },
+    } satisfies Metadata
+
     if (slide.title === deck.title) {
       return {
+        ...shared,
         title: {
           absolute: slide.title,
         },
@@ -38,6 +47,7 @@ export function createSlideRoute(deck: Deck) {
     }
 
     return {
+      ...shared,
       title: slide.title,
     }
   }
@@ -82,6 +92,36 @@ export function createSlideRoute(deck: Deck) {
   return { generateMetadata, generateStaticParams, Page }
 }
 
+/**
+ * The pieces an `app/slides/[id]/opengraph-image.tsx` route re-exports: one
+ * designed card per slide, prerendered at build time.
+ */
+export function createSlideShareCard(deck: Deck) {
+  // An image route is a route handler, which takes no params from the page
+  // beside it, so it lists the slide ids itself.
+  function generateStaticParams() {
+    return deck.slides.map((slide) => ({ id: slide.id }))
+  }
+
+  async function Image({ params }: SlideRouteProps) {
+    const { id } = await params
+    const response = await renderSlideShareCard(deck, id)
+
+    return response ?? new Response("Not found", { status: 404 })
+  }
+
+  return {
+    // One alt for every card: generateImageMetadata would give each its own,
+    // but it moves the card under a second dynamic segment that the build does
+    // not prerender.
+    alt: shareCardAlt(deck),
+    contentType: "image/png",
+    generateStaticParams,
+    Image,
+    size: shareCardSize,
+  }
+}
+
 export function createPresenterPage(deck: Deck) {
   function Page() {
     return (
@@ -99,8 +139,7 @@ export function createDeckSitemap(
   deck: Deck,
   options: { siteUrl?: string } = {}
 ) {
-  const siteUrl =
-    options.siteUrl ?? process.env.NEXT_PUBLIC_SITE_URL ?? defaultSiteUrl
+  const siteUrl = deckSiteUrl(options.siteUrl)
 
   return function sitemap(): MetadataRoute.Sitemap {
     const slideEntries = deck.slides.map((slide) => ({

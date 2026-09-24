@@ -60,6 +60,8 @@ deckard eject theme --theme ledger   # eject a different built-in instead
 
 It refuses when `deck/theme/` already exists.
 
+The copied `index.ts` carries the built-in's [share card](#share-cards) as literal values. Editing the palette in `theme.css` leaves the card as it was, so change `card` in the same edit.
+
 :::warning
 An ejected theme no longer receives updates from `@thebuilder/deckard-themes`. If the built-in you started from gains a token or fixes a contrast bug, your copy does not, and no check compares the two files.
 :::
@@ -85,8 +87,41 @@ export const theme = {
 | `colorModes` | `("light" \| "dark")[]` | Which modes the stylesheet actually carries. |
 | `defaultColorMode` | `"light" \| "dark" \| "system"` | What a browser opens on. |
 | `id` | `string` | Names the theme in `deckard validate` and `deckard eject theme`. |
+| `card` | `SlideThemeCard`, optional | The colors and face of each slide's [share card](#share-cards). Without it the card is grayscale in the default face. |
 
 `defineDeck` validates this. `defaultColorMode: "system"` needs both modes in `colorModes`. A theme listing one mode pins the canvas to it and hides the light/dark toggle.
+
+## Share cards
+
+A deck with an `app/slides/[id]/opengraph-image.tsx` route renders one Open Graph image per slide at build time, from [`createSlideShareCard`](/reference/core#createslidesharecard). The card renderer reads no stylesheet, so a theme repeats what the card needs in `card`:
+
+```ts deck/theme/index.ts
+export const theme = {
+  card: {
+    accent: "#2f5fb8",
+    background: "#f8fafc",
+    font: { family: "Schibsted Grotesk", weight: 700 },
+    foreground: "#111418",
+    muted: "#5f6570",
+  },
+  className: "my-theme",
+  // ...
+} satisfies SlideTheme
+```
+
+| Field | Type | What it paints |
+| --- | --- | --- |
+| `background` | `string` | The card. |
+| `foreground` | `string` | The slide title. |
+| `muted` | `string` | The brand, the slide position, and the description line. |
+| `accent` | `string` | The rule above the title. |
+| `font.family` | `string` | The face the card text is set in. A family Google Fonts carries, spelled the way it lists it. |
+| `font.weight` | `100` to `900`, in hundreds | The title's weight. The rest of the card is set at 400. |
+| `font.uppercase` | `boolean`, optional | Capitalises the title, for a theme whose headings are set in capitals. |
+
+The colors take hex or `rgb()`. The renderer does not parse `oklch()` or `var()`, and `defineDeck` fails on either, naming the theme and the field. Pick the palette the deck opens in: the card is one image, so it cannot follow the reader's color mode.
+
+Each built-in's card takes `--background`, `--foreground`, `--muted-foreground`, and `--primary` from the palette of the mode it opens in, converted to hex, and the first family in `--slide-font-heading`.
 
 ## The token contract
 

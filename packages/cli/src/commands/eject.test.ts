@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url"
 
 import { describe, expect, it } from "vitest"
 
-import { planFonts } from "./eject.ts"
+import { planFonts, themeEntry } from "./eject.ts"
 
 const themesSource = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -59,5 +59,32 @@ describe("planFonts", () => {
         ).toBe(true)
       }
     }
+  })
+})
+
+describe("themeEntry", () => {
+  const theme = {
+    className: "demo-theme",
+    colorModes: ["light" as const],
+    defaultColorMode: "light" as const,
+    id: "demo",
+  }
+
+  it("carries the share card into the copy", () => {
+    const card = {
+      accent: "#ff5500",
+      background: "#ffffff",
+      font: { family: "Archivo", uppercase: true, weight: 800 as const },
+      foreground: "#0a0a0a",
+      muted: "#666666",
+    }
+
+    expect(themeEntry({ ...theme, card })).toContain(
+      `  card: ${JSON.stringify(card)},\n  className: "demo-theme",`
+    )
+  })
+
+  it("writes no card for a theme without one", () => {
+    expect(themeEntry(theme)).not.toContain("card:")
   })
 })

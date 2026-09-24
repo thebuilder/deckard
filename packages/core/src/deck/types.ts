@@ -89,10 +89,31 @@ export interface DeckCanvasConfig {
 
 export type SlideColorMode = "light" | "dark"
 
+// What the share card of every slide URL paints with. The card renderer reads
+// no stylesheet, so this repeats the theme's palette as plain values.
+export interface SlideThemeCard {
+  /** The strong detail: the rule beside the title. Hex or `rgb()`, like every color here: the card renderer does not read oklch or CSS variables. */
+  accent: string
+  background: string
+  /** The display face the title is set in, which the card fetches from Google Fonts as a static instance at build time. */
+  font: {
+    family: string
+    uppercase?: boolean
+    weight: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900
+  }
+  /** The slide title. */
+  foreground: string
+  /** The eyebrow and the footer line. */
+  muted: string
+}
+
 // Static deck styling. The class scopes the theme stylesheet to the canvas, so it never reaches the runtime UI.
 // Crosses to client components, so it stays serializable: the motion map names
 // shader fields rather than carrying one.
 export interface SlideTheme {
+  // The colors and face of the share card. A theme without one gets a neutral
+  // grayscale card in the default face.
+  card?: SlideThemeCard
   className: string
   colorModes: SlideColorMode[]
   defaultColorMode: SlideColorMode | "system"

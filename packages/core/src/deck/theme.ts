@@ -5,6 +5,7 @@ import type {
   DeckPresentation,
   SlideColorMode,
   SlideTheme,
+  SlideThemeCard,
 } from "./types"
 
 // A deck without a theme falls back to the app tokens. No class, no deck stylesheet, both color modes.
@@ -69,6 +70,51 @@ function assertMotion(theme: SlideTheme) {
   }
 }
 
+const hexColor = /^#(?:[\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})$/i
+const rgbColor = /^rgba?\([^()]*\)$/i
+const cardColorFields = ["accent", "background", "foreground", "muted"] as const
+const cardFontWeights: readonly number[] = [
+  100, 200, 300, 400, 500, 600, 700, 800, 900,
+]
+
+// The card renderer parses hex and rgb() and nothing else: an oklch() or a
+// var() there fails the image, not the theme, so it is caught here instead.
+function assertCard(theme: SlideTheme) {
+  const { card } = theme
+
+  if (!card) {
+    return
+  }
+
+  for (const field of cardColorFields) {
+    const value = card[field]
+
+    if (
+      typeof value !== "string" ||
+      !(hexColor.test(value.trim()) || rgbColor.test(value.trim()))
+    ) {
+      throw new Error(
+        `Slide theme "${theme.id}" sets card.${field} to ${JSON.stringify(value)}. The share card reads hex or rgb() colors only, so convert it: oklch() and var() do not render.`
+      )
+    }
+  }
+
+  // A theme can be plain JavaScript, so the face is checked rather than trusted.
+  const font: Partial<SlideThemeCard["font"]> | undefined = card.font
+
+  if (typeof font?.family !== "string" || !font.family.trim()) {
+    throw new Error(
+      `Slide theme "${theme.id}" needs card.font.family, the display face the share card fetches.`
+    )
+  }
+
+  if (!cardFontWeights.includes(font.weight as number)) {
+    throw new Error(
+      `Slide theme "${theme.id}" sets card.font.weight to ${font.weight}. The card fetches a static instance, so use a hundred from 100 to 900.`
+    )
+  }
+}
+
 export function resolveTheme(theme: SlideTheme = baseTheme): SlideTheme {
   if (theme.id.trim().length === 0) {
     throw new Error("Slide theme needs a non-empty id.")
@@ -77,6 +123,7 @@ export function resolveTheme(theme: SlideTheme = baseTheme): SlideTheme {
   assertColorModes(theme)
   assertDefaultColorMode(theme)
   assertMotion(theme)
+  assertCard(theme)
 
   return { ...theme, colorModes: [...theme.colorModes] }
 }

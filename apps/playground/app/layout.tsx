@@ -1,4 +1,8 @@
-import { isPdfExport, pdfExportColorMode } from "@thebuilder/deckard-core"
+import {
+  deckSiteUrl,
+  isPdfExport,
+  pdfExportColorMode,
+} from "@thebuilder/deckard-core"
 import { ColorModeProvider } from "@thebuilder/deckard-core/components"
 import { cn } from "@thebuilder/deckard-core/utils"
 import type { Metadata } from "next"
@@ -20,6 +24,7 @@ const fontMono = Geist_Mono({
 
 export const metadata: Metadata = {
   description: deck.description,
+  metadataBase: new URL(deckSiteUrl()),
   title: {
     default: deck.title,
     template: `%s · ${deck.title}`,

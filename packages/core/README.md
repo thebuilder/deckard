@@ -40,7 +40,7 @@ export const slides: SlideDefinition[] = [
 ]
 ```
 
-The route files re-export `createSlideRoute`, `createPresenterPage`, `createDeckSitemap`, and `createFirstSlideRedirect` from `@thebuilder/deckard-core/next`. `npx @thebuilder/deckard-cli init` writes all of it.
+The route files re-export `createSlideRoute`, `createSlideShareCard`, `createPresenterPage`, `createDeckSitemap`, and `createFirstSlideRedirect` from `@thebuilder/deckard-core/next`. `npx @thebuilder/deckard-cli init` writes all of it.
 
 ## Documentation
 

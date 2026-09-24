@@ -7,6 +7,7 @@ export {
   normalizeFooterMode,
   resolveSlides,
 } from "./deck/resolve-slides"
+export { deckSiteUrl } from "./deck/site-url"
 export { toSlideSummaries, toSlideSummary } from "./deck/slide-summary"
 export type { ResolvedBackground } from "./deck/theme"
 export {
@@ -35,6 +36,7 @@ export type {
   SlideModule,
   SlideSummary,
   SlideTheme,
+  SlideThemeCard,
 } from "./deck/types"
 export type {
   PresenterChannelMessage,

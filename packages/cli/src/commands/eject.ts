@@ -71,13 +71,19 @@ function assertNoLocalTheme(): void {
   )
 }
 
-function themeEntry(theme: SlideTheme): string {
+// The share card is plain data in the built-in's module, generated from its
+// stylesheet, so the copy carries the values rather than the generator.
+function cardEntry(theme: SlideTheme): string {
+  return theme.card ? `  card: ${JSON.stringify(theme.card)},\n` : ""
+}
+
+export function themeEntry(theme: SlideTheme): string {
   return `import type { SlideTheme } from "@thebuilder/deckard-core"
 
 import "./theme.css"
 
 export const theme = {
-  className: "${theme.className}",
+${cardEntry(theme)}  className: "${theme.className}",
   colorModes: [${theme.colorModes.map((mode) => `"${mode}"`).join(", ")}],
   defaultColorMode: "${theme.defaultColorMode}",
   id: "${theme.id}",

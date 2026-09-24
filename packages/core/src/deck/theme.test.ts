@@ -9,7 +9,7 @@ import {
   resolveTheme,
   toDeckPresentation,
 } from "./theme"
-import type { SlideTheme } from "./types"
+import type { SlideTheme, SlideThemeCard } from "./types"
 
 const bothModes: SlideTheme = {
   className: "test-theme",
@@ -25,6 +25,11 @@ const emptyModesError = /at least one color mode/
 const duplicateModeError = /same color mode twice/
 const systemError = /defaults to "system"/
 const unsupportedDefaultError = /defaults to "light"/
+const oklchCardError =
+  /Slide theme "test" sets card.accent to "oklch\(0.5 0.1 20\)". The share card reads hex or rgb\(\) colors only/
+const varCardError = /Slide theme "test" sets card.muted to "var\(--muted\)"/
+const familyError = /Slide theme "test" needs card.font.family/
+const weightError = /Slide theme "test" sets card.font.weight to 650/
 
 describe("theme motion backgrounds", () => {
   const withMotion: SlideTheme = {
@@ -226,5 +231,53 @@ describe("toDeckPresentation", () => {
     )
 
     expect(presentation.meta).toBeUndefined()
+  })
+})
+
+describe("theme share card", () => {
+  const card: SlideThemeCard = {
+    accent: "#ff5500",
+    background: "rgb(10 10 10)",
+    font: { family: "Inter", weight: 700 },
+    foreground: "#fafafa",
+    muted: "rgba(250, 250, 250, 0.7)",
+  }
+
+  it("keeps a card whose colors are hex or rgb()", () => {
+    expect(resolveTheme({ ...bothModes, card }).card).toEqual(card)
+  })
+
+  it("leaves a theme with no card without one", () => {
+    expect(resolveTheme(bothModes).card).toBeUndefined()
+  })
+
+  it("names the theme and the field for an oklch color", () => {
+    expect(() =>
+      resolveTheme({
+        ...bothModes,
+        card: { ...card, accent: "oklch(0.5 0.1 20)" },
+      })
+    ).toThrow(oklchCardError)
+  })
+
+  it("names the theme and the field for a CSS variable", () => {
+    expect(() =>
+      resolveTheme({ ...bothModes, card: { ...card, muted: "var(--muted)" } })
+    ).toThrow(varCardError)
+  })
+
+  it("fails on a card with no face or an impossible weight", () => {
+    expect(() =>
+      resolveTheme({
+        ...bothModes,
+        card: { ...card, font: { family: " ", weight: 700 } },
+      })
+    ).toThrow(familyError)
+    expect(() =>
+      resolveTheme({
+        ...bothModes,
+        card: { ...card, font: { family: "Inter", weight: 650 as 600 } },
+      })
+    ).toThrow(weightError)
   })
 })

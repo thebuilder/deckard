@@ -438,7 +438,7 @@ deckard eject theme --theme meridian
 | --- | --- | --- |
 | `--theme <name>` | a built-in theme name | the theme `deck/deck.ts` imports |
 
-Creates `deck/theme/` with `theme.css` and `THEME.md` copied out of the installed `@thebuilder/deckard-themes`, generates an `index.ts` exporting a `SlideTheme` literal, and rewrites `deck/deck.ts` to `import { theme } from "@/deck/theme"`.
+Creates `deck/theme/` with `theme.css` and `THEME.md` copied out of the installed `@thebuilder/deckard-themes`, generates an `index.ts` exporting a `SlideTheme` literal, the built-in's share card `card` values included, and rewrites `deck/deck.ts` to `import { theme } from "@/deck/theme"`.
 
 ```bash ~/my-talk
 deckard eject theme
