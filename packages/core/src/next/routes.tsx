@@ -4,19 +4,19 @@ import { PresenterConsole } from "../components/presenter-console"
 import { SlideShell } from "../components/slide-shell"
 import { isPdfExport } from "../deck/pdf-export"
 import { getSlideById } from "../deck/resolve-slides"
+import { deckSiteUrl } from "../deck/site-url"
 import { toSlideSummaries, toSlideSummary } from "../deck/slide-summary"
 import { toDeckPresentation } from "../deck/theme"
 import type { Deck } from "../deck/types"
+import { slideParams } from "./slide-params"
 
 interface SlideRouteProps {
   params: Promise<{ id: string }>
 }
 
-const defaultSiteUrl = "http://localhost:3000"
-
 export function createSlideRoute(deck: Deck) {
   function generateStaticParams() {
-    return deck.slides.map((slide) => ({ id: slide.id }))
+    return slideParams(deck)
   }
 
   async function generateMetadata({
@@ -29,8 +29,19 @@ export function createSlideRoute(deck: Deck) {
       return {}
     }
 
+    // The share card beside this page links as og:image, which has to be an
+    // absolute URL, so it resolves against the same origin as the sitemap. The
+    // root layout `deckard init` writes sets the same metadataBase; this copy
+    // covers a deck whose layout predates it, and can go once 0.x decks have
+    // moved to a layout that sets it.
+    const shared = {
+      metadataBase: new URL(deckSiteUrl()),
+      twitter: { card: "summary_large_image" },
+    } satisfies Metadata
+
     if (slide.title === deck.title) {
       return {
+        ...shared,
         title: {
           absolute: slide.title,
         },
@@ -38,6 +49,7 @@ export function createSlideRoute(deck: Deck) {
     }
 
     return {
+      ...shared,
       title: slide.title,
     }
   }
@@ -99,8 +111,7 @@ export function createDeckSitemap(
   deck: Deck,
   options: { siteUrl?: string } = {}
 ) {
-  const siteUrl =
-    options.siteUrl ?? process.env.NEXT_PUBLIC_SITE_URL ?? defaultSiteUrl
+  const siteUrl = deckSiteUrl(options.siteUrl)
 
   return function sitemap(): MetadataRoute.Sitemap {
     const slideEntries = deck.slides.map((slide) => ({

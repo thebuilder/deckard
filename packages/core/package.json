@@ -44,6 +44,10 @@
       "types": "./dist/next/routes.d.ts",
       "default": "./dist/next/routes.js"
     },
+    "./share-card": {
+      "types": "./dist/next/share-card.d.ts",
+      "default": "./dist/next/share-card.js"
+    },
     "./slide-from-module": {
       "types": "./dist/deck/slide-from-module.d.ts",
       "default": "./dist/deck/slide-from-module.js"

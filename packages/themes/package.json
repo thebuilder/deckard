@@ -36,13 +36,17 @@
   "scripts": {
     "build": "tsc --project tsconfig.build.json && node scripts/copy-theme-assets.ts",
     "dev": "node scripts/dev.ts",
+    "generate:cards": "node scripts/generate-cards.ts",
     "prepack": "tsc --project tsconfig.build.json && node scripts/copy-theme-assets.ts",
+    "test": "vitest run",
+    "test:unit": "vitest run",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@thebuilder/deckard-core": "workspace:*",
     "@types/node": "^26.4.0",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.11"
   },
   "peerDependencies": {
     "@thebuilder/deckard-core": ">=0.0.1"

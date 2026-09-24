@@ -7,11 +7,13 @@ export {
   normalizeFooterMode,
   resolveSlides,
 } from "./deck/resolve-slides"
+export { deckSiteUrl } from "./deck/site-url"
 export { toSlideSummaries, toSlideSummary } from "./deck/slide-summary"
 export type { ResolvedBackground } from "./deck/theme"
 export {
   canSwitchColorMode,
   forcedColorMode,
+  homeColorMode,
   motionField,
   resolveBackground,
   resolveTheme,
@@ -35,6 +37,8 @@ export type {
   SlideModule,
   SlideSummary,
   SlideTheme,
+  SlideThemeCard,
+  SlideThemeCardColors,
 } from "./deck/types"
 export type {
   PresenterChannelMessage,
@@ -44,6 +48,7 @@ export type {
 export { PRESENTER_CHANNEL_NAME } from "./types/presenter"
 export type {
   BuiltInSlideBackgroundMode,
+  CardFontWeight,
   PaintedSlideBackgroundMode,
   SlideBackgroundMode,
   SlideBackgroundRole,
@@ -55,6 +60,7 @@ export type {
   SlideMotionMode,
 } from "./types/slides"
 export {
+  cardFontWeights,
   slideBackgroundModes,
   slideBackgroundRoles,
   slideMotionFields,

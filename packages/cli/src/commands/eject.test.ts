@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url"
 
 import { describe, expect, it } from "vitest"
 
-import { planFonts } from "./eject.ts"
+import { planFonts, themeEntry, toSource } from "./eject.ts"
 
 const themesSource = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -59,5 +59,70 @@ describe("planFonts", () => {
         ).toBe(true)
       }
     }
+  })
+})
+
+describe("themeEntry", () => {
+  const theme = {
+    className: "demo-theme",
+    colorModes: ["light" as const],
+    defaultColorMode: "light" as const,
+    id: "demo",
+  }
+
+  it("writes the theme as a literal a person would write", () => {
+    expect(themeEntry(theme)).toContain(`export const theme = {
+  className: "demo-theme",
+  colorModes: ["light"],
+  defaultColorMode: "light",
+  id: "demo",
+} satisfies SlideTheme`)
+  })
+
+  it("carries the share card into the copy", () => {
+    const palette = {
+      accent: "#ff5500",
+      background: "#ffffff",
+      foreground: "#0a0a0a",
+      muted: "#666666",
+    }
+
+    expect(
+      themeEntry({
+        ...theme,
+        card: {
+          colors: { dark: palette, light: palette },
+          font: { family: "Archivo", uppercase: true, weight: 800 },
+        },
+      })
+    ).toContain(`  card: {
+    colors: {
+      dark: {
+        accent: "#ff5500",`)
+  })
+
+  it("carries the motion map, so an ejected aurora keeps its field", () => {
+    expect(
+      themeEntry({ ...theme, motion: { closing: "waves", hero: "aurora" } })
+    ).toContain(`  motion: {
+    closing: "waves",
+    hero: "aurora",
+  },`)
+  })
+
+  it("writes no card for a theme without one", () => {
+    expect(themeEntry(theme)).not.toContain("card:")
+  })
+})
+
+describe("toSource", () => {
+  it("quotes a key only when it is not an identifier", () => {
+    expect(toSource({ "data-x": 1, plain: true })).toBe(
+      '{\n  "data-x": 1,\n  plain: true,\n}'
+    )
+  })
+
+  it("writes an empty object and skips undefined values", () => {
+    expect(toSource({ gone: undefined })).toBe("{}")
   })
 })

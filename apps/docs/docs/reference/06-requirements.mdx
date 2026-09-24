@@ -128,6 +128,8 @@ Treat Edge as untested rather than as supported or unsupported.
 
 Every slide, the presenter page, and the sitemap prerender. One thing changes: `/` becomes a page that redirects to the first slide once it loads in the browser, rather than a server 307.
 
+The share cards export too, as a PNG file named `opengraph-image` with no extension inside each slide's folder. Configure the host to serve those files as `image/png`, since a host that picks the type by extension will not.
+
 The capture commands do not work against a static export. They run `next start`, which `output: "export"` disables. Build twice, or run the captures before you switch the config.
 
 [Deploying](/guides/deploying) covers the rest of getting a built deck in front of an audience.

@@ -1,6 +1,7 @@
 import type { ReactNode } from "react"
 
 import type {
+  CardFontWeight,
   SlideBackgroundMode,
   SlideFooterMode,
   SlideFooterModeInput,
@@ -89,10 +90,37 @@ export interface DeckCanvasConfig {
 
 export type SlideColorMode = "light" | "dark"
 
+/** The four colors a share card paints with, in one color mode. Hex or `rgb()`: the card renderer does not read oklch or CSS variables. */
+export interface SlideThemeCardColors {
+  /** The strong detail: the rule beside the title. */
+  accent: string
+  background: string
+  /** The slide title. */
+  foreground: string
+  /** The eyebrow and the footer line. */
+  muted: string
+}
+
+// What the share card of every slide URL paints with. The card renderer reads
+// no stylesheet, so this repeats the theme's palette as plain values, in both
+// color modes. The card paints the theme's home mode, `homeColorMode(theme)`.
+export interface SlideThemeCard {
+  colors: Record<SlideColorMode, SlideThemeCardColors>
+  /** The display face the title is set in, which the card fetches from Google Fonts as a static instance at build time. */
+  font: {
+    family: string
+    uppercase?: boolean
+    weight: CardFontWeight
+  }
+}
+
 // Static deck styling. The class scopes the theme stylesheet to the canvas, so it never reaches the runtime UI.
 // Crosses to client components, so it stays serializable: the motion map names
 // shader fields rather than carrying one.
 export interface SlideTheme {
+  // The colors and face of the share card. A theme without one gets a neutral
+  // grayscale card in the default face.
+  card?: SlideThemeCard
   className: string
   colorModes: SlideColorMode[]
   defaultColorMode: SlideColorMode | "system"

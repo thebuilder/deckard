@@ -71,17 +71,50 @@ function assertNoLocalTheme(): void {
   )
 }
 
-function themeEntry(theme: SlideTheme): string {
+const identifier = /^[A-Za-z_$][\w$]*$/
+
+/**
+ * Plain theme data as TypeScript source, the way a person would write it:
+ * bare keys where they are identifiers, one property per line, and nothing for
+ * an undefined value.
+ */
+export function toSource(value: unknown, indent = ""): string {
+  if (Array.isArray(value)) {
+    return `[${value.map((item) => toSource(item, indent)).join(", ")}]`
+  }
+
+  if (value !== null && typeof value === "object") {
+    const inner = `${indent}  `
+    const lines = Object.entries(value)
+      .filter(([, entry]) => entry !== undefined)
+      .map(
+        ([key, entry]) =>
+          `${inner}${identifier.test(key) ? key : JSON.stringify(key)}: ${toSource(entry, inner)},`
+      )
+
+    return lines.length > 0 ? `{\n${lines.join("\n")}\n${indent}}` : "{}"
+  }
+
+  return JSON.stringify(value)
+}
+
+// Every field a built-in sets is plain data, the share card's generated colors
+// and aurora's motion map included, so the copy carries the values themselves.
+export function themeEntry(theme: SlideTheme): string {
+  const data = {
+    card: theme.card,
+    className: theme.className,
+    colorModes: theme.colorModes,
+    defaultColorMode: theme.defaultColorMode,
+    id: theme.id,
+    motion: theme.motion,
+  }
+
   return `import type { SlideTheme } from "@thebuilder/deckard-core"
 
 import "./theme.css"
 
-export const theme = {
-  className: "${theme.className}",
-  colorModes: [${theme.colorModes.map((mode) => `"${mode}"`).join(", ")}],
-  defaultColorMode: "${theme.defaultColorMode}",
-  id: "${theme.id}",
-} satisfies SlideTheme
+export const theme = ${toSource(data)} satisfies SlideTheme
 `
 }
 

@@ -1,6 +1,6 @@
 ---
 title: Deploying
-description: Build the deck, put it on Vercel or any Node host, set the public site URL, share a link to one slide, and decide who can reach the presenter window.
+description: Build the deck, put it on Vercel or any Node host, set the public site URL, share a link to one slide with its own preview card, and decide who can reach the presenter window.
 sidebar:
   icon: cloud-upload
 ---
@@ -38,13 +38,17 @@ The deck needs a Node runtime for `next start` even though every slide is static
 
 ## The public site URL
 
-`app/sitemap.ts` builds absolute URLs, and it needs to know the deck's address:
+The sitemap and the share cards publish absolute URLs, and they need to know the deck's address:
 
 ```bash
 NEXT_PUBLIC_SITE_URL=https://talk.example.com
 ```
 
-Without it the sitemap falls back to `http://localhost:3000` and publishes localhost URLs. Pass `siteUrl` to the adapter instead if you would rather keep it in the file:
+On Vercel you can leave it unset: a production build uses the project's production domain (`VERCEL_PROJECT_PRODUCTION_URL`), and a preview build uses its branch address (`VERCEL_BRANCH_URL`). Set the variable when the deck lives on a custom domain.
+
+With none of these set, both fall back to `http://localhost:3000`: the sitemap lists localhost URLs and every slide's `og:image` points at localhost, so a shared link shows no preview. The sitemap, the root layout's `metadataBase`, and the slide route's `metadataBase` all read the address through `deckSiteUrl()` from `@thebuilder/deckard-core`.
+
+Pass `siteUrl` to the sitemap adapter if you would rather keep the address in the file. That sets the sitemap only, so set the variable as well for the cards:
 
 ```ts app/sitemap.ts
 export default createDeckSitemap(deck, { siteUrl: "https://talk.example.com" })
@@ -70,6 +74,17 @@ A slide with no slug is served at its 1-based position, so it is `/slides/4` unt
 
 `/` redirects to the first slide, so the bare domain is a fine thing to hand out.
 
+## Share cards
+
+A deck `deckard init` generates has `app/slides/[id]/opengraph-image.tsx`, so every slide URL unfurls with its own card: the slide title in the theme's display face and colors, the brand, the slide's position, and the deck description. `next build` renders them to PNGs beside the slides, one per slide, at `/slides/<id>/opengraph-image`. Nothing renders on request. [Themes](/guides/themes#share-cards) covers what the card paints with.
+
+Two things the build needs:
+
+- **The site URL.** Vercel supplies it. Anywhere else, set `NEXT_PUBLIC_SITE_URL` as [above](#the-public-site-url) before building, or the cards link to localhost.
+- **Network access to Google Fonts.** The build fetches the theme's display face from `fonts.googleapis.com`, subset to the characters on each card. When it cannot, because the build is offline or the family is not on Google Fonts, it logs one warning per face and draws the cards in the renderer's default face. The build still succeeds.
+
+A deck that wants no cards deletes the route file. `deckard doctor` does not require it.
+
 ## Speaker notes are public
 
 `notes` never render in the deck, and they do ship to the browser with the slide. They are in the prerendered HTML, so anyone who can open a slide can read them in the page source.
@@ -90,7 +105,7 @@ If you want the whole deck private, put the deployment behind the host's access 
 
 Files in `public/` are served from the site root, so `public/logo.svg` is `/logo.svg`. Reference them with a root-relative path; the deck holds no base path.
 
-A built-in theme reaches no font host. The ones set in a real typeface ship it inside `@thebuilder/deckard-themes`, subset and self-hosted, and the rest use system stacks. Adding a web font of your own is `next/font` in `app/layout.tsx`, the same as any Next app.
+The slides reach no font host. A built-in theme set in a real typeface ships it inside `@thebuilder/deckard-themes`, subset and self-hosted, and the rest use system stacks. The one font request is the [share card](#share-cards) build fetching its face from Google Fonts, at build time, not in a reader's browser. Adding a web font of your own is `next/font` in `app/layout.tsx`, the same as any Next app.
 
 Images in the media blocks go through `next/image`, which needs the optimizer the host runs. That is automatic on Vercel and on any Node host running `next start`. It is the one thing [static export](/reference/requirements#static-export) has to turn off.
 
@@ -101,7 +116,8 @@ Images in the media blocks go through `next/image`, which needs the optimizer th
 | `/` | yes | Redirects to the first slide. |
 | `/slides/<id>` | yes | One static page per slide, notes included. |
 | `/presenter` | yes | Empty until a deck window on the same origin syncs to it. |
-| `/sitemap.xml` | yes | Absolute URLs from `NEXT_PUBLIC_SITE_URL`. |
+| `/slides/<id>/opengraph-image` | yes | One static PNG per slide, the slide's `og:image`. |
+| `/sitemap.xml` | yes | Absolute URLs from `deckSiteUrl()`. |
 
 The deck controls, the command center, and the presenter popout are client-side and need no server of their own.
 

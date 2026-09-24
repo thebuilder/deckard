@@ -1,6 +1,6 @@
 ---
 title: "@thebuilder/deckard-core"
-description: Every entry point the package exposes, what each one exports, and the four Next.js route adapters an app re-exports.
+description: Every entry point the package exposes, what each one exports, and the Next.js route adapters an app re-exports.
 sidebar:
   label: Core API
   icon: box
@@ -16,7 +16,8 @@ The package compiles to `dist/` with `tsc`: ESM, `.d.ts`, and `"use client"` dir
 | `@thebuilder/deckard-core/components` | The runtime components and slide context hooks |
 | `@thebuilder/deckard-core/code-block` | `CodeBlock`, kept off the components barrel because shiki loads WebAssembly |
 | `@thebuilder/deckard-core/discovery` | `discoverSlides` |
-| `@thebuilder/deckard-core/next` | The four route adapters |
+| `@thebuilder/deckard-core/next` | The route adapters |
+| `@thebuilder/deckard-core/share-card` | `createSlideShareCard`, kept off `/next` because `next/og` loads a WebAssembly renderer |
 | `@thebuilder/deckard-core/slide-from-module` | `slideFromModule` |
 | `@thebuilder/deckard-core/ui` | The shadcn primitives the runtime renders |
 | `@thebuilder/deckard-core/utils` | `cn` |
@@ -35,8 +36,11 @@ The package compiles to `dist/` with `tsc`: ESM, `.d.ts`, and `"use client"` dir
 | `normalizeFooterMode(mode)` | Collapse `"counter"` into `"visible"`. |
 | `toSlideSummary(slide)` / `toSlideSummaries(slides)` | The serializable shape client components receive. |
 | `resolveTheme(theme)` | Fill in and validate a `SlideTheme`. |
+| `deckSiteUrl(siteUrl?)` | The deck's public origin: `siteUrl`, else `NEXT_PUBLIC_SITE_URL`, else the production domain on a Vercel production build or the branch address on a preview, else `http://localhost:3000`. The sitemap and the share card URLs are built on it. |
 | `toDeckPresentation(deck)` | The serializable slice the shell needs. |
 | `canSwitchColorMode(theme)` / `forcedColorMode(theme)` | What the color-mode toggle does for a given theme. |
+| `homeColorMode(theme)` | The mode a theme is shown in when only one can be: its `defaultColorMode`, or `light` for `"system"`. The share card paints it. |
+| `cardFontWeights` | The weights a share card face can be set in, `100` to `900`. |
 | `isPdfExport()` / `pdfExportColorMode()` | Read the export environment variables. |
 | `isCapturing()` | True while a capture tool is driving the page. |
 | `captureAttribute` | The attribute a capture tool sets on the document element. |
@@ -47,7 +51,7 @@ The package compiles to `dist/` with `tsc`: ESM, `.d.ts`, and `"use client"` dir
 | `slideMotionFields` | The three fields a theme may name. |
 | `PRESENTER_CHANNEL_NAME` | The `BroadcastChannel` name presenter mode uses. |
 
-Types: `Deck`, `DeckConfig`, `DeckCanvasConfig`, `DeckHeaderConfig`, `DeckFooterConfig`, `DeckPresentation`, `ResolvedSlide`, `SlideDefinition`, `SlideMeta`, `SlideModule`, `SlideComponent`, `SlideDefaults`, `SlideSummary`, `SlideTheme`, `SlideColorMode`, `SlideHeaderMode`, `SlideFooterMode`, `SlideFooterModeInput`, `SlideLayoutMode`, `SlideBackgroundMode`, `BuiltInSlideBackgroundMode`, `PaintedSlideBackgroundMode`, `SlideBackgroundRole`, `ResolvedBackground`, `SlideMotionMode`, `SlideMotionField`, `PresenterChannelMessage`, `PresenterPreviewState`, `PresenterSlideState`.
+Types: `Deck`, `DeckConfig`, `DeckCanvasConfig`, `DeckHeaderConfig`, `DeckFooterConfig`, `DeckPresentation`, `ResolvedSlide`, `SlideDefinition`, `SlideMeta`, `SlideModule`, `SlideComponent`, `SlideDefaults`, `SlideSummary`, `SlideTheme`, `SlideThemeCard`, `SlideThemeCardColors`, `CardFontWeight`, `SlideColorMode`, `SlideHeaderMode`, `SlideFooterMode`, `SlideFooterModeInput`, `SlideLayoutMode`, `SlideBackgroundMode`, `BuiltInSlideBackgroundMode`, `PaintedSlideBackgroundMode`, `SlideBackgroundRole`, `ResolvedBackground`, `SlideMotionMode`, `SlideMotionField`, `PresenterChannelMessage`, `PresenterPreviewState`, `PresenterSlideState`.
 
 ## @thebuilder/deckard-core/components
 
@@ -136,6 +140,7 @@ Returns `{ currentStep, stepCount, advance, retreat, canAdvance, canRetreat, isR
 | `createPresenterPage(deck)` | `app/presenter/page.tsx` | `Page`, `metadata` |
 | `createDeckSitemap(deck, { siteUrl })` | `app/sitemap.ts` | The sitemap function |
 | `createFirstSlideRedirect(deck)` | `app/page.tsx` | `Page`, which redirects to the first slide |
+| `createSlideShareCard(deck)` | `app/slides/[id]/opengraph-image.tsx` | `Image`, `alt`, `contentType`, `generateStaticParams`, `size` |
 
 <CodeGroup>
 
@@ -173,13 +178,75 @@ import { deck } from "@/deck/deck"
 export default createFirstSlideRedirect(deck)
 ```
 
+```tsx app/slides/[id]/opengraph-image.tsx
+import { createSlideShareCard } from "@thebuilder/deckard-core/share-card"
+import { deck } from "@/deck/deck"
+
+const { Image, alt, contentType, generateStaticParams, size } =
+  createSlideShareCard(deck)
+
+export { alt, contentType, generateStaticParams, size }
+export default Image
+```
+
 </CodeGroup>
 
 Every slide prerenders statically. The route reads no request: `?presenterPreview=1` and `?step=` are read on the client, inside a Suspense boundary holding nothing but the reader.
 
-`createDeckSitemap` falls back to `NEXT_PUBLIC_SITE_URL` and then to `http://localhost:3000` when you pass no `siteUrl`. That sitemap is also how `deckard screenshots`, `check-overflow`, and `export pdf` find the slide list, so an app that drops the route breaks those three.
+`createDeckSitemap` takes its origin from `deckSiteUrl` when you pass no `siteUrl`: `NEXT_PUBLIC_SITE_URL`, then the address Vercel gives the deployment, then `http://localhost:3000`. `createSlideRoute`'s `generateMetadata` sets `metadataBase` from the same function, so the share card each slide links resolves to an absolute URL on the same origin. That sitemap is also how `deckard screenshots`, `check-overflow`, and `export pdf` find the slide list, so an app that drops the route breaks those three.
 
 The components the adapters compose are exported too, so a deck that needs its own route can write one.
+
+### createSlideShareCard
+
+```ts
+import { createSlideShareCard } from "@thebuilder/deckard-core/share-card"
+
+function createSlideShareCard(deck: Deck): {
+  Image: (props: { params: Promise<{ id: string }> }) => Promise<Response>
+  alt: string
+  contentType: string
+  generateStaticParams: () => { id: string }[]
+  size: { height: number; width: number }
+}
+```
+
+| Argument | Type | Default |
+| --- | --- | --- |
+| `deck` | `Deck`, the result of `defineDeck` | required |
+
+**Returns** the exports of an `opengraph-image.tsx` route beside the slide page:
+
+| Export | What it is |
+| --- | --- |
+| `Image` | The default export. Renders one slide's card with `ImageResponse` from `next/og`. |
+| `alt` | `A slide from <deck title>`, with `by <brand>` when `header.brand` differs from the title. Every card in the deck shares it. |
+| `contentType` | `"image/png"` |
+| `generateStaticParams` | Every slide id, the same list the slide page prerenders. |
+| `size` | `{ width: 1200, height: 630 }` |
+
+**Behaviour.** `next build` prerenders one PNG per slide at `<slides path>/<id>/opengraph-image`, and each slide page links it as `og:image` and `twitter:image`, with `twitter:card` set to `summary_large_image`. The card paints the theme's `card.colors` for its [home mode](#thebuilderdeckard-core), `homeColorMode(theme)`: the brand and the slide position (`3 / 18`) along the top in `muted`, an `accent` rule, the slide title in `foreground`, and `deck.description` along the bottom in `muted`, or `header.meta` when the description is empty. The title steps down in size as it gets longer and clamps at three lines. It is set in `card.font.family` at `card.font.weight`, capitalised when `card.font.uppercase` is true; the eyebrow and footer use the same family at 400.
+
+The face is fetched at build time from the Google Fonts CSS2 API, subset to the characters on the card and cached per family, weight, and text for the build. A theme with no `card` renders a grayscale card in the renderer's default face and fetches nothing.
+
+The route reads no request, so it prerenders with the slides. Re-export `generateStaticParams` from the image route as well: it is a route handler and does not take the slide page's params, so without it no card prerenders.
+
+**Errors.** A font fetch that fails, because the build is offline or Google Fonts does not carry the family, logs one warning naming the family and weight, and the card renders in the default face. The build does not fail. An id that names no slide answers 404. A theme `card` with a color that is not hex or `rgb()` fails `defineDeck`, naming the theme, the mode, and the field.
+
+**Example.** The playground's second deck lives at `/example`, so its card route sits beside that page:
+
+```tsx app/example/[id]/opengraph-image.tsx
+import { createSlideShareCard } from "@thebuilder/deckard-core/share-card"
+import { exampleDeck } from "@/deck/example-deck"
+
+const { Image, alt, contentType, generateStaticParams, size } =
+  createSlideShareCard(exampleDeck)
+
+export { alt, contentType, generateStaticParams, size }
+export default Image
+```
+
+**Related.** [`SlideThemeCard`](/guides/themes#share-cards) for the theme side, [Share cards](/guides/deploying#share-cards) for the site URL and the font fetch, `deckSiteUrl` for the origin.
 
 ## The dependency direction
 
