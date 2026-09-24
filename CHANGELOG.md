@@ -2,8 +2,12 @@
 
 Releases are tags. Pushing `v<version>` runs `.github/workflows/release.yml`, which packs, smokes, and publishes. The three packages version together: `@thebuilder/deckard-core`, `@thebuilder/deckard-themes`, and `@thebuilder/deckard-cli` ship the same number, and `deckard init` pins a new deck to the CLI's own version.
 
-## Unreleased
+## 0.2.0, 2026-09-24
 
+- A slide's `background` takes four roles every theme accepts: `hero`, `breaker`, `statement`, and `closing`. A theme that paints a role in `motion` shows its field, and any other theme renders the role's fallback: `default` for `hero` and `statement`, `spotlight` for `breaker`, `accent` for `closing`. `deckard validate` accepts them, `resolveBackground` and `slideBackgroundRoles` are exported, and the `deckard init` sample marks its opener, breaks, and close. Aurora's field now shows on those slides.
+- Presenter previews mount no motion canvas and never fetch the WebGL runtime. They show the theme's painted background.
+- The deck controls show on any pointer movement and hide after a few idle seconds unless the pointer rests near them. They also show once when a page loads, never during a capture or in a presenter preview.
+- `HeroSlide`'s credit row draws no rule above it. Atelier drops its own rule there, and ledger's footer draws no border under its folio rule.
 - Every slide URL gets an Open Graph share card, rendered at build time by `createSlideShareCard` from `@thebuilder/deckard-core/share-card` in the deck's theme colors and display face. `deckard init` writes the `app/slides/[id]/opengraph-image.tsx` route; an existing deck adds that file to opt in.
 - `SlideTheme` takes an optional `card`, with colors for both modes, and every built-in theme sets one generated from its own palette. The card paints `homeColorMode(theme)`. `deckard eject theme` copies it.
 - `deckard eject theme` keeps the theme's `motion` map, so an ejected aurora keeps its field, and writes the theme as a plain object literal.
