@@ -18,7 +18,24 @@ export const slideBackgroundModes = [
   "spotlight",
 ] as const
 
-export type BuiltInSlideBackgroundMode = (typeof slideBackgroundModes)[number]
+export type PaintedSlideBackgroundMode = (typeof slideBackgroundModes)[number]
+
+// Roles name the moment a slide is, not how it looks, so a deck can mark its
+// cover and its section breaks once and keep them across a theme swap. A theme
+// that paints a role in `motion` shows its field. Every other theme renders the
+// variant the role maps to here.
+export const slideBackgroundRoles = {
+  breaker: "spotlight",
+  closing: "accent",
+  hero: "default",
+  statement: "default",
+} as const satisfies Record<string, PaintedSlideBackgroundMode>
+
+export type SlideBackgroundRole = keyof typeof slideBackgroundRoles
+
+export type BuiltInSlideBackgroundMode =
+  | PaintedSlideBackgroundMode
+  | SlideBackgroundRole
 
 // A theme may name backgrounds of its own and paint them from its stylesheet or
 // with a motion field, so a deck is not held to the list above. `deckard

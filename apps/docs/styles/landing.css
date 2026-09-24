@@ -8,7 +8,7 @@
  */
 
 .landing {
-  --landing-measure: 72rem;
+  --landing-measure: 80rem;
 
   padding-block-end: 6rem;
   font-family: var(--blume-font-body);
@@ -33,8 +33,7 @@
   position: relative;
   display: grid;
   align-content: center;
-  min-block-size: min(44rem, 92dvh);
-  padding-block: 6rem 4.5rem;
+  padding-block: 5rem 4.5rem;
   padding-inline: 1.5rem;
   overflow: hidden;
   text-align: center;
@@ -44,8 +43,28 @@
 
 @media (min-width: 64rem) {
   .hero {
-    padding-block: 7rem 5.5rem;
+    padding-block: 6.5rem 5.5rem;
   }
+}
+
+.hero-eyebrow {
+  margin-block-end: 1.25rem;
+  font-family: var(--blume-font-mono);
+  font-size: 0.75rem;
+  color: var(--blume-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+/* The live deck, held to the page measure under the hero copy. */
+.stage {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: calc(var(--landing-measure) - 3rem);
+  margin-block-start: 4rem;
+  margin-inline: auto;
+  text-align: start;
 }
 
 .hero-inner {
@@ -100,7 +119,7 @@
 
 .hero-title {
   font-family: var(--blume-font-display);
-  font-size: clamp(2.25rem, 5.2vw, 3.5rem);
+  font-size: clamp(2.5rem, 6vw, 4.25rem);
   font-weight: 500;
   line-height: 1.04;
   letter-spacing: -0.01em;
@@ -123,18 +142,6 @@
   gap: 0.75rem;
   justify-content: center;
   margin-block-start: 2rem;
-}
-
-.hero-deck-strip {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.5rem;
-  margin-block-start: 2.5rem;
-  transform: perspective(900px) rotateX(3deg);
-}
-
-.hero-deck-strip .slide-screenshot {
-  box-shadow: 0 18px 36px -24px rgb(0 0 0 / 65%);
 }
 
 .button {
@@ -206,19 +213,78 @@
   display: grid;
 }
 
+/* Each panel is as wide as its text and the copy button beside it. */
 .install-panel {
+  position: relative;
   display: none;
   grid-area: 1 / 1;
+  justify-self: center;
+  width: fit-content;
+  max-width: 100%;
 }
 
-.install-panel[data-install="terminal"] {
-  width: min(100%, 32rem);
-  margin-inline: auto;
+/* The copied tag sits above the panel, so the panel does not clip it. */
+.install .install-panel {
+  overflow: visible;
 }
 
-.install pre.astro-code {
-  padding: 0.9375rem 1.25rem;
-  font-size: 0.875rem;
+.copy-button {
+  position: absolute;
+  inset-block-start: 0.5rem;
+  inset-inline-end: 0.5rem;
+  display: inline-flex;
+  gap: 0.375rem;
+  align-items: center;
+  padding: 0.4375rem;
+  font-family: var(--blume-font-mono);
+  font-size: 0.6875rem;
+  line-height: 1;
+  color: var(--blume-muted-foreground);
+  cursor: pointer;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: calc(var(--blume-radius) * 0.75);
+  transition:
+    color 140ms ease,
+    background-color 140ms ease;
+}
+
+.copy-button:hover {
+  color: var(--blume-foreground);
+  background-color: var(--blume-muted);
+}
+
+.copy-button:focus-visible {
+  outline: 2px solid var(--blume-accent);
+  outline-offset: 2px;
+}
+
+.copied-icon,
+.copied-label,
+.copy-button[data-copied] .copy-icon {
+  display: none;
+}
+
+.copy-button[data-copied] {
+  color: var(--blume-accent);
+  background-color: var(--blume-code-background);
+}
+
+.copy-button[data-copied] .copied-icon {
+  display: inline;
+}
+
+/* A tag over the button, so the panel keeps its width while it shows. */
+.copy-button[data-copied] .copied-label {
+  position: absolute;
+  inset-block-end: calc(100% + 0.375rem);
+  inset-inline-end: 0;
+  display: block;
+  padding: 0.3125rem 0.5rem;
+  color: var(--blume-accent-foreground);
+  white-space: nowrap;
+  background-color: var(--blume-accent);
+  border-radius: calc(var(--blume-radius) * 0.6);
 }
 
 .install:has(#install-terminal:checked) .install-panel[data-install="terminal"],
@@ -262,7 +328,16 @@
   clip-path: inset(50%);
 }
 
-.landing :not(pre) > code {
+.landing kbd {
+  padding: 0.1em 0.4em;
+  font-family: var(--blume-font-mono);
+  font-size: 0.8125em;
+  background-color: var(--blume-muted);
+  border: 1px solid var(--blume-border);
+  border-radius: 0.35rem;
+}
+
+.landing :is(.section-head, .feature-copy, .agent-item) code {
   padding: 0.1em 0.35em;
   font-family: var(--blume-font-mono);
   font-size: 0.875em;
@@ -281,9 +356,18 @@
   border-block-start: 1px solid var(--blume-border);
 }
 
-/* The hero's own border is the line above this section. */
-.section-lead {
+/* The hero's own border is the line above the first section. */
+.hero + .section {
   border-block-start: 0;
+}
+
+.section-eyebrow {
+  margin-block-end: 0.75rem;
+  font-family: var(--blume-font-mono);
+  font-size: 0.6875rem;
+  color: var(--blume-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
 }
 
 .section-head {
@@ -292,15 +376,17 @@
 }
 
 .section-head h2,
+.feature-copy h2,
 .closing h2 {
-  font-size: clamp(1.5rem, 2.6vw, 2rem);
+  font-size: clamp(1.625rem, 3vw, 2.375rem);
   font-weight: 600;
   line-height: 1.15;
   letter-spacing: -0.03em;
   text-wrap: balance;
 }
 
-.section-head p {
+.section-head p:not(.section-eyebrow),
+.feature-copy p:not(.section-eyebrow) {
   margin-block-start: 1rem;
   font-size: 1rem;
   line-height: 1.7;
@@ -373,6 +459,13 @@
   color: var(--shiki-dark);
 }
 
+/* Room on the right for the copy button. After the rule above, which it
+ * narrows. */
+.install pre.astro-code {
+  padding: 0.9375rem 3.5rem 0.9375rem 1.25rem;
+  font-size: 0.875rem;
+}
+
 /*
  * The stepped demo.
  *
@@ -408,7 +501,6 @@
 }
 
 .demo-steps label,
-.theme-picker label,
 .install-tabs label {
   font-family: var(--blume-font-mono);
   font-size: 0.75rem;
@@ -431,13 +523,11 @@
 }
 
 .demo-steps label:hover,
-.theme-picker label:hover,
 .install-tabs label:hover {
   color: var(--blume-foreground);
 }
 
 .demo-steps label:has(:checked),
-.theme-picker label:has(:checked),
 .install-tabs label:has(:checked) {
   color: var(--blume-foreground);
   background-color: var(--blume-muted);
@@ -445,7 +535,6 @@
 }
 
 .demo-steps label:has(:focus-visible),
-.theme-picker label:has(:focus-visible),
 .install-tabs label:has(:focus-visible) {
   outline: 2px solid var(--blume-accent);
   outline-offset: 2px;
@@ -464,8 +553,8 @@
 
 @media (min-width: 64rem) {
   .demo-panels {
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-    gap: 2rem;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 2.5rem;
   }
 
   /* The array is taller than a screen, so the slide it is describing follows
@@ -476,8 +565,25 @@
   }
 }
 
+.demo-slides {
+  display: grid;
+}
+
 .demo-slide {
   display: none;
+  grid-area: 1 / 1;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--blume-border);
+  border-radius: calc(var(--blume-radius) + 0.125rem);
+  box-shadow: 0 30px 70px -40px rgb(0 0 0 / 60%);
+}
+
+/* Stacked, the slide leads, so a step's picture is under the reader's thumb. */
+@media (max-width: 63.99rem) {
+  .demo-stage {
+    order: -1;
+  }
 }
 
 /* Height only, and only in the walkthrough. */
@@ -537,13 +643,13 @@
     min-block-size: 0;
   }
 
-  /* Small enough that the whole array is on screen at once, which is what
-   * makes dimming the lines outside the step mean anything. */
+  /* The panel scrolls the lit entry into view as the step changes, so the
+   * type can stay at reading size. */
   .demo-code pre.astro-code {
-    padding-block: 0.75rem;
+    padding-block: 1rem;
     overflow: auto;
-    font-size: 0.6875rem;
-    line-height: 1.5;
+    font-size: 0.78125rem;
+    line-height: 1.6;
   }
 
   /* The viewer is the sticky one here, so the slide gives up its own offset
@@ -592,30 +698,60 @@
   }
 }
 
-/* The canvas demonstration */
+/* Feature rows: copy on one side, the picture on the other */
 
-.canvas-demo {
+.feature {
   display: grid;
   gap: 2rem;
-  align-items: end;
-  justify-items: center;
+  align-items: center;
 }
 
-@media (min-width: 48rem) {
-  .canvas-demo {
-    grid-template-columns: minmax(0, 1fr) 10.5rem;
-    gap: 3rem;
-    max-width: 58rem;
+@media (min-width: 64rem) {
+  .feature {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 4rem;
+  }
+
+  .feature-flip {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  }
+
+  .feature-flip .feature-copy {
+    order: 2;
   }
 }
 
+.feature-copy p:not(.section-eyebrow) {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--blume-muted-foreground);
+  text-wrap: pretty;
+}
+
+/* The canvas demonstration: one capture at two widths */
+
+.canvas-demo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 9rem;
+  gap: 1.5rem;
+  align-items: end;
+}
+
 .canvas-demo figure {
-  width: 100%;
   margin: 0;
 }
 
-.canvas-demo-narrow {
-  max-width: 10.5rem;
+.canvas-demo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--blume-border);
+  border-radius: var(--blume-radius);
+  box-shadow: 0 30px 70px -40px rgb(0 0 0 / 60%);
+}
+
+.canvas-demo-narrow img {
+  border-radius: calc(var(--blume-radius) * 0.6);
 }
 
 .canvas-demo figcaption {
@@ -631,7 +767,6 @@
 /* The presenter screenshot */
 
 .shot {
-  max-width: 62rem;
   margin: 0;
 }
 
@@ -641,45 +776,7 @@
   height: auto;
   border: 1px solid var(--blume-border);
   border-radius: calc(var(--blume-radius) + 0.25rem);
-}
-
-.shot figcaption {
-  margin-block-start: 0.875rem;
-  font-size: 0.8125rem;
-  line-height: 1.6;
-  color: var(--blume-muted-foreground);
-}
-
-/* The theme switcher */
-
-.theme-stage {
-  max-width: 52rem;
-}
-
-.theme-frames {
-  display: grid;
-}
-
-.theme-frame {
-  display: none;
-  grid-area: 1 / 1;
-}
-
-.theme-frame .deck-preview {
-  box-shadow: 0 24px 60px -32px rgb(0 0 0 / 55%);
-}
-
-.theme-picker {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.375rem;
-  padding: 0;
-  margin-block-start: 1rem;
-  border: 0;
-}
-
-.theme-picker label {
-  padding: 0.4375rem 0.75rem;
+  box-shadow: 0 30px 70px -40px rgb(0 0 0 / 60%);
 }
 
 /* The agent section */

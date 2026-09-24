@@ -33,13 +33,18 @@ let root: Root
 interface RenderOptions {
   background?: string
   motion?: SlideMotionMode
+  readsUrl?: boolean
 }
 
-function render({ background = "hero", motion = "auto" }: RenderOptions = {}) {
+function render({
+  background = "hero",
+  motion = "auto",
+  readsUrl = true,
+}: RenderOptions = {}) {
   act(() => {
     root.render(
       <>
-        <SlideViewParamsBoundary />
+        {readsUrl ? <SlideViewParamsBoundary /> : null}
         <SlideCanvas
           background={background}
           canvas={canvas}
@@ -175,7 +180,38 @@ afterEach(() => {
   vi.restoreAllMocks()
 })
 
+function paintedVariant() {
+  return container.querySelector<HTMLElement>(".slide-background")?.dataset
+    .slideBackground
+}
+
 describe("a theme's motion background", () => {
+  // The URL store is module state and nothing resets it, so this has to run
+  // before any test that renders the boundary.
+  it("mounts no canvas until the slide has read its URL", () => {
+    render({ readsUrl: false })
+
+    expect(fieldCanvas()).toBeNull()
+    expect(paintedVariant()).toBe("hero")
+
+    render()
+
+    expect(requireFieldCanvas().dataset.slideMotion).toBe("aurora")
+  })
+
+  it("mounts no canvas in a presenter preview", () => {
+    window.history.replaceState(
+      null,
+      "",
+      `${window.location.pathname}?presenterPreview=1`
+    )
+
+    render()
+
+    expect(fieldCanvas()).toBeNull()
+    expect(paintedVariant()).toBe("hero")
+  })
+
   it("paints nothing for a variant the theme does not name", () => {
     render({ background: "default" })
 
@@ -205,10 +241,7 @@ describe("a theme's motion background", () => {
     render()
 
     expect(await settledState()).toBe("unavailable")
-    expect(
-      container.querySelector<HTMLElement>(".slide-background")?.dataset
-        .slideBackground
-    ).toBe("hero")
+    expect(paintedVariant()).toBe("hero")
   })
 })
 
@@ -269,24 +302,6 @@ describe.skipIf(!hasWebgl)("freezing a motion background", () => {
 
   it("draws one fixed frame while the page is being captured", async () => {
     document.documentElement.setAttribute("data-deck-capture", "")
-
-    const draws = countDraws()
-
-    render()
-
-    expect(await settledState()).toBe("frozen")
-
-    await afterAFewFrames()
-
-    expect(draws).toHaveBeenCalledTimes(1)
-  })
-
-  it("draws one fixed frame in a presenter preview", async () => {
-    window.history.replaceState(
-      null,
-      "",
-      `${window.location.pathname}?presenterPreview=1`
-    )
 
     const draws = countDraws()
 

@@ -91,9 +91,9 @@ of a slide. `--slide-item-gap` is the smaller gap between rows inside one block.
 design draws every divider at. The blocks set their own border widths in the
 markup, at one or two pixels, so each part this theme thickens names the token:
 `[data-slide-rail]`, `[data-slide-contents]`, `[data-slide-column]`,
-`[data-slide-log]`, `[data-stat-item]`, `[data-slide-hero-meta]`,
-`[data-slide-quote-attribution]`, `[data-slide-panel]`, the header, the footer
-and the progress bar.
+`[data-slide-log]`, `[data-stat-item]`, `[data-slide-quote-attribution]`,
+`[data-slide-panel]`, the header, the footer and the progress bar. The credit
+row on an opener takes no rule, so the cover ends on its copy.
 
 `[data-slide-table-heading]` is the odd one. `DataTable` draws the head rule on
 the row rather than the cell, and a row is not a part a theme may reach, so the

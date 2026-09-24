@@ -5,6 +5,7 @@ import {
   canSwitchColorMode,
   forcedColorMode,
   motionField,
+  resolveBackground,
   resolveTheme,
   toDeckPresentation,
 } from "./theme"
@@ -55,6 +56,57 @@ describe("theme motion backgrounds", () => {
     expect(() =>
       resolveTheme({ ...bothModes, motion: { none: "aurora" } })
     ).toThrow(noneVariantError)
+  })
+})
+
+describe("resolveBackground", () => {
+  const withMotion: SlideTheme = {
+    ...bothModes,
+    motion: { closing: "waves", hero: "aurora", sunrise: "wash" },
+  }
+
+  it("keeps a role the theme paints in motion and hands over its field", () => {
+    expect(resolveBackground(withMotion, "hero")).toEqual({
+      field: "aurora",
+      variant: "hero",
+    })
+    expect(resolveBackground(withMotion, "closing")).toEqual({
+      field: "waves",
+      variant: "closing",
+    })
+  })
+
+  it("falls a role back to its built-in variant when the theme has no field for it", () => {
+    expect(resolveBackground(bothModes, "hero")).toEqual({ variant: "default" })
+    expect(resolveBackground(bothModes, "statement")).toEqual({
+      variant: "default",
+    })
+    expect(resolveBackground(bothModes, "breaker")).toEqual({
+      variant: "spotlight",
+    })
+    expect(resolveBackground(bothModes, "closing")).toEqual({
+      variant: "accent",
+    })
+    expect(resolveBackground(withMotion, "breaker")).toEqual({
+      variant: "spotlight",
+    })
+  })
+
+  it("keeps a theme's own motion variant and its field", () => {
+    expect(resolveBackground(withMotion, "sunrise")).toEqual({
+      field: "wash",
+      variant: "sunrise",
+    })
+  })
+
+  it("passes every other variant through for the stylesheet", () => {
+    expect(resolveBackground(bothModes, "grid")).toEqual({ variant: "grid" })
+    expect(resolveBackground(bothModes, "duotone")).toEqual({
+      variant: "duotone",
+    })
+    expect(resolveBackground(withMotion, "toString")).toEqual({
+      variant: "toString",
+    })
   })
 })
 

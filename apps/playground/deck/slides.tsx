@@ -151,6 +151,7 @@ export const slides: SlideDefinition[] = [
         meta={["Use ← → to navigate", "P for presenter mode", "⌘K to jump"]}
       />
     ),
+    background: "hero",
   },
   {
     slug: "contents",
@@ -293,6 +294,7 @@ If the room is a single screen, describe it instead of showing it.`,
     slug: "blocks",
     title: "Blocks",
     body: <MinimalBreakerSlide title="Blocks" />,
+    background: "breaker",
   },
   {
     slug: "navigation",
@@ -394,7 +396,7 @@ If the room is a single screen, describe it instead of showing it.`,
         description="layout, header, footer, and background are fields on the slide, so a fullscreen shot in the middle of a talk needs no route of its own."
       />
     ),
-    background: "spotlight",
+    background: "breaker",
   },
   {
     slug: "fixed-canvas",
@@ -758,6 +760,7 @@ Say what is missing: no heading, no lead, no panel. The slide is the code, which
     slug: "shipping",
     title: "Shipping",
     body: <MinimalBreakerSlide title="Checking a deck before you present it" />,
+    background: "breaker",
   },
   {
     slug: "roadmap",
@@ -867,6 +870,6 @@ Say what is missing: no heading, no lead, no panel. The slide is the code, which
         ]}
       />
     ),
-    background: "accent",
+    background: "closing",
   },
 ]

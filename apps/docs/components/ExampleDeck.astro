@@ -1,25 +1,35 @@
 ---
 import { exampleOutline, exampleSlideOrder } from "../../playground/deck/example-outline"
+import { playgroundHref } from "../lib/playground"
+import { previewSrc } from "../lib/preview-src"
 import { slidePreviewPath } from "../lib/slide-previews"
-import SlideScreenshot from "./SlideScreenshot.astro"
 
 const slides = exampleSlideOrder.map((key) => exampleOutline[key])
 ---
 
 <ol class="example-deck not-prose">
-  {slides.map((slide) => (
+  {slides.map((slide, index) => (
     <li>
-      <SlideScreenshot
-        previewPath={slidePreviewPath(`/example/${slide.slug}`)}
-        title={`${slide.title} slide preview`}
-      />
-      <span>{slide.title}</span>
+      <a href={playgroundHref(`/example/${slide.slug}`)}>
+        <img
+          alt={`${slide.title}, slide ${index + 1} of the example deck`}
+          decoding="async"
+          height="1080"
+          loading="lazy"
+          src={previewSrc(slidePreviewPath(`/example/${slide.slug}`))}
+          width="1920"
+        />
+        <span><b>{String(index + 1).padStart(2, "0")}</b> {slide.title}</span>
+      </a>
     </li>
   ))}
 </ol>
 
 <style>
-  .example-deck { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: 1.5rem; padding: 0; margin-block: 2rem; list-style: none; }
-  .example-deck li { display: grid; gap: 0.5rem; }
-  .example-deck span { color: var(--blume-muted-foreground); font-size: 0.8125rem; }
+  .example-deck { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr)); gap: 1.25rem 1rem; padding: 0; margin-block: 2rem; list-style: none; }
+  .example-deck a { display: grid; gap: 0.5rem; color: inherit; text-decoration: none; }
+  .example-deck img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border: 1px solid var(--blume-border); border-radius: var(--blume-radius); transition: border-color 140ms ease; }
+  .example-deck a:hover img { border-color: var(--blume-accent); }
+  .example-deck span { color: var(--blume-muted-foreground); font-size: 0.8125rem; line-height: 1.45; }
+  .example-deck b { margin-inline-end: 0.35rem; font-family: var(--blume-font-mono); font-weight: 500; color: var(--blume-accent); }
 </style>

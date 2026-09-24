@@ -1,39 +1,10 @@
 /*
- * The gallery runs on a checkbox and two radios per card, so the previews swap
- * and the card expands with the page's JavaScript turned off. The inputs are
- * clipped rather than hidden, which keeps them reachable from the keyboard, and
- * every visible state below is driven off :checked.
+ * The theme grid and the per-theme showcase. Every picture is a capture of the
+ * example deck under that theme, written by `pnpm --filter playground
+ * docs:previews`.
  */
 
-.theme-gallery {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-  margin-block: 2rem;
-}
-
-@media (min-width: 48rem) {
-  .theme-gallery {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-.theme-card {
-  display: grid;
-  grid-template-rows: auto auto auto;
-  gap: 0.875rem;
-  align-content: start;
-  padding: 0.875rem;
-  border: 1px solid var(--blume-border);
-  border-radius: calc(var(--blume-radius) + 0.375rem);
-}
-
-.theme-card:has(.theme-card-input[data-expand]:checked) {
-  grid-column: 1 / -1;
-  background-color: var(--blume-muted);
-}
-
-.theme-card-input {
+.sr-only {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -42,175 +13,218 @@
   clip-path: inset(50%);
 }
 
-.theme-card-stage {
+/* The grid of covers */
+
+.theme-grid {
   display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+  gap: 1.5rem 1rem;
+  padding: 0;
+  margin: 2rem 0;
+  list-style: none;
 }
 
-.theme-card-input[data-mode="light"]:checked
-  ~ .theme-card-stage
-  .deck-preview[data-mode="dark"],
-.theme-card-input[data-mode="dark"]:checked
-  ~ .theme-card-stage
-  .deck-preview[data-mode="light"] {
-  display: none;
-}
-
-.theme-card-body {
+.theme-grid-card {
   display: grid;
   gap: 0.25rem;
-  padding-inline: 0.25rem;
+  color: inherit;
+  text-decoration: none;
 }
 
-.theme-card-head {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem 0.625rem;
-  align-items: baseline;
+.theme-grid-card img,
+.theme-showcase-slides img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border: 1px solid var(--blume-border);
+  border-radius: var(--blume-radius);
 }
 
-.theme-card-badge {
-  font-size: 0.625rem;
-  font-weight: 500;
-  color: var(--blume-muted-foreground);
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
+.theme-grid-card img {
+  margin-block-end: 0.5rem;
+  transition:
+    transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 200ms ease,
+    border-color 200ms ease;
 }
 
-.theme-card-name {
+.theme-grid-card:hover img,
+.theme-grid-card:focus-visible img {
+  border-color: color-mix(in oklch, var(--blume-accent) 55%, transparent);
+  box-shadow: 0 18px 40px -24px rgb(0 0 0 / 55%);
+  transform: translateY(-2px);
+}
+
+.theme-grid-name {
   font-family: var(--blume-font-mono);
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   font-weight: 500;
   color: var(--blume-foreground);
 }
 
-.theme-card-summary {
+.theme-grid-compact {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 8.5rem), 1fr));
+  gap: 1rem 0.75rem;
+}
+
+.theme-grid-compact .theme-grid-name {
+  font-size: 0.75rem;
+  color: var(--blume-muted-foreground);
+}
+
+.theme-grid-summary {
   font-size: 0.8125rem;
   line-height: 1.5;
   color: var(--blume-muted-foreground);
   text-wrap: pretty;
 }
 
-.theme-card-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  align-items: center;
-  justify-content: space-between;
-  padding-inline: 0.25rem;
+/* One theme: a large capture, the slides under it, and the modes */
+
+.theme-showcase {
+  display: grid;
+  gap: 0.75rem;
+  margin-block: 1.5rem 2rem;
 }
 
-.theme-card-modes {
-  display: flex;
-  padding: 2px;
-  background-color: var(--blume-muted);
-  border: 1px solid var(--blume-border);
-  border-radius: 999px;
+.theme-showcase-slides {
+  display: grid;
+  grid-template-columns: repeat(var(--showcase-slides), minmax(0, 1fr));
+  gap: 0.75rem 0.5rem;
+  padding: 0;
+  margin: 0;
+  border: 0;
 }
 
-.theme-card-modes label,
-.theme-card-enlarge {
-  font-size: 0.75rem;
-  font-weight: 500;
-  line-height: 1;
+/* The label's children sit on the fieldset's grid: every large capture in the
+ * first row across all columns, every thumbnail in a column of the second. */
+.theme-showcase-slides label {
+  display: contents;
+}
+
+.theme-showcase-slides .theme-showcase-large {
+  display: none;
+  grid-row: 1;
+  grid-column: 1 / -1;
+  border-radius: calc(var(--blume-radius) + 0.125rem);
+  box-shadow: 0 30px 60px -36px rgb(0 0 0 / 60%);
+}
+
+.theme-showcase-slides label:has(:checked) .theme-showcase-large {
+  display: block;
+}
+
+.theme-showcase-thumb {
+  display: grid;
+  grid-row: 2;
+  gap: 0.375rem;
+  font-size: 0.6875rem;
   color: var(--blume-muted-foreground);
   cursor: pointer;
-  border-radius: 999px;
+}
+
+.theme-showcase-thumb img {
+  opacity: 0.72;
   transition:
-    color 120ms ease,
-    background-color 120ms ease;
+    opacity 140ms ease,
+    border-color 140ms ease;
 }
 
-.theme-card-modes label {
-  padding: 0.375rem 0.75rem;
+.theme-showcase-thumb:hover img {
+  opacity: 0.9;
 }
 
-.theme-card-enlarge {
-  padding: 0.375rem 0.75rem;
-  border: 1px solid var(--blume-border);
+.theme-showcase-slides label:has(:checked) .theme-showcase-thumb img {
+  border-color: var(--blume-accent);
+  opacity: 1;
 }
 
-.theme-card-enlarge:hover,
-.theme-card-modes label:hover {
+.theme-showcase-slides label:has(:checked) .theme-showcase-thumb span {
   color: var(--blume-foreground);
 }
 
-.theme-card-input[data-mode="light"]:checked
-  ~ .theme-card-actions
-  label[data-mode="light"],
-.theme-card-input[data-mode="dark"]:checked
-  ~ .theme-card-actions
-  label[data-mode="dark"] {
-  color: var(--blume-foreground);
-  background-color: var(--blume-background);
-  box-shadow: 0 1px 2px rgb(0 0 0 / 8%);
-}
-
-.theme-card-input[data-mode="light"]:focus-visible
-  ~ .theme-card-actions
-  label[data-mode="light"],
-.theme-card-input[data-mode="dark"]:focus-visible
-  ~ .theme-card-actions
-  label[data-mode="dark"],
-.theme-card-input[data-expand]:focus-visible
-  ~ .theme-card-actions
-  .theme-card-enlarge {
+.theme-showcase-slides label:has(:focus-visible) .theme-showcase-thumb img {
   outline: 2px solid var(--blume-accent);
   outline-offset: 2px;
 }
 
-.theme-card-enlarge [data-when="open"],
-.theme-card-input[data-expand]:checked
-  ~ .theme-card-actions
-  .theme-card-enlarge
-  [data-when="closed"] {
+/* Only the captures in the chosen mode show. */
+.theme-showcase:has(input[value="light"]:checked) img[data-mode="dark"],
+.theme-showcase:has(input[value="dark"]:checked) img[data-mode="light"] {
   display: none;
 }
 
-.theme-card-input[data-expand]:checked
-  ~ .theme-card-actions
-  .theme-card-enlarge
-  [data-when="open"] {
-  display: inline;
-}
-
-.theme-card-detail {
-  display: none;
-  padding-block-end: 0.25rem;
-  padding-inline: 0.25rem;
-  font-size: 0.8125rem;
-  color: var(--blume-muted-foreground);
-}
-
-.theme-card-input[data-expand]:checked ~ .theme-card-detail {
-  display: grid;
+.theme-showcase-bar {
+  display: flex;
+  flex-wrap: wrap;
   gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-block-start: 0.25rem;
 }
 
-.theme-card-detail dl {
-  display: grid;
-  grid-template-columns: max-content minmax(0, 1fr);
-  gap: 0.375rem 1rem;
-  align-items: baseline;
+.theme-showcase-modes {
+  display: flex;
+  padding: 2px;
+  margin: 0;
+  border: 1px solid var(--blume-border);
+  border-radius: 999px;
 }
 
-.theme-card-detail dt {
-  font-size: 0.6875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+.theme-showcase-modes label,
+.theme-showcase-try,
+.theme-showcase-open {
+  padding: 0.375rem 0.75rem;
+  font-family: var(--blume-font-mono);
+  font-size: 0.75rem;
+  line-height: 1;
+  color: var(--blume-muted-foreground);
+  text-decoration: none;
+  cursor: pointer;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  transition:
+    color 140ms ease,
+    background-color 140ms ease;
 }
 
-.theme-card-detail dd {
+.theme-showcase-modes label:hover,
+.theme-showcase-try:hover {
   color: var(--blume-foreground);
 }
 
-.theme-card-detail code {
-  font-family: var(--blume-font-mono);
-  font-size: 0.8125rem;
+.theme-showcase-modes label:has(:checked) {
+  color: var(--blume-foreground);
+  background-color: var(--blume-muted);
 }
 
-.theme-card-detail a {
-  justify-self: start;
-  color: var(--blume-accent);
-  text-decoration-line: underline;
-  text-underline-offset: 3px;
+.theme-showcase-modes label:has(:focus-visible) {
+  outline: 2px solid var(--blume-accent);
+  outline-offset: 2px;
+}
+
+.theme-showcase-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.theme-showcase-try {
+  border-color: var(--blume-border);
+}
+
+.theme-showcase-open {
+  color: var(--blume-accent-foreground);
+  background-color: var(--blume-accent);
+}
+
+.theme-showcase-open:hover {
+  background-color: color-mix(
+    in oklch,
+    var(--blume-accent) 88%,
+    var(--blume-foreground)
+  );
 }

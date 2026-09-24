@@ -211,6 +211,15 @@ one slide. Use them instead of route-level special cases.
 theme accent and the ink flips, chrome included. Use it once or twice in a deck,
 for the one sentence that has to land, and never on two slides in a row.
 
+It also takes the roles `"hero"`, `"breaker"`, `"statement"`, and `"closing"`.
+Put `"hero"` on the opener, `"breaker"` on each section break, `"statement"` on
+the one sentence the deck is built around, and `"closing"` on the last slide. A
+theme that paints the role in `motion`, such as aurora, shows its animated field
+there, and every other theme renders the role as `"default"`, `"spotlight"`,
+`"default"`, and `"accent"` respectively (`slideBackgroundRoles` in
+`packages/core/src/types/slides.ts`). Prefer the role over the variant it falls
+back to, so switching the theme to one with fields needs no slide edits.
+
 `order` sorts a discovered module inside the discovered group. It cannot move the
 group: the spread position in `deck/slides.tsx` is authoritative, and
 `discoverSlides` drops `meta.order` from the definition. The deck sorts with

@@ -1,5 +1,9 @@
 import type { SlideDefinition, SlideTheme } from "@thebuilder/deckard-core"
-import { defineDeck, slideBackgroundModes } from "@thebuilder/deckard-core"
+import {
+  defineDeck,
+  slideBackgroundModes,
+  slideBackgroundRoles,
+} from "@thebuilder/deckard-core"
 import { describe, expect, it } from "vitest"
 
 import {
@@ -73,7 +77,24 @@ describe("checkSlides", () => {
 
 describe("slide backgrounds", () => {
   it("lists what @thebuilder/deckard-core paints for every deck", () => {
-    expect(builtInBackgrounds).toEqual([...slideBackgroundModes])
+    expect(builtInBackgrounds).toEqual([
+      ...slideBackgroundModes,
+      ...Object.keys(slideBackgroundRoles),
+    ])
+  })
+
+  it("passes a role on a theme that paints no motion", () => {
+    const deck = buildDeck(
+      [
+        { background: "hero", body: "one" },
+        { background: "breaker", body: "two" },
+        { background: "statement", body: "three" },
+        { background: "closing", body: "four" },
+      ],
+      theme
+    )
+
+    expect(checkSlides(deck, () => true).problems).toEqual([])
   })
 
   it("passes a variant the theme paints in a canvas", () => {

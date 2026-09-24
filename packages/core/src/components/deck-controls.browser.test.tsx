@@ -4,8 +4,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import type { SlideSummary } from "../deck/types"
 import { pushed } from "./__fixtures__/next-navigation"
 import { DeckControls, resetDeckControlsMemory } from "./deck-controls"
+import { SlideShellRuntime } from "./slide-shell-runtime"
+import { SlideViewParamsBoundary } from "./slide-view-params"
 
-// Pointer proximity and focus land outside any act() scope, the way they do in a
+// The cluster stays up this long after the pointer last moved.
+const idleHideMs = 2500
+const pastIdle = { interval: 50, timeout: idleHideMs + 1500 }
+
+// Pointer moves and focus land outside any act() scope, the way they do in a
 // browser, so the flag is only raised around the renders this test drives itself.
 function actNow(work: () => void) {
   Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true })
@@ -32,6 +38,20 @@ const slides = [summary(1), summary(2), summary(3)]
 let container: HTMLDivElement
 let root: Root
 
+function deckControls(presenterHref: string | undefined) {
+  return (
+    <DeckControls
+      currentNumber={2}
+      deckTitle="Test deck"
+      next={slides[2]}
+      presenterHref={presenterHref}
+      previous={slides[0]}
+      showColorModeToggle={true}
+      slides={slides}
+    />
+  )
+}
+
 function mountControls(
   { presenterHref }: { presenterHref?: string } = {
     presenterHref: "/presenter",
@@ -39,17 +59,30 @@ function mountControls(
 ) {
   actNow(() => {
     root.render(
-      <DeckControls
-        currentNumber={2}
-        deckTitle="Test deck"
-        next={slides[2]}
-        presenterHref={presenterHref}
-        previous={slides[0]}
-        showColorModeToggle={true}
-        slides={slides}
-      />
+      <>
+        <SlideViewParamsBoundary />
+        {deckControls(presenterHref)}
+      </>
     )
   })
+}
+
+// A slide navigation unmounts the cluster and mounts a new one.
+function remountControls() {
+  actNow(() => root.unmount())
+  root = createRoot(container)
+  mountControls()
+}
+
+// The URL store is module state, so a test that needs a particular URL has the
+// boundary publish it before the cluster mounts and reads it.
+function readUrl(search: string) {
+  window.history.replaceState(null, "", `${window.location.pathname}${search}`)
+  actNow(() => root.render(<SlideViewParamsBoundary />))
+}
+
+function wait(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 function controls() {
@@ -113,14 +146,33 @@ function stubMediaQueries(matching: Record<string, boolean>) {
   }
 }
 
-function movePointerTo(x: number, y: number) {
+// The viewport corner farthest from the cluster, well past revealDistance.
+function moveAwayFromControls() {
+  const box = controls().getBoundingClientRect()
+  const x = box.left > window.innerWidth - box.right ? 0 : window.innerWidth - 1
+  const y =
+    box.top > window.innerHeight - box.bottom ? 0 : window.innerHeight - 1
+
+  movePointerTo(x, y)
+}
+
+function movePointerTo(x: number, y: number, pointerType = "mouse") {
   window.dispatchEvent(
-    new PointerEvent("pointermove", { clientX: x, clientY: y })
+    new PointerEvent("pointermove", { clientX: x, clientY: y, pointerType })
   )
 }
 
+function movePointerOntoControls(pointerType?: string) {
+  const box = controls().getBoundingClientRect()
+
+  movePointerTo(box.left + box.width / 2, box.top + box.height / 2, pointerType)
+}
+
 beforeEach(() => {
+  // A captured page skips the first-mount reveal, so every test starts with the
+  // cluster at rest. The intro tests clear the marker.
   resetDeckControlsMemory()
+  document.documentElement.setAttribute("data-deck-capture", "")
   pushed.length = 0
   container = document.createElement("div")
   container.style.position = "fixed"
@@ -132,6 +184,8 @@ beforeEach(() => {
 afterEach(() => {
   actNow(() => root.unmount())
   container.remove()
+  document.documentElement.removeAttribute("data-deck-capture")
+  window.history.replaceState(null, "", window.location.pathname)
   vi.restoreAllMocks()
 })
 
@@ -198,22 +252,119 @@ describe("DeckControls", () => {
     expect(cluster().className).toContain("opacity-0")
   })
 
-  it("reveals the cluster when the pointer comes near it", async () => {
+  it("reveals the cluster when the pointer moves anywhere and hides it once the pointer rests", async () => {
     const restore = stubMediaQueries({ "(any-pointer: fine)": true })
 
     try {
       mountControls()
 
-      const box = controls().getBoundingClientRect()
-
-      movePointerTo(box.left + box.width / 2, box.top + box.height / 2)
+      moveAwayFromControls()
       await vi.waitUntil(isRevealed)
 
-      movePointerTo(box.right + 900, box.bottom + 900)
-      await vi.waitUntil(() => !isRevealed())
+      const movedAt = Date.now()
+
+      await vi.waitUntil(() => !isRevealed(), pastIdle)
+
+      expect(Date.now() - movedAt).toBeGreaterThanOrEqual(idleHideMs - 100)
     } finally {
       restore()
     }
+  })
+
+  it("keeps the cluster up while the pointer rests near it, across a slide navigation", async () => {
+    const restore = stubMediaQueries({ "(any-pointer: fine)": true })
+
+    try {
+      mountControls()
+
+      movePointerOntoControls()
+      await vi.waitUntil(isRevealed)
+      await wait(idleHideMs + 300)
+
+      expect(isRevealed()).toBe(true)
+
+      remountControls()
+
+      expect(isRevealed()).toBe(true)
+
+      moveAwayFromControls()
+      await vi.waitUntil(() => !isRevealed(), pastIdle)
+    } finally {
+      restore()
+    }
+  }, 15_000)
+
+  it("keeps a reveal earned by movement across a slide navigation", async () => {
+    const restore = stubMediaQueries({ "(any-pointer: fine)": true })
+
+    try {
+      mountControls()
+      moveAwayFromControls()
+      await vi.waitUntil(isRevealed)
+
+      remountControls()
+
+      expect(isRevealed()).toBe(true)
+    } finally {
+      restore()
+    }
+  })
+
+  it("reveals the cluster once when the deck first mounts, and not on later mounts", async () => {
+    document.documentElement.removeAttribute("data-deck-capture")
+    mountControls()
+
+    await vi.waitUntil(isRevealed)
+    await vi.waitUntil(() => !isRevealed(), pastIdle)
+
+    remountControls()
+    await wait(100)
+
+    expect(isRevealed()).toBe(false)
+  }, 10_000)
+
+  it("skips the first-mount reveal while the page is captured", async () => {
+    document.documentElement.setAttribute("data-deck-capture", "")
+    mountControls()
+    await wait(100)
+
+    expect(isRevealed()).toBe(false)
+  })
+
+  it("ignores touch movement", async () => {
+    const restore = stubMediaQueries({ "(any-pointer: fine)": true })
+
+    try {
+      mountControls()
+      movePointerOntoControls("touch")
+      await wait(100)
+
+      expect(isRevealed()).toBe(false)
+    } finally {
+      restore()
+    }
+  })
+
+  it("sits in a shell that drops it from a presenter preview", () => {
+    readUrl("?presenterPreview=1")
+    actNow(() =>
+      root.render(
+        <SlideShellRuntime
+          controls={deckControls("/presenter")}
+          slide={slides[1]}
+          slides={slides}
+        >
+          <div />
+        </SlideShellRuntime>
+      )
+    )
+
+    const shell = controls().closest("[data-slide-chrome]")
+
+    expect(shell?.getAttribute("data-slide-chrome")).toBe("hidden")
+    expect(controls().className).toContain(
+      "group-data-[slide-chrome=hidden]/shell:hidden"
+    )
   })
 
   it("still answers the command shortcut while it is hidden", async () => {
@@ -228,7 +379,7 @@ describe("DeckControls", () => {
     await vi.waitUntil(isRevealed)
   })
 
-  it("gives a hybrid machine the handle and the proximity reveal", async () => {
+  it("gives a hybrid machine the handle and the pointer reveal", async () => {
     const restore = stubMediaQueries({
       "(any-pointer: coarse)": true,
       "(any-pointer: fine)": true,
@@ -239,9 +390,7 @@ describe("DeckControls", () => {
 
       expect(handle()).not.toBeNull()
 
-      const box = controls().getBoundingClientRect()
-
-      movePointerTo(box.left + box.width / 2, box.top + box.height / 2)
+      movePointerOntoControls()
       await vi.waitUntil(isRevealed)
     } finally {
       restore()
@@ -256,10 +405,8 @@ describe("DeckControls", () => {
 
       expect(handle()).not.toBeNull()
 
-      const box = controls().getBoundingClientRect()
-
-      movePointerTo(box.left + box.width / 2, box.top + box.height / 2)
-      await new Promise((resolve) => setTimeout(resolve, 50))
+      movePointerOntoControls()
+      await wait(50)
 
       expect(isRevealed()).toBe(false)
 

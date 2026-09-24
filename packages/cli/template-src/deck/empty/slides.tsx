@@ -6,6 +6,7 @@ export const slides: SlideDefinition[] = [
   {
     slug: "intro",
     title: "__DECK_TITLE__",
+    background: "hero",
     body: <HeroSlide eyebrow="A Deckard deck" />,
   },
   {

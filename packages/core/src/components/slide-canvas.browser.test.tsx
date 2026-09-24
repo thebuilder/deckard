@@ -137,3 +137,51 @@ describe("canvas theme scoping", () => {
     expect(renderThemedCanvas(["light"])).toBe(light)
   })
 })
+
+describe("background roles", () => {
+  function renderBackground(background: string, theme = resolveTheme()) {
+    act(() => {
+      root.render(
+        <SlideCanvas background={background} canvas={canvas} theme={theme}>
+          <div />
+        </SlideCanvas>
+      )
+    })
+
+    const element = container.querySelector<HTMLElement>("[data-slide-canvas]")
+    const layer = container.querySelector<HTMLElement>(".slide-background")
+
+    return {
+      canvas: element?.dataset.slideBackground,
+      layer: layer?.dataset.slideBackground,
+      motion: layer?.querySelector("[data-slide-motion]") !== null,
+    }
+  }
+
+  it("renders a role the theme does not animate as its fallback variant", () => {
+    expect(renderBackground("closing")).toEqual({
+      canvas: "accent",
+      layer: "accent",
+      motion: false,
+    })
+    expect(renderBackground("breaker")).toEqual({
+      canvas: "spotlight",
+      layer: "spotlight",
+      motion: false,
+    })
+  })
+
+  it("keeps a role the theme animates and mounts its field", () => {
+    const animated = resolveTheme({
+      className: themeClassName,
+      colorModes: ["light", "dark"],
+      defaultColorMode: "system",
+      id: "test",
+      motion: { hero: "aurora" },
+    })
+    const rendered = renderBackground("hero", animated)
+
+    expect(rendered.canvas).toBe("hero")
+    expect(rendered.layer).toBe("hero")
+  })
+})

@@ -27,7 +27,7 @@ let root: Root
 function resolved(state: Partial<ReturnType<typeof getThemeSwitchState>> = {}) {
   act(() => {
     publishThemeSwitch({
-      isPresenterPreview: false,
+      isFramed: false,
       isResolved: true,
       themeId: null,
       ...state,
@@ -57,7 +57,7 @@ beforeEach(() => {
 
   act(() => {
     publishThemeSwitch({
-      isPresenterPreview: false,
+      isFramed: false,
       isResolved: false,
       themeId: null,
     })
@@ -136,8 +136,8 @@ describe("DeckThemePicker", () => {
     expect(button?.getAttribute("aria-pressed")).toBe("true")
   })
 
-  it("stays out of a presenter preview, which carries the deck and no chrome", () => {
-    resolved({ isPresenterPreview: true })
+  it("stays out of a framed deck, which the framing page drives", () => {
+    resolved({ isFramed: true })
     renderPicker()
 
     expect(container.querySelector("[data-deck-theme-picker]")).toBeNull()

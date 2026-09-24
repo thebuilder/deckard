@@ -35,6 +35,7 @@ export const slides: SlideDefinition[] = [
         eyebrow="A Deckard deck"
       />
     ),
+    background: "hero",
   },
   {
     title: "Where things are",
@@ -80,6 +81,7 @@ export const slides: SlideDefinition[] = [
   },
   {
     title: "Over to you",
+    background: "closing",
     body: (
       <HeroSlide
         description="Delete these slides, keep the wiring, and write the talk."

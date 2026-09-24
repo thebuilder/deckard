@@ -181,7 +181,7 @@ export function HeroSlide({
 
       {meta && meta.length > 0 ? (
         <div
-          className="mt-[var(--slide-content-gap)] flex gap-14 border-[var(--slide-surface-border)] border-t pt-7 font-[family-name:var(--slide-font-mono)] text-[length:var(--slide-label-size)] text-muted-foreground"
+          className="mt-[var(--slide-content-gap)] flex gap-14 font-[family-name:var(--slide-font-mono)] text-[length:var(--slide-label-size)] text-muted-foreground"
           data-slide-hero-meta=""
         >
           {meta.map((entry) => (

@@ -509,10 +509,12 @@
 }
 
 /* The folio sits centred under the text block, where a printed page carries it,
- * and the deck has no progress bar: a page does not tell you how far in you are. */
+ * and the deck has no progress bar: a page does not tell you how far in you are.
+ * The heavy rule the background sets above it is the line at the foot, so the
+ * footer draws none of its own. */
 
 .ledger-theme [data-slide-footer] {
-  border-block-start-width: 1px;
+  border-block-start-width: 0;
 }
 
 .ledger-theme [data-slide-counter] {

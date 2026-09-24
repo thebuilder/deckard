@@ -1,0 +1,120 @@
+---
+import "../styles/theme-gallery.css"
+import { playgroundHref } from "../lib/playground"
+import { previewSrc } from "../lib/preview-src"
+import {
+  type PreviewColorMode,
+  themePreviewPath,
+  themePreviewSlides,
+} from "../lib/slide-previews"
+import { galleryTheme, type ThemeName } from "../lib/theme-gallery"
+
+interface Props {
+  theme: ThemeName
+}
+
+const { theme } = Astro.props
+const { homeMode } = galleryTheme[theme]
+const modes: PreviewColorMode[] = ["light", "dark"]
+const slideNames = {
+  close: "Close",
+  decision: "Comparison",
+  figures: "Figures",
+  opening: "Opener",
+} as const
+---
+
+{/*
+ * Each slide's label holds its large capture and its thumbnail, so the checked
+ * label shows its own large capture and the stylesheet names no slide. The
+ * mode radios hide the captures in the other mode. It works with script off,
+ * and a lazy image that is not showing is never fetched.
+ */}
+<div
+  class="theme-showcase not-prose"
+  style={`--showcase-slides: ${themePreviewSlides.length}`}
+>
+  <fieldset class="theme-showcase-slides">
+    <legend class="sr-only">Slide</legend>
+    {
+      themePreviewSlides.map((slide, index) => (
+        <label>
+          <input
+            aria-label={slideNames[slide]}
+            checked={index === 0}
+            class="sr-only"
+            name={`${theme}-slide`}
+            type="radio"
+            value={slide}
+          />
+          {modes.map((mode) => (
+            <img
+              alt={`${slideNames[slide]} slide of the example deck in ${theme}, ${mode} mode`}
+              class="theme-showcase-large"
+              data-mode={mode}
+              decoding="async"
+              height="720"
+              loading="lazy"
+              src={previewSrc(themePreviewPath(theme, slide, mode))}
+              width="1280"
+            />
+          ))}
+          <span class="theme-showcase-thumb">
+            {modes.map((mode) => (
+              <img
+                alt=""
+                data-mode={mode}
+                decoding="async"
+                height="720"
+                loading="lazy"
+                src={previewSrc(themePreviewPath(theme, slide, mode))}
+                width="1280"
+              />
+            ))}
+            <span>{slideNames[slide]}</span>
+          </span>
+        </label>
+      ))
+    }
+  </fieldset>
+
+  <div class="theme-showcase-bar">
+    <fieldset class="theme-showcase-modes">
+      <legend class="sr-only">Color mode</legend>
+      {
+        modes.map((mode) => (
+          <label>
+            <input
+              checked={mode === homeMode}
+              class="sr-only"
+              name={`${theme}-mode`}
+              type="radio"
+              value={mode}
+            />
+            {mode === "light" ? "Light" : "Dark"}
+          </label>
+        ))
+      }
+    </fieldset>
+
+    <div class="theme-showcase-links">
+      <button
+        class="theme-showcase-try"
+        data-live-deck-mode={homeMode}
+        data-live-deck-theme={theme}
+        hidden
+        type="button"
+      >
+        Try it in the live deck
+      </button>
+      <a
+        class="theme-showcase-open"
+        href={playgroundHref("/example/opening", { mode: homeMode, theme })}
+        rel="noopener"
+        target="_blank"
+      >
+        Open the deck in {theme}
+      </a>
+    </div>
+  </div>
+</div>

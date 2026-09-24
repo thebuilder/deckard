@@ -97,7 +97,8 @@ styling of its own. This file decides what each variant paints.
 - `accent` is the inverted statement slide: the canvas floods with the theme
   accent and the ink flips.
 - `none` renders nothing at all. `SlideBackground` returns `null`.
-- `hero`, `breaker`, `statement`, and `closing` are the fields, below.
+- `hero`, `breaker`, `statement`, and `closing` are the background roles every
+  deck can write, and this theme paints each one as a field, below.
 
 `accent` is painted by two unlayered rules near the bottom of this file. A base
 layer fallback ships in `@thebuilder/deckard-core/styles.css`, and a theme's unlayered CSS
@@ -111,8 +112,9 @@ element that uses it: remapping `--primary` on the same element that reads
 
 ## The motion fields
 
-`index.ts` names four variants in `motion`, which is what makes
-`SlideBackground` render a canvas inside the background layer for them:
+`index.ts` names every background role in `motion`, which is what makes
+`SlideBackground` render a canvas inside the background layer for them. Mark
+the slides by role and the fields appear:
 
 | Variant     | Field    | Where it goes in a deck                    |
 | ----------- | -------- | ------------------------------------------ |
@@ -124,8 +126,15 @@ element that uses it: remapping `--primary` on the same element that reads
 The three fields are the shader programs `@thebuilder/deckard-core` ships: `aurora` is
 banded curtains over noise, `waves` is a horizontal band that undulates, and
 `wash` is a soft noise field with a dither. A deck picks a field by picking the
-variant whose name matches the moment it is on, so `background: "closing"` on a
+role that matches the moment it is on, so `background: "closing"` on a
 mid-deck slide is a legal way to ask for the wave field.
+
+Write the opener as `background: "hero"`, each section break as `"breaker"`, the
+statement as `"statement"`, and the last slide as `"closing"`. The same deck on
+a theme with no fields renders those slides as `default`, `spotlight`,
+`default`, and `accent`, the fallbacks in `slideBackgroundRoles`, so the roles
+stay in the deck when the theme changes. A slide written as `"default"` or
+`"spotlight"` never shows a field here.
 
 Each variant sets `--slide-motion-color-1`, `--slide-motion-color-2`, and
 `--slide-motion-color-3` on the background layer, which the canvas inherits and
@@ -152,12 +161,15 @@ A paragraph over a field is the thing to move onto the flat sheet.
 
 A frozen field still draws. It renders one fixed frame and holds it, so a
 screenshot, a contact sheet, and a PDF page of the same slide are the same
-image. Reduced motion, a running capture, the presenter preview, and a deck or
-slide that asks for `motion: "frozen"` each freeze it.
+image. Reduced motion, a running capture, and a deck or slide that asks for
+`motion: "frozen"` each freeze it. A presenter preview mounts no canvas at all
+and shows the gradient.
 
 The four variants also lighten `--slide-chrome-border` and
 `--slide-progress-track` to a mix off the foreground, because the border colour
-that reads on the flat sheet disappears against a field.
+that reads on the flat sheet disappears against a field. `hero` and `breaker`
+fade the chrome border further, and `hero` dims the text of
+`[data-slide-hero-meta]`, so the cover reads as copy on the curtains.
 
 ## Block parts
 

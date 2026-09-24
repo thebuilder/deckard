@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from "react"
-import { forcedColorMode, motionField } from "../deck/theme"
+import { forcedColorMode, resolveBackground } from "../deck/theme"
 import type { DeckCanvasConfig, SlideTheme } from "../deck/types"
 import { cn } from "../lib/utils"
 import type {
@@ -45,6 +45,7 @@ export function SlideCanvas({
     height: canvas.height,
     width: canvas.width,
   } as CSSProperties
+  const resolved = resolveBackground(theme, background)
 
   return (
     <div
@@ -54,7 +55,7 @@ export function SlideCanvas({
       )}
       data-canvas-height={canvas.height}
       data-canvas-width={canvas.width}
-      data-slide-background={background}
+      data-slide-background={resolved.variant}
       data-slide-canvas=""
       data-slide-color-mode={forcedColorMode(theme)}
       data-slide-layout={layout}
@@ -62,9 +63,9 @@ export function SlideCanvas({
       style={canvasStyle}
     >
       <SlideBackground
-        field={motionField(theme, background)}
+        field={resolved.field}
         frozen={motion === "frozen"}
-        variant={background}
+        variant={resolved.variant}
       />
       {header}
       <main
