@@ -1,6 +1,6 @@
 # @thebuilder/deckard-core
 
-The deck contract and the runtime behind [Deckard](https://deckard.thebuilder.dk), a React presentation framework for Next.js. `defineDeck`, the fixed 1920x1080 canvas, the slide shell, keyboard navigation, presenter mode, and the Next.js route adapters.
+The deck contract and the runtime behind [Deckard](https://deckard.thebuilder.dk), a React presentation framework for Next.js. `defineDeck`, the fixed 1920x1080 canvas, the slide shell, keyboard and swipe navigation, presenter mode, and the Next.js route adapters.
 
 ## Install
 

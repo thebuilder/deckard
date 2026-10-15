@@ -1,6 +1,6 @@
 ---
 title: Presenting
-description: Keyboard navigation, the command center, the presenter window, speaker notes, step reveals, and the deck controls cluster.
+description: Keyboard and swipe navigation, the command center, the presenter window, speaker notes, step reveals, and the deck controls cluster.
 sidebar:
   icon: presentation
 ---
@@ -19,6 +19,20 @@ Navigation keys are ignored while you are typing in a field, when the event alre
 
 On a stepped slide the arrow keys walk the steps first and only then move to the next slide, so one key drives the whole deck.
 
+## Touch
+
+On a touchscreen, swipe left for the next step or slide and swipe right for the previous one. A swipe walks the steps the same way the arrow keys do.
+
+A swipe counts when it is mostly horizontal, at least 50 browser pixels long, and finished within 800 milliseconds. It is ignored when it starts:
+
+- on a link, button, input, or anything marked `data-step-ignore-click="true"`
+- inside content that scrolls sideways, such as a wide code block
+- on the deck controls or an open dialog
+- near the left or right edge of the screen, where the phone runs its own back gesture
+- while the page is pinch-zoomed, or once a second finger lands
+
+The thresholds live in `packages/core/src/components/slide-stepper.tsx`. The deck page also turns off sideways overscroll on the root element, so Chrome on a touchscreen does not step browser history on the same swipe.
+
 ## The command center
 
 `Cmd/Ctrl + K` opens a searchable list of every slide by number and title. Pick one and the deck navigates. It opens whether or not the controls cluster is showing.
@@ -29,7 +43,11 @@ The command center trigger, presenter popout, color mode toggle, and compact pre
 
 The cluster shows for a couple of seconds when the deck first loads, then hides. Moving the pointer anywhere in the window brings it back, and it hides again once the pointer has been still for the same couple of seconds, unless the pointer rests near the corner, something inside the cluster has focus, the command dialog is open, or it has been pinned open. The first-load reveal happens once per page load, not on every slide, and never while a `deckard` capture command is photographing the page or inside a presenter preview.
 
-A device matching `(any-pointer: coarse)` also gets a handle in the corner that pins the cluster open on tap, and touch movement leaves the cluster alone. The pointer reveal is on wherever `(any-pointer: fine)` or `(hover: hover)` matches. The queries ask per capability rather than about the primary pointer, so a hybrid laptop with a trackpad and a touchscreen gets both affordances.
+A phone or a tablet, where `(pointer: coarse)` matches, docks the cluster in a row directly under the slide and keeps it showing. The slide shrinks to leave the row room, so the controls never cover the footer.
+
+Any other device matching `(any-pointer: coarse)` gets a handle in the corner that pins the cluster open on tap, and touch movement leaves the cluster alone. The pointer reveal is on wherever `(any-pointer: fine)` or `(hover: hover)` matches. These queries ask per capability rather than about the primary pointer, so a hybrid laptop with a trackpad and a touchscreen gets both affordances.
+
+`SlideShell` takes a `controlsAccessory`, a deck's own control rendered first in the cluster. It reveals and docks with the rest of the cluster.
 
 Hidden means transparent, not absent. The buttons stay in the accessibility tree and tabbing into them reveals the cluster. A presenter preview and a PDF export drop the cluster entirely and keep the header and footer.
 
@@ -116,7 +134,7 @@ Hidden steps stay in the layout, so a stepped slide takes its full height from t
 | `mountOnReveal` | `false` | Render an empty placeholder until the step arrives, instead of a hidden copy. Use it for something expensive. |
 | `className` | | Applied to the step wrapper. |
 
-`SlideStepAdvanceArea` wraps content in a click-to-advance surface. Clicks on links, buttons, inputs, and anything marked `data-step-ignore-click="true"` pass through untouched.
+`SlideStepAdvanceArea` wraps content in a click-to-advance surface. Clicks on links, buttons, inputs, and anything marked `data-step-ignore-click="true"` pass through untouched, and a swipe that starts on one of them does not page the deck.
 
 `useSlideStepper()` returns the current step, the count, and `advance` / `retreat` / `canAdvance` / `canRetreat` / `isReadOnly`, for a slide that wants to drive its own reveal. It returns `null` outside a stepper.
 

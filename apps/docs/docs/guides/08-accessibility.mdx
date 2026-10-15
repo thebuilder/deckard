@@ -11,7 +11,7 @@ The runtime gives every slide landmarks, names every control, and keeps the deck
 
 - The shell renders `<header>`, `<main>`, `<footer>`, and a `<nav aria-label="Deck controls">`. Your slide body lands inside `<main>`.
 - Every control in the cluster has an `aria-label`: the command center trigger, the presenter popout, the colour mode toggle, and previous and next.
-- The controls cluster is invisible at rest but stays in the accessibility tree and in tab order. Tabbing into it reveals it.
+- The controls cluster is invisible at rest but stays in the accessibility tree and in tab order. Tabbing into it reveals it. On a phone or a tablet it stays visible in a row under the slide.
 - Unrevealed step content carries `aria-hidden` and `inert`, so a screen reader and the tab order both skip it until it appears.
 - The slide title becomes the document title, through `generateMetadata`.
 - The footer progress bar is `aria-hidden` and the slide counter next to it is plain text, so the position is read rather than inferred from a graphic.
@@ -58,6 +58,8 @@ An interactive slide is a client component like any other, and the deck does not
 ```
 
 Calling `preventDefault()` on the event also stops the deck, since it skips anything already handled.
+
+The same marker keeps a swipe that starts on the widget from paging the deck. Content that scrolls sideways is left its swipe without a marker.
 
 ## Headings
 

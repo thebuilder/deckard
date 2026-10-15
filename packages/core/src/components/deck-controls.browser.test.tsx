@@ -397,24 +397,38 @@ describe("DeckControls", () => {
     }
   })
 
-  it("gives a touch-only machine the handle and nothing to hover with", async () => {
-    const restore = stubMediaQueries({ "(any-pointer: coarse)": true })
+  it("docks the cluster open on a machine whose primary pointer is coarse", () => {
+    const restore = stubMediaQueries({
+      "(any-pointer: coarse)": true,
+      "(pointer: coarse)": true,
+    })
 
     try {
       mountControls()
 
-      expect(handle()).not.toBeNull()
-
-      movePointerOntoControls()
-      await wait(50)
-
-      expect(isRevealed()).toBe(false)
-
-      handle()?.click()
-      await vi.waitUntil(isRevealed)
+      expect(handle()).toBeNull()
+      expect(isRevealed()).toBe(true)
     } finally {
       restore()
     }
+  })
+
+  it("puts a deck's accessory first in the cluster", () => {
+    actNow(() => {
+      root.render(
+        <DeckControls
+          accessory={<select aria-label="Deck theme" />}
+          currentNumber={2}
+          deckTitle="Test deck"
+          showColorModeToggle={false}
+          slides={slides}
+        />
+      )
+    })
+
+    expect(cluster().firstElementChild?.getAttribute("aria-label")).toBe(
+      "Deck theme"
+    )
   })
 
   it("navigates from the revealed buttons", async () => {

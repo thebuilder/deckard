@@ -3,7 +3,7 @@
 import { SlideShell } from "@thebuilder/deckard-core/components"
 import { type ComponentProps, useMemo } from "react"
 import { ThemeSwitchBoundary, useDeckTheme } from "./deck-theme"
-import { DeckThemePicker } from "./deck-theme-picker"
+import { DeckThemePicker, DeckThemeSelect } from "./deck-theme-picker"
 
 type ThemedSlideShellProps = ComponentProps<typeof SlideShell> & {
   /** Off for a PDF build, which renders the theme deck.ts names and no chrome. */
@@ -27,7 +27,13 @@ export function ThemedSlideShell({
 
   return (
     <>
-      <SlideShell {...props} deck={deck}>
+      <SlideShell
+        {...props}
+        controlsAccessory={
+          themeSwitchEnabled ? <DeckThemeSelect deckTheme={deckTheme} /> : null
+        }
+        deck={deck}
+      >
         {children}
       </SlideShell>
 

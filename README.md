@@ -10,8 +10,8 @@ components, your styles.
 
 Deckard supplies the parts a presentation needs and an app does not. A fixed
 1920x1080 canvas that scales to whatever screen it lands on, so a slide looks
-the same on a laptop, a projector, and in the exported PDF. Keyboard
-navigation, step reveals, a command menu, and a presenter window carrying your
+the same on a laptop, a projector, and in the exported PDF. Keyboard and
+swipe navigation, step reveals, a command menu, and a presenter window carrying your
 notes. Themes you can take ownership of the moment you want to.
 
 ![A slide from the reference deck](assets/deck.png)
