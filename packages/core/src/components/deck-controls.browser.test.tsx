@@ -413,6 +413,24 @@ describe("DeckControls", () => {
     }
   })
 
+  it("puts a deck's accessory first in the cluster", () => {
+    actNow(() => {
+      root.render(
+        <DeckControls
+          accessory={<select aria-label="Deck theme" />}
+          currentNumber={2}
+          deckTitle="Test deck"
+          showColorModeToggle={false}
+          slides={slides}
+        />
+      )
+    })
+
+    expect(cluster().firstElementChild?.getAttribute("aria-label")).toBe(
+      "Deck theme"
+    )
+  })
+
   it("navigates from the revealed buttons", async () => {
     mountControls()
 

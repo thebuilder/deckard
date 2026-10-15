@@ -26,6 +26,8 @@ import { StaticMediaBoundary } from "./static-media-boundary"
 interface SlideShellProps {
   background?: SlideBackgroundMode
   children: ReactNode
+  /** A deck's own control, rendered first in the deck controls cluster. */
+  controlsAccessory?: ReactNode
   controlsHidden?: boolean
   deck: DeckPresentation
   footerMode?: SlideFooterMode
@@ -126,6 +128,7 @@ function stageAspectRatio({ height, margin, width }: DeckCanvasConfig) {
 export function SlideShell({
   background = "default",
   children,
+  controlsAccessory,
   controlsHidden = false,
   deck,
   footerMode = "visible",
@@ -149,6 +152,7 @@ export function SlideShell({
     <SlideShellRuntime
       controls={
         <DeckControls
+          accessory={controlsAccessory}
           currentNumber={slide.number}
           deckTitle={deck.title}
           next={next}

@@ -2,7 +2,7 @@
 
 import { ArrowLeft, ArrowRight, ChevronUp } from "lucide-react"
 import { useRouter } from "next/navigation"
-import type { RefObject } from "react"
+import type { ReactNode, RefObject } from "react"
 import {
   useCallback,
   useEffect,
@@ -215,6 +215,8 @@ function useFocusWithin(anchor: RefObject<HTMLElement | null>) {
 }
 
 interface DeckControlsProps {
+  /** A deck's own control, first in the cluster and revealed with it. */
+  accessory?: ReactNode
   currentNumber: number
   deckTitle: string
   next?: SlideSummary
@@ -225,6 +227,7 @@ interface DeckControlsProps {
 }
 
 export function DeckControls({
+  accessory,
   currentNumber,
   deckTitle,
   next,
@@ -324,6 +327,7 @@ export function DeckControls({
         )}
         data-deck-controls-cluster=""
       >
+        {accessory}
         <SlideCommandCenter
           currentNumber={currentNumber}
           deckTitle={deckTitle}

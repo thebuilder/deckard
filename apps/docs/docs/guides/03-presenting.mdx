@@ -47,6 +47,8 @@ A phone or a tablet, where `(pointer: coarse)` matches, docks the cluster in a r
 
 Any other device matching `(any-pointer: coarse)` gets a handle in the corner that pins the cluster open on tap, and touch movement leaves the cluster alone. The pointer reveal is on wherever `(any-pointer: fine)` or `(hover: hover)` matches. These queries ask per capability rather than about the primary pointer, so a hybrid laptop with a trackpad and a touchscreen gets both affordances.
 
+`SlideShell` takes a `controlsAccessory`, a deck's own control rendered first in the cluster. It reveals and docks with the rest of the cluster.
+
 Hidden means transparent, not absent. The buttons stay in the accessibility tree and tabbing into them reveals the cluster. A presenter preview and a PDF export drop the cluster entirely and keep the header and footer.
 
 ## The presenter window

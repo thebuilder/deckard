@@ -6,6 +6,7 @@ Releases are tags. Pushing `v<version>` runs `.github/workflows/release.yml`, wh
 
 - A swipe left or right on a touchscreen steps the deck forward or back, the way the arrow keys do. A swipe that starts on a control, inside sideways-scrolling content, outside the slide, or at the screen edge is left alone.
 - On a phone or a tablet the deck controls dock in a row under the slide and stay visible, instead of a handle over the slide's corner.
+- `SlideShell` takes `controlsAccessory`, a deck's own control rendered first in the deck controls cluster.
 
 ## 0.2.0, 2026-09-24
 
