@@ -40,7 +40,9 @@ function ThemeButton({
  * Outside the canvas, so it never lands on a slide, in a screenshot, or in the
  * PDF. Bottom left, opposite the deck controls, and revealed with them: the
  * canvas fills the window at 16:9, so a bar parked in the corner would sit on
- * the slide's own counter. app/globals.css holds the reveal.
+ * the slide's own counter. app/globals.css holds the reveal. On a touchscreen
+ * the controls dock under the slide and stay up, so the picker keeps to one
+ * scrolling row that stops short of them.
  */
 export function DeckThemePicker({ deckTheme }: { deckTheme: SlideTheme }) {
   const { isFramed, isResolved } = useThemeSwitch()
@@ -52,7 +54,7 @@ export function DeckThemePicker({ deckTheme }: { deckTheme: SlideTheme }) {
 
   return (
     <fieldset
-      className="fixed bottom-0 left-0 z-50 flex flex-wrap items-center gap-1.5 p-3 sm:p-4"
+      className="fixed bottom-0 left-0 z-50 flex pointer-coarse:min-w-0 pointer-coarse:max-w-[calc(100%-14rem)] flex-wrap pointer-coarse:flex-nowrap items-center gap-1.5 pointer-coarse:overflow-x-auto p-3 sm:p-4"
       data-deck-theme-picker=""
     >
       <legend className="sr-only">Deck theme</legend>

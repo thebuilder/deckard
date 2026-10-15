@@ -2,6 +2,11 @@
 
 Releases are tags. Pushing `v<version>` runs `.github/workflows/release.yml`, which packs, smokes, and publishes. The three packages version together: `@thebuilder/deckard-core`, `@thebuilder/deckard-themes`, and `@thebuilder/deckard-cli` ship the same number, and `deckard init` pins a new deck to the CLI's own version.
 
+## Unreleased
+
+- A swipe left or right on a touchscreen steps the deck forward or back, the way the arrow keys do. A swipe that starts on a control, inside sideways-scrolling content, outside the slide, or at the screen edge is left alone.
+- On a phone or a tablet the deck controls dock in a row under the slide and stay visible, instead of a handle over the slide's corner.
+
 ## 0.2.0, 2026-09-24
 
 - A slide's `background` takes four roles every theme accepts: `hero`, `breaker`, `statement`, and `closing`. A theme that paints a role in `motion` shows its field, and any other theme renders the role's fallback: `default` for `hero` and `statement`, `spotlight` for `breaker`, `accent` for `closing`. `deckard validate` accepts them, `resolveBackground` and `slideBackgroundRoles` are exported, and the `deckard init` sample marks its opener, breaks, and close. Aurora's field now shows on those slides.

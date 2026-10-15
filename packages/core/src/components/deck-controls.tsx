@@ -38,7 +38,13 @@ const idleHideMs = 2500
 // so a hybrid gets both. Either that or hover earns the reveal, because a
 // headless engine can report one of them missing while still delivering
 // pointermove.
+//
+// A machine whose primary pointer is coarse, a phone or a tablet, has nothing to
+// reveal the cluster with, so it docks the cluster in a row under the slide and
+// keeps it up. The layout half of that is the pointer-coarse: classes here and in
+// the shell, so it holds from the first paint.
 const touchQuery = "(any-pointer: coarse)"
+const dockedQuery = "(pointer: coarse)"
 const finePointerQuery = "(any-pointer: fine)"
 const hoverQuery = "(hover: hover)"
 
@@ -231,6 +237,7 @@ export function DeckControls({
   const stepper = useSlideStepper()
   const anchor = useRef<HTMLElement | null>(null)
   const hasTouch = useMediaQuery(touchQuery, false)
+  const isDocked = useMediaQuery(dockedQuery, false)
   const hasFinePointer = useMediaQuery(finePointerQuery, true)
   const canHover = useMediaQuery(hoverQuery, true)
   const canPoint = hasFinePointer || canHover
@@ -275,24 +282,25 @@ export function DeckControls({
 
   const hasPrevious = Boolean(previousHref || stepper?.canRetreat)
   const hasNext = Boolean(nextHref || stepper?.canAdvance)
-  const isRevealed = isPointerRevealed || isFocused || isCommandOpen || isPinned
+  const isRevealed =
+    isDocked || isPointerRevealed || isFocused || isCommandOpen || isPinned
 
   return (
     <nav
       aria-label="Deck controls"
       className={cn(
-        "pointer-events-none absolute right-0 bottom-0 z-50 flex items-center gap-2 p-3 sm:p-4",
+        "pointer-events-none pointer-coarse:static absolute right-0 bottom-0 z-50 flex items-center pointer-coarse:justify-end gap-2 p-3 sm:p-4",
         controlsHiddenClass
       )}
       data-deck-controls=""
       data-deck-controls-revealed={isRevealed ? "" : undefined}
       ref={anchor}
     >
-      {hasTouch ? (
+      {hasTouch && !isDocked ? (
         <Button
           aria-expanded={isRevealed}
           aria-label={isRevealed ? "Hide deck controls" : "Show deck controls"}
-          className="pointer-events-auto border-border/70 bg-background/80 text-muted-foreground backdrop-blur-sm"
+          className="pointer-events-auto pointer-coarse:hidden border-border/70 bg-background/80 text-muted-foreground backdrop-blur-sm"
           onClick={togglePinned}
           size="icon-sm"
           type="button"
@@ -312,7 +320,7 @@ export function DeckControls({
           "flex items-center gap-2 transition-[opacity,transform] duration-150 ease-out motion-reduce:translate-y-0 motion-reduce:transition-none",
           isRevealed
             ? "pointer-events-auto translate-y-0 opacity-100"
-            : "pointer-events-none translate-y-2 opacity-0"
+            : "pointer-events-none pointer-coarse:pointer-events-auto pointer-coarse:translate-y-0 translate-y-2 opacity-0 pointer-coarse:opacity-100"
         )}
         data-deck-controls-cluster=""
       >

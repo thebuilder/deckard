@@ -56,8 +56,12 @@ export function SlideShellRuntime({
         isPresenterPreview={isPreview}
         title={slide.authoredTitle}
       >
+        {/* A touchscreen with no pointer to reveal the controls docks them in a
+            row under the slide, so the shell stacks the two and centres them.
+            The root drops its sideways overscroll, which Chrome turns into a
+            history step on a touchscreen, so a swipe pages the deck once. */}
         <div
-          className="group/shell relative h-svh w-full overflow-hidden bg-background text-foreground"
+          className="group/shell relative pointer-coarse:flex h-svh w-full pointer-coarse:flex-col pointer-coarse:justify-center overflow-hidden bg-background text-foreground [:root:has(&)]:overscroll-x-none"
           data-slide-chrome={isPreview || controlsHidden ? "hidden" : undefined}
         >
           <SlideViewParamsBoundary />

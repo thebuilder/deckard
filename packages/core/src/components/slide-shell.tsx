@@ -1,6 +1,10 @@
 import type { ReactNode } from "react"
 import { canSwitchColorMode } from "../deck/theme"
-import type { DeckPresentation, SlideSummary } from "../deck/types"
+import type {
+  DeckCanvasConfig,
+  DeckPresentation,
+  SlideSummary,
+} from "../deck/types"
 import { cn } from "../lib/utils"
 import type {
   SlideBackgroundMode,
@@ -112,6 +116,13 @@ function chromeInset({ isFullscreen, showFooter, showHeader }: ChromeState) {
   }
 }
 
+// The viewport keeps the canvas margin on every side, so the stage carries it too.
+function stageAspectRatio({ height, margin, width }: DeckCanvasConfig) {
+  const gutter = margin > 0 ? margin * 2 : 0
+
+  return `${width + gutter} / ${height + gutter}`
+}
+
 export function SlideShell({
   background = "default",
   children,
@@ -160,50 +171,58 @@ export function SlideShell({
     >
       <SlidePrefetch slides={prefetch} />
 
-      <SlideViewport canvas={deck.canvas}>
-        <SlideCanvas
-          background={background}
-          canvas={deck.canvas}
-          chromeInset={chromeInset(chrome)}
-          footer={
-            chrome.showFooter ? (
-              <SlideCanvasFooter
-                number={slide.number}
-                showProgress={deck.showProgress}
-                total={slides.length}
-              />
-            ) : null
-          }
-          frameClassName={frameClassName(chrome)}
-          header={
-            chrome.showHeader ? (
-              <SlideCanvasHeader
-                brand={deck.title}
-                brandHref={deck.titleHref}
-                meta={deck.meta}
-                title={slide.authoredTitle}
-              />
-            ) : null
-          }
-          layout={layout}
-          motion={motion}
-          theme={deck.theme}
-        >
-          <SlideStepAdvanceArea className="h-full w-full">
-            <StaticMediaBoundary
-              activePath={slide.href}
-              className="h-full w-full"
-              enabled={freezeMedia}
-            >
-              <div className="h-full w-full">
-                <SlideErrorBoundary slideId={slide.id}>
-                  {children}
-                </SlideErrorBoundary>
-              </div>
-            </StaticMediaBoundary>
-          </SlideStepAdvanceArea>
-        </SlideCanvas>
-      </SlideViewport>
+      {/* The whole shell, or on a touchscreen a box shaped like the canvas
+          that shrinks to leave the docked controls their row. */}
+      <div
+        className="absolute pointer-coarse:relative inset-0 pointer-coarse:min-h-0 pointer-coarse:w-full"
+        data-slide-stage=""
+        style={{ aspectRatio: stageAspectRatio(deck.canvas) }}
+      >
+        <SlideViewport canvas={deck.canvas}>
+          <SlideCanvas
+            background={background}
+            canvas={deck.canvas}
+            chromeInset={chromeInset(chrome)}
+            footer={
+              chrome.showFooter ? (
+                <SlideCanvasFooter
+                  number={slide.number}
+                  showProgress={deck.showProgress}
+                  total={slides.length}
+                />
+              ) : null
+            }
+            frameClassName={frameClassName(chrome)}
+            header={
+              chrome.showHeader ? (
+                <SlideCanvasHeader
+                  brand={deck.title}
+                  brandHref={deck.titleHref}
+                  meta={deck.meta}
+                  title={slide.authoredTitle}
+                />
+              ) : null
+            }
+            layout={layout}
+            motion={motion}
+            theme={deck.theme}
+          >
+            <SlideStepAdvanceArea className="h-full w-full">
+              <StaticMediaBoundary
+                activePath={slide.href}
+                className="h-full w-full"
+                enabled={freezeMedia}
+              >
+                <div className="h-full w-full">
+                  <SlideErrorBoundary slideId={slide.id}>
+                    {children}
+                  </SlideErrorBoundary>
+                </div>
+              </StaticMediaBoundary>
+            </SlideStepAdvanceArea>
+          </SlideCanvas>
+        </SlideViewport>
+      </div>
     </SlideShellRuntime>
   )
 }

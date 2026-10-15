@@ -43,6 +43,56 @@ function isInteractiveTarget(target: EventTarget | null) {
   )
 }
 
+// A swipe is a horizontal flick, in browser pixels: long enough not to be a
+// tap, mostly sideways so a vertical drag never pages, and quick enough not to
+// be a slow drag over the slide.
+const swipeDistance = 50
+const swipeRatio = 1.5
+const swipeMaxMs = 800
+
+// Phones run their own back and forward gestures from the screen edges, so a
+// touch that starts there is left to the system rather than paging twice.
+const systemEdgeGutter = 24
+
+// Content that scrolls sideways keeps the swipe, the way a link keeps the tap.
+function isInsideHorizontalScroller(target: EventTarget | null) {
+  let node = target instanceof Element ? target : null
+
+  while (node && node !== document.documentElement) {
+    if (node.scrollWidth > node.clientWidth) {
+      const { overflowX } = window.getComputedStyle(node)
+
+      if (overflowX === "auto" || overflowX === "scroll") {
+        return true
+      }
+    }
+
+    node = node.parentElement
+  }
+
+  return false
+}
+
+function isIgnoredSwipeStart(event: TouchEvent) {
+  const touch = event.touches.item(0)
+
+  return (
+    event.touches.length !== 1 ||
+    !touch ||
+    touch.clientX < systemEdgeGutter ||
+    touch.clientX > window.innerWidth - systemEdgeGutter ||
+    // A pinch-zoomed page pans sideways under the finger.
+    (window.visualViewport?.scale ?? 1) > 1 ||
+    // The slide, not a dialog or the controls laid over it.
+    !(
+      event.target instanceof Element &&
+      event.target.closest("[data-slide-viewport]")
+    ) ||
+    isInteractiveTarget(event.target) ||
+    isInsideHorizontalScroller(event.target)
+  )
+}
+
 const previousKeys = ["ArrowLeft", "ArrowUp", "PageUp"]
 const nextKeys = ["ArrowRight", "ArrowDown", "PageDown", " "]
 const zoomKeys = ["+", "=", "-", "_"]
@@ -193,6 +243,75 @@ export function SlideStepper({
 
     window.addEventListener("keydown", onKeyDown)
     return () => window.removeEventListener("keydown", onKeyDown)
+  }, [goNext, goPrevious, readOnly])
+
+  // Passive and observe-only: the browser keeps its own scrolling and zooming,
+  // and a finished horizontal swipe pages the deck the way an arrow key does.
+  useEffect(() => {
+    if (readOnly) {
+      return
+    }
+
+    let start: { time: number; x: number; y: number } | null = null
+
+    function onTouchStart(event: TouchEvent) {
+      const touch = event.touches.item(0)
+
+      start =
+        touch && !isIgnoredSwipeStart(event)
+          ? { time: event.timeStamp, x: touch.clientX, y: touch.clientY }
+          : null
+    }
+
+    function onTouchMove(event: TouchEvent) {
+      if (event.touches.length > 1) {
+        start = null
+      }
+    }
+
+    function onTouchCancel() {
+      start = null
+    }
+
+    function onTouchEnd(event: TouchEvent) {
+      const touch = event.changedTouches.item(0)
+      const origin = start
+      start = null
+
+      if (!(origin && touch) || event.timeStamp - origin.time > swipeMaxMs) {
+        return
+      }
+
+      const dx = touch.clientX - origin.x
+      const dy = touch.clientY - origin.y
+
+      if (
+        Math.abs(dx) < swipeDistance ||
+        Math.abs(dx) < Math.abs(dy) * swipeRatio
+      ) {
+        return
+      }
+
+      if (dx < 0) {
+        goNext()
+      } else {
+        goPrevious()
+      }
+    }
+
+    const options = { passive: true }
+
+    window.addEventListener("touchstart", onTouchStart, options)
+    window.addEventListener("touchmove", onTouchMove, options)
+    window.addEventListener("touchend", onTouchEnd, options)
+    window.addEventListener("touchcancel", onTouchCancel, options)
+
+    return () => {
+      window.removeEventListener("touchstart", onTouchStart)
+      window.removeEventListener("touchmove", onTouchMove)
+      window.removeEventListener("touchend", onTouchEnd)
+      window.removeEventListener("touchcancel", onTouchCancel)
+    }
   }, [goNext, goPrevious, readOnly])
 
   useEffect(() => {
