@@ -2,6 +2,10 @@
 
 Releases are tags. Pushing `v<version>` runs `.github/workflows/release.yml`, which packs, smokes, and publishes. The three packages version together: `@thebuilder/deckard-core`, `@thebuilder/deckard-themes`, and `@thebuilder/deckard-cli` ship the same number, and `deckard init` pins a new deck to the CLI's own version.
 
+## Unreleased
+
+- A slide takes `counted: false` to leave the slide count, for backup slides kept after the close. The counter and the total skip it, its footer shows no counter and holds the progress bar, the presenter shows "Not counted", the command center and presenter flow show a dot for its number, and its share card prints no position. `ResolvedSlide` and `SlideSummary` carry `counted`, `countedNumber` and `countedTotal`, and `SlideCanvasFooter` takes `counted`.
+
 ## 0.2.1, 2026-10-17
 
 - A swipe left or right on a touchscreen steps the deck forward or back, the way the arrow keys do. A swipe that starts on a control, inside sideways-scrolling content, outside the slide, or at the screen edge is left alone.

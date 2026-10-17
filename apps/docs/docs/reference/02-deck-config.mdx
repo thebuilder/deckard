@@ -164,7 +164,10 @@ routes: { slides: "/example", presenter: false }
 | `id` | The URL segment: the slug, or the 1-based position. |
 | `href` | The configured slide path followed by the slide id. |
 | `index` | Zero-based position in the array. |
-| `number` | One-based position, what the counter shows. |
+| `number` | One-based position in the array. Ids, hrefs, and the presenter flow use it. |
+| `counted` | `false` when the slide set `counted: false`, otherwise `true`. |
+| `countedNumber` | How many counted slides there are up to and including this one. What the counter shows. |
+| `countedTotal` | How many counted slides the deck has. What the counter shows as the total. |
 | `title` | The authored title, or the generated `Slide 4` fallback. |
 | `authoredTitle` | Set only when the author gave the slide a title. The fallback in `title` names a slide in chrome but must never render as its own heading. |
 | `header` `footer` `layout` `background` `motion` | The slide's own value, or the deck default. |
@@ -172,7 +175,7 @@ routes: { slides: "/example", presenter: false }
 | `notes` `slug` `sourcePath` | As authored. |
 | `body` | The slide's React node. |
 
-Only `SlideSummary` (`id`, `number`, `title`, `authoredTitle`, `href`, `stepCount`) crosses into client components, because it has to survive `BroadcastChannel` serialization for presenter mode. The rendered slide body crosses only as `children`.
+Only `SlideSummary` (`id`, `number`, `title`, `authoredTitle`, `href`, `stepCount`, and the optional `counted`, `countedNumber`, `countedTotal`) crosses into client components, because it has to survive `BroadcastChannel` serialization for presenter mode. The rendered slide body crosses only as `children`.
 
 ## Deck chrome
 

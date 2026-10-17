@@ -17,6 +17,7 @@ let root: Root
 
 function renderChrome({
   brand = "Deckard",
+  counted,
   meta,
   number,
   showProgress,
@@ -24,6 +25,7 @@ function renderChrome({
   total,
 }: {
   brand?: string
+  counted?: boolean
   meta?: string
   number: number
   showProgress?: boolean
@@ -37,6 +39,7 @@ function renderChrome({
         canvas={canvas}
         footer={
           <SlideCanvasFooter
+            counted={counted}
             number={number}
             showProgress={showProgress}
             total={total}
@@ -147,6 +150,19 @@ describe("canvas chrome", () => {
 
     expect(container.querySelector("[data-slide-progress]")).toBeNull()
     expect(element("[data-slide-counter]")).not.toBeNull()
+  })
+
+  it("drops the counter on an uncounted slide and holds the progress", () => {
+    renderChrome({ counted: false, number: 12, total: 12 })
+
+    expect(container.querySelector("[data-slide-counter]")).toBeNull()
+    expect(
+      Number(
+        getComputedStyle(element("[data-slide-progress]")).getPropertyValue(
+          "--slide-progress"
+        )
+      )
+    ).toBe(1)
   })
 
   it("reaches a full fraction on the last slide", () => {

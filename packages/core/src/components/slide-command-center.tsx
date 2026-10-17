@@ -3,6 +3,7 @@
 import { List } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
+import { slideCountLabel } from "../deck/slide-summary"
 import type { SlideSummary } from "../deck/types"
 import { Button } from "../ui/button"
 import {
@@ -42,7 +43,7 @@ function SlideCommandOption({
       value={`${slide.number} ${slide.title} ${slide.id}`}
     >
       <span className="inline-flex min-w-10 text-muted-foreground tabular-nums">
-        {String(slide.number).padStart(2, "0")}
+        {slideCountLabel(slide, 2)}
       </span>
       <span className="truncate">{slide.title}</span>
       <span className="hidden truncate text-muted-foreground text-xs md:inline">

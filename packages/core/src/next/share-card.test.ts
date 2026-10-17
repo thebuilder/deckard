@@ -63,6 +63,21 @@ describe("shareCardText", () => {
     })
   })
 
+  it("leaves the position off an uncounted slide, and out of the total", () => {
+    const withBackup = defineDeck({
+      ...deck,
+      slides: [
+        { body: null, slug: "opening" },
+        { body: null, counted: false, slug: "backup" },
+      ],
+    })
+
+    expect(shareCardText(withBackup, withBackup.slides[1]).position).toBe("")
+    expect(shareCardText(withBackup, withBackup.slides[0]).position).toBe(
+      "1 / 1"
+    )
+  })
+
   it("uppercases the title when the theme does, and subsets every character it draws", () => {
     const text = shareCardText(deck, deck.slides[0], true)
 

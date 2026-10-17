@@ -168,3 +168,42 @@ describe("getSlideById", () => {
     expect(getSlideById(resolved, "99")).toBeUndefined()
   })
 })
+
+describe("resolveSlides counting", () => {
+  it("counts every slide by default", () => {
+    const resolved = resolveSlides([slide(), slide(), slide()])
+
+    expect(resolved.map((item) => item.counted)).toEqual([true, true, true])
+    expect(resolved.map((item) => item.countedNumber)).toEqual([1, 2, 3])
+    expect(resolved.map((item) => item.countedTotal)).toEqual([3, 3, 3])
+  })
+
+  it("leaves uncounted slides out of the number and the total", () => {
+    const resolved = resolveSlides([
+      slide(),
+      slide({ slug: "close" }),
+      slide({ counted: false, slug: "backup-one" }),
+      slide({ counted: false, slug: "backup-two" }),
+    ])
+
+    expect(resolved.map((item) => item.counted)).toEqual([
+      true,
+      true,
+      false,
+      false,
+    ])
+    expect(resolved.map((item) => item.countedNumber)).toEqual([1, 2, 2, 2])
+    expect(resolved.map((item) => item.countedTotal)).toEqual([2, 2, 2, 2])
+  })
+
+  it("keeps the position, ids and hrefs of an uncounted slide", () => {
+    const resolved = resolveSlides([slide({ counted: false }), slide()])
+
+    expect(resolved.map((item) => item.number)).toEqual([1, 2])
+    expect(resolved.map((item) => item.href)).toEqual([
+      "/slides/1",
+      "/slides/2",
+    ])
+    expect(resolved[1].countedNumber).toBe(1)
+  })
+})

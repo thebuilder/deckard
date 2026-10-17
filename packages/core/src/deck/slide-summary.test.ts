@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest"
 
 import { resolveSlides } from "./resolve-slides"
-import { toSlideSummaries, toSlideSummary } from "./slide-summary"
+import {
+  slideCountLabel,
+  toSlideSummaries,
+  toSlideSummary,
+} from "./slide-summary"
 
 describe("toSlideSummary", () => {
   it("keeps only the serializable fields the client needs", () => {
@@ -17,6 +21,9 @@ describe("toSlideSummary", () => {
 
     expect(toSlideSummary(resolved)).toEqual({
       authoredTitle: "Deckard",
+      counted: true,
+      countedNumber: 1,
+      countedTotal: 1,
       href: "/slides/intro",
       id: "intro",
       number: 1,
@@ -39,5 +46,28 @@ describe("toSlideSummary", () => {
 
     expect(summaries.map((summary) => summary.id)).toEqual(["1", "pricing"])
     expect(summaries.map((summary) => summary.number)).toEqual([1, 2])
+  })
+})
+
+describe("slideCountLabel", () => {
+  it("prints the counted number, padded when asked", () => {
+    const [, second] = toSlideSummaries(
+      resolveSlides([{ body: null, counted: false }, { body: null }])
+    )
+
+    expect(slideCountLabel(second)).toBe("1")
+    expect(slideCountLabel(second, 2)).toBe("01")
+  })
+
+  it("prints no number for an uncounted slide", () => {
+    const [first] = toSlideSummaries(
+      resolveSlides([{ body: null, counted: false }])
+    )
+
+    expect(slideCountLabel(first)).toBe("·")
+  })
+
+  it("falls back to the position on a summary written by hand", () => {
+    expect(slideCountLabel({ number: 4 }, 2)).toBe("04")
   })
 })

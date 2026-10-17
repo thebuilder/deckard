@@ -2,7 +2,8 @@
 
 import { ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react"
 import { useCallback, useEffect, useRef, useState } from "react"
-import type { DeckCanvasConfig } from "../deck/types"
+import { slideCountLabel } from "../deck/slide-summary"
+import type { DeckCanvasConfig, SlideSummary } from "../deck/types"
 import {
   PRESENTER_CHANNEL_NAME,
   PRESENTER_PREVIEW_STEP_MESSAGE,
@@ -47,12 +48,20 @@ function getFlowWindow(state: PresenterSlideState | null) {
   return state.slides.slice(start, end + 1).map((slide) => ({
     href: slide.href,
     isCurrent: slide.number === state.slide.number,
-    number: slide.number,
+    label: slideCountLabel(slide),
     title: slide.title,
   }))
 }
 
 type FlowItem = ReturnType<typeof getFlowWindow>[number]
+
+function presenterPosition(slide: SlideSummary, slides: SlideSummary[]) {
+  if (slide.counted === false) {
+    return "Not counted"
+  }
+
+  return `Slide ${slideCountLabel(slide)} of ${slide.countedTotal ?? slides.length}`
+}
 
 function FlowButton({
   item,
@@ -76,7 +85,7 @@ function FlowButton({
       type="button"
     >
       <span className="min-w-7 font-medium text-xs tabular-nums">
-        {item.number}
+        {item.label}
       </span>
       <span className="truncate text-sm">{item.title}</span>
     </button>
@@ -529,7 +538,7 @@ export function PresenterConsole({
           <div className="flex flex-wrap items-center gap-2 text-muted-foreground text-xs">
             <span className="rounded-full border border-border/70 bg-card/60 px-3 py-1 font-medium">
               {state
-                ? `Slide ${state.slide.number} of ${state.slides.length}`
+                ? presenterPosition(state.slide, state.slides)
                 : "Open a slide tab and start presenting"}
             </span>
             {state ? (
