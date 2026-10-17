@@ -542,7 +542,7 @@ export function PresenterConsole({
           </div>
         </div>
 
-        <div className="group relative flex min-h-48 flex-col rounded-2xl border border-border/80 bg-card/80 lg:min-h-64 lg:basis-[36%] lg:overflow-hidden">
+        <div className="group relative flex min-h-48 flex-col rounded-2xl border border-border/80 bg-card/80 lg:min-h-56 lg:basis-[28%] lg:overflow-hidden">
           <div className="p-6 pr-20 lg:min-h-0 lg:flex-1 lg:overflow-y-auto">
             <p
               className="whitespace-pre-wrap text-foreground"

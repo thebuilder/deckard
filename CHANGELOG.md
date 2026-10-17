@@ -4,7 +4,7 @@ Releases are tags. Pushing `v<version>` runs `.github/workflows/release.yml`, wh
 
 ## 0.2.4, 2026-10-18
 
-- The presenter view gives the speaker notes about a third of the window's height. The "Presenter View" label and the header above the current slide are gone, since the flow list already names the slide and the next step preview shows what the next press brings. On a wide screen the current slide now fits the height the notes leave it. The notes' font size buttons sit in the notes' corner, faded until the pointer comes near, instead of in a footer row.
+- The presenter view gives the speaker notes more of the window's height, about a quarter. The "Presenter View" label and the header above the current slide are gone, since the flow list already names the slide and the next step preview shows what the next press brings. On a wide screen the current slide now fits the height the notes leave it. The notes' font size buttons sit in the notes' corner, faded until the pointer comes near, instead of in a footer row.
 
 ## 0.2.3, 2026-10-17
 
