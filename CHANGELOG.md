@@ -2,7 +2,7 @@
 
 Releases are tags. Pushing `v<version>` runs `.github/workflows/release.yml`, which packs, smokes, and publishes. The three packages version together: `@thebuilder/deckard-core`, `@thebuilder/deckard-themes`, and `@thebuilder/deckard-cli` ship the same number, and `deckard init` pins a new deck to the CLI's own version.
 
-## Unreleased
+## 0.2.1, 2026-10-17
 
 - A swipe left or right on a touchscreen steps the deck forward or back, the way the arrow keys do. A swipe that starts on a control, inside sideways-scrolling content, outside the slide, or at the screen edge is left alone.
 - On a phone or a tablet the deck controls dock in a row under the slide and stay visible, instead of a handle over the slide's corner.
