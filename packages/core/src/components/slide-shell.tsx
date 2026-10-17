@@ -1,4 +1,4 @@
-import type { ReactNode } from "react"
+import type { CSSProperties, ReactNode } from "react"
 import { canSwitchColorMode } from "../deck/theme"
 import type {
   DeckCanvasConfig,
@@ -176,11 +176,18 @@ export function SlideShell({
       <SlidePrefetch slides={prefetch} />
 
       {/* The whole shell, or on a touchscreen a box shaped like the canvas
-          that shrinks to leave the docked controls their row. */}
+          that shrinks to leave the docked controls their row. The ratio only
+          applies there: on an absolutely placed box it wins over the bottom
+          inset, so a window taller than the canvas got a stage pinned to the
+          top and the slide centred in that instead of in the window. */}
       <div
-        className="absolute pointer-coarse:relative inset-0 pointer-coarse:min-h-0 pointer-coarse:w-full"
+        className="absolute pointer-coarse:relative inset-0 pointer-coarse:aspect-(--slide-stage-ratio) pointer-coarse:min-h-0 pointer-coarse:w-full"
         data-slide-stage=""
-        style={{ aspectRatio: stageAspectRatio(deck.canvas) }}
+        style={
+          {
+            "--slide-stage-ratio": stageAspectRatio(deck.canvas),
+          } as CSSProperties
+        }
       >
         <SlideViewport canvas={deck.canvas}>
           <SlideCanvas
