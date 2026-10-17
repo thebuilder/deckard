@@ -2,6 +2,10 @@
 
 Releases are tags. Pushing `v<version>` runs `.github/workflows/release.yml`, which packs, smokes, and publishes. The three packages version together: `@thebuilder/deckard-core`, `@thebuilder/deckard-themes`, and `@thebuilder/deckard-cli` ship the same number, and `deckard init` pins a new deck to the CLI's own version.
 
+## 0.2.3, 2026-10-17
+
+- The slide sits in the middle of the window again on a desktop. Since 0.2.1 the stage kept the canvas ratio everywhere, so a window taller than 16:9 put the slide at the top, and a wider one let it run off the bottom. The ratio now only applies on a touchscreen, where the controls dock under the slide.
+
 ## 0.2.2, 2026-10-17
 
 - The command center lights only the selected slide. Every row was drawn as selected, because cmdk marks the others `data-selected="false"` and the style matched the attribute alone. Its search field is 16px on a phone, so iOS no longer zooms the page when it takes focus.
