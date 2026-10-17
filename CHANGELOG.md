@@ -4,6 +4,7 @@ Releases are tags. Pushing `v<version>` runs `.github/workflows/release.yml`, wh
 
 ## Unreleased
 
+- The command center lights only the selected slide. Every row was drawn as selected, because cmdk marks the others `data-selected="false"` and the style matched the attribute alone. Its search field is 16px on a phone, so iOS no longer zooms the page when it takes focus.
 - A slide takes `counted: false` to leave the slide count, for backup slides kept after the close. The counter and the total skip it, its footer shows no counter and holds the progress bar, the presenter shows "Not counted", the command center and presenter flow show a dot for its number, and its share card prints no position. `ResolvedSlide` and `SlideSummary` carry `counted`, `countedNumber` and `countedTotal`, and `SlideCanvasFooter` takes `counted`.
 
 ## 0.2.1, 2026-10-17
