@@ -2,6 +2,10 @@
 
 Releases are tags. Pushing `v<version>` runs `.github/workflows/release.yml`, which packs, smokes, and publishes. The three packages version together: `@thebuilder/deckard-core`, `@thebuilder/deckard-themes`, and `@thebuilder/deckard-cli` ship the same number, and `deckard init` pins a new deck to the CLI's own version.
 
+## 0.2.4, 2026-10-18
+
+- The presenter view gives the speaker notes about a third of the window's height. The "Presenter View" label and the header above the current slide are gone, since the flow list already names the slide and the next step preview shows what the next press brings. On a wide screen the current slide now fits the height the notes leave it. The notes' font size buttons sit in the notes' corner, faded until the pointer comes near, instead of in a footer row.
+
 ## 0.2.3, 2026-10-17
 
 - The slide sits in the middle of the window again on a desktop. Since 0.2.1 the stage kept the canvas ratio everywhere, so a window taller than 16:9 put the slide at the top, and a wider one let it run off the bottom. The ratio now only applies on a touchscreen, where the controls dock under the slide.

@@ -1,9 +1,15 @@
 "use client"
 
 import { ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react"
-import { useCallback, useEffect, useRef, useState } from "react"
+import {
+  type CSSProperties,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react"
 import { slideCountLabel } from "../deck/slide-summary"
-import type { DeckCanvasConfig, SlideSummary } from "../deck/types"
+import type { DeckCanvasConfig } from "../deck/types"
 import {
   PRESENTER_CHANNEL_NAME,
   PRESENTER_PREVIEW_STEP_MESSAGE,
@@ -54,14 +60,6 @@ function getFlowWindow(state: PresenterSlideState | null) {
 }
 
 type FlowItem = ReturnType<typeof getFlowWindow>[number]
-
-function presenterPosition(slide: SlideSummary, slides: SlideSummary[]) {
-  if (slide.counted === false) {
-    return "Not counted"
-  }
-
-  return `Slide ${slideCountLabel(slide)} of ${slide.countedTotal ?? slides.length}`
-}
 
 function FlowButton({
   item,
@@ -442,11 +440,7 @@ export function PresenterConsole({
     // one column the page scrolls, because a phone cannot hold two panes.
     <div className="flex min-h-svh flex-col bg-background text-foreground lg:grid lg:h-svh lg:grid-cols-[22rem_1fr] lg:overflow-hidden">
       <aside className="order-2 flex flex-col border-border/70 border-t p-6 lg:order-none lg:min-h-0 lg:overflow-hidden lg:border-t-0 lg:border-r">
-        <p className="order-1 text-muted-foreground text-xs uppercase tracking-[0.22em] lg:order-none">
-          Presenter View
-        </p>
-
-        <div className="order-4 mt-5 grid grid-cols-2 gap-3 lg:order-none">
+        <div className="order-4 mt-5 grid grid-cols-2 gap-3 lg:order-none lg:mt-0">
           <div className="rounded-xl border border-border/70 bg-card/60 p-3">
             <p className="font-semibold text-[0.65rem] text-muted-foreground uppercase tracking-[0.18em]">
               Timer
@@ -496,7 +490,7 @@ export function PresenterConsole({
           </div>
         </div>
 
-        <div className="order-2 mt-4 flex items-center justify-between gap-3 lg:order-none">
+        <div className="order-2 flex items-center justify-between gap-3 lg:order-none lg:mt-4">
           <Button
             className="gap-2"
             disabled={!canNavigatePrevious}
@@ -525,44 +519,31 @@ export function PresenterConsole({
         </p>
       </aside>
 
-      <section className="order-1 flex flex-col p-5 sm:p-6 lg:order-none lg:min-h-0 lg:overflow-hidden">
-        <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <p className="font-semibold text-[0.65rem] text-muted-foreground uppercase tracking-[0.18em]">
-              Current Slide
-            </p>
-            <h2 className="mt-1 font-semibold text-lg tracking-tight">
-              {state?.slide.title ?? "Waiting for slideshow"}
-            </h2>
-          </div>
-          <div className="flex flex-wrap items-center gap-2 text-muted-foreground text-xs">
-            <span className="rounded-full border border-border/70 bg-card/60 px-3 py-1 font-medium">
-              {state
-                ? presenterPosition(state.slide, state.slides)
-                : "Open a slide tab and start presenting"}
-            </span>
-            {state ? (
-              <span className="rounded-full border border-border/70 bg-card/60 px-3 py-1 font-medium">
-                Step {state.currentStep + 1} of{" "}
-                {Math.max(state.slide.stepCount, 1)}
-              </span>
-            ) : null}
+      <section className="order-1 flex flex-col gap-4 p-5 sm:p-6 lg:order-none lg:min-h-0 lg:overflow-hidden">
+        {/* The flow list already names the slide and the next step preview shows
+            what a press brings, so the slide and the notes get the height. On a
+            wide screen the slide fits whatever the notes leave, measured off
+            this box as a size container. */}
+        <div className="flex justify-center lg:min-h-0 lg:flex-1 lg:[container-type:size]">
+          <div
+            className="relative w-full overflow-hidden rounded-2xl border border-border/70 bg-card/40 lg:w-[min(100cqw,calc(100cqh*var(--preview-aspect-ratio)))]"
+            style={
+              {
+                "--preview-aspect-ratio": previewAspectRatio,
+                aspectRatio: previewAspectRatio,
+              } as CSSProperties
+            }
+          >
+            <CurrentSlidePreview
+              canvas={canvas}
+              slidesPath={slidesPath}
+              state={state}
+            />
           </div>
         </div>
 
-        <div
-          className="relative w-full overflow-hidden rounded-2xl border border-border/70 bg-card/40"
-          style={{ aspectRatio: previewAspectRatio }}
-        >
-          <CurrentSlidePreview
-            canvas={canvas}
-            slidesPath={slidesPath}
-            state={state}
-          />
-        </div>
-
-        <div className="mt-5 flex flex-col rounded-2xl border border-border/80 bg-card/80 lg:min-h-0 lg:flex-1 lg:overflow-hidden">
-          <div className="p-6 lg:min-h-0 lg:flex-1 lg:overflow-y-auto">
+        <div className="group relative flex min-h-48 flex-col rounded-2xl border border-border/80 bg-card/80 lg:min-h-64 lg:basis-[36%] lg:overflow-hidden">
+          <div className="p-6 pr-20 lg:min-h-0 lg:flex-1 lg:overflow-y-auto">
             <p
               className="whitespace-pre-wrap text-foreground"
               style={{
@@ -573,14 +554,13 @@ export function PresenterConsole({
               {state?.notes?.trim().length ? state.notes : ""}
             </p>
           </div>
-          <div className="flex items-center justify-end gap-2 border-border/70 border-t px-4 py-3">
-            <p className="mr-1 font-medium text-muted-foreground text-sm tabular-nums">
-              {notesFontSize.toFixed(2)}rem
-            </p>
+          {/* Out of the way while presenting, there when the pointer comes looking. */}
+          <div className="absolute top-3 right-3 flex items-center gap-1.5 opacity-40 transition-opacity focus-within:opacity-100 group-hover:opacity-100">
             <Button
               aria-label="Decrease presenter notes font size"
               onClick={decreaseNotesFontSize}
               size="icon-sm"
+              title={`Notes at ${notesFontSize.toFixed(2)}rem`}
               type="button"
               variant="outline"
             >
@@ -590,6 +570,7 @@ export function PresenterConsole({
               aria-label="Increase presenter notes font size"
               onClick={increaseNotesFontSize}
               size="icon-sm"
+              title={`Notes at ${notesFontSize.toFixed(2)}rem`}
               type="button"
               variant="outline"
             >
