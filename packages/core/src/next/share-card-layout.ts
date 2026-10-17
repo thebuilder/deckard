@@ -49,13 +49,18 @@ const ellipsis = "…"
 
 /** The words on a slide's card, cased the way the card draws them. */
 export function shareCardText(
-  deck: Pick<Deck, "description" | "header" | "slides" | "title">,
-  slide: Pick<ResolvedSlide, "number" | "title">,
+  deck: Pick<Deck, "description" | "header" | "title">,
+  slide: Pick<
+    ResolvedSlide,
+    "counted" | "countedNumber" | "countedTotal" | "title"
+  >,
   uppercase = false
 ): ShareCardText {
   const brand = deck.header.brand.trim() || deck.title
   const eyebrow = brand.toUpperCase()
-  const position = `${slide.number} / ${deck.slides.length}`
+  const position = slide.counted
+    ? `${slide.countedNumber} / ${slide.countedTotal}`
+    : ""
   const title = uppercase ? slide.title.toUpperCase() : slide.title
   const footer =
     deck.description.trim() || deck.header.meta?.trim() || undefined

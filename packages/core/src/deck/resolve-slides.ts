@@ -59,9 +59,16 @@ export function resolveSlides(
 ): ResolvedSlide[] {
   const resolvedDefaults = { ...fallbackDefaults, ...defaults }
   const claimedSlugs = new Map<string, number>()
+  const countedTotal = slides.filter((slide) => slide.counted !== false).length
+  let countedNumber = 0
 
   return slides.map((slide, index) => {
     const number = index + 1
+    const counted = slide.counted !== false
+
+    if (counted) {
+      countedNumber += 1
+    }
 
     if (slide.slug !== undefined) {
       assertValidSlug(slide.slug, number)
@@ -74,6 +81,9 @@ export function resolveSlides(
       authoredTitle: slide.title,
       background: slide.background ?? resolvedDefaults.background,
       body: slide.body,
+      counted,
+      countedNumber,
+      countedTotal,
       footer: normalizeFooterMode(slide.footer ?? resolvedDefaults.footer),
       header: slide.header ?? resolvedDefaults.header,
       href: `${slidesPath}/${id}`,

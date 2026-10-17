@@ -35,6 +35,11 @@ An entry in the array. `body` is required, everything else is optional.
       default: "0",
       description: "How many reveal steps the slide has. Pair it with SlideStep.",
     },
+    counted: {
+      type: "boolean",
+      default: "true",
+      description: "false leaves the slide out of the slide count. The footer drops its counter and holds the progress bar where the last counted slide left it, the presenter shows \"Not counted\", slide lists show a dot for its number, and its share card prints no position. It keeps its URL and its place in the deck.",
+    },
     header: {
       type: '"visible" | "hidden" | "auto"',
       default: "the deck's header.mode",
@@ -123,6 +128,17 @@ The `slides` array defines deck order. `resolveSlides` never reorders it, so mov
 Ids are matched exactly. A slugged slide is served only at its slug and never at its position, so there is one URL per slide.
 
 The deck fails to build on a duplicate slug, an empty slug, a slug with characters unsafe in a URL path, or a slug made only of digits.
+
+## Backup slides
+
+Mark the slides kept after the close with `counted: false`, so the count the room sees ends on the last slide you present.
+
+```tsx deck/slides.tsx
+{ slug: "thanks", background: "closing", body: <HeroSplitSlide … /> },
+{ slug: "backup-pricing", title: "Backup: pricing", counted: false, body: <PricingTable /> },
+```
+
+With twelve presented slides and two backups, the closing slide reads "12 of 12" and the backups show no counter.
 
 ## Step reveals
 

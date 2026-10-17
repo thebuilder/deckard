@@ -13,6 +13,9 @@ import type {
 
 export interface SlideMeta {
   background?: SlideBackgroundMode
+  // false leaves the slide out of the count the counter, the presenter and the
+  // share card show, for backup slides kept after the close.
+  counted?: boolean
   footer?: SlideFooterModeInput
   header?: SlideHeaderMode
   layout?: SlideLayoutMode
@@ -54,6 +57,12 @@ export interface ResolvedSlide {
   authoredTitle?: string
   background: SlideBackgroundMode
   body: ReactNode
+  counted: boolean
+  // The counted slides up to and including this one, and in the whole deck.
+  // `number` stays the position, because ids, hrefs and the presenter flow
+  // are keyed on it.
+  countedNumber: number
+  countedTotal: number
   footer: SlideFooterMode
   header: SlideHeaderMode
   href: string
@@ -72,6 +81,11 @@ export interface ResolvedSlide {
 // Crosses the server/client boundary and BroadcastChannel, so every field has to stay serializable.
 export interface SlideSummary {
   authoredTitle?: string
+  // Optional so a summary written by hand, such as a not-found page's, still
+  // type-checks. Left off, the slide counts at its own position.
+  counted?: boolean
+  countedNumber?: number
+  countedTotal?: number
   href: string
   id: string
   number: number

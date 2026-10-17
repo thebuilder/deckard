@@ -35,10 +35,14 @@ export function SlideCanvasHeader({
 }
 
 export function SlideCanvasFooter({
+  counted = true,
   number,
   showProgress = true,
   total,
 }: {
+  // An uncounted slide drops the counter and holds the progress bar where the
+  // last counted slide left it, so backup slides read as past the end.
+  counted?: boolean
   number: number
   showProgress?: boolean
   total: number
@@ -57,11 +61,13 @@ export function SlideCanvasFooter({
           style={{ "--slide-progress": progress } as CSSProperties}
         />
       ) : null}
-      <p data-slide-counter="">
-        <span data-slide-counter-current="">{number}</span>
-        <span data-slide-counter-separator=""> of </span>
-        <span data-slide-counter-total="">{total}</span>
-      </p>
+      {counted ? (
+        <p data-slide-counter="">
+          <span data-slide-counter-current="">{number}</span>
+          <span data-slide-counter-separator=""> of </span>
+          <span data-slide-counter-total="">{total}</span>
+        </p>
+      ) : null}
     </footer>
   )
 }

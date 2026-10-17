@@ -190,9 +190,10 @@ export function SlideShell({
             footer={
               chrome.showFooter ? (
                 <SlideCanvasFooter
-                  number={slide.number}
+                  counted={slide.counted !== false}
+                  number={slide.countedNumber ?? slide.number}
                   showProgress={deck.showProgress}
-                  total={slides.length}
+                  total={slide.countedTotal ?? slides.length}
                 />
               ) : null
             }
