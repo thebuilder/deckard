@@ -134,9 +134,9 @@ Hidden steps stay in the layout, so a stepped slide takes its full height from t
 | `mountOnReveal` | `false` | Render an empty placeholder until the step arrives, instead of a hidden copy. Use it for something expensive. |
 | `className` | | Applied to the step wrapper. |
 
-`SlideStepAdvanceArea` wraps content in a click-to-advance surface. Clicks on links, buttons, inputs, and anything marked `data-step-ignore-click="true"` pass through untouched, and a swipe that starts on one of them does not page the deck.
+`SlideStepAdvanceArea` wraps content in a click-to-advance surface. A click moves on the way the right arrow does, through the slide's steps and then to the next slide. Clicks on links, buttons, inputs, and anything marked `data-step-ignore-click="true"` pass through untouched, and a swipe that starts on one of them does not page the deck.
 
-`useSlideStepper()` returns the current step, the count, and `advance` / `retreat` / `canAdvance` / `canRetreat` / `isReadOnly`, for a slide that wants to drive its own reveal. It returns `null` outside a stepper.
+`useSlideStepper()` returns the current step, the count, and `advance` / `retreat` / `next` / `canAdvance` / `canRetreat` / `isReadOnly`, for a slide that wants to drive its own reveal. It returns `null` outside a stepper.
 
 ## Color mode
 

@@ -25,6 +25,8 @@ interface SlideStepContextValue {
   canRetreat: boolean
   currentStep: number
   isReadOnly: boolean
+  /** The next step, or the next slide once the steps run out. */
+  next: () => boolean
   retreat: () => void
   stepCount: number
 }
@@ -215,10 +217,20 @@ export function SlideStepper({
       canRetreat,
       currentStep,
       isReadOnly: readOnly,
+      next: goNext,
       retreat,
       stepCount,
     }),
-    [advance, canAdvance, canRetreat, currentStep, readOnly, retreat, stepCount]
+    [
+      advance,
+      canAdvance,
+      canRetreat,
+      currentStep,
+      goNext,
+      readOnly,
+      retreat,
+      stepCount,
+    ]
   )
 
   useEffect(() => {
@@ -396,11 +408,15 @@ export function SlideStepAdvanceArea({
 
   const handleClick = useCallback(
     (event: MouseEvent<HTMLDivElement>) => {
-      if (!context?.canAdvance || isInteractiveTarget(event.target)) {
+      // A click moves on the way the arrow keys do: through the steps, then
+      // to the next slide. Stopping at the last step left a presenter with a
+      // clicker stuck on any slide that had steps, and on every slide that
+      // had none.
+      if (!context || context.isReadOnly || isInteractiveTarget(event.target)) {
         return
       }
 
-      context.advance()
+      context.next()
     },
     [context]
   )

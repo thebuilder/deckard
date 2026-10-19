@@ -2,7 +2,11 @@ import { act } from "react"
 import { createRoot, type Root } from "react-dom/client"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-import { SlideStepper, useSlideStepper } from "./slide-stepper"
+import {
+  SlideStepAdvanceArea,
+  SlideStepper,
+  useSlideStepper,
+} from "./slide-stepper"
 
 const { push } = vi.hoisted(() => ({ push: vi.fn() }))
 
@@ -20,26 +24,37 @@ function StepReadout() {
   return <span data-testid="step">{stepper?.currentStep ?? -1}</span>
 }
 
-function Deck({ stepCount = 0 }: { stepCount?: number }) {
+function Deck({
+  stepCount = 0,
+  readOnly = false,
+}: {
+  stepCount?: number
+  readOnly?: boolean
+}) {
   return (
     <SlideStepper
       nextHref="/slides/3"
       previousHref="/slides/1"
+      readOnly={readOnly}
       stepCount={stepCount}
     >
       <StepReadout />
-      <div data-slide-viewport="" style={{ height: "300px", width: "100%" }}>
-        <p data-testid="slide">Slide body</p>
-        <button data-testid="button" type="button">
-          A control
-        </button>
-        <div
-          data-testid="scroller"
-          style={{ overflowX: "auto", whiteSpace: "nowrap", width: "100px" }}
-        >
-          <span style={{ display: "inline-block", width: "600px" }}>wide</span>
+      <SlideStepAdvanceArea>
+        <div data-slide-viewport="" style={{ height: "300px", width: "100%" }}>
+          <p data-testid="slide">Slide body</p>
+          <button data-testid="button" type="button">
+            A control
+          </button>
+          <div
+            data-testid="scroller"
+            style={{ overflowX: "auto", whiteSpace: "nowrap", width: "100px" }}
+          >
+            <span style={{ display: "inline-block", width: "600px" }}>
+              wide
+            </span>
+          </div>
         </div>
-      </div>
+      </SlideStepAdvanceArea>
       <p data-testid="outside">Outside the viewport</p>
     </SlideStepper>
   )
@@ -117,9 +132,15 @@ function sideways(direction: "left" | "right"): [Point, Point] {
   return [start, end]
 }
 
-function mount(stepCount?: number) {
+function mount(stepCount?: number, readOnly?: boolean) {
   act(() => {
-    root.render(<Deck stepCount={stepCount} />)
+    root.render(<Deck readOnly={readOnly} stepCount={stepCount} />)
+  })
+}
+
+function click(target: HTMLElement) {
+  act(() => {
+    target.click()
   })
 }
 
@@ -133,6 +154,41 @@ beforeEach(() => {
 afterEach(() => {
   act(() => root.unmount())
   container.remove()
+})
+
+describe("click navigation", () => {
+  it("walks the steps, then pages on to the next slide", () => {
+    mount(2)
+
+    click(query("slide"))
+    expect(currentStep()).toBe(1)
+    expect(push).not.toHaveBeenCalled()
+
+    click(query("slide"))
+    expect(push).toHaveBeenLastCalledWith("/slides/3")
+  })
+
+  it("pages a slide that has no steps", () => {
+    mount()
+
+    click(query("slide"))
+    expect(push).toHaveBeenLastCalledWith("/slides/3")
+  })
+
+  it("leaves a click on a control to the control", () => {
+    mount()
+
+    click(query("button"))
+    expect(push).not.toHaveBeenCalled()
+  })
+
+  it("does nothing in a read-only deck", () => {
+    mount(2, true)
+
+    click(query("slide"))
+    expect(currentStep()).toBe(0)
+    expect(push).not.toHaveBeenCalled()
+  })
 })
 
 describe("swipe navigation", () => {
