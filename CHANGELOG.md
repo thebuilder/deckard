@@ -2,6 +2,10 @@
 
 Releases are tags. Pushing `v<version>` runs `.github/workflows/release.yml`, which packs, smokes, and publishes. The three packages version together: `@thebuilder/deckard-core`, `@thebuilder/deckard-themes`, and `@thebuilder/deckard-cli` ship the same number, and `deckard init` pins a new deck to the CLI's own version.
 
+## 0.2.5, 2026-10-19
+
+- A click on the slide now pages on to the next slide once its steps run out, the way the right arrow does. Before, a click only walked the steps, so a slide with no steps, or one on its last step, ignored it. A read-only deck still ignores clicks, and so does the click at the end of a drag or a text selection, so dragging across a 3D scene or selecting a line doesn't leave the slide. A click on an icon inside a button or link now counts as a click on the control. `useSlideStepper()` gains `next()`, which does the same thing.
+
 ## 0.2.4, 2026-10-18
 
 - The presenter view gives the speaker notes more of the window's height, about a quarter. The "Presenter View" label and the header above the current slide are gone, since the flow list already names the slide and the next step preview shows what the next press brings. On a wide screen the current slide now fits the height the notes leave it. The notes' font size buttons sit in the notes' corner, faded until the pointer comes near, instead of in a footer row.

@@ -2,7 +2,11 @@ import { act } from "react"
 import { createRoot, type Root } from "react-dom/client"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-import { SlideStepper, useSlideStepper } from "./slide-stepper"
+import {
+  SlideStepAdvanceArea,
+  SlideStepper,
+  useSlideStepper,
+} from "./slide-stepper"
 
 const { push } = vi.hoisted(() => ({ push: vi.fn() }))
 
@@ -20,26 +24,40 @@ function StepReadout() {
   return <span data-testid="step">{stepper?.currentStep ?? -1}</span>
 }
 
-function Deck({ stepCount = 0 }: { stepCount?: number }) {
+function Deck({
+  stepCount = 0,
+  readOnly = false,
+}: {
+  stepCount?: number
+  readOnly?: boolean
+}) {
   return (
     <SlideStepper
       nextHref="/slides/3"
       previousHref="/slides/1"
+      readOnly={readOnly}
       stepCount={stepCount}
     >
       <StepReadout />
-      <div data-slide-viewport="" style={{ height: "300px", width: "100%" }}>
-        <p data-testid="slide">Slide body</p>
-        <button data-testid="button" type="button">
-          A control
-        </button>
-        <div
-          data-testid="scroller"
-          style={{ overflowX: "auto", whiteSpace: "nowrap", width: "100px" }}
-        >
-          <span style={{ display: "inline-block", width: "600px" }}>wide</span>
+      <SlideStepAdvanceArea>
+        <div data-slide-viewport="" style={{ height: "300px", width: "100%" }}>
+          <p data-testid="slide">Slide body</p>
+          <button data-testid="button" type="button">
+            A control
+            <svg aria-hidden="true" height="10" width="10">
+              <path d="M0 0h10v10H0z" data-testid="icon" />
+            </svg>
+          </button>
+          <div
+            data-testid="scroller"
+            style={{ overflowX: "auto", whiteSpace: "nowrap", width: "100px" }}
+          >
+            <span style={{ display: "inline-block", width: "600px" }}>
+              wide
+            </span>
+          </div>
         </div>
-      </div>
+      </SlideStepAdvanceArea>
       <p data-testid="outside">Outside the viewport</p>
     </SlideStepper>
   )
@@ -117,9 +135,32 @@ function sideways(direction: "left" | "right"): [Point, Point] {
   return [start, end]
 }
 
-function mount(stepCount?: number) {
+function mount(stepCount?: number, readOnly?: boolean) {
   act(() => {
-    root.render(<Deck stepCount={stepCount} />)
+    root.render(<Deck readOnly={readOnly} stepCount={stepCount} />)
+  })
+}
+
+function click(target: Element) {
+  act(() => {
+    target.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+  })
+}
+
+// A press at one point and a release at another, the click the browser
+// fires at the end of a drag.
+function drag(target: HTMLElement, from: Point, to: Point) {
+  act(() => {
+    target.dispatchEvent(
+      new PointerEvent("pointerdown", {
+        bubbles: true,
+        clientX: from.x,
+        clientY: from.y,
+      })
+    )
+    target.dispatchEvent(
+      new MouseEvent("click", { bubbles: true, clientX: to.x, clientY: to.y })
+    )
   })
 }
 
@@ -133,6 +174,70 @@ beforeEach(() => {
 afterEach(() => {
   act(() => root.unmount())
   container.remove()
+})
+
+describe("click navigation", () => {
+  it("walks the steps, then pages on to the next slide", () => {
+    mount(2)
+
+    click(query("slide"))
+    expect(currentStep()).toBe(1)
+    expect(push).not.toHaveBeenCalled()
+
+    click(query("slide"))
+    expect(push).toHaveBeenLastCalledWith("/slides/3")
+  })
+
+  it("pages a slide that has no steps", () => {
+    mount()
+
+    click(query("slide"))
+    expect(push).toHaveBeenLastCalledWith("/slides/3")
+  })
+
+  it("leaves a click on a control to the control", () => {
+    mount()
+
+    click(query("button"))
+    expect(push).not.toHaveBeenCalled()
+  })
+
+  it("leaves a click on a control's icon to the control", () => {
+    mount()
+
+    click(query("icon"))
+    expect(push).not.toHaveBeenCalled()
+  })
+
+  it("ignores the click that ends a drag", () => {
+    mount()
+
+    drag(query("slide"), { x: 10, y: 10 }, { x: 80, y: 40 })
+    expect(push).not.toHaveBeenCalled()
+
+    drag(query("slide"), { x: 10, y: 10 }, { x: 12, y: 11 })
+    expect(push).toHaveBeenLastCalledWith("/slides/3")
+  })
+
+  it("ignores a click that leaves text selected", () => {
+    mount()
+
+    window.getSelection()?.selectAllChildren(query("slide"))
+    click(query("slide"))
+    expect(push).not.toHaveBeenCalled()
+
+    window.getSelection()?.removeAllRanges()
+    click(query("slide"))
+    expect(push).toHaveBeenLastCalledWith("/slides/3")
+  })
+
+  it("does nothing in a read-only deck", () => {
+    mount(2, true)
+
+    click(query("slide"))
+    expect(currentStep()).toBe(0)
+    expect(push).not.toHaveBeenCalled()
+  })
 })
 
 describe("swipe navigation", () => {

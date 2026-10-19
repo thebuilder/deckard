@@ -1,6 +1,6 @@
 {
   "name": "@thebuilder/deckard-core",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "The deck contract and the slideshow runtime behind Deckard, a React presentation framework for Next.js.",
   "keywords": [
     "deck",
