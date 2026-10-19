@@ -44,6 +44,9 @@ function Deck({
           <p data-testid="slide">Slide body</p>
           <button data-testid="button" type="button">
             A control
+            <svg aria-hidden="true" height="10" width="10">
+              <path d="M0 0h10v10H0z" data-testid="icon" />
+            </svg>
           </button>
           <div
             data-testid="scroller"
@@ -138,9 +141,26 @@ function mount(stepCount?: number, readOnly?: boolean) {
   })
 }
 
-function click(target: HTMLElement) {
+function click(target: Element) {
   act(() => {
-    target.click()
+    target.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+  })
+}
+
+// A press at one point and a release at another, the click the browser
+// fires at the end of a drag.
+function drag(target: HTMLElement, from: Point, to: Point) {
+  act(() => {
+    target.dispatchEvent(
+      new PointerEvent("pointerdown", {
+        bubbles: true,
+        clientX: from.x,
+        clientY: from.y,
+      })
+    )
+    target.dispatchEvent(
+      new MouseEvent("click", { bubbles: true, clientX: to.x, clientY: to.y })
+    )
   })
 }
 
@@ -180,6 +200,35 @@ describe("click navigation", () => {
 
     click(query("button"))
     expect(push).not.toHaveBeenCalled()
+  })
+
+  it("leaves a click on a control's icon to the control", () => {
+    mount()
+
+    click(query("icon"))
+    expect(push).not.toHaveBeenCalled()
+  })
+
+  it("ignores the click that ends a drag", () => {
+    mount()
+
+    drag(query("slide"), { x: 10, y: 10 }, { x: 80, y: 40 })
+    expect(push).not.toHaveBeenCalled()
+
+    drag(query("slide"), { x: 10, y: 10 }, { x: 12, y: 11 })
+    expect(push).toHaveBeenLastCalledWith("/slides/3")
+  })
+
+  it("ignores a click that leaves text selected", () => {
+    mount()
+
+    window.getSelection()?.selectAllChildren(query("slide"))
+    click(query("slide"))
+    expect(push).not.toHaveBeenCalled()
+
+    window.getSelection()?.removeAllRanges()
+    click(query("slide"))
+    expect(push).toHaveBeenLastCalledWith("/slides/3")
   })
 
   it("does nothing in a read-only deck", () => {

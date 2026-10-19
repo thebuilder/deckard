@@ -4,11 +4,13 @@ import { useRouter } from "next/navigation"
 import {
   createContext,
   type MouseEvent,
+  type PointerEvent,
   type ReactNode,
   useCallback,
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react"
 import { cn } from "../lib/utils"
@@ -33,8 +35,10 @@ interface SlideStepContextValue {
 
 const SlideStepContext = createContext<SlideStepContextValue | null>(null)
 
+// Element rather than HTMLElement, so the icon inside a button counts: a click
+// on it lands on an SVG path.
 function isInteractiveTarget(target: EventTarget | null) {
-  if (!(target instanceof HTMLElement)) {
+  if (!(target instanceof Element)) {
     return false
   }
 
@@ -397,6 +401,26 @@ export function SlideStep({
   )
 }
 
+// Now that a click can leave the slide, a click that ends a drag must not: a
+// drag across a 3D scene or a chart, or over text to select it, still fires
+// one on release.
+const dragTolerance = 6
+
+function isDragOrSelection(
+  event: MouseEvent,
+  pressedAt: { x: number; y: number } | null
+) {
+  if (window.getSelection()?.isCollapsed === false) {
+    return true
+  }
+
+  return (
+    pressedAt !== null &&
+    Math.hypot(event.clientX - pressedAt.x, event.clientY - pressedAt.y) >
+      dragTolerance
+  )
+}
+
 export function SlideStepAdvanceArea({
   children,
   className,
@@ -405,6 +429,14 @@ export function SlideStepAdvanceArea({
   className?: string
 }) {
   const context = useSlideStepper()
+  const pressedAt = useRef<{ x: number; y: number } | null>(null)
+
+  const handlePointerDown = useCallback(
+    (event: PointerEvent<HTMLDivElement>) => {
+      pressedAt.current = { x: event.clientX, y: event.clientY }
+    },
+    []
+  )
 
   const handleClick = useCallback(
     (event: MouseEvent<HTMLDivElement>) => {
@@ -412,7 +444,12 @@ export function SlideStepAdvanceArea({
       // to the next slide. Stopping at the last step left a presenter with a
       // clicker stuck on any slide that had steps, and on every slide that
       // had none.
-      if (!context || context.isReadOnly || isInteractiveTarget(event.target)) {
+      if (
+        !context ||
+        context.isReadOnly ||
+        isInteractiveTarget(event.target) ||
+        isDragOrSelection(event, pressedAt.current)
+      ) {
         return
       }
 
@@ -425,7 +462,11 @@ export function SlideStepAdvanceArea({
     // biome-ignore lint/a11y/noStaticElementInteractions: click-to-advance surface wraps arbitrary slide content, so it cannot be an interactive element
     // biome-ignore lint/a11y/noNoninteractiveElementInteractions: click-to-advance surface wraps arbitrary slide content, so it cannot be an interactive element
     // biome-ignore lint/a11y/useKeyWithClickEvents: stepping is already bound to arrow, page, and space keys on the window
-    <div className={className} onClick={handleClick}>
+    <div
+      className={className}
+      onClick={handleClick}
+      onPointerDown={handlePointerDown}
+    >
       {children}
     </div>
   )
