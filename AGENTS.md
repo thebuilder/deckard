@@ -200,7 +200,7 @@ argument for the decision.
 - Say what a thing is for, not what it is not. "Use `FocusSlide` when the block
   is the whole slide" beats a paragraph on why it is not a prop on another
   component.
-- History belongs in a changelog. A deprecated field's entry says
+- History belongs in the GitHub release notes. A deprecated field's entry says
   `"counter" is a deprecated alias for "visible"`, not the story of the rename.
 - No em dashes. Commas or hyphens.
 - No "powerful", "seamless", "simply", "just", "elegant", "blazing", or
