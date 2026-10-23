@@ -55,16 +55,17 @@ Hidden means transparent, not absent. The buttons stay in the accessibility tree
 
 Press `P` or click the popout button. A second window opens at `/presenter` and syncs with the deck over a `BroadcastChannel`, so the two stay in step without a server.
 
-![The presenter window: a timer and a clock, a preview of the next step, the deck listed by title with the current slide picked out, the slide itself, and the speaker notes under it.](../../assets/presenter.png)
+![The presenter window: the slide's position and title, a timer and a clock across the top, the slide itself with the speaker notes under it, and beside them a preview of the next step and the deck listed by title.](../../assets/presenter.png)
 
 What it shows:
 
-- The current slide, and a preview of what comes next (aware of reveal steps, so the preview advances with them)
+- The current slide's position and title, and the slide itself
+- A preview of what comes next, aware of reveal steps, so the preview advances with them
 - Speaker notes for the current slide, with font-size controls
-- A timer you start, and a 24-hour clock
+- A timer that starts when the deck connects, with buttons to pause, resume, and reset it, and a 24-hour clock. Reset zeroes the timer and leaves it running or paused as it was.
 - A flow window: the current slide with a little of the deck behind it and more of it ahead, by title. Click any of them to jump the deck there.
 
-Arrow keys in either window drive both.
+The navigation keys in either window drive both. In the presenter window they work wherever focus is, except in a text field, and `Space` on a focused button presses the button.
 
 ### Notes
 
@@ -101,6 +102,8 @@ export function Chart() {
 ```
 
 Use it to skip autoplay, audio, canvas work, or anything else expensive inside the preview iframe. The built-in video primitive already suppresses autoplay there, and a theme's motion background mounts no canvas there, so the preview shows the background the theme paints underneath it.
+
+The preview frames also turn autoplay off for themselves and every frame nested in them, so in browsers that support the `autoplay` permission policy, audio a slide starts on its own, including Web Audio in an embedded page, stays silent in the presenter window. Checking `useIsPresenterPreview()` before starting the sound covers every browser and saves the work.
 
 The slide route itself never reads the query. `?presenterPreview=1` and `?step=` are read on the client inside a Suspense boundary that holds nothing but the reader, which is what lets every slide prerender as static HTML.
 

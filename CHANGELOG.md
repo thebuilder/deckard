@@ -2,6 +2,13 @@
 
 Releases are tags. Pushing `v<version>` runs `.github/workflows/release.yml`, which packs, smokes, and publishes. The three packages version together: `@thebuilder/deckard-core`, `@thebuilder/deckard-themes`, and `@thebuilder/deckard-cli` ship the same number, and `deckard init` pins a new deck to the CLI's own version.
 
+## Unreleased
+
+- The presenter window sends the navigation keys to the deck wherever focus is in it. It had no keys of its own, so arrows there did nothing, and a click into a preview took focus into a frame that ignored them. The previews no longer take focus, and `Space` on a focused button presses the button rather than also moving the deck.
+- Presenter previews no longer play sound. A slide that started its own audio, such as Web Audio in an embedded page, played it in the presenter window as well, and the copy in the preview of the slide just left kept playing after the deck moved on. Autoplay is now off for every preview frame and anything nested in it, so the sound plays only in the deck window.
+- The presenter timer has buttons to pause, resume, and reset it. It still starts when the deck connects. Reset zeroes it and leaves it running or paused as it was.
+- The presenter window drops its cards. A top bar holds the slide's position and title, the timer, the clock, and the notes size buttons, and hairlines separate the slide, the notes, and the column with the next step preview and the flow list. The connection line moves into the top bar, where it shows until the deck connects.
+
 ## 0.2.5, 2026-10-19
 
 - A click on the slide now pages on to the next slide once its steps run out, the way the right arrow does. Before, a click only walked the steps, so a slide with no steps, or one on its last step, ignored it. A read-only deck still ignores clicks, and so does the click at the end of a drag or a text selection, so dragging across a 3D scene or selecting a line doesn't leave the slide. A click on an icon inside a button or link now counts as a click on the control. `useSlideStepper()` gains `next()`, which does the same thing.
