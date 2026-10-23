@@ -1,6 +1,6 @@
 # Changelog
 
-Releases are tags. Pushing `v<version>` runs `.github/workflows/release.yml`, which packs, smokes, and publishes. The three packages version together: `@thebuilder/deckard-core`, `@thebuilder/deckard-themes`, and `@thebuilder/deckard-cli` ship the same number, and `deckard init` pins a new deck to the CLI's own version.
+Publishing a GitHub release tagged `v<version>` runs `.github/workflows/release.yml`, which sets that version on the packages, packs, smokes, publishes, and then commits the version to `main`. The code does not need a version bump before the release. Retitle `## Unreleased` to `## <version>, <date>` before cutting it. The three packages version together: `@thebuilder/deckard-core`, `@thebuilder/deckard-themes`, and `@thebuilder/deckard-cli` ship the same number, and `deckard init` pins a new deck to the CLI's own version.
 
 ## Unreleased
 

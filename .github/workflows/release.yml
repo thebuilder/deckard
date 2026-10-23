@@ -1,33 +1,63 @@
 name: Release
 
-# A tag like v0.2.0 publishes the three packages. The tag has to match the
-# version every package.json carries, so a bump that forgot a package or a tag
-# that names the wrong number stops before anything reaches npm.
+# Publishing a GitHub release tagged v0.2.6 publishes the three packages at
+# 0.2.6. The version comes from the tag: release:pack sets it on every
+# package.json before it builds, so the code does not have to be bumped first.
+# A tag pushed without a release publishes nothing.
+#
+# To retry a failed release, run this workflow by hand with the tag. The
+# workflow file comes from the default branch and the source from the tag.
 #
 # Publishing uses npm trusted publishing: the job's OIDC token proves it is this
 # workflow in this repository, and npm accepts that in place of a stored token.
 # Each package page on npmjs.com names this file under Trusted Publisher.
 
 on:
-  push:
-    tags:
-      - "v*"
+  release:
+    types:
+      - published
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: The release tag to publish, like v0.2.6
+        required: true
+        type: string
 
-permissions:
-  contents: read
-  id-token: write
+concurrency:
+  group: release-${{ github.event.release.tag_name || inputs.tag }}
+  cancel-in-progress: false
+
+permissions: {}
 
 env:
   DO_NOT_TRACK: "1"
   NEXT_TELEMETRY_DISABLED: "1"
+  RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
   TURBO_TELEMETRY_DISABLED: "1"
 
 jobs:
   publish:
     name: Pack, smoke, publish
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
+      - name: The tag names a version
+        id: version
+        run: |
+          version="${RELEASE_TAG#v}"
+          if [ "$RELEASE_TAG" = "$version" ] || ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::The release tag has to look like v0.2.6, got $RELEASE_TAG"
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
       - uses: actions/checkout@v5
+        with:
+          ref: refs/tags/${{ env.RELEASE_TAG }}
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v5
         with:
@@ -36,25 +66,61 @@ jobs:
           registry-url: https://registry.npmjs.org
       - run: pnpm install --frozen-lockfile
 
-      - name: The tag names the version the packages carry
-        run: |
-          tag="${GITHUB_REF_NAME#v}"
-          for package in core themes cli; do
-            version="$(node -p "require('./packages/$package/package.json').version")"
-            if [ "$version" != "$tag" ]; then
-              echo "packages/$package is $version, the tag says $tag"
-              exit 1
-            fi
-          done
-
       - run: pnpm --filter @thebuilder/deckard-core exec playwright install --with-deps chromium
 
-      # Builds from nothing, packs, inspects each tarball, and scaffolds a deck
-      # from those exact files under pnpm and npm. What passes here is what ships.
-      - run: pnpm release:pack
+      # Sets the tag's version on the three packages, builds from nothing,
+      # packs, checks each tarball carries that version and what an installer
+      # needs, and scaffolds a deck from those exact files under pnpm and npm.
+      # What passes here is what ships.
+      - run: pnpm release:pack --version "${{ steps.version.outputs.version }}"
 
       # Core first: themes and the CLI name it as a peer, and init resolves the
       # caret range from the registry.
       - run: npm publish ./dist-tarballs/thebuilder-deckard-core.tgz --access public --provenance
       - run: npm publish ./dist-tarballs/thebuilder-deckard-themes.tgz --access public --provenance
       - run: npm publish ./dist-tarballs/thebuilder-deckard-cli.tgz --access public --provenance
+
+  # After npm has the release, main records the version it shipped, so a
+  # workspace build and `deckard --version` report it. This runs after the
+  # publish and a failure here leaves the published packages alone. It skips a
+  # release cut from a commit main does not contain, and a version main has
+  # already reached.
+  record-version:
+    name: Record the version on main
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      VERSION: ${{ needs.publish.outputs.version }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.repository.default_branch }}
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+
+      - name: Commit the version
+        run: |
+          if ! git merge-base --is-ancestor "refs/tags/$RELEASE_TAG" HEAD; then
+            echo "::notice::$RELEASE_TAG is not on the default branch, so its version is not recorded there"
+            exit 0
+          fi
+
+          current="$(node -p "require('./packages/core/package.json').version")"
+          highest="$(printf '%s\n%s\n' "$current" "$VERSION" | sort -V | tail -n 1)"
+          if [ "$current" = "$VERSION" ] || [ "$highest" != "$VERSION" ]; then
+            echo "::notice::The default branch is at $current, which $VERSION does not move forward"
+            exit 0
+          fi
+
+          node tools/release-version/run.ts "$VERSION"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add packages/core/package.json packages/themes/package.json packages/cli/package.json
+          git commit --message "Release $VERSION"
+          git pull --rebase origin "${{ github.event.repository.default_branch }}"
+          git push origin "HEAD:${{ github.event.repository.default_branch }}"
