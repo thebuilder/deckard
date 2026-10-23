@@ -222,7 +222,7 @@ So it will not connect when:
 - They are in different browsers, or one is in a private window.
 - The browser has no `BroadcastChannel`. The runtime checks for it and carries on without sync rather than failing.
 
-**Fix.** Open the presenter window from the deck itself, with `P` or the popout button, so it inherits the origin. It reads `Connected via BroadcastChannel.` once the first message lands.
+**Fix.** Open the presenter window from the deck itself, with `P` or the popout button, so it inherits the origin. Once the first message lands, the waiting line gives way to the slide's position and title.
 
 A presenter window opened by pasting the URL into a different browser will never connect, and that is the design rather than a fault.
 

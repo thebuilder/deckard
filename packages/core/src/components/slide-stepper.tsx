@@ -37,7 +37,7 @@ const SlideStepContext = createContext<SlideStepContextValue | null>(null)
 
 // Element rather than HTMLElement, so the icon inside a button counts: a click
 // on it lands on an SVG path.
-function isInteractiveTarget(target: EventTarget | null) {
+export function isInteractiveTarget(target: EventTarget | null) {
   if (!(target instanceof Element)) {
     return false
   }
@@ -99,12 +99,12 @@ function isIgnoredSwipeStart(event: TouchEvent) {
   )
 }
 
-const previousKeys = ["ArrowLeft", "ArrowUp", "PageUp"]
-const nextKeys = ["ArrowRight", "ArrowDown", "PageDown", " "]
+export const previousKeys = ["ArrowLeft", "ArrowUp", "PageUp"]
+export const nextKeys = ["ArrowRight", "ArrowDown", "PageDown", " "]
 const zoomKeys = ["+", "=", "-", "_"]
 const zoomCodes = ["Equal", "Minus", "NumpadAdd", "NumpadSubtract"]
 
-function isIgnoredKeyEvent(event: KeyboardEvent) {
+export function isIgnoredKeyEvent(event: KeyboardEvent) {
   return (
     event.defaultPrevented ||
     event.metaKey ||

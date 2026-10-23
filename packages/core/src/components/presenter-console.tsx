@@ -1,6 +1,14 @@
 "use client"
 
-import { ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react"
+import {
+  ChevronLeft,
+  ChevronRight,
+  Minus,
+  Pause,
+  Play,
+  Plus,
+  RotateCcw,
+} from "lucide-react"
 import {
   type CSSProperties,
   useCallback,
@@ -9,7 +17,7 @@ import {
   useState,
 } from "react"
 import { slideCountLabel } from "../deck/slide-summary"
-import type { DeckCanvasConfig } from "../deck/types"
+import type { DeckCanvasConfig, SlideSummary } from "../deck/types"
 import {
   PRESENTER_CHANNEL_NAME,
   PRESENTER_PREVIEW_STEP_MESSAGE,
@@ -19,7 +27,14 @@ import {
   type PresenterSlideState,
 } from "../types/presenter"
 import { Button } from "../ui/button"
+import { isTypingTarget } from "./presenter-controls"
 import { SlideErrorBoundary } from "./slide-error-boundary"
+import {
+  isIgnoredKeyEvent,
+  isInteractiveTarget,
+  nextKeys,
+  previousKeys,
+} from "./slide-stepper"
 import { SlideViewport } from "./slide-viewport"
 
 function formatClock(date: Date) {
@@ -74,18 +89,27 @@ function FlowButton({
 
   return (
     <button
-      className={`flex w-full items-center gap-2 rounded-md px-2 py-1 text-left ${
+      aria-current={item.isCurrent ? "step" : undefined}
+      className={`flex w-full items-baseline gap-3 py-1 text-left outline-none transition-colors focus-visible:text-foreground ${
         item.isCurrent
-          ? "bg-primary/15 text-foreground"
-          : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+          ? "text-foreground"
+          : "text-muted-foreground hover:text-foreground"
       }`}
       onClick={handleClick}
       type="button"
     >
-      <span className="min-w-7 font-medium text-xs tabular-nums">
+      <span
+        className={`min-w-6 text-xs tabular-nums ${
+          item.isCurrent ? "text-primary" : ""
+        }`}
+      >
         {item.label}
       </span>
-      <span className="truncate text-sm">{item.title}</span>
+      <span
+        className={`truncate text-sm ${item.isCurrent ? "font-medium" : ""}`}
+      >
+        {item.title}
+      </span>
     </button>
   )
 }
@@ -124,11 +148,18 @@ function PreviewLayer({
   )
 
   return (
+    // A preview is a still. Inert keeps a click from moving focus into the
+    // frame, where the console's keys would stop reaching the deck. Autoplay
+    // is off for the frame and everything nested in it, so a slide that starts
+    // its own sound, such as Web Audio in an embedded page, stays silent here
+    // instead of playing alongside the deck and on after the deck moves on.
     // biome-ignore lint/a11y/noNoninteractiveElementInteractions: onLoad is a resource lifecycle event, not a user interaction
     <iframe
-      className={`absolute inset-0 border-0 transition-opacity duration-150 ${
-        isActive ? "opacity-100" : "pointer-events-none opacity-0"
+      allow="autoplay 'none'"
+      className={`pointer-events-none absolute inset-0 border-0 transition-opacity duration-150 ${
+        isActive ? "opacity-100" : "opacity-0"
       }`}
+      inert
       onLoad={handleLoad}
       ref={handleMount}
       src={src}
@@ -337,6 +368,31 @@ function NextStepPreview({
   )
 }
 
+// Null until the deck first connects, which starts it. After that only the
+// presenter starts, pauses, or zeroes it.
+interface TimerState {
+  accumulatedMs: number
+  runningSince: number | null
+}
+
+function timerElapsed(timer: TimerState, now: number) {
+  return timer.runningSince === null
+    ? timer.accumulatedMs
+    : timer.accumulatedMs + now - timer.runningSince
+}
+
+function slidePosition(slide: SlideSummary | undefined, total: number) {
+  if (!slide) {
+    return null
+  }
+
+  if (slide.counted === false) {
+    return "Not counted"
+  }
+
+  return `${slide.countedNumber ?? slide.number} / ${slide.countedTotal ?? total}`
+}
+
 export function PresenterConsole({
   canvas,
   slidesPath = "/slides",
@@ -346,18 +402,17 @@ export function PresenterConsole({
 }) {
   const previewAspectRatio = canvas.width / canvas.height
   const [state, setState] = useState<PresenterSlideState | null>(null)
-  const [connected, setConnected] = useState(false)
   const [clock, setClock] = useState(() => new Date())
-  const [startedAt, setStartedAt] = useState<number | null>(null)
+  const [timer, setTimer] = useState<TimerState | null>(null)
   const [notesFontSize, setNotesFontSize] = useState(1.5)
   const channelRef = useRef<BroadcastChannel | null>(null)
 
   useEffect(() => {
-    const timer = window.setInterval(() => {
+    const interval = window.setInterval(() => {
       setClock(new Date())
     }, 1000)
 
-    return () => window.clearInterval(timer)
+    return () => window.clearInterval(interval)
   }, [])
 
   useEffect(() => {
@@ -373,9 +428,11 @@ export function PresenterConsole({
         return
       }
 
-      setConnected(true)
       setState(event.data.payload)
-      setStartedAt((value) => value ?? Date.now())
+
+      setTimer(
+        (value) => value ?? { accumulatedMs: 0, runningSince: Date.now() }
+      )
     }
 
     channel.addEventListener("message", handleMessage)
@@ -390,9 +447,13 @@ export function PresenterConsole({
     }
   }, [])
 
-  const elapsed = startedAt ? formatElapsed(Date.now() - startedAt) : "00:00:00"
+  const isTimerRunning = Boolean(timer?.runningSince)
+  const elapsed = formatElapsed(
+    timer ? timerElapsed(timer, clock.getTime()) : 0
+  )
   const notesLineHeight = Number((notesFontSize * 1.45).toFixed(2))
   const flowItems = getFlowWindow(state)
+  const position = slidePosition(state?.slide, state?.slides.length ?? 0)
   const canNavigatePrevious = Boolean(
     state && (state.slide.number > 1 || state.currentStep > 0)
   )
@@ -427,6 +488,56 @@ export function PresenterConsole({
     [sendNavigationMessage]
   )
 
+  // The deck's own keys, sent on to the deck. Space on a focused button is
+  // left to press the button, so one press never moves twice.
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (isIgnoredKeyEvent(event) || isTypingTarget(event.target)) {
+        return
+      }
+
+      if (event.key === " " && isInteractiveTarget(event.target)) {
+        return
+      }
+
+      if (previousKeys.includes(event.key)) {
+        event.preventDefault()
+        goToPreviousStep()
+        return
+      }
+
+      if (nextKeys.includes(event.key)) {
+        event.preventDefault()
+        goToNextStep()
+      }
+    }
+
+    window.addEventListener("keydown", onKeyDown)
+    return () => window.removeEventListener("keydown", onKeyDown)
+  }, [goToNextStep, goToPreviousStep])
+
+  const toggleTimer = useCallback(() => {
+    const now = Date.now()
+    setClock(new Date(now))
+    setTimer((value) =>
+      value?.runningSince
+        ? { accumulatedMs: timerElapsed(value, now), runningSince: null }
+        : { accumulatedMs: value?.accumulatedMs ?? 0, runningSince: now }
+    )
+  }, [])
+
+  const resetTimer = useCallback(() => {
+    const now = Date.now()
+    setClock(new Date(now))
+    setTimer(
+      (value) =>
+        value && {
+          accumulatedMs: 0,
+          runningSince: value.runningSince === null ? null : now,
+        }
+    )
+  }, [])
+
   const decreaseNotesFontSize = useCallback(() => {
     setNotesFontSize((value) => Number(Math.max(1, value - 0.125).toFixed(3)))
   }, [])
@@ -436,116 +547,115 @@ export function PresenterConsole({
   }, [])
 
   return (
-    // Two panes side by side on a wide screen. Narrower than that they become
-    // one column the page scrolls, because a phone cannot hold two panes.
-    <div className="flex min-h-svh flex-col bg-background text-foreground lg:grid lg:h-svh lg:grid-cols-[22rem_1fr] lg:overflow-hidden">
-      <aside className="order-2 flex flex-col border-border/70 border-t p-6 lg:order-none lg:min-h-0 lg:overflow-hidden lg:border-t-0 lg:border-r">
-        <div className="order-4 mt-5 grid grid-cols-2 gap-3 lg:order-none lg:mt-0">
-          <div className="rounded-xl border border-border/70 bg-card/60 p-3">
-            <p className="font-semibold text-[0.65rem] text-muted-foreground uppercase tracking-[0.18em]">
-              Timer
+    <div className="flex min-h-svh flex-col bg-background text-foreground lg:h-svh lg:overflow-hidden">
+      <header className="flex flex-wrap items-center gap-x-6 gap-y-2 border-border/60 border-b px-5 py-3 sm:px-6">
+        <div className="flex min-w-40 flex-1 items-center">
+          {state ? (
+            <p className="flex min-w-0 items-baseline gap-3">
+              <span className="shrink-0 text-muted-foreground text-sm tabular-nums">
+                {position}
+              </span>
+              <span className="truncate font-medium">{state.slide.title}</span>
             </p>
-            <p className="mt-2 font-semibold text-xl tabular-nums">{elapsed}</p>
-          </div>
-          <div className="rounded-xl border border-border/70 bg-card/60 p-3">
-            <p className="font-semibold text-[0.65rem] text-muted-foreground uppercase tracking-[0.18em]">
-              Current Time
+          ) : (
+            <p className="text-muted-foreground text-sm">
+              Waiting for connection from the slideshow tab.
             </p>
-            <p className="mt-2 font-semibold text-xl tabular-nums">
-              {formatClock(clock)}
-            </p>
-          </div>
+          )}
         </div>
 
-        <div className="order-3 mt-5 rounded-xl border border-border/70 bg-card/60 p-4 lg:order-none">
-          <p className="font-semibold text-[0.65rem] text-muted-foreground uppercase tracking-[0.18em]">
-            Next Step Preview
-          </p>
-          <div
-            className="relative mt-3 w-full overflow-hidden rounded-xl border border-border/70 bg-card/40"
-            style={{ aspectRatio: previewAspectRatio }}
+        <div className="flex items-center gap-1">
+          <p
+            className={`mr-2 font-medium text-2xl tabular-nums tracking-tight transition-colors ${
+              isTimerRunning ? "text-foreground" : "text-muted-foreground"
+            }`}
+            title={isTimerRunning ? "Elapsed" : "Elapsed, paused"}
           >
-            <NextStepPreview
-              canvas={canvas}
-              preview={state?.preview}
-              slidesPath={slidesPath}
-            />
-          </div>
-        </div>
-
-        <div className="order-5 mt-4 rounded-xl border border-border/70 bg-card/60 p-3 lg:order-none">
-          <p className="font-semibold text-[0.65rem] text-muted-foreground uppercase tracking-[0.18em]">
-            Flow
+            {elapsed}
           </p>
-          <div className="mt-2 space-y-1">
-            {flowItems.length ? (
-              flowItems.map((item) => (
-                <FlowButton item={item} key={item.href} onSelect={goToSlide} />
-              ))
-            ) : (
-              <p className="text-muted-foreground text-sm">
-                Waiting for slideshow flow...
-              </p>
-            )}
-          </div>
-        </div>
-
-        <div className="order-2 flex items-center justify-between gap-3 lg:order-none lg:mt-4">
           <Button
-            className="gap-2"
-            disabled={!canNavigatePrevious}
-            onClick={goToPreviousStep}
+            aria-label={isTimerRunning ? "Pause timer" : "Start timer"}
+            onClick={toggleTimer}
+            size="icon-sm"
+            title={isTimerRunning ? "Pause timer" : "Start timer"}
             type="button"
-            variant="outline"
+            variant="ghost"
           >
-            <ChevronLeft className="size-4" data-icon="inline-start" />
-            Previous
+            {isTimerRunning ? <Pause /> : <Play />}
           </Button>
           <Button
-            className="gap-2"
-            disabled={!canNavigateNext}
-            onClick={goToNextStep}
+            aria-label="Reset timer"
+            onClick={resetTimer}
+            size="icon-sm"
+            title="Reset timer"
             type="button"
+            variant="ghost"
           >
-            Next
-            <ChevronRight className="size-4" data-icon="inline-end" />
+            <RotateCcw />
           </Button>
         </div>
 
-        <p className="order-6 pt-4 text-muted-foreground text-xs lg:order-none lg:mt-auto">
-          {connected
-            ? "Connected via BroadcastChannel."
-            : "Waiting for connection from the slideshow tab."}
+        <p
+          className="text-muted-foreground text-sm tabular-nums"
+          title="Current time"
+        >
+          {formatClock(clock)}
         </p>
-      </aside>
 
-      <section className="order-1 flex flex-col gap-4 p-5 sm:p-6 lg:order-none lg:min-h-0 lg:overflow-hidden">
-        {/* The flow list already names the slide and the next step preview shows
-            what a press brings, so the slide and the notes get the height. On a
-            wide screen the slide fits whatever the notes leave, measured off
-            this box as a size container. */}
-        <div className="flex justify-center lg:min-h-0 lg:flex-1 lg:[container-type:size]">
-          <div
-            className="relative w-full overflow-hidden rounded-2xl border border-border/70 bg-card/40 lg:w-[min(100cqw,calc(100cqh*var(--preview-aspect-ratio)))]"
-            style={
-              {
-                "--preview-aspect-ratio": previewAspectRatio,
-                aspectRatio: previewAspectRatio,
-              } as CSSProperties
-            }
+        <div className="flex items-center gap-1 text-muted-foreground">
+          <Button
+            aria-label="Decrease presenter notes font size"
+            onClick={decreaseNotesFontSize}
+            size="icon-sm"
+            title={`Notes at ${notesFontSize.toFixed(2)}rem`}
+            type="button"
+            variant="ghost"
           >
-            <CurrentSlidePreview
-              canvas={canvas}
-              slidesPath={slidesPath}
-              state={state}
-            />
-          </div>
+            <Minus />
+          </Button>
+          <span aria-hidden className="text-xs">
+            Notes
+          </span>
+          <Button
+            aria-label="Increase presenter notes font size"
+            onClick={increaseNotesFontSize}
+            size="icon-sm"
+            title={`Notes at ${notesFontSize.toFixed(2)}rem`}
+            type="button"
+            variant="ghost"
+          >
+            <Plus />
+          </Button>
         </div>
+      </header>
 
-        <div className="group relative flex min-h-48 flex-col rounded-2xl border border-border/80 bg-card/80 lg:min-h-56 lg:basis-[28%] lg:overflow-hidden">
-          <div className="p-6 pr-20 lg:min-h-0 lg:flex-1 lg:overflow-y-auto">
+      {/* Two columns on a wide screen. Narrower than that they stack into one
+          the page scrolls, because a phone cannot hold both. */}
+      <div className="flex flex-1 flex-col lg:grid lg:min-h-0 lg:grid-cols-[1fr_22rem]">
+        <section className="flex flex-col lg:min-h-0">
+          {/* On a wide screen the slide fits whatever the notes leave, measured
+              off this box as a size container. */}
+          <div className="flex justify-center p-5 sm:p-6 lg:min-h-0 lg:flex-1 lg:[container-type:size]">
+            <div
+              className="relative w-full overflow-hidden bg-muted ring-1 ring-border/60 lg:w-[min(100cqw,calc(100cqh*var(--preview-aspect-ratio)))]"
+              style={
+                {
+                  "--preview-aspect-ratio": previewAspectRatio,
+                  aspectRatio: previewAspectRatio,
+                } as CSSProperties
+              }
+            >
+              <CurrentSlidePreview
+                canvas={canvas}
+                slidesPath={slidesPath}
+                state={state}
+              />
+            </div>
+          </div>
+
+          <div className="min-h-48 border-border/60 border-t px-5 py-5 sm:px-6 lg:min-h-56 lg:basis-[30%] lg:overflow-y-auto">
             <p
-              className="whitespace-pre-wrap text-foreground"
+              className="max-w-[70ch] whitespace-pre-wrap text-foreground"
               style={{
                 fontSize: `${notesFontSize}rem`,
                 lineHeight: `${notesLineHeight}rem`,
@@ -554,31 +664,63 @@ export function PresenterConsole({
               {state?.notes?.trim().length ? state.notes : ""}
             </p>
           </div>
-          {/* Out of the way while presenting, there when the pointer comes looking. */}
-          <div className="absolute top-3 right-3 flex items-center gap-1.5 opacity-40 transition-opacity focus-within:opacity-100 group-hover:opacity-100">
-            <Button
-              aria-label="Decrease presenter notes font size"
-              onClick={decreaseNotesFontSize}
-              size="icon-sm"
-              title={`Notes at ${notesFontSize.toFixed(2)}rem`}
-              type="button"
-              variant="outline"
+        </section>
+
+        <aside className="flex flex-col gap-8 border-border/60 border-t p-5 sm:p-6 lg:min-h-0 lg:overflow-y-auto lg:border-t-0 lg:border-l">
+          <div>
+            <p className="text-muted-foreground text-xs">Next</p>
+            <div
+              className="relative mt-2 w-full overflow-hidden bg-muted ring-1 ring-border/60"
+              style={{ aspectRatio: previewAspectRatio }}
             >
-              <Minus />
+              <NextStepPreview
+                canvas={canvas}
+                preview={state?.preview}
+                slidesPath={slidesPath}
+              />
+            </div>
+            {state?.preview ? (
+              <p className="mt-2 truncate text-muted-foreground text-sm">
+                {state.preview.id === state.slide.id
+                  ? `Step ${state.preview.step + 1} of ${state.slide.stepCount}`
+                  : state.preview.title}
+              </p>
+            ) : null}
+          </div>
+
+          <nav aria-label="Slides">
+            <p className="text-muted-foreground text-xs">Slides</p>
+            <div className="mt-2">
+              {flowItems.map((item) => (
+                <FlowButton item={item} key={item.href} onSelect={goToSlide} />
+              ))}
+            </div>
+          </nav>
+
+          <div className="order-first flex items-center justify-between gap-3 lg:order-none lg:mt-auto">
+            <Button
+              className="gap-2"
+              disabled={!canNavigatePrevious}
+              onClick={goToPreviousStep}
+              type="button"
+              variant="ghost"
+            >
+              <ChevronLeft className="size-4" data-icon="inline-start" />
+              Previous
             </Button>
             <Button
-              aria-label="Increase presenter notes font size"
-              onClick={increaseNotesFontSize}
-              size="icon-sm"
-              title={`Notes at ${notesFontSize.toFixed(2)}rem`}
+              className="gap-2"
+              disabled={!canNavigateNext}
+              onClick={goToNextStep}
               type="button"
               variant="outline"
             >
-              <Plus />
+              Next
+              <ChevronRight className="size-4" data-icon="inline-end" />
             </Button>
           </div>
-        </div>
-      </section>
+        </aside>
+      </div>
     </div>
   )
 }
