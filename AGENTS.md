@@ -153,7 +153,7 @@ is what generates it, so a change to that shape belongs in
 - Nothing heavy or async belongs in the components barrel. `CodeBlock` sits behind its own entry point because shiki loads WebAssembly, and a discovered slide module that reaches it through the barrel would throw.
 - Adding a dependency to the runtime means adding it to `packages/core/package.json`, not the app's. `pnpm smoke:package` catches the ones that only work because the workspace hoisted them.
 - The CLI ships no browser and no PDF writer. `playwright` and `pdf-lib` are optional peers of `@thebuilder/deckard-cli`, dev dependencies of every deck (`init` writes them, pinned from the playground through `template/versions.json`), and `packages/cli/src/deck/tooling.ts` loads them from the deck at run time. Anything else that heavy goes the same way, so `npx @thebuilder/deckard-cli init` stays a small download. `pnpm smoke:cli` asserts the packed CLI carries neither.
-- Each of the three packages has a `prepack` that builds only itself: `tsc` for core, `tsc` plus the asset copy for themes, the template sync for the CLI. A package cannot build its dependencies, so ordering the three is `pnpm release:pack`'s job. That command cleans every `dist`, the CLI template, and the build info beside them, builds the three through turbo with `--force`, packs them into `dist-tarballs/`, checks each tarball carries what an installer needs, and runs the CLI smoke against those exact files. It is the release path, so it is the one CI runs, and `.github/workflows/release.yml` runs it again on a `v*` tag before publishing the three tarballs to npm through trusted publishing.
+- Each of the three packages has a `prepack` that builds only itself: `tsc` for core, `tsc` plus the asset copy for themes, the template sync for the CLI. A package cannot build its dependencies, so ordering the three is `pnpm release:pack`'s job. That command cleans every `dist`, the CLI template, and the build info beside them, builds the three through turbo with `--force`, packs them into `dist-tarballs/`, checks each tarball carries what an installer needs, and runs the CLI smoke against those exact files. With `--version <x.y.z>` it first sets that version on the three packages through `tools/release-version/run.ts`, and the tarball check fails unless each tarball carries it. It is the release path, so it is the one CI runs. `.github/workflows/release.yml` runs it again when a GitHub release tagged `v<x.y.z>` is published, passing the tag's version, publishes the three tarballs to npm through trusted publishing, and then commits that version to `main` when the tag is on it and the version moves `main` forward. A tag pushed without a release publishes nothing. To retry a failed release, run the workflow by hand with the tag. Nobody bumps a `package.json` version by hand.
 
 ## Change discipline
 
@@ -200,7 +200,7 @@ argument for the decision.
 - Say what a thing is for, not what it is not. "Use `FocusSlide` when the block
   is the whole slide" beats a paragraph on why it is not a prop on another
   component.
-- History belongs in a changelog. A deprecated field's entry says
+- History belongs in the GitHub release notes. A deprecated field's entry says
   `"counter" is a deprecated alias for "visible"`, not the story of the rename.
 - No em dashes. Commas or hyphens.
 - No "powerful", "seamless", "simply", "just", "elegant", "blazing", or

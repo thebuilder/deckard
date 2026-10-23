@@ -17,6 +17,8 @@ interface Package {
   // which is added below rather than written out here.
   contents: string[]
   filter: string
+  // The package directory, whose package.json names the version to ship.
+  manifest: string
   name: string
   // Everything a stale build could leave behind. tsc skips emitting when its
   // build info says the output is current, so the build info goes with the
@@ -38,6 +40,7 @@ const packages: Package[] = [
       "LICENSE",
     ],
     filter: "@thebuilder/deckard-core",
+    manifest: "packages/core/package.json",
     name: "thebuilder-deckard-core",
     stale: ["packages/core/dist", "packages/core/tsconfig.build.tsbuildinfo"],
   },
@@ -54,6 +57,7 @@ const packages: Package[] = [
       "LICENSE",
     ],
     filter: "@thebuilder/deckard-themes",
+    manifest: "packages/themes/package.json",
     name: "thebuilder-deckard-themes",
     stale: [
       "packages/themes/dist",
@@ -73,6 +77,7 @@ const packages: Package[] = [
       "LICENSE",
     ],
     filter: "@thebuilder/deckard-cli",
+    manifest: "packages/cli/package.json",
     name: "thebuilder-deckard-cli",
     stale: [
       "packages/cli/dist",
@@ -157,6 +162,40 @@ function pack({ filter, name }: Package): string {
   return tarball
 }
 
+// --version 0.2.6 sets that version on the three packages before anything is
+// built, which is how the release workflow ships the number in the release
+// tag. Without it the packages ship the version they already carry.
+function stamp() {
+  const flag = process.argv.indexOf("--version")
+
+  if (flag === -1) {
+    return
+  }
+
+  run("node", [
+    path.join(repoRoot, "tools/release-version/run.ts"),
+    process.argv[flag + 1] ?? "",
+  ])
+}
+
+function sourceVersion({ manifest }: Package): string {
+  return (
+    JSON.parse(fs.readFileSync(path.join(repoRoot, manifest), "utf8")) as {
+      version: string
+    }
+  ).version
+}
+
+function packedVersion(tarball: string): string {
+  const read = spawnSync("tar", ["-xOzf", tarball, "package/package.json"], {
+    encoding: "utf8",
+  })
+
+  assert(read.status === 0, `tar could not read package.json in ${tarball}`)
+
+  return (JSON.parse(read.stdout) as { version: string }).version
+}
+
 function entries(tarball: string): string[] {
   const listed = spawnSync("tar", ["-tzf", tarball], { encoding: "utf8" })
 
@@ -176,13 +215,22 @@ function inspect(entry: Package, tarball: string) {
     `${path.basename(tarball)} is missing ${missing.join(", ")}. An installer would find a broken package.`
   )
 
+  const expected = sourceVersion(entry)
+  const packed = packedVersion(tarball)
+
+  assert(
+    packed === expected,
+    `${path.basename(tarball)} carries version ${packed}, the package says ${expected}.`
+  )
+
   const { size } = fs.statSync(tarball)
 
   process.stdout.write(
-    `  ${entry.filter.padEnd(16)} ${listed.size - 1} files, ${(size / 1024).toFixed(0)}kB\n`
+    `  ${entry.filter.padEnd(16)} ${packed}, ${listed.size - 1} files, ${(size / 1024).toFixed(0)}kB\n`
   )
 }
 
+stamp()
 clean()
 time("build the three packages from nothing", build)
 
