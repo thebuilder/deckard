@@ -1,0 +1,18 @@
+name: Playwright Chromium
+description: >
+  Installs the Chromium the workspace's Playwright drives, cached by Playwright
+  version. Runs after pnpm install. The runner image carries Chromium's system
+  libraries, so it skips --with-deps, whose apt step has taken over ten minutes.
+
+runs:
+  using: composite
+  steps:
+    - id: version
+      shell: bash
+      run: echo "version=$(pnpm --filter @thebuilder/deckard-core exec node -p "require('playwright/package.json').version")" >> "$GITHUB_OUTPUT"
+    - uses: actions/cache@v4
+      with:
+        key: ${{ runner.os }}-playwright-chromium-${{ steps.version.outputs.version }}
+        path: ~/.cache/ms-playwright
+    - shell: bash
+      run: pnpm --filter @thebuilder/deckard-core exec playwright install chromium

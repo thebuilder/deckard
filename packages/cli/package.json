@@ -1,6 +1,6 @@
 {
   "name": "@thebuilder/deckard-cli",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "The deckard command line: scaffold a deck, check it, screenshot it, export it.",
   "keywords": [
     "cli",
