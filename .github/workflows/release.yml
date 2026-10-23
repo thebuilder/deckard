@@ -66,7 +66,7 @@ jobs:
           registry-url: https://registry.npmjs.org
       - run: pnpm install --frozen-lockfile
 
-      - run: pnpm --filter @thebuilder/deckard-core exec playwright install --with-deps chromium
+      - uses: ./.github/actions/playwright-chromium
 
       # Sets the tag's version on the three packages, builds from nothing,
       # packs, checks each tarball carries that version and what an installer
@@ -98,9 +98,12 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.repository.default_branch }}
+      # Only node runs here. setup-node reads packageManager from the root
+      # package.json and would look for a pnpm this job never installs.
       - uses: actions/setup-node@v5
         with:
           node-version: 24
+          package-manager-cache: false
 
       - name: Commit the version
         run: |
