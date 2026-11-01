@@ -26,12 +26,15 @@
 
 /*
  * Full-bleed, with the effect canvas filling it and the copy in a measure on
- * top. The backdrop gradient renders first and stays for a browser the effect
+ * top. Every single-column grid on this page names its column as
+ * minmax(0, 1fr): an implicit auto column grows to its widest unbreakable
+ * child in Safari, and one line of code then pushes the page off a phone. The backdrop gradient renders first and stays for a browser the effect
  * declines; the canvas covers it once live. The scrim sits over both.
  */
 .hero {
   position: relative;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   align-content: center;
   padding-block: 5rem 4.5rem;
   padding-inline: 1.5rem;
@@ -54,6 +57,7 @@
   color: var(--blume-accent);
   text-transform: uppercase;
   letter-spacing: 0.16em;
+  text-wrap: balance;
 }
 
 /* The live deck, held to the page measure under the hero copy. */
@@ -211,6 +215,7 @@
 
 .install-panels {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
 }
 
 /* Each panel is as wide as its text and the copy button beside it. */
@@ -483,11 +488,13 @@
 
 .demo {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 1.25rem;
 }
 
 .demo-viewer {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 1.25rem;
 }
 
@@ -547,6 +554,7 @@
 
 .demo-panels {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 1.5rem;
   align-items: start;
 }
@@ -702,6 +710,7 @@
 
 .feature {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 2rem;
   align-items: center;
 }
@@ -783,6 +792,7 @@
 
 .agent-grid {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 1.5rem;
 }
 
